@@ -7,7 +7,7 @@ var _ = require('underscore');
 rorm.connect({})
 
 describe('Model', function(){
-    var Cat, catou, minou, catou_id;
+    var Cat, catou, minou, catou_id, catouCopy, minouCopy;
     describe('createModel', function(){
         it('Create model', function(){
             Cat = rorm.createModel('Cat', { name: String });
@@ -232,6 +232,23 @@ describe('Model', function(){
             (function() {  new Cat({ arrayOfStrings: value }, {enforce: true}) }).should.throw('Value for [arrayOfStrings][1] must be a String');
         });
     });
+    describe('new', function(){
+        it('should use the default function with the original doc', function() {
+            var value = "noString";
+            Cat = rorm.createModel('Cat', { fieldString: {_type: String, default: function(doc) { return 1 }}});
+            (function() { new Cat({value: value}, {enforce: true}) }).should.throw('The default function did not return a String for [fieldString]');
+        });
+    });
+
+    // Testing enforce true at the model level
+    describe('new', function(){
+        it('should throw when enforcce=true (declared in the model) with a wrong type (string)', function() {
+            Cat = rorm.createModel('Cat', { fieldString: String }, {enforce: true});
+            (function() { new Cat({fieldString: 1}) }).should.throw('Value for [fieldString] must be a String');
+        });
+    });
+   
+
 
 
 
@@ -241,8 +258,8 @@ describe('Model', function(){
     describe('define', function() {
         it('should save a method', function() {
             Cat = rorm.createModel('Cat', { name: String });
-            catou = new Cat({name: 'Catou'});
             Cat.define('hello', function() { return 'hello, my name is '+this.name; })
+            catou = new Cat({name: 'Catou'});
             should.exist(Cat.hello)
         });
     });
@@ -259,4 +276,57 @@ describe('Model', function(){
             should.equal(catou.hello(), 'hello, my name is Catou');
         });
     });
+
+
+    // Test again a database
+    describe('save', function() {
+        it('should add a field id', function(done){
+            Cat = rorm.createModel('Cat', { id: String, name: String });
+            catou = new Cat({name: 'Catou'});
+            catou.save( function(error, result) {
+                catouCopy = result;
+
+                should.exist(result.id);
+                minou = new Cat({name: 'Minou'});
+                minou.save( function(error, result) {
+                    minouCopy = result;
+                    done();
+                });
+            });
+        });
+    });
+
+
+
+    describe('get', function() {
+        it('retrieve a document in the database', function(done){
+            Cat.get(catouCopy.id, function(error, result) {
+                should(_.isEqual(result, catouCopy));
+                done();
+            })
+        });
+    });
+    describe('get', function() {
+        it('retrieve documents in the database', function(done){
+            Cat.get([catouCopy.id, minouCopy.id], function(error, result) {
+                should.not.exists(error);
+                result.should.have.length(2);
+                should.equal(result[0].id, catouCopy.id);
+                done();
+            })
+        });
+    });
+    describe('filter', function() {
+        it('retrieve documents in the database', function(done){
+            Cat.filter(function(doc) { return r.expr([catouCopy.id, minouCopy.id]).contains(doc("id")) },
+                function(error, result) {
+                    should.not.exists(error);
+                    result.should.have.length(2);
+                    done();
+                }
+            )
+        });
+    });
+
+
 })
