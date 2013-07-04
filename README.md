@@ -35,6 +35,7 @@ TODO
 - Fully test insert/update/replace
 - Add filter
 - Write the docs
+- Find a better name than rorm
 - Get a cake
 
 
