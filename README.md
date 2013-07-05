@@ -27,7 +27,7 @@ _Note_: Work in progress.
 ### Thinky
 
 #### Thinky.connect( options )
-options is an object with the fields
+options (object): object with the fields
 - host: RethinkDB host (default "localhost")
 - port: RethinkDB port for client (default to 28015)
 - db: default database (default to "test")
@@ -39,6 +39,38 @@ options is an object with the fields
 Returns all the options previously set.
 
 
+#### Thinky.setOptions( options, overwrite)
+- options: object with the fields
+    - host: RethinkDB host (default "localhost")
+    - port: RethinkDB port for client (default to 28015)
+    - db: default database (default to "test")
+    - poolMax: The maximum number of connections in the pool (default to 10)
+    - poolMin: The minimum number of connections in the pool (default to 1)
+- overwrite (boolean): flag to delete not declared options, default to false.
+
+
+#### Thinky.getOption( optionName )
+- optionName (string): possible values:
+    - host: RethinkDB host
+    - port: RethinkDB port for client
+    - db: default database
+    - poolMax: The maximum number of connections in the pool
+    - poolMin: The minimum number of connections in the pool
+
+
+#### Thinky.disconnect()
+Close all the connections.
+
+#### Thinky.createModel( name, schema, settings)
+Create a new model
+- name: name of the model
+- schema: An object which fields can have the following values:
+    - String
+    - Number
+    - Boolean
+    - Array
+    - Object
+- settings (object): settings for the model
 ### Model
 
 
@@ -48,19 +80,17 @@ Contribute
 ====
 You are welcome to do a pull request
 
-TODO
+## TODO
 ====
-- Fully test insert/update/replace
-- Add filter
 - Write the docs
-- Get a cake
+- Add more complex queries
+- Update pool when poolMax/poolMin changes
 
-
-About
+## About
 ====
 Author: Michel Tu -- orphee@gmail.com -- www.justonepixel.com
 
-License
+## License
 ====
 Copyright (c) 2013 Michel Tu <orphee@gmail.com>
 
