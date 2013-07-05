@@ -1,30 +1,48 @@
-Thinky
+# Thinky
 ====
 
 JavaScript ORM for RethinkDB.
+_Note_: Alpha release
 
+## Quick start 
 
-How to use
-====
-Simple case:
 ```
-var thinky = require('lib/index.js');
+var thinky = require('thinky');
 thinky.connect({});
-var Cat = thinky.createModel('Cat', {name: String});
-Cat.define('hello', function() { console.log("Hello, I'm "+this.name) });
-cat = new Cat({name: 'Catou'});
-cat.hello();
-cat.insert(function(err, result) {
+
+var Cat = thinky.createModel('Cat', {name: String}); // Create a model
+Cat.define('hello', function() { console.log("Hello, I'm "+this.name) }); // Create custom methods
+
+kitty = new Cat({name: 'Kitty'}); // Create a new object
+kitty.hello(); // Log "Hello, I'm Kitty
+kitty.save(function(err, result) {
     if (err) throw err;
-    cat = result;
+    console.log("Kitty has been saved in the database");
 })
 ```
 
+## Docs
+_Note_: Work in progress. 
 
-Advanced case:
-```
-Read the code (or the tests)
-```
+### Thinky
+
+#### Thinky.connect( options )
+options is an object with the fields
+- host: RethinkDB host (default "localhost")
+- port: RethinkDB port for client (default to 28015)
+- db: default database (default to "test")
+- poolMax: The maximum number of connections in the pool (default to 10)
+- poolMin: The minimum number of connections in the pool (default to 1)
+
+
+#### Thinky.getOptions()
+Returns all the options previously set.
+
+
+### Model
+
+
+### Document
 
 Contribute
 ====
