@@ -26,6 +26,7 @@ _Note_: Work in progress.
 #### Thinky
 
 __Thinky.connect(__ options __)__
+
 options (object): object with the fields
 - host: RethinkDB host (default "localhost")
 - port: RethinkDB port for client (default to 28015)
@@ -35,10 +36,12 @@ options (object): object with the fields
 
 
 __Thinky.getOptions()__  
+
 Returns all the options previously set.
 
 
-__Thinky.setOptions(__ options, overwrite__)__
+__Thinky.setOptions(__ options, overwrite __)__
+
 - options: object with the fields
     - host: RethinkDB host (default "localhost")
     - port: RethinkDB port for client (default to 28015)
@@ -49,6 +52,7 @@ __Thinky.setOptions(__ options, overwrite__)__
 
 
 __Thinky.getOption(__ optionName __)__
+
 - optionName (string): possible values:
     - host: RethinkDB host
     - port: RethinkDB port for client
@@ -58,6 +62,7 @@ __Thinky.getOption(__ optionName __)__
 
 
 __Thinky.disconnect()__
+
 Close all the connections.
 
 __Thinky.createModel(__ name, schema, settings __)__
