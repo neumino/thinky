@@ -1,13 +1,13 @@
-var rorm = require('../lib/index.js');
+var thinky = require('../lib/index.js');
 var should = require('should');
 var assert = require('assert');
 var r = require('rethinkdb');
 var _ = require('underscore');
 
-rorm.connect({})
+thinky.connect({})
 
 describe('Document', function(){
-    var Cat = rorm.createModel('Cat', { id: String, name: String, age: 20});
+    var Cat = thinky.createModel('Cat', { id: String, name: String, age: 20});
     var catou, minou;
     var listener;
 
@@ -30,7 +30,7 @@ describe('Document', function(){
     // Test define
     describe('define', function() {
         it('should save a method', function() {
-            Cat = rorm.createModel('Cat', { id: String, name: String });
+            Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
             minou = new Cat({name: 'Minou'});
             catou.define('helloDoc', function() { return 'hello, my name is '+this.name; })
@@ -52,7 +52,7 @@ describe('Document', function(){
     // Test against the database
     describe('save', function() {
         it('should add a field id', function(done){
-            Cat = rorm.createModel('Cat', { id: String, name: String });
+            Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
 
             catou.save( function(error, result) {
@@ -63,7 +63,7 @@ describe('Document', function(){
     });
     describe('save', function() {
         it('should not change the reference of the object', function(done){
-            Cat = rorm.createModel('Cat', { id: String, name: String });
+            Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
             catou.save( function(error, result) {
                 should.equal(catou, result);
@@ -74,7 +74,7 @@ describe('Document', function(){
     });
     describe('save', function() {
         it('should not change the reference of the object', function(done){
-            Cat = rorm.createModel('Cat', { id: String, name: String });
+            Cat = thinky.createModel('Cat', { id: String, name: String });
             minou = new Cat({name: 'Minou'});
             minou.save( function(error, result) {
                 should.equal(minou, result);
@@ -113,7 +113,7 @@ describe('Document', function(){
     // Test listener
     describe('on', function() {
         it('should execute the callback when the even is emitted', function(done){
-            Cat = rorm.createModel('Cat', { id: String, name: String });
+            Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
             listener = function() {
                 done();
@@ -141,7 +141,7 @@ describe('Document', function(){
     // Test that events are properly fired
     describe('save', function() {
         it('should emit the event `save` on insert', function(done){
-            Cat = rorm.createModel('Cat', { id: String, name: String });
+            Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
             listener = function() {
                 catou.removeAllListeners('save');
@@ -161,7 +161,7 @@ describe('Document', function(){
     });
     describe('replace', function() {
         it('should emit the event `change`', function(done){
-            Cat = rorm.createModel('Cat', { id: String, name: String });
+            Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
             listener = function() {
                 catou.removeAllListeners('save');

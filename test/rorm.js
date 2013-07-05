@@ -1,30 +1,30 @@
-var rorm = require('../lib/index.js');
+var thinky = require('../lib/index.js');
 var should = require('should');
 var r = require('rethinkdb');
 
 //TODO Split test
 //TODO Use something else than assert. should.js?
 
-describe('Rorm', function(){
+describe('Thinky', function(){
     // Testing pool
     describe('connect', function(){
         it('should create a pool', function(){
-            rorm.connect({})
-            should.exist(rorm.pool);
+            thinky.connect({})
+            should.exist(thinky.pool);
         })
     });
     describe('pool.acquire', function(){
         it('should provide a connection', function(){
-            rorm.pool.acquire(function(err, client) {
+            thinky.pool.acquire(function(err, client) {
                 should.not.exist(err);
                 should.exist(client);
-                rorm.pool.release(client);
+                thinky.pool.release(client);
             });
         })
     });
     describe('pool', function(){
         it('should have more than one connection', function(){
-            should(rorm.pool.getPoolSize() >= 1);
+            should(thinky.pool.getPoolSize() >= 1);
         })
     });
 
@@ -32,20 +32,20 @@ describe('Rorm', function(){
     // Testing get/set options
     describe('getOption', function(){
         it('should return the option passed', function(){
-            should.equal(rorm.getOption('poolMax'), 10);
+            should.equal(thinky.getOption('poolMax'), 10);
         })
     });
     describe('setOption', function(){
         it('should set an option', function(){
             var value = 7;
-            rorm.setOption('poolMax', value);
-            should.equal(rorm.getOption('poolMax'), value);
+            thinky.setOption('poolMax', value);
+            should.equal(thinky.getOption('poolMax'), value);
         })
     });
 
     describe('getOptions', function(){
         it('should return all options', function(){
-            should.exist(rorm.getOptions());
+            should.exist(thinky.getOptions());
         })
     });
     describe('setOptions', function(){
@@ -54,32 +54,32 @@ describe('Rorm', function(){
                 poolMax: 20,
                 poolMin: 2
             };
-            rorm.setOptions(options, true);
-            should.equal(rorm.getOptions(), options);
+            thinky.setOptions(options, true);
+            should.equal(thinky.getOptions(), options);
         })
     });
     describe('setOptions', function(){
         it('should merge by default all options', function(){
             var value = 4;
-            rorm.setOption('poolMin', value);
+            thinky.setOption('poolMin', value);
             options = {
                 poolMax: 30,
             };
-            rorm.setOptions(options, false);
-            should.equal(rorm.getOption('poolMax'), 30);
-            should.equal(rorm.getOption('poolMin'), value);
+            thinky.setOptions(options, false);
+            should.equal(thinky.getOption('poolMax'), 30);
+            should.equal(thinky.getOption('poolMin'), value);
         })
     });
     describe('setOptions', function(){
         it('should merge the new options', function(){
             var value = 5;
-            rorm.setOption('poolMin', value);
+            thinky.setOption('poolMin', value);
             options = {
                 poolMax: 30,
             };
-            rorm.setOptions(options, false);
-            should.equal(rorm.getOption('poolMax'), 30);
-            should.equal(rorm.getOption('poolMin'), value);
+            thinky.setOptions(options, false);
+            should.equal(thinky.getOption('poolMax'), 30);
+            should.equal(thinky.getOption('poolMin'), value);
         })
     });
 

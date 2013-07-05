@@ -1,16 +1,16 @@
-var rorm = require('../lib/index.js');
+var thinky = require('../lib/index.js');
 var should = require('should');
 var assert = require('assert');
 var r = require('rethinkdb');
 var _ = require('underscore');
 
-rorm.connect({})
+thinky.connect({})
 
 describe('Model', function(){
     var Cat, catou, minou, catou_id, catouCopy, minouCopy;
     describe('createModel', function(){
         it('Create model', function(){
-            Cat = rorm.createModel('Cat', { name: String });
+            Cat = thinky.createModel('Cat', { name: String });
             should.exist(Cat);
         });
     });
@@ -41,7 +41,7 @@ describe('Model', function(){
     // Test schema
     describe('new', function(){
         it('should save String fields', function() {
-            Cat = rorm.createModel('Cat', { fieldString: String });
+            Cat = thinky.createModel('Cat', { fieldString: String });
             minou = new Cat({fieldString: 'Minou'});
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(minou.fieldString, 'Minou');
@@ -54,7 +54,7 @@ describe('Model', function(){
     });
     describe('new', function(){
         it('should save Number fields', function() {
-            Cat = rorm.createModel('Cat', { fieldNumber: Number });
+            Cat = thinky.createModel('Cat', { fieldNumber: Number });
             var value = Math.random();
             minou = new Cat({fieldNumber: value});
             should(Object.prototype.toString.call(catou) === '[object Object]');
@@ -69,7 +69,7 @@ describe('Model', function(){
     });
     describe('new', function(){
         it('should save Boolean fields', function() {
-            Cat = rorm.createModel('Cat', { fieldBoolean: Boolean });
+            Cat = thinky.createModel('Cat', { fieldBoolean: Boolean });
             var value = (Math.random > 0.5)? true: false;
             minou = new Cat({fieldBoolean: value});
             should(Object.prototype.toString.call(catou) === '[object Object]');
@@ -84,7 +84,7 @@ describe('Model', function(){
     });
     describe('new', function(){
         it('should save Nested fields', function() {
-            Cat = rorm.createModel('Cat', { nested: { fieldString: String } });
+            Cat = thinky.createModel('Cat', { nested: { fieldString: String } });
             var value = "Hello, I'm a nested string field"
             minou = new Cat({ nested: { fieldString: value}});
             should(Object.prototype.toString.call(catou) === '[object Object]');
@@ -99,7 +99,7 @@ describe('Model', function(){
     });
     describe('new', function(){
         it('should save double nested fields', function() {
-            Cat = rorm.createModel('Cat', { nested: { nestedBis: {fieldString: String }}});
+            Cat = thinky.createModel('Cat', { nested: { nestedBis: {fieldString: String }}});
             var value = "Hello, I'm a nested string field"
             minou = new Cat({ nested: { nestedBis: {fieldString: value}}});
             should(Object.prototype.toString.call(catou) === '[object Object]');
@@ -115,7 +115,7 @@ describe('Model', function(){
     describe('new', function(){
         it('should save Array fields', function() {
             var value = ["a", "b", "c"]
-            Cat = rorm.createModel('Cat', { arrayOfStrings: [String] });
+            Cat = thinky.createModel('Cat', { arrayOfStrings: [String] });
             minou = new Cat({ arrayOfStrings: value });
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(minou.arrayOfStrings.join(), value.join());
@@ -130,14 +130,14 @@ describe('Model', function(){
     describe('new', function(){
         it('should save Array or Array fields', function() {
             var value = [["a", "b"], ["c", "d"], ["e"]];
-            Cat = rorm.createModel('Cat', { arrayOfStrings: [[String]] });
+            Cat = thinky.createModel('Cat', { arrayOfStrings: [[String]] });
             minou = new Cat({ arrayOfStrings: value });
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(minou.arrayOfStrings.join(), value.join());
         });
         it('should save Array or Array fields (enforce = true)', function() {
             var value = [["a", "b"], ["c", "d"], ["e"]];
-            Cat = rorm.createModel('Cat', { arrayOfStrings: [[String]] });
+            Cat = thinky.createModel('Cat', { arrayOfStrings: [[String]] });
             minou = new Cat({ arrayOfStrings: value }, {enforce: true});
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(minou.arrayOfStrings.join(), value.join());
@@ -146,7 +146,7 @@ describe('Model', function(){
     describe('new', function(){
         it('should save Array of objects', function() {
             var value = [{key: 'a'}, {key: 'b'}, {key: 'c'}];
-            Cat = rorm.createModel('Cat', { arrayOfObjects: [{ key: String}] });
+            Cat = thinky.createModel('Cat', { arrayOfObjects: [{ key: String}] });
             minou = new Cat({ arrayOfObjects: value });
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(minou.arrayOfObjects.length, value.length);
@@ -162,34 +162,34 @@ describe('Model', function(){
     // Test schema with options 
     describe('new', function(){
         it('should save String fields', function() {
-            Cat = rorm.createModel('Cat', { fieldString: {_type: String }});
+            Cat = thinky.createModel('Cat', { fieldString: {_type: String }});
             minou = new Cat({fieldString: 'Minou'});
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(minou.fieldString, 'Minou');
         });
         it('should miss the  String field', function() {
-            Cat = rorm.createModel('Cat', { fieldString: {_type: String }});
+            Cat = thinky.createModel('Cat', { fieldString: {_type: String }});
             minou = new Cat({});
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(minou.fieldString, undefined);
         });
         it('should use the default value', function() {
             var value = "noString";
-            Cat = rorm.createModel('Cat', { fieldString: {_type: String, default: value }});
+            Cat = thinky.createModel('Cat', { fieldString: {_type: String, default: value }});
             minou = new Cat({});
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(minou.fieldString, value);
         });
         it('should use the default function', function() {
             var value = "noString";
-            Cat = rorm.createModel('Cat', { fieldString: {_type: String, default: function() { return value }}});
+            Cat = thinky.createModel('Cat', { fieldString: {_type: String, default: function() { return value }}});
             minou = new Cat({});
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(minou.fieldString, value);
         });
         it('should use the default function with the original doc', function() {
             var value = "noString";
-            Cat = rorm.createModel('Cat', { fieldString: {_type: String, default: function(doc) { return doc.value }}});
+            Cat = thinky.createModel('Cat', { fieldString: {_type: String, default: function(doc) { return doc.value }}});
             minou = new Cat({value: value});
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(minou.fieldString, value);
@@ -209,33 +209,33 @@ describe('Model', function(){
     // Test schema errors
     describe('new', function(){
         it('should throw when enforcce=true with a wrong type (string)', function() {
-            Cat = rorm.createModel('Cat', { fieldString: String });
+            Cat = thinky.createModel('Cat', { fieldString: String });
             (function() { new Cat({fieldString: 1}, {enforce: true}); }).should.throw('Value for [fieldString] must be a String');
         });
     });
     describe('new', function(){
         it('should throw when enforcce=true with a wrong type (number)', function() {
-            Cat = rorm.createModel('Cat', { fieldNumber: Number });
+            Cat = thinky.createModel('Cat', { fieldNumber: Number });
             (function() { new Cat({fieldNumber: 'not_number'}, {enforce: true}); }).should.throw('Value for [fieldNumber] must be a Number');
         });
     });
     describe('new', function(){
         it('should throw when enforcce=true with a wrong type (bool)', function() {
-            Cat = rorm.createModel('Cat', { fieldBool: Boolean });
+            Cat = thinky.createModel('Cat', { fieldBool: Boolean });
             (function() { new Cat({fieldBool: 'not_bool'}, {enforce: true}); }).should.throw('Value for [fieldBool] must be a Boolean');
         });
     });
     describe('new', function(){
         it('should save Array fields (enforce = true)', function() {
             var value = ["a", 1, "c"]
-            Cat = rorm.createModel('Cat', { arrayOfStrings: [String] });
+            Cat = thinky.createModel('Cat', { arrayOfStrings: [String] });
             (function() {  new Cat({ arrayOfStrings: value }, {enforce: true}) }).should.throw('Value for [arrayOfStrings][1] must be a String');
         });
     });
     describe('new', function(){
         it('should use the default function with the original doc', function() {
             var value = "noString";
-            Cat = rorm.createModel('Cat', { fieldString: {_type: String, default: function(doc) { return 1 }}});
+            Cat = thinky.createModel('Cat', { fieldString: {_type: String, default: function(doc) { return 1 }}});
             (function() { new Cat({value: value}, {enforce: true}) }).should.throw('The default function did not return a String for [fieldString]');
         });
     });
@@ -243,7 +243,7 @@ describe('Model', function(){
     // Testing enforce true at the model level
     describe('new', function(){
         it('should throw when enforcce=true (declared in the model) with a wrong type (string)', function() {
-            Cat = rorm.createModel('Cat', { fieldString: String }, {enforce: true});
+            Cat = thinky.createModel('Cat', { fieldString: String }, {enforce: true});
             (function() { new Cat({fieldString: 1}) }).should.throw('Value for [fieldString] must be a String');
         });
     });
@@ -257,7 +257,7 @@ describe('Model', function(){
     // Test define
     describe('define', function() {
         it('should save a method', function() {
-            Cat = rorm.createModel('Cat', { name: String });
+            Cat = thinky.createModel('Cat', { name: String });
             Cat.define('hello', function() { return 'hello, my name is '+this.name; })
             catou = new Cat({name: 'Catou'});
             should.exist(Cat.hello)
@@ -281,7 +281,7 @@ describe('Model', function(){
     // Test again a database
     describe('save', function() {
         it('should add a field id', function(done){
-            Cat = rorm.createModel('Cat', { id: String, name: String });
+            Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
             catou.save( function(error, result) {
                 catouCopy = result;
