@@ -23,5 +23,8 @@
   "gitHead": "1983ded4bd82ebcee75ce07e874479ec25eb40ce",
   "bugs": {
     "url": "https://github.com/neumino/thinky/issues"
+  },
+  "dependencies":{
+    "generic-pool": ">= 2.0.3"
   }
 }
