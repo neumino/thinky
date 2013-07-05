@@ -138,6 +138,8 @@ __Document.replace(__ newDoc  __)__
 __Document.update(__ newDoc  __)__
 Not yet
 
+All method of EventEmitter are available on Document. They do not pollute the document itself.
+
 ### Contribute
 You are welcome to do a pull request.
 
