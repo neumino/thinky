@@ -25,7 +25,7 @@ _Note_: Work in progress.
 
 #### Thinky
 
-__Thinky.connect( options )__
+__Thinky.connect(__ options __)__
 options (object): object with the fields
 - host: RethinkDB host (default "localhost")
 - port: RethinkDB port for client (default to 28015)
@@ -34,11 +34,11 @@ options (object): object with the fields
 - poolMin: The minimum number of connections in the pool (default to 1)
 
 
-__Thinky.getOptions()__
+__Thinky.getOptions()__  
 Returns all the options previously set.
 
 
-__Thinky.setOptions( options, overwrite)__
+__Thinky.setOptions(__ options, overwrite__)__
 - options: object with the fields
     - host: RethinkDB host (default "localhost")
     - port: RethinkDB port for client (default to 28015)
@@ -48,7 +48,7 @@ __Thinky.setOptions( options, overwrite)__
 - overwrite (boolean): flag to delete not declared options, default to false.
 
 
-__Thinky.getOption( optionName )__
+__Thinky.getOption(__ optionName __)__
 - optionName (string): possible values:
     - host: RethinkDB host
     - port: RethinkDB port for client
@@ -60,7 +60,7 @@ __Thinky.getOption( optionName )__
 __Thinky.disconnect()__
 Close all the connections.
 
-__Thinky.createModel( name, schema, settings)__
+__Thinky.createModel(__ name, schema, settings __)__
 Create a new model
 - name: name of the model
 - schema: An object which fields can have the following values:
@@ -81,17 +81,14 @@ You are welcome to do a pull request.
 
 
 ### TODO
-====
 - Write the docs
 - Add more complex queries
 - Update pool when poolMax/poolMin changes
 
 ### About
-====
 Author: Michel Tu -- orphee@gmail.com -- www.justonepixel.com
 
 ### License
-====
 Copyright (c) 2013 Michel Tu <orphee@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
