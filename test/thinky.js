@@ -48,43 +48,30 @@ describe('Thinky', function(){
             should.exist(thinky.getOptions());
         })
     });
-    describe('setOptions', function(){
-        it('should overwrite all options', function(){
-            options = {
-                poolMax: 20,
-                poolMin: 2
-            };
-            thinky.setOptions(options, true);
-            should.equal(thinky.getOptions(), options);
-        })
-    });
-    describe('setOptions', function(){
-        it('should merge by default all options', function(){
+    describe('setOption', function(){
+        it('should update the option', function(){
             var value = 4;
             thinky.setOption('poolMin', value);
-            options = {
-                poolMax: 30,
-            };
-            thinky.setOptions(options, false);
-            should.equal(thinky.getOption('poolMax'), 30);
             should.equal(thinky.getOption('poolMin'), value);
         })
+        it('should use the default if the user pass null', function(){
+            var value = null;
+            thinky.setOption('poolMin', value);
+            should.equal(thinky.getOption('poolMin'), 1);
+        })
+
     });
     describe('setOptions', function(){
-        it('should merge the new options', function(){
-            var value = 5;
-            thinky.setOption('poolMin', value);
+        it('should update all the provided options', function(){
             options = {
-                poolMax: 30,
+                poolMax: null,
+                poolMin: 3
             };
-            thinky.setOptions(options, false);
-            should.equal(thinky.getOption('poolMax'), 30);
-            should.equal(thinky.getOption('poolMin'), value);
+            thinky.setOptions(options);
+            should.equal(thinky.getOption('poolMax'), 10);
+            should.equal(thinky.getOption('poolMin'), 3);
         })
     });
-
-
-
 })
 
 

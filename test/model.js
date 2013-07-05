@@ -328,5 +328,4 @@ describe('Model', function(){
         });
     });
 
-
 })

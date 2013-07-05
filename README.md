@@ -40,18 +40,18 @@ __Thinky.getOptions()__
 Returns all the options previously set.
 
 
-__Thinky.setOptions(__ options, overwrite __)__
+__Thinky.setOptions(__ options __)__
+Overwrite the options defined in the argument.
 
-- options: object with the fields
+The argument _options_ is an object that can have the following fields
     - host: RethinkDB host (default "localhost")
     - port: RethinkDB port for client (default to 28015)
     - db: default database (default to "test")
     - poolMax: The maximum number of connections in the pool (default to 10)
     - poolMin: The minimum number of connections in the pool (default to 1)
-- overwrite (boolean): flag to delete not declared options, default to false.
-_Note_: the overwrite flag will probably be removed.
-_Note bis_: overwriting poolMax and poolMin does not affect the pool for now. I'll probably end
-up forking generic-pool for that.
+Setting a value to null will delete the value.
+
+_Note_: Almost useless for now since we don't recreate/update the pool
 
 __Thinky.getOption(__ optionName __)__
 
@@ -62,6 +62,7 @@ __Thinky.getOption(__ optionName __)__
     - poolMax: The maximum number of connections in the pool
     - poolMin: The minimum number of connections in the pool
 
+_Note_: Almost useless for now since we don't recreate/update the pool
 
 __Thinky.disconnect()__
 
@@ -104,18 +105,26 @@ Save a method
 __Model.setSchema(__ schema __)__
 Change the schema -- Not tested (I think)
 
-
 __Model.getSettings(__  __)__
+Return the settings of the model.
 
 __Model.getDocument(__  __)__
+Return the document.
 
 __Model.getPrimaryKey(__  __)__
+Return the primary key 
 
-__Model.save(__ callback  __)__
+__Model.save(__ callback, overwrite  __)__
+Save the object in the database. Thinky will call insert or update depending
+on whether how the object was created.
 
-__Model.save(__ id or [ids]  __)__
+overwrite: not implemented yet
+
+__Model.get(__ id or [ids]  __)__
+Retrieve one or more document
 
 __Model.filter(__ filterFunction  __)__
+Retrieve document based on the filter
 
 __Model.mapReduce(__ filterFunction  __)__
 Not yet
@@ -139,6 +148,16 @@ __Document.update(__ newDoc  __)__
 Not yet
 
 All method of EventEmitter are available on Document. They do not pollute the document itself.
+
+### Internals
+When you create a new object from a model, the object has the following chain of prototypes
+object -> DocumentObject -> Document -> model
+
+Run the tests
+
+```
+mocha
+```
 
 ### Contribute
 You are welcome to do a pull request.
