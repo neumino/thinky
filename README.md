@@ -1,9 +1,9 @@
 # Thinky
 
-JavaScript ORM for RethinkDB.
+JavaScript ORM for RethinkDB.  
 _Note_: Alpha release
 
-## Quick start 
+### Quick start 
 
 ```javascript
 var thinky = require('thinky');
@@ -20,12 +20,12 @@ kitty.save(function(err, result) {
 })
 ```
 
-## Docs
+### Docs
 _Note_: Work in progress. 
 
-### Thinky
+#### Thinky
 
-#### Thinky.connect( options )
+__Thinky.connect( options )__
 options (object): object with the fields
 - host: RethinkDB host (default "localhost")
 - port: RethinkDB port for client (default to 28015)
@@ -34,11 +34,11 @@ options (object): object with the fields
 - poolMin: The minimum number of connections in the pool (default to 1)
 
 
-#### Thinky.getOptions()
+__Thinky.getOptions()__
 Returns all the options previously set.
 
 
-#### Thinky.setOptions( options, overwrite)
+__Thinky.setOptions( options, overwrite)__
 - options: object with the fields
     - host: RethinkDB host (default "localhost")
     - port: RethinkDB port for client (default to 28015)
@@ -48,7 +48,7 @@ Returns all the options previously set.
 - overwrite (boolean): flag to delete not declared options, default to false.
 
 
-#### Thinky.getOption( optionName )
+__Thinky.getOption( optionName )__
 - optionName (string): possible values:
     - host: RethinkDB host
     - port: RethinkDB port for client
@@ -57,10 +57,10 @@ Returns all the options previously set.
     - poolMin: The minimum number of connections in the pool
 
 
-#### Thinky.disconnect()
+__Thinky.disconnect()__
 Close all the connections.
 
-#### Thinky.createModel( name, schema, settings)
+__Thinky.createModel( name, schema, settings)__
 Create a new model
 - name: name of the model
 - schema: An object which fields can have the following values:
@@ -70,26 +70,27 @@ Create a new model
     - Array
     - Object
 - settings (object): settings for the model
-### Model
+
+#### Model
 
 
-### Document
+#### Document
 
-Contribute
-====
-You are welcome to do a pull request
+### Contribute
+You are welcome to do a pull request.
 
-## TODO
+
+### TODO
 ====
 - Write the docs
 - Add more complex queries
 - Update pool when poolMax/poolMin changes
 
-## About
+### About
 ====
 Author: Michel Tu -- orphee@gmail.com -- www.justonepixel.com
 
-## License
+### License
 ====
 Copyright (c) 2013 Michel Tu <orphee@gmail.com>
 
