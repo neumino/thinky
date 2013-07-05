@@ -1,16 +1,16 @@
-RORM
+Thinky
 ====
 
-JavaScript ORM for RethinkDB -- First try
+JavaScript ORM for RethinkDB.
 
 
 How to use
 ====
 Simple case:
 ```
-var rorm = require('lib/index.js');
-rorm.connect({});
-var Cat = rorm.createModel('Cat', {name: String});
+var thinky = require('lib/index.js');
+thinky.connect({});
+var Cat = thinky.createModel('Cat', {name: String});
 Cat.define('hello', function() { console.log("Hello, I'm "+this.name) });
 cat = new Cat({name: 'Catou'});
 cat.hello();
@@ -35,7 +35,6 @@ TODO
 - Fully test insert/update/replace
 - Add filter
 - Write the docs
-- Find a better name than rorm
 - Get a cake
 
 
