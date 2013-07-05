@@ -1,5 +1,4 @@
 # Thinky
-====
 
 JavaScript ORM for RethinkDB.
 _Note_: Alpha release
