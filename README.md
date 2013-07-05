@@ -6,7 +6,7 @@ _Note_: Alpha release
 
 ## Quick start 
 
-```
+```javascript
 var thinky = require('thinky');
 thinky.connect({});
 
