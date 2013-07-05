@@ -33,6 +33,13 @@ options (object): object with the fields
 - db: default database (default to "test")
 - poolMax: The maximum number of connections in the pool (default to 10)
 - poolMin: The minimum number of connections in the pool (default to 1)
+- enforce: Boolean that represent if the schemas should be enforced or not
+
+_Note_: The behavior of enforce may change. Since I can imagine four cases
+- Be flexible
+- Forbid extra fields
+- Forbid missing fields
+- Forbid extra AND missing fields
 
 
 __Thinky.getOptions()__  
@@ -40,8 +47,22 @@ __Thinky.getOptions()__
 Returns all the options previously set.
 
 
+
+__Thinky.getOption(__ optionName __)__  
+
+Returns the value for _optionName_. Possible values:
+    - host: RethinkDB host
+    - port: RethinkDB port for client
+    - db: default database
+    - poolMax: The maximum number of connections in the pool
+    - poolMin: The minimum number of connections in the pool
+    - enforce: Boolean that represent if the schemas should be enforced or not
+
+
+
 __Thinky.setOptions(__ options __)__
-Overwrite the options defined in the argument.
+
+Overwrite the options defined in _options_.
 
 The argument _options_ is an object that can have the following fields
     - host: RethinkDB host (default "localhost")
@@ -53,20 +74,13 @@ Setting a value to null will delete the value.
 
 _Note_: Almost useless for now since we don't recreate/update the pool
 
-__Thinky.getOption(__ optionName __)__
 
-- optionName (string): possible values:
-    - host: RethinkDB host
-    - port: RethinkDB port for client
-    - db: default database
-    - poolMax: The maximum number of connections in the pool
-    - poolMin: The minimum number of connections in the pool
-
-_Note_: Almost useless for now since we don't recreate/update the pool
 
 __Thinky.disconnect()__
 
 Close all the connections.
+
+
 
 __Thinky.createModel(__ name, schema, settings __)__
 Create a new model
@@ -78,29 +92,35 @@ Create a new model
     - Array
     - Object
 - settings (object): settings for the model
-    - enforce (boolean)
-    Enforce or not the schema. Error will be thrown if extra fields are provided/missing.
+    - enforce: Boolean that represent if the schemas should be enforced or not
 
-_Note_: The behavior of enforce may change. Since I can imagine four cases
-- Be flexible
-- Forbid extra fields
-- Forbid missing fields
-- Forbid extra AND missing fields
+Valid schema can be:
+```
+{ name: String }
+{ name: { type: String } } // {name: "Kitty"} or { name: { type: "Kitty" } }?
+{ name: { type: String, default: value/function }
+{ name: { type: [String, Number, ...] }
+{ age: { type: Number, min: ..., max: ...} }
+{ comments: { type: Array, min: ..., max: ...} }
+{ arrayOfStrings: [ String ] }
+{ arrayOfStrings: [ String, maxLength, minLength ] }
+```
+Coming soon: default with object and arrays.
+
 
 #### Model
-__Model.comple(__ name, schema, settings, thinky __)__
-Compile the model
+__Model.compile(__ name, schema, settings, thinky __)__
+_Internal method_
 
 __Model.createBasedOnSchema(__ result, doc, originalDoc, enforce, prefix, schema __)__
-Internal method
+_Internal method_
 
 
 __Model.checkType(__ result, doc, originalDoc, schema, key, type, typeOf, prefix, enforce __)__
-Internal method for createBasedOnSchema
-
+_Internal method_
 
 __Model.define(__ key, method __)__
-Save a method
+Define a method on the model that can be called by any instances of the model.
 
 __Model.setSchema(__ schema __)__
 Change the schema -- Not tested (I think)
@@ -120,17 +140,17 @@ on whether how the object was created.
 
 overwrite: not implemented yet
 
-__Model.get(__ id or [ids]  __)__
-Retrieve one or more document
+__Model.get(__ id or [ids], callback __)__
+Retrieve one or more documents
 
 __Model.filter(__ filterFunction  __)__
-Retrieve document based on the filter
+Retrieve document based on the filter.
 
 __Model.mapReduce(__ filterFunction  __)__
-Not yet
+Not yet implemented
 
 __Model.filter(__ filterFunction  __)__
-Not yet
+Not yet implemented
 
 #### Document
 
