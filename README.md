@@ -5,6 +5,12 @@ _Note_: Alpha release
 
 ### Quick start 
 
+Install:
+```
+npm install thinky
+```
+
+Use
 ```javascript
 var thinky = require('thinky');
 thinky.connect({});
