@@ -32,6 +32,7 @@ _Note_: Work in progress.
 __Thinky.connect(__ options __)__
 
 options (object): object with the fields
+
 - host: RethinkDB host (default "localhost")
 - port: RethinkDB port for client (default to 28015)
 - db: default database (default to "test")
@@ -39,7 +40,8 @@ options (object): object with the fields
 - poolMin: The minimum number of connections in the pool (default to 1)
 - enforce: Boolean that represent if the schemas should be enforced or not
 
-_Note_: The behavior of enforce may change. Since I can imagine four cases
+_Note_: The behavior of enforce may change. Since there are more than two cases
+
 - Be flexible
 - Forbid extra fields
 - Forbid missing fields
@@ -55,6 +57,7 @@ Returns all the options previously set.
 __Thinky.getOption(__ optionName __)__  
 
 Returns the value for _optionName_. Possible values:
+
     - host: RethinkDB host
     - port: RethinkDB port for client
     - db: default database
@@ -114,29 +117,47 @@ Coming soon: default with object and arrays.
 
 #### Model
 __Model.compile(__ name, schema, settings, thinky __)__
+
 _Internal method_
 
+
+
 __Model.createBasedOnSchema(__ result, doc, originalDoc, enforce, prefix, schema __)__
+
 _Internal method_
+
 
 
 __Model.checkType(__ result, doc, originalDoc, schema, key, type, typeOf, prefix, enforce __)__
+
 _Internal method_
+
+
 
 __Model.define(__ key, method __)__
 Define a method on the model that can be called by any instances of the model.
 
+
+
 __Model.setSchema(__ schema __)__
 Change the schema -- Not tested (I think)
+
+
 
 __Model.getSettings(__  __)__
 Return the settings of the model.
 
+
+
 __Model.getDocument(__  __)__
 Return the document.
 
+
+
 __Model.getPrimaryKey(__  __)__
 Return the primary key 
+
+
 
 __Model.save(__ callback, overwrite  __)__
 Save the object in the database. Thinky will call insert or update depending
@@ -144,32 +165,56 @@ on whether how the object was created.
 
 overwrite: not implemented yet
 
+
+
 __Model.get(__ id or [ids], callback __)__
+
 Retrieve one or more documents
 
+
+
 __Model.filter(__ filterFunction  __)__
+
 Retrieve document based on the filter.
 
-__Model.mapReduce(__ filterFunction  __)__
-Not yet implemented
 
-__Model.filter(__ filterFunction  __)__
+
+__Model.count(__  __)__
+
+Return the number of element in the table of your model.
+
+
+
+__Model.mapReduce(__ filterFunction  __)__
+
 Not yet implemented
 
 #### Document
 
+
 __Document.getDocument(__  __)__
+
+_Internal method?_
+
+
 
 __Document.getModel(__  __)__
 
+Return the model of the document.
+
+
+
 __Document.getSettings(__  __)__
+
+
 
 __Document.define(__ name, method  __)__
 
-__Document.replace(__ newDoc  __)__
 
-__Document.update(__ newDoc  __)__
-Not yet
+
+__Document.replace(__ newDoc  __)__
+_Not implemented yet_
+
 
 All method of EventEmitter are available on Document. They do not pollute the document itself.
 
