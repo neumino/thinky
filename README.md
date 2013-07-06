@@ -135,31 +135,37 @@ _Internal method_
 
 
 __Model.define(__ key, method __)__
+
 Define a method on the model that can be called by any instances of the model.
 
 
 
 __Model.setSchema(__ schema __)__
+
 Change the schema -- Not tested (I think)
 
 
 
 __Model.getSettings(__  __)__
+
 Return the settings of the model.
 
 
 
 __Model.getDocument(__  __)__
+
 Return the document.
 
 
 
 __Model.getPrimaryKey(__  __)__
+
 Return the primary key 
 
 
 
 __Model.save(__ callback, overwrite  __)__
+
 Save the object in the database. Thinky will call insert or update depending
 on whether how the object was created.
 
