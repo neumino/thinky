@@ -4,7 +4,7 @@ var assert = require('assert');
 var r = require('rethinkdb');
 var _ = require('underscore');
 
-thinky.connect({})
+thinky.init({})
 
 describe('Model', function(){
     var Cat, catou, minou, catou_id, catouCopy, minouCopy;

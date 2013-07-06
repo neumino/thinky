@@ -13,7 +13,7 @@ npm install thinky
 Use
 ```javascript
 var thinky = require('thinky');
-thinky.connect({});
+thinky.init({});
 
 // Create a model
 var Cat = thinky.createModel('Cat', {name: String}); 
@@ -35,7 +35,7 @@ _Note_: Work in progress.
 
 #### Thinky
 
-__Thinky.connect(__ options __)__
+__Thinky.init(__ options __)__
 
 options (object): object with the fields
 

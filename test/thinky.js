@@ -7,9 +7,9 @@ var r = require('rethinkdb');
 
 describe('Thinky', function(){
     // Testing pool
-    describe('connect', function(){
+    describe('init', function(){
         it('should create a pool', function(){
-            thinky.connect({})
+            thinky.init({})
             should.exist(thinky.pool);
         })
     });

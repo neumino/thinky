@@ -4,7 +4,7 @@ var assert = require('assert');
 var r = require('rethinkdb');
 var _ = require('underscore');
 
-thinky.connect({})
+thinky.init({})
 
 describe('Document', function(){
     var Cat = thinky.createModel('Cat', { id: String, name: String, age: 20});
