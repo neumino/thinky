@@ -9,10 +9,14 @@ _Note_: Alpha release
 var thinky = require('thinky');
 thinky.connect({});
 
-var Cat = thinky.createModel('Cat', {name: String}); // Create a model
-Cat.define('hello', function() { console.log("Hello, I'm "+this.name) }); // Create custom methods
+// Create a model
+var Cat = thinky.createModel('Cat', {name: String}); 
 
-kitty = new Cat({name: 'Kitty'}); // Create a new object
+// Create custom methods
+Cat.define('hello', function() { console.log("Hello, I'm "+this.name) });
+
+// Create a new object
+kitty = new Cat({name: 'Kitty'});
 kitty.hello(); // Log "Hello, I'm Kitty
 kitty.save(function(err, result) {
     if (err) throw err;
