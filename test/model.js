@@ -167,7 +167,7 @@ describe('Model', function(){
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(minou.fieldString, 'Minou');
         });
-        it('should miss the  String field', function() {
+        it('should miss the String field', function() {
             Cat = thinky.createModel('Cat', { fieldString: {_type: String }});
             minou = new Cat({});
             should(Object.prototype.toString.call(catou) === '[object Object]');
@@ -182,14 +182,20 @@ describe('Model', function(){
         });
         it('should use the default function', function() {
             var value = "noString";
-            Cat = thinky.createModel('Cat', { fieldString: {_type: String, default: function() { return value }}});
+            Cat = thinky.createModel('Cat', { fieldString: {
+                _type: String,
+                default: function() { return value }
+            }});
             minou = new Cat({});
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(minou.fieldString, value);
         });
         it('should use the default function with the original doc', function() {
             var value = "noString";
-            Cat = thinky.createModel('Cat', { fieldString: {_type: String, default: function(doc) { return doc.value }}});
+            Cat = thinky.createModel('Cat', { fieldString: {
+                _type: String,
+                default: function(doc) { return doc.value }
+            }});
             minou = new Cat({value: value});
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(minou.fieldString, value);

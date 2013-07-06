@@ -38,7 +38,12 @@ options (object): object with the fields
 - db: default database (default to "test")
 - poolMax: The maximum number of connections in the pool (default to 10)
 - poolMin: The minimum number of connections in the pool (default to 1)
-- enforce: Boolean that represent if the schemas should be enforced or not
+- enforce: represents if the schemas should be enforced or not. Its value can be:
+    - an object with the 3 fields:
+        - missing // throw on missing fields // default to false
+        - extra // throw if extra fields are provided // default to false
+        - type // throw if the type is not the one expected // default to true
+    - a boolean that set all 3 parameters to the same value
 
 _Note_: The behavior of enforce may change. Since there are more than two cases
 
