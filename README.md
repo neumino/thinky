@@ -81,9 +81,10 @@ The argument _options_ is an object that can have the following fields
     - db: default database (default to "test")
     - poolMax: The maximum number of connections in the pool (default to 10)
     - poolMin: The minimum number of connections in the pool (default to 1)
-Setting a value to null will delete the value.
+Setting a value to null will delete the value and the default value will be used.
 
-_Note_: Almost useless for now since we don't recreate/update the pool
+_Note_: Changing the host/port/poolMax/poolMin will create a new pool (the previous one will be drained).  
+This behavior will be fixed when generic pool will be able to resize the pool at will (or when I'll fork it)
 
 
 

@@ -83,6 +83,28 @@ describe('Thinky', function(){
             should(thinky.pool);
             thinky.pool.should.not.equal(previousPool);
         })
+        it('should create a new pool if the user change poolMax', function(){
+            var previousPool = thinky.pool;
+            var value = '11';
+
+            thinky.setOption('poolMax', value);
+
+            should(previousPool);
+            should(thinky.pool);
+            thinky.pool.should.not.equal(previousPool);
+        })
+        it('should create a new pool if the user change poolMin', function(){
+            var previousPool = thinky.pool;
+            var value = '2';
+
+            thinky.setOption('poolMin', value);
+
+            should(previousPool);
+            should(thinky.pool);
+            thinky.pool.should.not.equal(previousPool);
+        })
+
+
         it('should be able to change the db', function(done){
             var value = 'whateverDBThatDoesNotExist';
             thinky.setOption('db', value);
