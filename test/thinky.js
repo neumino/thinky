@@ -92,7 +92,7 @@ describe('Thinky', function(){
                 should.equal(error.name, 'RqlRuntimeError');
                 done();
             })
-
+            thinky.setOption('db', 'test');
         })
     });
     describe('setOptions', function(){
