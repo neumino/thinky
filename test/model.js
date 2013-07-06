@@ -327,5 +327,18 @@ describe('Model', function(){
             )
         });
     });
-
+    describe('count', function() {
+        it('should return the number of document in the table', function(done){
+            Cat.filter(function(doc) { return true },
+                function(error, result) {
+                    should.not.exists(error);
+                    Cat.count( function(error, resultCount) {
+                        should.not.exists(error);
+                        result.should.have.length(resultCount);
+                        done();
+                    });
+                }
+            )
+        });
+    });
 })

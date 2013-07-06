@@ -42,10 +42,14 @@ describe('Thinky', function(){
             should.equal(thinky.getOption('poolMax'), value);
         })
     });
-
     describe('getOptions', function(){
         it('should return all options', function(){
-            should.exist(thinky.getOptions());
+            should.exist(thinky.getOptions().host);
+            should.exist(thinky.getOptions().port);
+            should.exist(thinky.getOptions().db);
+            should.exist(thinky.getOptions().poolMax);
+            should.exist(thinky.getOptions().poolMin);
+            should.exist(thinky.getOptions().enforce);
         })
     });
     describe('setOption', function(){
@@ -59,7 +63,26 @@ describe('Thinky', function(){
             thinky.setOption('poolMin', value);
             should.equal(thinky.getOption('poolMin'), 1);
         })
+        it('should create a new pool if the user change the host', function(){
+            var previousPool = thinky.pool;
+            var value = '127.0.0.1';
 
+            thinky.setOption('host', value);
+
+            should(previousPool);
+            should(thinky.pool);
+            thinky.pool.should.not.equal(previousPool);
+        })
+        it('should create a new pool if the user change the port', function(){
+            var previousPool = thinky.pool;
+            var value = '28015';
+
+            thinky.setOption('port', value);
+
+            should(previousPool);
+            should(thinky.pool);
+            thinky.pool.should.not.equal(previousPool);
+        })
     });
     describe('setOptions', function(){
         it('should update all the provided options', function(){
@@ -72,6 +95,7 @@ describe('Thinky', function(){
             should.equal(thinky.getOption('poolMin'), 3);
         })
     });
+
 })
 
 
