@@ -83,6 +83,17 @@ describe('Thinky', function(){
             should(thinky.pool);
             thinky.pool.should.not.equal(previousPool);
         })
+        it('should be able to change the db', function(done){
+            var value = 'whateverDBThatDoesNotExist';
+            thinky.setOption('db', value);
+            Cat = thinky.createModel('Cat', { id: String, name: String });
+            catou = new Cat({name: 'Catou'});
+            catou.save( function(error, result) {
+                should.equal(error.name, 'RqlRuntimeError');
+                done();
+            })
+
+        })
     });
     describe('setOptions', function(){
         it('should update all the provided options', function(){
