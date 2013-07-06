@@ -46,9 +46,9 @@ options (object): object with the fields
 - poolMin: The minimum number of connections in the pool (default to 1)
 - enforce: represents if the schemas should be enforced or not. Its value can be:
     - an object with the 3 fields:
-        - missing // throw on missing fields // default to false
-        - extra // throw if extra fields are provided // default to false
-        - type // throw if the type is not the one expected // default to true
+        - missing -- throw on missing fields -- default to false
+        - extra -- throw if extra fields are provided -- default to false
+        - type -- throw if the type is not the one expected -- default to true
     - a boolean that set all 3 parameters to the same value
 
 
@@ -76,12 +76,20 @@ __Thinky.setOptions(__ options __)__
 Overwrite the options defined in _options_.
 
 The argument _options_ is an object that can have the following fields
+
     - host: RethinkDB host (default "localhost")
     - port: RethinkDB port for client (default to 28015)
     - db: default database (default to "test")
     - poolMax: The maximum number of connections in the pool (default to 10)
     - poolMin: The minimum number of connections in the pool (default to 1)
-Setting a value to null will delete the value and the default value will be used.
+    - enforce: represents if the schemas should be enforced or not. Its value can be:
+        - an object with the 3 fields:
+            - missing -- throw on missing fields -- default to false
+            - extra -- throw if extra fields are provided -- default to false
+            - type -- throw if the type is not the one expected -- default to true
+        - a boolean that set all 3 parameters to the same value
+
+Setting a value to `null` will delete the value and the default value will be used.
 
 _Note_: Changing the host/port/poolMax/poolMin will create a new pool (the previous one will be drained).  
 This behavior will be fixed when generic pool will be able to resize the pool at will (or when I'll fork it)
@@ -96,6 +104,7 @@ Close all the connections.
 
 __Thinky.createModel(__ name, schema, settings __)__
 Create a new model
+
 - name: name of the model
 - schema: An object which fields can have the following values:
     - String
@@ -103,10 +112,18 @@ Create a new model
     - Boolean
     - Array
     - Object
+
 - settings (object): settings for the model
-    - enforce: Boolean that represent if the schemas should be enforced or not
+    - enforce: represents if the schemas should be enforced or not. Its value can be:
+        - an object with the 3 fields:
+            - missing -- throw on missing fields -- default to false
+            - extra -- throw if extra fields are provided -- default to false
+            - type -- throw if the type is not the one expected -- default to true
+        - a boolean that set all 3 parameters to the same value
+
 
 Valid schema can be:
+
 ```
 { name: String }
 { name: { type: String } } // {name: "Kitty"} or { name: { type: "Kitty" } }?
@@ -117,6 +134,7 @@ Valid schema can be:
 { arrayOfStrings: [ String ] }
 { arrayOfStrings: [ String, maxLength, minLength ] }
 ```
+
 Coming soon: default with object and arrays.
 
 
