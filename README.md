@@ -62,12 +62,12 @@ __Thinky.getOption(__ optionName __)__
 
 Returns the value for _optionName_. Possible values:
 
-    - host: RethinkDB host
-    - port: RethinkDB port for client
-    - db: default database
-    - poolMax: The maximum number of connections in the pool
-    - poolMin: The minimum number of connections in the pool
-    - enforce: Boolean that represent if the schemas should be enforced or not
+- host: RethinkDB host
+- port: RethinkDB port for client
+- db: default database
+- poolMax: The maximum number of connections in the pool
+- poolMin: The minimum number of connections in the pool
+- enforce: Boolean that represent if the schemas should be enforced or not
 
 
 
@@ -77,17 +77,17 @@ Overwrite the options defined in _options_.
 
 The argument _options_ is an object that can have the following fields
 
-    - host: RethinkDB host (default "localhost")
-    - port: RethinkDB port for client (default to 28015)
-    - db: default database (default to "test")
-    - poolMax: The maximum number of connections in the pool (default to 10)
-    - poolMin: The minimum number of connections in the pool (default to 1)
-    - enforce: represents if the schemas should be enforced or not. Its value can be:
-        - an object with the 3 fields:
-            - missing -- throw on missing fields -- default to false
-            - extra -- throw if extra fields are provided -- default to false
-            - type -- throw if the type is not the one expected -- default to true
-        - a boolean that set all 3 parameters to the same value
+- host: RethinkDB host (default "localhost")
+- port: RethinkDB port for client (default to 28015)
+- db: default database (default to "test")
+- poolMax: The maximum number of connections in the pool (default to 10)
+- poolMin: The minimum number of connections in the pool (default to 1)
+- enforce: represents if the schemas should be enforced or not. Its value can be:
+    - an object with the 3 fields:
+        - missing -- throw on missing fields -- default to false
+        - extra -- throw if extra fields are provided -- default to false
+        - type -- throw if the type is not the one expected -- default to true
+    - a boolean that set all 3 parameters to the same value
 
 Setting a value to `null` will delete the value and the default value will be used.
 
