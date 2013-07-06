@@ -51,13 +51,6 @@ options (object): object with the fields
         - type // throw if the type is not the one expected // default to true
     - a boolean that set all 3 parameters to the same value
 
-_Note_: The behavior of enforce may change. Since there are more than two cases
-
-- Be flexible
-- Forbid extra fields
-- Forbid missing fields
-- Forbid extra AND missing fields
-
 
 __Thinky.getOptions()__  
 
