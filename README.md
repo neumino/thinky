@@ -126,7 +126,7 @@ Create a new model
             - type -- throw if the type is not the one expected -- default to true
         - a boolean that set all 3 parameters to the same value
 
-_Note_: the fields enforce and default are optional. 
+_Note_: the fields enforce and default are optional.   
 _Note bis_: if enforce is provided as an object, the three fields missing/extra/type have to be defined. This limitation will be lifted when more important issues will be solved.
 
 Examples of valid schema:
