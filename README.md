@@ -178,8 +178,10 @@ We still recommand not to overwrite a method since it may be an internal one and
 
 __Model.setSchema(__ schema __)__
 
-Change the schema -- Not tested (I think)
+Change the schema.
 
+_Note_: When you change the schema, the instances previously created do not change.
+We do not keep a reference of all objects now. We may do it in the future, but it requires some work to be sure that no leaks are created...
 
 
 __Model.getSettings(__  __)__

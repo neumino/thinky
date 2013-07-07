@@ -335,11 +335,19 @@ describe('Model', function(){
             Cat.define('hello', function() { return 'hello, my name is '+this.catName; });
             (function() { Cat.define('hello', function() { return 'hello' }, true) }).should.not.throw();
         });
-
-
-
     });
 
+    // Test setSchema
+    describe('setSchema', function() {
+        it('should change the schema', function() {
+            Cat = thinky.createModel('Cat', { catName: String, age: Number });
+            Cat.setSchema({ catName: String, owner: String })
+            catou = new Cat({ catName: 'Catou', owner: 'Michel', age: 7});
+            should.equal(catou.catName, 'Catou');
+            should.equal(catou.owner, 'Michel');
+            should.equal(catou.age, undefined);
+        });
+    });
 
     // Test again a database
     describe('save', function() {
