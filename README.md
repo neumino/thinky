@@ -103,16 +103,23 @@ Close all the connections.
 
 
 __Thinky.createModel(__ name, schema, settings __)__
+
 Create a new model
 
 - name: name of the model
-- schema: An object which fields can have the following values:
+- schema: An object which fields can map to the following value
     - String
     - Number
     - Boolean
-    - Array
-    - Object
+    - Array with one type (like [String], [Number], [{name: String, age: Number}]
+    - Object that contains a valid schema
 
+Because you can pass options in the schema on the level of a field, the previous values can be rewritten this way (where enforce and default are optional fields)
+    - {_type: String, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
+    - {_type: Number, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
+    - {_type: Boolean, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
+    - {_type: Array, schema: <schema>, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
+    - {_type: Object, schama: <schema>, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
 - settings (object): settings for the model
     - enforce: represents if the schemas should be enforced or not. Its value can be:
         - an object with the 3 fields:
@@ -121,21 +128,21 @@ Create a new model
             - type -- throw if the type is not the one expected -- default to true
         - a boolean that set all 3 parameters to the same value
 
+_Note:_ if enforce is provided as an object, the three fields missing/extra/type have to be defined. This limitation will be lifted when more important issues will be solved.
 
-Valid schema can be:
-
+Examples of valid schema:
 ```
 { name: String }
-{ name: { type: String } } // {name: "Kitty"} or { name: { type: "Kitty" } }?
-{ name: { type: String, default: value/function }
-{ name: { type: [String, Number, ...] }
-{ age: { type: Number, min: ..., max: ...} }
-{ comments: { type: Array, min: ..., max: ...} }
-{ arrayOfStrings: [ String ] }
-{ arrayOfStrings: [ String, maxLength, minLength ] }
+{ name: { _type: String } }
+{ name: { _type: String, default: "Unknown name" } }
+{ age: { _type: Number, default: function() { return Math.random()*100 } } }
+{ name: {_type: String, enforce: { missing: false, extra: false, type: true } }, age: { _type: Number, enforce: { missing: false, extra: false, type: true } }
+{ user: { name: String, age: Number }}
+{ comments: [ {author: String, comment: String} ] }
+{ comments: {_type: Array, schema: {author: String, comment: String} } }
 ```
 
-Coming soon: default with object and arrays.
+_Note:_ The settings to set a minimum/maximum of elements in an array is on the roadmap.
 
 
 #### Model
