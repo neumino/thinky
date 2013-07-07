@@ -113,9 +113,6 @@ Create a new model
     - Boolean
     - Array with one type (like [String], [Number], [{name: String, age: Number}]
     - Object that contains a valid schema
-
-Because you can pass options in the schema on the level of a field, the previous values can be rewritten this way (where enforce and default are optional fields)
-
     - {_type: String, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
     - {_type: Number, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
     - {_type: Boolean, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
@@ -129,9 +126,11 @@ Because you can pass options in the schema on the level of a field, the previous
             - type -- throw if the type is not the one expected -- default to true
         - a boolean that set all 3 parameters to the same value
 
-_Note:_ if enforce is provided as an object, the three fields missing/extra/type have to be defined. This limitation will be lifted when more important issues will be solved.
+_Note_: the fields enforce and default are optional. 
+_Note bis_: if enforce is provided as an object, the three fields missing/extra/type have to be defined. This limitation will be lifted when more important issues will be solved.
 
 Examples of valid schema:
+
 ```
 { name: String }
 { name: { _type: String } }
