@@ -190,15 +190,9 @@ Return the settings of the model.
 
 
 
-__Model.getDocument(__  __)__
-
-Return the document.
-
-
-
 __Model.getPrimaryKey(__  __)__
 
-Return the primary key 
+Return the primary key of the model.
 
 
 
@@ -232,6 +226,9 @@ Return the number of element in the table of your model.
 __Model.mapReduce(__ filterFunction  __)__
 
 Not yet implemented
+
+
+
 
 #### Document
 

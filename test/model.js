@@ -349,6 +349,19 @@ describe('Model', function(){
         });
     });
 
+    // Test getPrimaryKey
+    describe('getPrimaryKey', function() {
+        it('should return the primary key -- default primary key', function() {
+            Cat = thinky.createModel('Cat', { catName: String });
+            should.equal(Cat.getPrimaryKey(), 'id');
+        });
+        it('should return the primary key', function() {
+            Cat = thinky.createModel('Cat -- customed primary key', { catName: String }, {primaryKey: 'test'});
+            should.equal(Cat.getPrimaryKey(), 'test');
+        });
+
+    });
+
     // Test again a database
     describe('save', function() {
         it('should add a field id -- Testing model', function(done){
