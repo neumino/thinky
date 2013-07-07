@@ -166,10 +166,14 @@ _Internal method_
 
 
 
-__Model.define(__ key, method __)__
+__Model.define(__ key, method, force __)__
 
-Define a method on the model that can be called by any instances of the model.
+Define a _method_ on the model with the name _key_.
+This method can be called by any instances of the model, whether the instances were created
+before or after the definition of the method.
 
+_Note_: If a method already exists with such name, an error will be thrown except if you pass force=true.  
+We still recommand not to overwrite a method since it may be an internal one and can trigger an undefined behavior.
 
 
 __Model.setSchema(__ schema __)__

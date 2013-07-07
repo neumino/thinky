@@ -312,17 +312,31 @@ describe('Model', function(){
             dogou = new Dog({dogName: "Dogou"});
             should.not.exist(dogou.hello);
         });
-
         it('should define the function for newly created documents', function(){
             minou = new Cat({catName: 'Minou'});
             should.exist(minou.hello);
             should.equal(minou.hello(), 'hello, my name is Minou');
         });
-        it('should not create a mehtod for another class', function() {
-            Dog = thinky.createModel('Dog', { name: String });
-            dogou = new Dog({name: "Dogou"});
-            should.not.exist(dogou.hello);
+        it('should throw if the user may overwrite an existing method', function(){
+            Cat = thinky.createModel('Cat', { catName: String });
+            (function() { Cat.define('name', function() { return 'hello' }) }).should.throw('A property/method named `name` is already defined. Use Model.define(key, fn, true) to overwrite the function.');
         });
+        it('should throw if the user may overwrite an existing method -- customed method', function(){
+            Cat = thinky.createModel('Cat', { catName: String });
+            Cat.define('hello', function() { return 'hello, my name is '+this.catName; });
+            (function() { Cat.define('hello', function() { return 'hello' }) }).should.throw('A property/method named `hello` is already defined. Use Model.define(key, fn, true) to overwrite the function.');
+        });
+        it('should throw if the user may overwrite an existing method', function(){
+            Cat = thinky.createModel('Cat', { catName: String });
+            (function() { Cat.define('name', function() { return 'hello' }, true) }).should.not.throw();
+        });
+        it('should throw if the user may overwrite an existing method -- customed method', function(){
+            Cat = thinky.createModel('Cat', { catName: String });
+            Cat.define('hello', function() { return 'hello, my name is '+this.catName; });
+            (function() { Cat.define('hello', function() { return 'hello' }, true) }).should.not.throw();
+        });
+
+
 
     });
 
@@ -332,7 +346,6 @@ describe('Model', function(){
         it('should add a field id -- Testing model', function(done){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
-            console.log(catou);
             catou.save( function(error, result) {
                 catouCopy = result;
 
