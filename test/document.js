@@ -33,7 +33,7 @@ describe('Document', function(){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
             minou = new Cat({name: 'Minou'});
-            catou.define('helloDoc', function() { return 'hello, my name is '+this.name; })
+            catou.definePrivate('helloDoc', function() { return 'hello, my name is '+this.name; })
             should.equal(catou.helloDoc(), 'hello, my name is Catou');
         });
     });
@@ -51,7 +51,7 @@ describe('Document', function(){
 
     // Test against the database
     describe('save', function() {
-        it('should add a field id', function(done){
+        it('should add a field id -- Testing document', function(done){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
 

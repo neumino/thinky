@@ -25,29 +25,22 @@ describe('Model', function(){
         it('should create a new instance of the Model', function() {
             catou = new Cat({catName: 'Catou'});
             should(Object.prototype.toString.call(catou) === '[object Object]');
-            console.log(catou);
             should.equal(catou.catName, 'Catou');
         });
-    });
-    describe('new', function(){
         it('should create another new instance of the Model', function() {
             minou = new Cat({catName: 'Minou'});
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(minou.catName, 'Minou');
         });
-    });
-    describe('new', function(){
         it('should not change the previous instances', function() {
             catou = new Cat({catName: 'Catou'});
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(catou.catName, 'Catou');
         });
-        it('should be able to create other class instances', function() {
-            Cat.should.not.equal(Dog)
+        it('should not interfer with previously created instances of other classes', function() {
             dogou = new Dog({dogName: "Dogou"});
-            dogou.getModel().should.not.equal(Cat);
-            should.equal(catou.catName, 'Catou');
-            should.equal(dogou.dogName, 'Dogou');
+            should(dogou.getModel().name, 'Dog');
+            should(catou.getModel().name, 'Cat');
         });
     })
 
@@ -305,16 +298,15 @@ describe('Model', function(){
     // Test define
     describe('define', function() {
         it('should save a method', function() {
-            Cat = thinky.createModel('Cat', { name: String });
-            Cat.define('hello', function() { return 'hello, my name is '+this.name; })
+            Cat = thinky.createModel('Cat', { catName: String });
+            Cat.define('hello', function() { return 'hello, my name is '+this.catName; })
             should.exist(Cat.hello)
         });
         it('should define the function for previously created documents', function(){
-            catou = new Cat({name: 'Catou'});
+            catou = new Cat({catName: 'Catou'});
             should.exist(catou.hello);
             should.equal(catou.hello(), 'hello, my name is Catou');
         });
-        /*
         it('should not create a mehtod for another class', function() {
             Dog = thinky.createModel('Dog', { dogName: String });
             dogou = new Dog({dogName: "Dogou"});
@@ -322,23 +314,10 @@ describe('Model', function(){
         });
 
         it('should define the function for newly created documents', function(){
-            minou = new Cat({name: 'Minou'});
-            console.log(catou.getModel());
-            console.log('==============================')
-            console.log(catou.__proto__);
-            console.log('==============================')
-            console.log(catou.__proto__.__proto__);
-            console.log('==============================')
-            console.log(catou.__proto__.__proto__.__proto__);
-            console.log('==============================')
-            console.log(catou.__proto__.__proto__.__proto__.__proto__);
-
-            should(catou.getModel(), minou.getModel());
-            catou.getModel().should.not.equal(dogou.getModel());
-            //should.exist(minou.hello);
-            //should.equal(minou.hello(), 'hello, my name is Minou');
+            minou = new Cat({catName: 'Minou'});
+            should.exist(minou.hello);
+            should.equal(minou.hello(), 'hello, my name is Minou');
         });
-        */
         it('should not create a mehtod for another class', function() {
             Dog = thinky.createModel('Dog', { name: String });
             dogou = new Dog({name: "Dogou"});
@@ -350,9 +329,10 @@ describe('Model', function(){
 
     // Test again a database
     describe('save', function() {
-        it('should add a field id', function(done){
+        it('should add a field id -- Testing model', function(done){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
+            console.log(catou);
             catou.save( function(error, result) {
                 catouCopy = result;
 
