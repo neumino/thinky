@@ -7,36 +7,50 @@ var _ = require('underscore');
 thinky.init({})
 
 describe('Model', function(){
-    var Cat, catou, minou, catou_id, catouCopy, minouCopy;
+    var Cat, catou, minou, catou_id, catouCopy, minouCopy, Dog, dogou;
     describe('createModel', function(){
         it('Create model', function(){
-            Cat = thinky.createModel('Cat', { name: String });
+            Cat = thinky.createModel('Cat', { catName: String });
             should.exist(Cat);
+        });
+        it('should create another Model', function() {
+            Dog = thinky.createModel('Dog', { dogName: String });
+            Cat.should.not.equal(Dog)
+            Cat.__proto__.should.not.equal(Dog.__proto__)
         });
     });
 
     // Test new
     describe('new', function(){
         it('should create a new instance of the Model', function() {
-            catou = new Cat({name: 'Catou'});
+            catou = new Cat({catName: 'Catou'});
             should(Object.prototype.toString.call(catou) === '[object Object]');
-            should.equal(catou.name, 'Catou');
+            console.log(catou);
+            should.equal(catou.catName, 'Catou');
         });
     });
     describe('new', function(){
         it('should create another new instance of the Model', function() {
-            minou = new Cat({name: 'Minou'});
+            minou = new Cat({catName: 'Minou'});
             should(Object.prototype.toString.call(catou) === '[object Object]');
-            should.equal(minou.name, 'Minou');
+            should.equal(minou.catName, 'Minou');
         });
     });
     describe('new', function(){
         it('should not change the previous instances', function() {
-            catou = new Cat({name: 'Catou'});
+            catou = new Cat({catName: 'Catou'});
             should(Object.prototype.toString.call(catou) === '[object Object]');
-            should.equal(catou.name, 'Catou');
+            should.equal(catou.catName, 'Catou');
         });
-    });
+        it('should be able to create other class instances', function() {
+            Cat.should.not.equal(Dog)
+            dogou = new Dog({dogName: "Dogou"});
+            dogou.getModel().should.not.equal(Cat);
+            should.equal(catou.catName, 'Catou');
+            should.equal(dogou.dogName, 'Dogou');
+        });
+    })
+
 
     // Test schema
     describe('new', function(){
@@ -242,7 +256,7 @@ describe('Model', function(){
             Cat = thinky.createModel('Cat', { fieldString: String }, {enforce: {type: true, missing: true, extra: true}});
             (function() { minou = new Cat({}) }).should.throw('Value for [fieldString] must be defined')
         });
-        it('should throw when a String is missing (defined with options) (enforce on model leve)', function() {
+        it('should throw when a String is missing (defined with options) (enforce on model level)', function() {
             Cat = thinky.createModel('Cat', { fieldString: {_type: String} }, {enforce: {type: true, missing: true, extra: true}});
             (function() { minou = new Cat({}) }).should.throw('Value for [fieldString] must be defined')
         });
@@ -293,22 +307,44 @@ describe('Model', function(){
         it('should save a method', function() {
             Cat = thinky.createModel('Cat', { name: String });
             Cat.define('hello', function() { return 'hello, my name is '+this.name; })
-            catou = new Cat({name: 'Catou'});
             should.exist(Cat.hello)
         });
-    });
-    describe('define', function(){
         it('should define the function for previously created documents', function(){
-            should.exist(catou.hello);
-            should.equal(catou.hello(), 'hello, my name is Catou');
-        });
-    });
-    describe('define', function(){
-        it('should define the function for newly created documents', function(){
             catou = new Cat({name: 'Catou'});
             should.exist(catou.hello);
             should.equal(catou.hello(), 'hello, my name is Catou');
         });
+        /*
+        it('should not create a mehtod for another class', function() {
+            Dog = thinky.createModel('Dog', { dogName: String });
+            dogou = new Dog({dogName: "Dogou"});
+            should.not.exist(dogou.hello);
+        });
+
+        it('should define the function for newly created documents', function(){
+            minou = new Cat({name: 'Minou'});
+            console.log(catou.getModel());
+            console.log('==============================')
+            console.log(catou.__proto__);
+            console.log('==============================')
+            console.log(catou.__proto__.__proto__);
+            console.log('==============================')
+            console.log(catou.__proto__.__proto__.__proto__);
+            console.log('==============================')
+            console.log(catou.__proto__.__proto__.__proto__.__proto__);
+
+            should(catou.getModel(), minou.getModel());
+            catou.getModel().should.not.equal(dogou.getModel());
+            //should.exist(minou.hello);
+            //should.equal(minou.hello(), 'hello, my name is Minou');
+        });
+        */
+        it('should not create a mehtod for another class', function() {
+            Dog = thinky.createModel('Dog', { name: String });
+            dogou = new Dog({name: "Dogou"});
+            should.not.exist(dogou.hello);
+        });
+
     });
 
 
