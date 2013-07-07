@@ -115,6 +115,7 @@ Create a new model
     - Object that contains a valid schema
 
 Because you can pass options in the schema on the level of a field, the previous values can be rewritten this way (where enforce and default are optional fields)
+
     - {_type: String, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
     - {_type: Number, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
     - {_type: Boolean, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
