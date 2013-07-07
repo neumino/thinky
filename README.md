@@ -113,11 +113,11 @@ Create a new model
     - Boolean
     - Array with one type (like [String], [Number], [{name: String, age: Number}]
     - Object that contains a valid schema
-    - {_type: String, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
-    - {_type: Number, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
-    - {_type: Boolean, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
-    - {_type: Array, schema: <schema>, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
-    - {_type: Object, schama: <schema>, enforce: { missing: <boolean>, type: <boolean>, extra: <boolean>}, default: <value/function> }
+    - {\_type: String, enforce: { missing: _boolean_, type: _boolean_, extra: _boolean_}, default: _value/function_ }
+    - {\_type: Number, enforce: { missing: _boolean_, type: _boolean_, extra: _boolean_}, default: _value/function_ }
+    - {\_type: Boolean, enforce: { missing: <boolean_, type: _boolean_, extra: _boolean_}, default: _value/function_ }
+    - {\_type: Array, schema: _schema_, enforce: { missing: _boolean_, type: _boolean_, extra: _boolean_}, default: _value/function_ }
+    - {\_type: Object, schama: _schema_, enforce: { missing: _boolean_, type: _boolean_, extra: _boolean_}, default: _value/function_ }
 - settings (object): settings for the model
     - enforce: represents if the schemas should be enforced or not. Its value can be:
         - an object with the 3 fields:
@@ -126,8 +126,10 @@ Create a new model
             - type -- throw if the type is not the one expected -- default to true
         - a boolean that set all 3 parameters to the same value
 
-_Note_: the fields enforce and default are optional.   
-_Note bis_: if enforce is provided as an object, the three fields missing/extra/type have to be defined. This limitation will be lifted when more important issues will be solved.
+_Note 1_: the fields enforce and default are optional.  
+_Note 2_: the value of enforce is the lower one (thinky -> model -> field).  
+_Note 3_: if enforce is provided as an object, the three fields missing/extra/type have to be defined. This limitation will be lifted when more important issues will be solved.  
+_Note 4_: you currently cannot have a field named _type in your model. This limitation will be removed at some point.  
 
 Examples of valid schema:
 
