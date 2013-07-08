@@ -278,7 +278,7 @@ You are welcome to do a pull request.
 ### TODO
 - Write more docs
 - Add events methods on Model
-- Add more complex queries
+- Add joins
 - Do not drain the pool when poolMin/poolMax are changed
 
 ### About
