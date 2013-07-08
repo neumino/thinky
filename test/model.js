@@ -255,11 +255,11 @@ describe('Model', function(){
         });
         it('should throw when an extra field is provided (enforce on model leve)', function() {
             Cat = thinky.createModel('Cat', { fieldString: String }, {enforce: {type: true, missing: true, extra: true}});
-            (function() { minou = new Cat({fieldString: 'hello', outOfSchema: 1}) }).should.throw('An extra field outOfSchema not defined in the schema was found.')
+            (function() { minou = new Cat({fieldString: 'hello', outOfSchema: 1}) }).should.throw('An extra field `outOfSchema` not defined in the schema was found.')
         });
         it('should throw when a String is missing (defined with options) (enforce on model leve)', function() {
             Cat = thinky.createModel('Cat', { fieldString: {_type: String} }, {enforce: {type: true, missing: true, extra: true}});
-            (function() { minou = new Cat({fieldString: 'hello', outOfSchema: 1}) }).should.throw('An extra field outOfSchema not defined in the schema was found.')
+            (function() { minou = new Cat({fieldString: 'hello', outOfSchema: 1}) }).should.throw('An extra field `outOfSchema` not defined in the schema was found.')
         });
         it('should throw when an Object is missing (enforce on model leve)', function() {
             Cat = thinky.createModel('Cat', { nested: {fieldString: String} }, {enforce: {type: true, missing: true, extra: true}});

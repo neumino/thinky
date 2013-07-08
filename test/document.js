@@ -49,6 +49,55 @@ describe('Document', function(){
         });
     });
 
+    // Test merge 
+    describe('merge', function() {
+        it('should merge all fields', function(){
+            Cat = thinky.createModel('Cat', { id: Number, name: String }, {enforce: true});
+            catou = new Cat({id: 1, name: 'Catou'});
+            catou.merge({id: 2, name: 'CatouBis'});
+            should.equal(catou.id, 2);
+            should.equal(catou.name, 'CatouBis');
+        });
+        it('should not throw if merge is recursif (default settings) even if the schema is enforced', function(){
+            Cat = thinky.createModel('Cat', { id: Number, name: String }, {enforce: true});
+            catou = new Cat({id: 1, name: 'Catou'});
+            catou.merge({name: 'CatouTer'});
+            should.equal(catou.id, 1);
+            should.equal(catou.name, 'CatouTer');
+        });
+        it('should throw if schema is enforced -- extra field', function(){
+            Cat = thinky.createModel('Cat', { id: Number, name: String }, {enforce: true});
+            catou = new Cat({id: 1, name: 'Catou'});
+            (function() { catou.merge({id: 2, name: 'CatouBis', extraField: 3});}).should.throw('An extra field `extraField` not defined in the schema was found.');
+        });
+        it('should throw if schema is enforced -- missing field', function(){
+            Cat = thinky.createModel('Cat', { id: Number, name: String }, {enforce: true});
+            catou = new Cat({id: 1, name: 'Catou'});
+            (function() { catou.merge({name: 'catoubis'}, true);}).should.throw('Value for [id] must be defined')
+        });
+        it('should throw if schema is enforced -- wrong type field', function(){
+            Cat = thinky.createModel('Cat', { id: Number, name: String }, {enforce: true});
+            catou = new Cat({id: 1, name: 'Catou'});
+            (function() { catou.merge({id: 'nonValidValue', name: 'CatouBis', extraField: 3});}).should.throw('Value for [id] must be a Number');
+        });
+
+
+
+    });
+    describe('merge', function() {
+        it('should emit the event `change`', function(done){
+            Cat = thinky.createModel('Cat', { id: Number, name: String });
+            catou = new Cat({id: 1, name: 'Catou'});
+            listener = function() {
+                catou.removeAllListeners('save');
+                done();
+            }
+            catou.on('change', listener);
+            catou.merge({name: 'CatouBis'});
+        });
+    });
+
+
     // Test against the database
     describe('save', function() {
         it('should add a field id -- Testing document', function(done){
@@ -159,7 +208,7 @@ describe('Document', function(){
             catou.save();
         });
     });
-    describe('replace', function() {
+    describe('merge', function() {
         it('should emit the event `change`', function(done){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
@@ -168,7 +217,7 @@ describe('Document', function(){
                 done();
             }
             catou.on('change', listener);
-            catou.replace({name: 'CatouBis'});
+            catou.merge({name: 'CatouBis'});
         });
     });
 })

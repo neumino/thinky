@@ -253,8 +253,11 @@ __Document.define(__ name, method  __)__
 
 
 
-__Document.replace(__ newDoc  __)__
-_Not implemented yet_
+__Document.merge(__ newDoc, replace __)__
+Merge newDoc in the document.
+If _replace_ is set to _true_, the document will be replaced.
+
+_Note_: The new document is checked agains the schema of the model.
 
 
 All method of EventEmitter are available on Document. They do not pollute the document itself.
