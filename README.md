@@ -222,7 +222,7 @@ Return the number of element in the table of your model.
 
 __Document.getDocument(__  __)__
 
-_Internal method?_
+_Internal method_
 
 
 
@@ -234,6 +234,7 @@ Return the model of the document.
 
 __Document.getSettings(__  __)__
 
+Return the settings of the document.
 
 
 __Document.definePrivate(__ name, method  __)__
@@ -244,7 +245,8 @@ The method will be accessible only by the document iself and not any other docum
 those in the same class).
 
 
-__Model.save(__ callback __)__
+
+__Document.save(__ callback __)__
 
 Save the object in the database. Thinky will call insert or update depending
 on whether how the object was created.
@@ -261,11 +263,9 @@ _Note_: The new document is checked agains the schema of the model.
 
 All method of EventEmitter are available on Document. They do not pollute the document itself.
 
-### Internals
-When you create a new object from a model, the object has the following chain of prototypes
-object -> DocumentObject -> Document -> model
 
-Run the tests
+
+### Run the tests
 
 ```
 mocha
