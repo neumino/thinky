@@ -240,7 +240,12 @@ __Document.getSettings(__  __)__
 
 
 
-__Document.define(__ name, method  __)__
+__Document.definePrivate(__ name, method  __)__
+
+Define a method accessible through the key _name_.
+
+The method will be accessible only by the document iself and not any other documents (including
+those in the same class).
 
 
 __Model.save(__ callback __)__

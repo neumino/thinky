@@ -28,7 +28,7 @@ describe('Document', function(){
 
 
     // Test define
-    describe('define', function() {
+    describe('definePrivate', function() {
         it('should save a method', function() {
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
