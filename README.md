@@ -251,6 +251,7 @@ __Document.save(__ callback __)__
 Save the object in the database. Thinky will call insert or update depending
 on whether how the object was created.
 
+The event 'save' is triggered if the document is saved.
 
 
 __Document.merge(__ newDoc, replace __)
@@ -258,8 +259,53 @@ __Document.merge(__ newDoc, replace __)
 Merge newDoc in the document.
 If _replace_ is set to _true_, the document will be replaced.
 
+The event 'change' is triggered if the document is changed.
+
 _Note_: The new document is checked agains the schema of the model.
 
+
+__Document.addListener(__ event, listener __)__
+
+Add a _listener_ for an event.  
+Method from events.EventEmitter.  
+
+
+__Document.on(__ event, listener __)__
+
+Alias for Document.addListener.  
+Method from events.EventEmitter.
+
+
+__Document.once(event, listener)
+
+Add a _listener_ for an event that is going to be removed once it is triggered once.  
+Method from events.EventEmitter.
+
+
+__Document.removeListener(event, listener)
+
+Remove a listener for an event.  
+Method from events.EventEmitter.
+
+__Document.off(event, listener)
+
+Currently an alias for removeListener. It will be extended at some point later.  
+
+
+__Document.removeAllListeners([event])
+
+Remove all listeners for the events provided.  
+Method from events.EventEmitter.
+
+
+__Document.setMaxListeners(n)
+
+Set the maximum of listeners. 
+Method from events.EventEmitter.
+
+
+__Document.listeners(event)
+__Document.emit(event, [arg1], [arg2], [...])
 
 All method of EventEmitter are available on Document. They do not pollute the document itself.
 
@@ -276,10 +322,10 @@ You are welcome to do a pull request.
 
 
 ### TODO
-- Write more docs
 - Add events methods on Model
 - Add more complex queries
 - Do not drain the pool when poolMin/poolMax are changed
+- Write examples
 
 ### About
 Author: Michel Tu -- orphee@gmail.com -- www.justonepixel.com
