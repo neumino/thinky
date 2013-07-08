@@ -198,8 +198,12 @@ Return the primary key of the model.
 
 __Model.get(__ id or [ids], callback __)__
 
-Retrieve one or more documents
+Retrieve one or more documents using their primary keys.
 
+
+__Model.getAll(__ value or [values], indexName, callback __)__
+
+Retrieve one or more documents using a secondary index
 
 
 __Model.filter(__ filterFunction  __)__
@@ -207,17 +211,9 @@ __Model.filter(__ filterFunction  __)__
 Retrieve document based on the filter.
 
 
-
 __Model.count(__  __)__
 
 Return the number of element in the table of your model.
-
-
-
-__Model.mapReduce(__ filterFunction  __)__
-
-Not yet implemented
-
 
 
 

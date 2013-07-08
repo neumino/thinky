@@ -379,6 +379,8 @@ describe('Model', function(){
                 });
             });
         });
+    });
+    describe('get', function() {
         it('should retrieve a document in the database', function(done){
             Cat.get(catouCopy.id, function(error, result) {
                 should(_.isEqual(result, catouCopy));
@@ -390,6 +392,22 @@ describe('Model', function(){
                 should.not.exists(error);
                 result.should.have.length(2);
                 should((result[0].id === catouCopy.id) || (result[0].id === minouCopy.id));
+                done();
+            })
+        });
+    });
+    describe('getAll', function() {
+        it('should retrieve some documents in the database -- single values', function(done){
+            Cat.getAll(catouCopy.name, 'name', function(error, result) {
+                should.not.exists(error);
+                should(result.length >= 1);
+                done();
+            })
+        });
+        it('should retrieve some documents in the database -- multiple values', function(done){
+            Cat.getAll([catouCopy.name, minouCopy.name], 'name', function(error, result) {
+                should.not.exists(error);
+                should(result.length >= 2);
                 done();
             })
         });
