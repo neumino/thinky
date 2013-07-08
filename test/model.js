@@ -362,8 +362,9 @@ describe('Model', function(){
 
     });
 
-    // Test again a database
+    // Test against a database
     describe('save', function() {
+        // Init with some data
         it('should add a field id -- Testing model', function(done){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
@@ -378,24 +379,17 @@ describe('Model', function(){
                 });
             });
         });
-    });
-
-
-
-    describe('get', function() {
-        it('retrieve a document in the database', function(done){
+        it('should retrieve a document in the database', function(done){
             Cat.get(catouCopy.id, function(error, result) {
                 should(_.isEqual(result, catouCopy));
                 done();
             })
         });
-    });
-    describe('get', function() {
-        it('retrieve documents in the database', function(done){
+        it('should retrieve documents in the database', function(done){
             Cat.get([catouCopy.id, minouCopy.id], function(error, result) {
                 should.not.exists(error);
                 result.should.have.length(2);
-                should.equal(result[0].id, catouCopy.id);
+                should((result[0].id === catouCopy.id) || (result[0].id === minouCopy.id));
                 done();
             })
         });
