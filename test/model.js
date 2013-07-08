@@ -405,6 +405,17 @@ describe('Model', function(){
             )
         });
     });
+    describe('filter', function() {
+        it('should return many documents', function(done){
+            Cat.filter(function(doc) { return true },
+                function(error, result) {
+                    should.not.exists(error);
+                    should(result.length > 2);
+                    done();
+                }
+            )
+        });
+    });
     describe('count', function() {
         it('should return the number of document in the table', function(done){
             Cat.filter(function(doc) { return true },
