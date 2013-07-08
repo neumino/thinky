@@ -276,9 +276,10 @@ You are welcome to do a pull request.
 
 
 ### TODO
-- Write the docs
+- Write more docs
+- Add events methods on Model
 - Add more complex queries
-- Update pool when poolMax/poolMin changes
+- Do not drain the pool when poolMin/poolMax are changed
 
 ### About
 Author: Michel Tu -- orphee@gmail.com -- www.justonepixel.com
