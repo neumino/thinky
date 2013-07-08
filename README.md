@@ -196,15 +196,6 @@ Return the primary key of the model.
 
 
 
-__Model.save(__ callback, overwrite  __)__
-
-Save the object in the database. Thinky will call insert or update depending
-on whether how the object was created.
-
-overwrite: not implemented yet
-
-
-
 __Model.get(__ id or [ids], callback __)__
 
 Retrieve one or more documents
@@ -252,8 +243,15 @@ __Document.getSettings(__  __)__
 __Document.define(__ name, method  __)__
 
 
+__Model.save(__ callback __)__
 
-__Document.merge(__ newDoc, replace __)__
+Save the object in the database. Thinky will call insert or update depending
+on whether how the object was created.
+
+
+
+__Document.merge(__ newDoc, replace __)
+
 Merge newDoc in the document.
 If _replace_ is set to _true_, the document will be replaced.
 
