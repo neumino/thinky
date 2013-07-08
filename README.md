@@ -166,16 +166,22 @@ _Internal method_
 
 
 
-__Model.define(__ key, method __)__
+__Model.define(__ key, method, force __)__
 
-Define a method on the model that can be called by any instances of the model.
+Define a _method_ on the model with the name _key_.
+This method can be called by any instances of the model, whether the instances were created
+before or after the definition of the method.
 
+_Note_: If a method already exists with such name, an error will be thrown except if you pass force=true.  
+We still recommand not to overwrite a method since it may be an internal one and can trigger an undefined behavior.
 
 
 __Model.setSchema(__ schema __)__
 
-Change the schema -- Not tested (I think)
+Change the schema.
 
+_Note_: When you change the schema, the instances previously created do not change.
+We do not keep a reference of all objects now. We may add an option to do it later. 
 
 
 __Model.getSettings(__  __)__
@@ -184,37 +190,25 @@ Return the settings of the model.
 
 
 
-__Model.getDocument(__  __)__
-
-Return the document.
-
-
-
 __Model.getPrimaryKey(__  __)__
 
-Return the primary key 
-
-
-
-__Model.save(__ callback, overwrite  __)__
-
-Save the object in the database. Thinky will call insert or update depending
-on whether how the object was created.
-
-overwrite: not implemented yet
+Return the primary key of the model.
 
 
 
 __Model.get(__ id or [ids], callback __)__
 
-Retrieve one or more documents
+Retrieve one or more documents using their primary keys.
 
+
+__Model.getAll(__ value or [values], indexName, callback __)__
+
+Retrieve one or more documents using a secondary index
 
 
 __Model.filter(__ filterFunction  __)__
 
 Retrieve document based on the filter.
-
 
 
 __Model.count(__  __)__
@@ -223,16 +217,12 @@ Return the number of element in the table of your model.
 
 
 
-__Model.mapReduce(__ filterFunction  __)__
-
-Not yet implemented
-
 #### Document
 
 
 __Document.getDocument(__  __)__
 
-_Internal method?_
+_Internal method_
 
 
 
@@ -244,23 +234,38 @@ Return the model of the document.
 
 __Document.getSettings(__  __)__
 
+Return the settings of the document.
 
 
-__Document.define(__ name, method  __)__
+__Document.definePrivate(__ name, method  __)__
+
+Define a method accessible through the key _name_.
+
+The method will be accessible only by the document iself and not any other documents (including
+those in the same class).
 
 
 
-__Document.replace(__ newDoc  __)__
-_Not implemented yet_
+__Document.save(__ callback __)__
+
+Save the object in the database. Thinky will call insert or update depending
+on whether how the object was created.
+
+
+
+__Document.merge(__ newDoc, replace __)
+
+Merge newDoc in the document.
+If _replace_ is set to _true_, the document will be replaced.
+
+_Note_: The new document is checked agains the schema of the model.
 
 
 All method of EventEmitter are available on Document. They do not pollute the document itself.
 
-### Internals
-When you create a new object from a model, the object has the following chain of prototypes
-object -> DocumentObject -> Document -> model
 
-Run the tests
+
+### Run the tests
 
 ```
 mocha
@@ -271,9 +276,10 @@ You are welcome to do a pull request.
 
 
 ### TODO
-- Write the docs
+- Write more docs
+- Add events methods on Model
 - Add more complex queries
-- Update pool when poolMax/poolMin changes
+- Do not drain the pool when poolMin/poolMax are changed
 
 ### About
 Author: Michel Tu -- orphee@gmail.com -- www.justonepixel.com

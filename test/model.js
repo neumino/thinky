@@ -255,11 +255,11 @@ describe('Model', function(){
         });
         it('should throw when an extra field is provided (enforce on model leve)', function() {
             Cat = thinky.createModel('Cat', { fieldString: String }, {enforce: {type: true, missing: true, extra: true}});
-            (function() { minou = new Cat({fieldString: 'hello', outOfSchema: 1}) }).should.throw('An extra field outOfSchema not defined in the schema was found.')
+            (function() { minou = new Cat({fieldString: 'hello', outOfSchema: 1}) }).should.throw('An extra field `outOfSchema` not defined in the schema was found.')
         });
         it('should throw when a String is missing (defined with options) (enforce on model leve)', function() {
             Cat = thinky.createModel('Cat', { fieldString: {_type: String} }, {enforce: {type: true, missing: true, extra: true}});
-            (function() { minou = new Cat({fieldString: 'hello', outOfSchema: 1}) }).should.throw('An extra field outOfSchema not defined in the schema was found.')
+            (function() { minou = new Cat({fieldString: 'hello', outOfSchema: 1}) }).should.throw('An extra field `outOfSchema` not defined in the schema was found.')
         });
         it('should throw when an Object is missing (enforce on model leve)', function() {
             Cat = thinky.createModel('Cat', { nested: {fieldString: String} }, {enforce: {type: true, missing: true, extra: true}});
@@ -312,27 +312,62 @@ describe('Model', function(){
             dogou = new Dog({dogName: "Dogou"});
             should.not.exist(dogou.hello);
         });
-
         it('should define the function for newly created documents', function(){
             minou = new Cat({catName: 'Minou'});
             should.exist(minou.hello);
             should.equal(minou.hello(), 'hello, my name is Minou');
         });
-        it('should not create a mehtod for another class', function() {
-            Dog = thinky.createModel('Dog', { name: String });
-            dogou = new Dog({name: "Dogou"});
-            should.not.exist(dogou.hello);
+        it('should throw if the user may overwrite an existing method', function(){
+            Cat = thinky.createModel('Cat', { catName: String });
+            (function() { Cat.define('name', function() { return 'hello' }) }).should.throw('A property/method named `name` is already defined. Use Model.define(key, fn, true) to overwrite the function.');
+        });
+        it('should throw if the user may overwrite an existing method -- customed method', function(){
+            Cat = thinky.createModel('Cat', { catName: String });
+            Cat.define('hello', function() { return 'hello, my name is '+this.catName; });
+            (function() { Cat.define('hello', function() { return 'hello' }) }).should.throw('A property/method named `hello` is already defined. Use Model.define(key, fn, true) to overwrite the function.');
+        });
+        it('should throw if the user may overwrite an existing method', function(){
+            Cat = thinky.createModel('Cat', { catName: String });
+            (function() { Cat.define('name', function() { return 'hello' }, true) }).should.not.throw();
+        });
+        it('should throw if the user may overwrite an existing method -- customed method', function(){
+            Cat = thinky.createModel('Cat', { catName: String });
+            Cat.define('hello', function() { return 'hello, my name is '+this.catName; });
+            (function() { Cat.define('hello', function() { return 'hello' }, true) }).should.not.throw();
+        });
+    });
+
+    // Test setSchema
+    describe('setSchema', function() {
+        it('should change the schema', function() {
+            Cat = thinky.createModel('Cat', { catName: String, age: Number });
+            Cat.setSchema({ catName: String, owner: String })
+            catou = new Cat({ catName: 'Catou', owner: 'Michel', age: 7});
+            should.equal(catou.catName, 'Catou');
+            should.equal(catou.owner, 'Michel');
+            should.equal(catou.age, undefined);
+        });
+    });
+
+    // Test getPrimaryKey
+    describe('getPrimaryKey', function() {
+        it('should return the primary key -- default primary key', function() {
+            Cat = thinky.createModel('Cat', { catName: String });
+            should.equal(Cat.getPrimaryKey(), 'id');
+        });
+        it('should return the primary key', function() {
+            Cat = thinky.createModel('Cat -- customed primary key', { catName: String }, {primaryKey: 'test'});
+            should.equal(Cat.getPrimaryKey(), 'test');
         });
 
     });
 
-
-    // Test again a database
+    // Test against a database
     describe('save', function() {
+        // Init with some data
         it('should add a field id -- Testing model', function(done){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
-            console.log(catou);
             catou.save( function(error, result) {
                 catouCopy = result;
 
@@ -345,23 +380,34 @@ describe('Model', function(){
             });
         });
     });
-
-
-
     describe('get', function() {
-        it('retrieve a document in the database', function(done){
+        it('should retrieve a document in the database', function(done){
             Cat.get(catouCopy.id, function(error, result) {
                 should(_.isEqual(result, catouCopy));
                 done();
             })
         });
-    });
-    describe('get', function() {
-        it('retrieve documents in the database', function(done){
+        it('should retrieve documents in the database', function(done){
             Cat.get([catouCopy.id, minouCopy.id], function(error, result) {
                 should.not.exists(error);
                 result.should.have.length(2);
-                should.equal(result[0].id, catouCopy.id);
+                should((result[0].id === catouCopy.id) || (result[0].id === minouCopy.id));
+                done();
+            })
+        });
+    });
+    describe('getAll', function() {
+        it('should retrieve some documents in the database -- single values', function(done){
+            Cat.getAll(catouCopy.name, 'name', function(error, result) {
+                should.not.exists(error);
+                should(result.length >= 1);
+                done();
+            })
+        });
+        it('should retrieve some documents in the database -- multiple values', function(done){
+            Cat.getAll([catouCopy.name, minouCopy.name], 'name', function(error, result) {
+                should.not.exists(error);
+                should(result.length >= 2);
                 done();
             })
         });
@@ -372,6 +418,17 @@ describe('Model', function(){
                 function(error, result) {
                     should.not.exists(error);
                     result.should.have.length(2);
+                    done();
+                }
+            )
+        });
+    });
+    describe('filter', function() {
+        it('should return many documents', function(done){
+            Cat.filter(function(doc) { return true },
+                function(error, result) {
+                    should.not.exists(error);
+                    should(result.length > 2);
                     done();
                 }
             )
