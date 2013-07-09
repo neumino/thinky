@@ -46,7 +46,6 @@ You are welcome to do a pull request.
 
 
 ### TODO
-- Add events methods on Model
 - Decide what to do with null (does it throw when checked against a Number?)
 - Joins
 - Premises?
