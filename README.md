@@ -216,25 +216,25 @@ __Model.count(__  __)__
 Return the number of element in the table of your model.
 
 
-__Model.addListener(__ event, listener __)
+__Model.addListener(__ event, listener __)__
 
 Add a listener on the model. Everytime a new instance will be created, the listeners defined on the model
 will be added to the document.
 
 _Note_: Previously created document will not have such listeners.
 
-__Model.on(__ event, listener __)
+__Model.on(__ event, listener __)__
 
 Alias for addListener
 
 
-__Model.once(__ event, listener __)
+__Model.once(__ event, listener __)__
 
 Add a listener on the model. Everytime a new instance will be created, the listeners defined on the model
 will be added to the document. Such listener can be triggered only once per document.
 
 
-__Model.off(__ event, listener __)
+__Model.off(__ event, listener __)__
 
 Remove the listener bound to the event.
 
@@ -243,7 +243,7 @@ Remove the listener bound to the event.
 - If no argument is supplied, all events/listeners are removed.
 
 
-__Model.listeners(__ event, raw __)
+__Model.listeners(__ event, raw __)__
 
 Return all the listeners for this event. These listeners can be
 - The listeners passed in `addListener/on`
