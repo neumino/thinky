@@ -448,4 +448,104 @@ describe('Model', function(){
             )
         });
     });
+
+    // Testing events
+    describe('on', function() {
+        it('should add a listener on the model', function() {
+            Cat = thinky.createModel('Cat', {name: String});
+            Cat.on('test', function() { });
+            should.exists(Cat.getModel()._listeners['test']);
+            Cat.getModel()._listeners['test'].should.have.length(1);
+        });
+        it('should add a listener on the model', function(done) {
+            Cat = thinky.createModel('Cat', {name: String});
+            Cat.on('test', function() { done(); });
+            catou = new Cat({name: 'Catou'});
+            catou.emit('test');
+        });
+        it('should not pollute other/new models', function() {
+            Cat = thinky.createModel('Cat', {name: String});
+            should.not.exist(Cat.getModel()._listeners['test']);
+        });
+        it('should be able to add more than one listener', function() {
+            var count = 0
+            Cat = thinky.createModel('Cat', {name: String});
+            Cat.on('test', function() {});
+            Cat.on('test', function() {});
+            Cat.getModel()._listeners['test'].should.have.length(2);
+        });
+    });
+    describe('off', function() {
+        it('should remove one listener if the event and listener are provided', function() {
+            Cat = thinky.createModel('Cat', {name: String});
+            var fn = function() {};
+            Cat.on('test', function() { });
+            Cat.on('test', fn);
+            Cat.on('test2', function() {});
+            Cat.off('test', fn);
+            should.exists(Cat.getModel()._listeners['test']);
+            Cat.getModel()._listeners['test'].should.have.length(1);
+        });
+        it('should remove all the listeners of an event if only the event is provided', function() {
+            Cat = thinky.createModel('Cat', {name: String});
+            var fn = function() {};
+            Cat.on('test', function() { });
+            Cat.on('test', fn);
+            Cat.on('test2', function() {});
+            Cat.off('test');
+            should.not.exists(Cat.getModel()._listeners['test'])
+        });
+        it('should remove all the listeners that match the one provided if only the listener is provided', function() {
+            Cat = thinky.createModel('Cat', {name: String});
+            var fn = function() {};
+            Cat.on('test', function() { });
+            Cat.on('test', fn);
+            Cat.on('test2', fn);
+            Cat.off(fn);
+            Cat.getModel()._listeners['test'].should.have.length(1);
+            Cat.getModel()._listeners['test2'].should.have.length(0);
+        });
+        it('should remove everything if no argument is provided', function() {
+            Cat = thinky.createModel('Cat', {name: String});
+            var fn = function() {};
+            Cat.on('test', fn);
+            Cat.on('test', fn);
+            Cat.on('test2', fn);
+            Cat.off();
+            should.not.exists(Cat.getModel()._listeners['test'])
+            should.not.exists(Cat.getModel()._listeners['test2'])
+        });
+    });
+
+    describe('listeners', function() {
+         it('should return the listeners for the event', function() {
+            Cat = thinky.createModel('Cat', {name: String});
+            var fn = function() {};
+            Cat.on('test', fn);
+            Cat.on('test', fn);
+            Cat.on('test2', fn);
+            Cat.listeners('test').should.have.length(2);
+            Cat.listeners('test2').should.have.length(1);
+        });
+    });
+
+    describe('listeners', function() {
+         it('should return the listeners for the event', function() {
+            Cat = thinky.createModel('Cat', {name: String});
+            var fn = function() {console.log('hello')};
+            Cat.on('test', fn);
+            Cat.once('test', fn);
+            Cat.once('test2', fn);
+
+            catou = new Cat({name: 'Catou'});
+            catou.emit('test');
+            catou.emit('test2');
+
+            catou.listeners('test').should.have.length(1);
+            catou.listeners('test2').should.have.length(0);
+
+        });
+       
+    });
+
 })
