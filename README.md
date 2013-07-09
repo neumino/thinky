@@ -330,7 +330,9 @@ Method from events.EventEmitter.
 
 __Document.off(event, listener)
 
-Currently an alias for removeListener. It will be extended at some point later.  
+If no argument is provided to `off()`, all listeners of the document will be removed.  
+If only an event is provided, all listeners for this event will be removed.  
+If an event and a listener are provided, the listener will be removed from the event provided.
 
 
 __Document.removeAllListeners([event])
