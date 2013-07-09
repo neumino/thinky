@@ -532,7 +532,7 @@ describe('Model', function(){
     describe('listeners', function() {
          it('should return the listeners for the event', function() {
             Cat = thinky.createModel('Cat', {name: String});
-            var fn = function() {console.log('hello')};
+            var fn = function() {};
             Cat.on('test', fn);
             Cat.once('test', fn);
             Cat.once('test2', fn);
