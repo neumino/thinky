@@ -308,49 +308,56 @@ _Note_: The new document is checked agains the schema of the model.
 __Document.addListener(__ event, listener __)__
 
 Add a _listener_ for an event.  
-Method from events.EventEmitter.  
+
+_Method from events.EventEmitter._
 
 
 __Document.on(__ event, listener __)__
 
 Alias for Document.addListener.  
-Method from events.EventEmitter.
+
+_Method from events.EventEmitter._
 
 
 __Document.once(event, listener)
 
 Add a _listener_ for an event that is going to be removed once it is triggered once.  
-Method from events.EventEmitter.
+
+_Method from events.EventEmitter._
 
 
-__Document.removeListener(event, listener)
+__Document.removeListener(__ event, listener __)__
 
 Remove a listener for an event.  
-Method from events.EventEmitter.
 
-__Document.off(event, listener)
+_Method from events.EventEmitter._
+
+
+__Document.off(__event, listener __)__
 
 If no argument is provided to `off()`, all listeners of the document will be removed.  
 If only an event is provided, all listeners for this event will be removed.  
 If an event and a listener are provided, the listener will be removed from the event provided.
 
 
-__Document.removeAllListeners([event])
+__Document.removeAllListeners(__ event __)__
 
 Remove all listeners for the events provided.  
-Method from events.EventEmitter.
+If no event is provided, all listeners will be removed.
+
+_Method from events.EventEmitter._
 
 
-__Document.setMaxListeners(n)
+__Document.setMaxListeners(__ n __)__
 
 Set the maximum of listeners. 
-Method from events.EventEmitter.
+
+_Method from events.EventEmitter._
 
 
-__Document.listeners(event)
+__Document.listeners(__ event __)__
 __Document.emit(event, [arg1], [arg2], [...])
 
-All method of EventEmitter are available on Document. They do not pollute the document itself.
 
 
 
