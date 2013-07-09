@@ -295,7 +295,7 @@ on whether how the object was created.
 The event 'save' is triggered if the document is saved.
 
 
-__Document.merge(__ newDoc, replace __)
+__Document.merge(__ newDoc, replace __)__
 
 Merge newDoc in the document.
 If _replace_ is set to _true_, the document will be replaced.
