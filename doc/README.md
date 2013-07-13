@@ -163,9 +163,12 @@ Return the primary key of the model.
 
 
 
-__Model.get(__ id or [ids], callback __)__
+__Model.get(__ id or [ids], callback, options __)__
 
 Retrieve one or more documents using their primary keys.
+options can be {
+    getJoin: <boolean>
+}
 
 
 __Model.getAll(__ value or [values], indexName, callback __)__
