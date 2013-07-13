@@ -573,7 +573,7 @@ describe('Model', function(){
                 should.exist(catou.idHuman);
                 should.exist(catou.owner.id);
                 done();
-            });
+            }, {saveJoin: true});
         });
         it('should be able to save the joined doc -- nested joins', function(done) {
             Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
@@ -582,7 +582,7 @@ describe('Model', function(){
             Human.hasOne(Mother, 'mom', {leftKey: 'idMom', rightKey: 'id'});
             Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
             var owner = new Human({ownerName: "Michel"});
-            var catou = new Cat({name: "Catou"});
+            catou = new Cat({name: "Catou"});
             var mother = new Mother({motherName: "Mom"});
             catou['owner'] = owner;
             owner['mom'] = mother;
@@ -591,9 +591,20 @@ describe('Model', function(){
                 should.exist(catou.id);
                 should.exist(catou.idHuman);
                 should.exist(catou.owner.id);
+                catou_id = catou.id;
+                console.log(catou);
                 done();
-            });
+            }, {saveJoin: true});
         });
+        it('get should be able to get joined documents', function(done) {
+            var catou = Cat.get(catou_id, function(error, result) {
+                should.not.exist(error);
+                console.log(error);
+                console.log(result);
+                done();
+            }, {getJoin: true})
+        });
+
 
     })
 })
