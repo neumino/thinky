@@ -225,6 +225,44 @@ Return all the listeners for this event. These listeners can be
 If `raw` is set to false (default is true), the objects are replaced by the listener they contain.
 
 
+__Model.hasOne(__ model, fieldName, attribute/fn __)__
+
+Example
+```
+// Create the models
+var Cat = thinky.createModel('Cat', {name: String, idHuman: String}); 
+var Human = thinky.createModel('Human', {name: String}); 
+
+// Specify the join
+Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'})
+
+// Create a new object
+kitty = new Cat({name: 'Kitty'});
+michel = new Human({name: Michel});
+kitty.owner = michel;
+
+kitty.save(function(err, result) {
+    if (err) throw err;
+    console.log("Kitty and Michel have been saved in the database");
+    /*
+    console.log(kitty);
+    {
+        id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+        name: "Catou",
+        idHuman: "3851d8b4-5358-43f2-ba23-f4d481358901",
+        owner: {
+            id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+            name: Michel
+        }
+    }
+    */
+})
+```
+
+__Model.hasMany(__ model, fieldName, attribute/fn __)__
+
+_Not implemented yet_
+
 #### Document
 
 

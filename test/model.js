@@ -7,7 +7,7 @@ var _ = require('underscore');
 thinky.init({})
 
 describe('Model', function(){
-    var Cat, catou, minou, catou_id, catouCopy, minouCopy, Dog, dogou;
+    var Cat, catou, minou, catou_id, catouCopy, minouCopy, Dog, dogou, Human, owner;
     describe('createModel', function(){
         it('Create model', function(){
             Cat = thinky.createModel('Cat', { catName: String });
@@ -32,6 +32,9 @@ describe('Model', function(){
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(minou.catName, 'Minou');
         });
+        it('should create documents with different settings', function() {
+            minou.getDocSettings().should.not.equal(catou.getDocSettings());
+        });
         it('should not change the previous instances', function() {
             catou = new Cat({catName: 'Catou'});
             should(Object.prototype.toString.call(catou) === '[object Object]');
@@ -41,6 +44,10 @@ describe('Model', function(){
             dogou = new Dog({dogName: "Dogou"});
             should(dogou.getModel().name, 'Dog');
             should(catou.getModel().name, 'Cat');
+            catou = new Cat({catName: 'Catou'});
+            should(dogou.getModel().name, 'Dog');
+            should(catou.getModel().name, 'Cat');
+
         });
     })
 
@@ -255,11 +262,11 @@ describe('Model', function(){
         });
         it('should throw when an extra field is provided (enforce on model leve)', function() {
             Cat = thinky.createModel('Cat', { fieldString: String }, {enforce: {type: true, missing: true, extra: true}});
-            (function() { minou = new Cat({fieldString: 'hello', outOfSchema: 1}) }).should.throw('An extra field `outOfSchema` not defined in the schema was found.')
+            (function() { minou = new Cat({fieldString: 'hello', outOfSchema: 1}) }).should.throw('An extra field `[outOfSchema]` not defined in the schema was found.')
         });
         it('should throw when a String is missing (defined with options) (enforce on model leve)', function() {
             Cat = thinky.createModel('Cat', { fieldString: {_type: String} }, {enforce: {type: true, missing: true, extra: true}});
-            (function() { minou = new Cat({fieldString: 'hello', outOfSchema: 1}) }).should.throw('An extra field `outOfSchema` not defined in the schema was found.')
+            (function() { minou = new Cat({fieldString: 'hello', outOfSchema: 1}) }).should.throw('An extra field `[outOfSchema]` not defined in the schema was found.')
         });
         it('should throw when an Object is missing (enforce on model leve)', function() {
             Cat = thinky.createModel('Cat', { nested: {fieldString: String} }, {enforce: {type: true, missing: true, extra: true}});
@@ -543,9 +550,50 @@ describe('Model', function(){
 
             catou.listeners('test').should.have.length(1);
             catou.listeners('test2').should.have.length(0);
-
         });
        
     });
 
+    // Test joins
+    describe('hasOne', function() {
+        it('should add a new key in model.joins', function() {
+            Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
+            Human = thinky.createModel('Human', {id: String, ownerName: String});
+            var catou = new Cat({name: "Catou"});
+            var owner = new Human({ownerName: "Michel"});
+            Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
+            should.exist(Cat.getModel().joins['owner']);
+        });
+        it('should be able to save the joined doc', function(done) {
+            var owner = new Human({ownerName: "Michel"});
+            var catou = new Cat({name: "Catou"});
+            catou['owner'] = owner;
+            catou.save( function(error, result) {
+                should.exist(catou.id);
+                should.exist(catou.idHuman);
+                should.exist(catou.owner.id);
+                done();
+            });
+        });
+        it('should be able to save the joined doc -- nested joins', function(done) {
+            Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
+            Human = thinky.createModel('Human', {id: String, ownerName: String, idMom: String});
+            Mother = thinky.createModel('Mother', {id: String, motherName: String});
+            Human.hasOne(Mother, 'mom', {leftKey: 'idMom', rightKey: 'id'});
+            Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
+            var owner = new Human({ownerName: "Michel"});
+            var catou = new Cat({name: "Catou"});
+            var mother = new Mother({motherName: "Mom"});
+            catou['owner'] = owner;
+            owner['mom'] = mother;
+
+            catou.save( function(error, result) {
+                should.exist(catou.id);
+                should.exist(catou.idHuman);
+                should.exist(catou.owner.id);
+                done();
+            });
+        });
+
+    })
 })

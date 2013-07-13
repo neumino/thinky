@@ -68,7 +68,7 @@ describe('Document', function(){
         it('should throw if schema is enforced -- extra field', function(){
             Cat = thinky.createModel('Cat', { id: Number, name: String }, {enforce: true});
             catou = new Cat({id: 1, name: 'Catou'});
-            (function() { catou.merge({id: 2, name: 'CatouBis', extraField: 3});}).should.throw('An extra field `extraField` not defined in the schema was found.');
+            (function() { catou.merge({id: 2, name: 'CatouBis', extraField: 3});}).should.throw('An extra field `[extraField]` not defined in the schema was found.');
         });
         it('should throw if schema is enforced -- missing field', function(){
             Cat = thinky.createModel('Cat', { id: Number, name: String }, {enforce: true});
