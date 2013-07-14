@@ -592,15 +592,13 @@ describe('Model', function(){
                 should.exist(catou.idHuman);
                 should.exist(catou.owner.id);
                 catou_id = catou.id;
-                console.log(catou);
                 done();
             }, {saveJoin: true});
         });
         it('get should be able to get joined documents', function(done) {
             var catou = Cat.get(catou_id, function(error, result) {
                 should.not.exist(error);
-                console.log(error);
-                console.log(result);
+                should.exist(result.owner);
                 done();
             }, {getJoin: true})
         });
