@@ -166,19 +166,32 @@ Return the primary key of the model.
 __Model.get(__ id or [ids], callback, options __)__
 
 Retrieve one or more documents using their primary keys.
-options can be {
-    getJoin: <boolean>
-}
+options is an object with the fields
+- `getJoin` which is a boolean and define if you want to get back joined documents or not.
+_Note_: Thinky does not currently keep track of the created objects (to avoid leaks), so
+new objects are going to be created even if they somehow already exist.
 
 
-__Model.getAll(__ value or [values], indexName, callback __)__
+__Model.getAll(__ value or [values], indexName, callback, options __)__
 
 Retrieve one or more documents using a secondary index
 
+options is an object with the fields
+- `getJoin` which is a boolean and define if you want to get back joined documents or not.
+_Note_: Thinky does not currently keep track of the created objects (to avoid leaks), so
+new objects are going to be created even if they somehow already exist.
 
-__Model.filter(__ filterFunction  __)__
+
+
+__Model.filter(__ filterFunction, callback, options  __)__
 
 Retrieve document based on the filter.
+
+options is an object with the fields
+- `getJoin` which is a boolean and define if you want to get back joined documents or not.
+_Note_: Thinky does not currently keep track of the created objects (to avoid leaks), so
+new objects are going to be created even if they somehow already exist.
+
 
 
 __Model.count(__  __)__
