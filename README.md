@@ -65,11 +65,12 @@ You are welcome to do a pull request.
 
 
 ### TODO
-- Decide what to do with null (does it throw when checked against a Number?)
 - Joins
-- Premises?
+- Decide what to do with null (does it throw when checked against a Number?)
+- Promises?
 - Do not drain the pool when poolMin/poolMax are changed
 - Write examples
+- Clean tests
 
 ### About
 Author: Michel Tu -- orphee@gmail.com -- www.justonepixel.com
