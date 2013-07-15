@@ -241,7 +241,7 @@ Return all the listeners for this event. These listeners can be
 If `raw` is set to false (default is true), the objects are replaced by the listener they contain.
 
 
-__Model.hasOne(__ model, fieldName, attribute/fn __)__
+__Model.hasOne(__ model, fieldName, joinClause __)__
 
 Example
 ```
@@ -275,7 +275,7 @@ kitty.save(function(err, result) {
 })
 ```
 
-__Model.hasMany(__ model, fieldName, attribute/fn __)__
+__Model.hasMany(__ model, fieldName, joinClause __)__
 
 _Not implemented yet_
 
