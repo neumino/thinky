@@ -1,434 +1,133 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Thinky -- JavaScript ORM for RethinkDB -- by neumino</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html class="ie ltie7 ltie8 ltie9" lang="en"> <![endif]-->
+<!--[if IE 7 ]>    <html class="ie ie7 ltie8 ltie9" lang="en"> <![endif]-->
+<!--[if IE 8 ]>    <html class="ie ie8 ltie9" lang="en"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie ie9 ltie10" lang="en"> <![endif]-->
+<!--[if gt IE 9]><!--> <html lang="en" class=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="keywords" content=""/>
+        <meta name="description" content=""/>
+        <meta name="viewport" content="width=device-width">
+        <meta name="author" content="Michel Tu"/>
+        <title>Thinky -- JavaScript ORM for RethinkDB</title>
+        <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+        <!--[if ie 9]><style type="text/css" media="screen">.filter{behavior: url(ie9-gradient-fix.htc);}</style><![endif]-->
+        <link rel="stylesheet" href="stylesheets/styles.css">
+        <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
+        <link rel="stylesheet" href="stylesheets/bootstrap-responsive.min.css">
+    </head>
+    <body>
     <div class="wrapper">
-      <header>
+    <navigation>
+        <ul>
+            <li><a href="">Download</a></li>
+            <li><a href="">Quickstart</a></li>
+            <li><a href="">Docs</a></li>
+            <li><a href="">Examples</a></li>
+            <li><a href="">Github project</a></li>
+            <li><a href="">About</a></li>
+        </ul>
+    </navigation>
+    <header>
         <h1 class="header">Thinky</h1>
-        <p class="header">JavaScript ORM for RethinkDB</p>
+        <p class="header-description">Cute JavaScript ORM for RethinkDB</p>
 
         <ul>
-          <li class="download"><a class="buttons" href="https://github.com/neumino/thinky/zipball/master">Download ZIP</a></li>
-          <li class="download"><a class="buttons" href="https://github.com/neumino/thinky/tarball/master">Download TAR</a></li>
-          <li><a class="buttons github" href="https://github.com/neumino/thinky">View On GitHub</a></li>
+            <li>
+                <a class="btn" href="https://github.com/neumino/thinky/zipball/master">Download</a>
+            </li>
+            <li>
+                <a class="btn" href="https://github.com/neumino/thinky/quickstart.html">Quickstart</a>
+            </li>
+            <li>
+                <a class="btn" href="https://github.com/neumino/thinky/documentation.html">Documentation</a>
+            </li>
+
         </ul>
+    </header>
 
-        <p class="header">This project is maintained by <a class="header name" href="https://github.com/neumino">neumino</a></p>
-
-
-      </header>
-      <section>
+    <section>
         <h3>
-<a name="quick-start" class="anchor" href="#quick-start"><span class="octicon octicon-link"></span></a>Quick start</h3>
-
-<p>Install:</p>
-
-<pre><code>npm install thinky
-</code></pre>
-
-<p>Use</p>
-
-<div class="highlight"><pre><span class="kd">var</span> <span class="nx">thinky</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'thinky'</span><span class="p">);</span>
-<span class="nx">thinky</span><span class="p">.</span><span class="nx">init</span><span class="p">({});</span>
-
-<span class="c1">// Create a model</span>
-<span class="kd">var</span> <span class="nx">Cat</span> <span class="o">=</span> <span class="nx">thinky</span><span class="p">.</span><span class="nx">createModel</span><span class="p">(</span><span class="s1">'Cat'</span><span class="p">,</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="nb">String</span><span class="p">});</span> 
-
-<span class="c1">// Create custom methods</span>
-<span class="nx">Cat</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s1">'hello'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Hello, I'm "</span><span class="o">+</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="p">});</span>
-
-<span class="c1">// Create a new object</span>
-<span class="nx">kitty</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Cat</span><span class="p">({</span><span class="nx">name</span><span class="o">:</span> <span class="s1">'Kitty'</span><span class="p">});</span>
-<span class="nx">kitty</span><span class="p">.</span><span class="nx">hello</span><span class="p">();</span> <span class="c1">// Log "Hello, I'm Kitty</span>
-<span class="nx">kitty</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Kitty has been saved in the database"</span><span class="p">);</span>
-<span class="p">})</span>
-</pre></div>
-
-<h3>
-<a name="docs" class="anchor" href="#docs"><span class="octicon octicon-link"></span></a>Docs</h3>
-
-<p><em>Note</em>: Work in progress. </p>
-
-<h4>
-<a name="thinky" class="anchor" href="#thinky"><span class="octicon octicon-link"></span></a>Thinky</h4>
-
-<p><strong>Thinky.init(</strong> options <strong>)</strong></p>
-
-<p>options (object): object with the fields</p>
-
-<ul>
-<li>host: RethinkDB host (default "localhost")</li>
-<li>port: RethinkDB port for client (default to 28015)</li>
-<li>db: default database (default to "test")</li>
-<li>poolMax: The maximum number of connections in the pool (default to 10)</li>
-<li>poolMin: The minimum number of connections in the pool (default to 1)</li>
-<li>enforce: represents if the schemas should be enforced or not. Its value can be:
-
-<ul>
-<li>an object with the 3 fields:
-
-<ul>
-<li>missing -- throw on missing fields -- default to false</li>
-<li>extra -- throw if extra fields are provided -- default to false</li>
-<li>type -- throw if the type is not the one expected -- default to true</li>
-</ul>
-</li>
-<li>a boolean that set all 3 parameters to the same value</li>
-</ul>
-</li>
-</ul><p><strong>Thinky.getOptions()</strong>  </p>
-
-<p>Returns all the options previously set.</p>
-
-<p><strong>Thinky.getOption(</strong> optionName <strong>)</strong>  </p>
-
-<p>Returns the value for <em>optionName</em>. Possible values:</p>
-
-<ul>
-<li>host: RethinkDB host</li>
-<li>port: RethinkDB port for client</li>
-<li>db: default database</li>
-<li>poolMax: The maximum number of connections in the pool</li>
-<li>poolMin: The minimum number of connections in the pool</li>
-<li>enforce: Boolean that represent if the schemas should be enforced or not</li>
-</ul><p><strong>Thinky.setOptions(</strong> options <strong>)</strong></p>
-
-<p>Overwrite the options defined in <em>options</em>.</p>
-
-<p>The argument <em>options</em> is an object that can have the following fields</p>
-
-<ul>
-<li>host: RethinkDB host (default "localhost")</li>
-<li>port: RethinkDB port for client (default to 28015)</li>
-<li>db: default database (default to "test")</li>
-<li>poolMax: The maximum number of connections in the pool (default to 10)</li>
-<li>poolMin: The minimum number of connections in the pool (default to 1)</li>
-<li>enforce: represents if the schemas should be enforced or not. Its value can be:
-
-<ul>
-<li>an object with the 3 fields:
-
-<ul>
-<li>missing -- throw on missing fields -- default to false</li>
-<li>extra -- throw if extra fields are provided -- default to false</li>
-<li>type -- throw if the type is not the one expected -- default to true</li>
-</ul>
-</li>
-<li>a boolean that set all 3 parameters to the same value</li>
-</ul>
-</li>
-</ul><p>Setting a value to <code>null</code> will delete the value and the default value will be used.</p>
-
-<p><em>Note</em>: Changing the host/port/poolMax/poolMin will create a new pool (the previous one will be drained).<br>
-This behavior will be fixed when generic pool will be able to resize the pool at will (or when I'll fork it)</p>
-
-<p><strong>Thinky.disconnect()</strong></p>
-
-<p>Close all the connections.</p>
-
-<p><strong>Thinky.createModel(</strong> name, schema, settings <strong>)</strong></p>
-
-<p>Create a new model</p>
-
-<ul>
-<li>name: name of the model</li>
-<li>schema: An object which fields can map to the following value
-
-<ul>
-<li>String</li>
-<li>Number</li>
-<li>Boolean</li>
-<li>Array with one type (like [String], [Number], [{name: String, age: Number}]</li>
-<li>Object that contains a valid schema</li>
-<li>{_type: String, enforce: { missing: <em>boolean</em>, type: <em>boolean</em>, extra: <em>boolean</em>}, default: <em>value/function</em> }</li>
-<li>{_type: Number, enforce: { missing: <em>boolean</em>, type: <em>boolean</em>, extra: <em>boolean</em>}, default: <em>value/function</em> }</li>
-<li>{_type: Boolean, enforce: { missing: &lt;boolean_, type: <em>boolean</em>, extra: <em>boolean</em>}, default: <em>value/function</em> }</li>
-<li>{_type: Array, schema: <em>schema</em>, enforce: { missing: <em>boolean</em>, type: <em>boolean</em>, extra: <em>boolean</em>}, default: <em>value/function</em> }</li>
-<li>{_type: Object, schama: <em>schema</em>, enforce: { missing: <em>boolean</em>, type: <em>boolean</em>, extra: <em>boolean</em>}, default: <em>value/function</em> }</li>
-</ul>
-</li>
-<li>settings (object): settings for the model
-
-<ul>
-<li>enforce: represents if the schemas should be enforced or not. Its value can be:
-
-<ul>
-<li>an object with the 3 fields:
-
-<ul>
-<li>missing -- throw on missing fields -- default to false</li>
-<li>extra -- throw if extra fields are provided -- default to false</li>
-<li>type -- throw if the type is not the one expected -- default to true</li>
-</ul>
-</li>
-<li>a boolean that set all 3 parameters to the same value</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul><p><em>Note 1</em>: the fields enforce and default are optional.<br><em>Note 2</em>: the value of enforce is the lower one (thinky -&gt; model -&gt; field).<br><em>Note 3</em>: if enforce is provided as an object, the three fields missing/extra/type have to be defined. This limitation will be lifted when more important issues will be solved.<br><em>Note 4</em>: you currently cannot have a field named _type in your model. This limitation will be removed at some point.  </p>
-
-<p>Examples of valid schema:</p>
-
-<pre><code>{ name: String }
-{ name: { _type: String } }
-{ name: { _type: String, default: "Unknown name" } }
-{ age: { _type: Number, default: function() { return Math.random()*100 } } }
-{ name: {_type: String, enforce: { missing: false, extra: false, type: true } }, age: { _type: Number, enforce: { missing: false, extra: false, type: true } }
-{ user: { name: String, age: Number }}
-{ comments: [ {author: String, comment: String} ] }
-{ comments: {_type: Array, schema: {author: String, comment: String} } }
-</code></pre>
-
-<p><em>Note:</em> The settings to set a minimum/maximum of elements in an array is on the roadmap.</p>
-
-<h4>
-<a name="model" class="anchor" href="#model"><span class="octicon octicon-link"></span></a>Model</h4>
-
-<p><strong>Model.compile(</strong> name, schema, settings, thinky <strong>)</strong></p>
-
-<p><em>Internal method</em></p>
-
-<p><strong>Model.createBasedOnSchema(</strong> result, doc, originalDoc, enforce, prefix, schema <strong>)</strong></p>
-
-<p><em>Internal method</em></p>
-
-<p><strong>Model.checkType(</strong> result, doc, originalDoc, schema, key, type, typeOf, prefix, enforce <strong>)</strong></p>
-
-<p><em>Internal method</em></p>
-
-<p><strong>Model.define(</strong> key, method, force <strong>)</strong></p>
-
-<p>Define a <em>method</em> on the model with the name <em>key</em>.
-This method can be called by any instances of the model, whether the instances were created
-before or after the definition of the method.</p>
-
-<p><em>Note</em>: If a method already exists with such name, an error will be thrown except if you pass force=true.<br>
-We still recommand not to overwrite a method since it may be an internal one and can trigger an undefined behavior.</p>
-
-<p><strong>Model.setSchema(</strong> schema <strong>)</strong></p>
-
-<p>Change the schema.</p>
-
-<p><em>Note</em>: When you change the schema, the instances previously created do not change.
-We do not keep a reference of all objects now. We may add an option to do it later. </p>
-
-<p><strong>Model.getSettings(</strong>  <strong>)</strong></p>
-
-<p>Return the settings of the model.</p>
-
-<p><strong>Model.getPrimaryKey(</strong>  <strong>)</strong></p>
-
-<p>Return the primary key of the model.</p>
-
-<p><strong>Model.get(</strong> id or [ids], callback <strong>)</strong></p>
-
-<p>Retrieve one or more documents using their primary keys.</p>
-
-<p><strong>Model.getAll(</strong> value or [values], indexName, callback <strong>)</strong></p>
-
-<p>Retrieve one or more documents using a secondary index</p>
-
-<p><strong>Model.filter(</strong> filterFunction  <strong>)</strong></p>
-
-<p>Retrieve document based on the filter.</p>
-
-<p><strong>Model.count(</strong>  <strong>)</strong></p>
-
-<p>Return the number of element in the table of your model.</p>
-
-<p><strong>Model.addListener(</strong> event, listener <strong>)</strong></p>
-
-<p>Add a listener on the model. Everytime a new instance will be created, the listeners defined on the model
-will be added to the document.</p>
-
-<p><em>Note</em>: Previously created document will not have such listeners.</p>
-
-<p><strong>Model.on(</strong> event, listener <strong>)</strong></p>
-
-<p>Alias for addListener</p>
-
-<p><strong>Model.once(</strong> event, listener <strong>)</strong></p>
-
-<p>Add a listener on the model. Everytime a new instance will be created, the listeners defined on the model
-will be added to the document. Such listener can be triggered only once per document.</p>
-
-<p><strong>Model.off(</strong> event, listener <strong>)</strong></p>
-
-<p>Remove the listener bound to the event.</p>
-
-<ul>
-<li>If only the event is passed, all listeners of this event will be removed.</li>
-<li>If the event passed is a listener, this listener will be removed from all events.</li>
-<li>If no argument is supplied, all events/listeners are removed.</li>
-</ul><p><strong>Model.listeners(</strong> event, raw <strong>)</strong></p>
-
-<p>Return all the listeners for this event. These listeners can be</p>
-
-<ul>
-<li>The listeners passed in <code>addListener/on</code>
-</li>
-<li>Object like this one:
-<code>
-{
-once: true,
-listener: listener
-}
-</code>
-</li>
-</ul><p>If <code>raw</code> is set to false (default is true), the objects are replaced by the listener they contain.</p>
-
-<h4>
-<a name="document" class="anchor" href="#document"><span class="octicon octicon-link"></span></a>Document</h4>
-
-<p><strong>Document.getDocument(</strong>  <strong>)</strong></p>
-
-<p><em>Internal method</em></p>
-
-<p><strong>Document.getModel(</strong>  <strong>)</strong></p>
-
-<p>Return the model of the document.</p>
-
-<p><strong>Document.getSettings(</strong>  <strong>)</strong></p>
-
-<p>Return the settings of the document.</p>
-
-<p><strong>Document.definePrivate(</strong> name, method  <strong>)</strong></p>
-
-<p>Define a method accessible through the key <em>name</em>.</p>
-
-<p>The method will be accessible only by the document iself and not any other documents (including
-those in the same class).</p>
-
-<p><strong>Document.save(</strong> callback <strong>)</strong></p>
-
-<p>Save the object in the database. Thinky will call insert or update depending
-on whether how the object was created.</p>
-
-<p>The event 'save' is triggered if the document is saved.</p>
-
-<p><strong>Document.merge(</strong> newDoc, replace <strong>)</strong></p>
-
-<p>Merge newDoc in the document.
-If <em>replace</em> is set to <em>true</em>, the document will be replaced.</p>
-
-<p>The event 'change' is triggered if the document is changed.</p>
-
-<p><em>Note</em>: The new document is checked agains the schema of the model.</p>
-
-<p><strong>Document.addListener(</strong> event, listener <strong>)</strong></p>
-
-<p>Add a <em>listener</em> for an event.  </p>
-
-<p><em>Method from events.EventEmitter.</em></p>
-
-<p><strong>Document.on(</strong> event, listener <strong>)</strong></p>
-
-<p>Alias for Document.addListener.  </p>
-
-<p><em>Method from events.EventEmitter.</em></p>
-
-<p>__Document.once(event, listener)</p>
-
-<p>Add a <em>listener</em> for an event that is going to be removed once it is triggered once.  </p>
-
-<p><em>Method from events.EventEmitter.</em></p>
-
-<p><strong>Document.removeListener(</strong> event, listener <strong>)</strong></p>
-
-<p>Remove a listener for an event.  </p>
-
-<p><em>Method from events.EventEmitter.</em></p>
-
-<p><strong>Document.off(</strong>event, listener <strong>)</strong></p>
-
-<p>If no argument is provided to <code>off()</code>, all listeners of the document will be removed.<br>
-If only an event is provided, all listeners for this event will be removed.<br>
-If an event and a listener are provided, the listener will be removed from the event provided.</p>
-
-<p><strong>Document.removeAllListeners(</strong> event <strong>)</strong></p>
-
-<p>Remove all listeners for the events provided.<br>
-If no event is provided, all listeners will be removed.</p>
-
-<p><em>Method from events.EventEmitter.</em></p>
-
-<p><strong>Document.setMaxListeners(</strong> n <strong>)</strong></p>
-
-<p>Set the maximum of listeners. </p>
-
-<p><em>Method from events.EventEmitter.</em></p>
-
-<p><strong>Document.listeners(</strong> event <strong>)</strong>
-__Document.emit(event, [arg1], [arg2], [...])</p>
-
-<h3>
-<a name="run-the-tests" class="anchor" href="#run-the-tests"><span class="octicon octicon-link"></span></a>Run the tests</h3>
-
-<pre><code>mocha
-</code></pre>
-
-<h3>
-<a name="contribute" class="anchor" href="#contribute"><span class="octicon octicon-link"></span></a>Contribute</h3>
-
-<p>You are welcome to do a pull request.</p>
-
-<h3>
-<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>TODO</h3>
-
-<ul>
-<li>Add events methods on Model</li>
-<li>Add more complex queries</li>
-<li>Decide what to do with null (does it throw when checked against a Number?)</li>
-<li>Joins</li>
-<li>Premises?</li>
-<li>Do not drain the pool when poolMin/poolMax are changed</li>
-<li>Write examples</li>
-</ul><h3>
-<a name="about" class="anchor" href="#about"><span class="octicon octicon-link"></span></a>About</h3>
-
-<p>Author: Michel Tu -- <a href="mailto:orphee@gmail.com">orphee@gmail.com</a> -- <a href="http://www.justonepixel.com">www.justonepixel.com</a></p>
-
-<h3>
-<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h3>
-
-<p>Copyright (c) 2013 Michel Tu <a href="mailto:orphee@gmail.com">orphee@gmail.com</a></p>
-
-<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this
-software and associated documentation files (the 'Software'), to deal in the Software
-without restriction, including without limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of the Software, and to permit
-persons to whom the Software is furnished to do so, subject to the following conditions:</p>
-
-<p>The above copyright notice and this permission notice shall be included in all copies or
-substantial portions of the Software.</p>
-
-<p>THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
-FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.</p>
-      </section>
-      <footer>
-        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
-      </footer>
-    </div>
+            <a name="quick-start" class="anchor" href="#quick-start"></a>
+            Quick start
+        </h3>
+
+    <h4>Install:</h4>
+
+    <pre><code>npm install thinky</code></pre>
+
+    <h4>Use:</h4>
+
+```javascript
+var thinky = require('thinky');
+thinky.init({});
+
+// Create a model
+var Cat = thinky.createModel('Cat', {name: String, idHuman: String}); 
+
+// Create custom methods
+Cat.define('hello', function() { console.log("Hello, I'm "+this.name) });
+
+// Join models
+var Human = thinky.createModel('Human', {name: String}); 
+Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'})
+
+// Create a new object
+kitty = new Cat({name: 'Kitty'});
+michel = new Human({name: Michel});
+kitty.owner = michel;
+
+kitty.hello(); // Log "Hello, I'm Kitty
+kitty.save(function(err, result) {
+    if (err) throw err;
+    console.log("Kitty and Michel have been saved in the database");
+    /*
+    console.log(kitty);
+    {
+        id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+        name: "Catou",
+        idHuman: "3851d8b4-5358-43f2-ba23-f4d481358901",
+        owner: {
+            id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+            name: Michel
+        }
+    }
+    */
+})
+```
+
+
+        <h4>
+            <a name="license" class="anchor" href="#license"></a>
+            License
+        </h4>
+
+        <p>Copyright (c) 2013 Michel Tu <a href="mailto:orphee@gmail.com">orphee@gmail.com</a></p>
+
+        <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this
+        software and associated documentation files (the 'Software'), to deal in the Software
+        without restriction, including without limitation the rights to use, copy, modify, merge,
+        publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+        persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+
+        <p>The above copyright notice and this permission notice shall be included in all copies or
+        substantial portions of the Software.</p>
+
+        <p>THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+        INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+        PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+        FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+        OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+        DEALINGS IN THE SOFTWARE.</p>
+    </section>
+
+    <footer>
+        <p><small>Author: Michel Tu -- <a href="mailto:orphee@gmail.com">orphee@gmail.com</a> -- <a href="http://www.justonepixel.com">www.justonepixel.com</a></small></p>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a></small></p>
+    </footer>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-		
-  </body>
+
+</body>
 </html>
