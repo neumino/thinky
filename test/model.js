@@ -767,9 +767,8 @@ describe('Model', function(){
         });
     })
 
-    /*
     describe('hasMany', function() {
-        var Cat, catou, Task, task1, task2, task3, 
+        var Cat, catou, Task, task1, task2, task3;
         it('should add a new key in model.joins', function() {
             Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
             Task = thinky.createModel('Task', {id: String, task: String});
@@ -787,40 +786,69 @@ describe('Model', function(){
             task2 = new Task({task: "Eat"});
             task3 = new Task({task: "Sleep"});
             catou.tasks = [task1, task2, task3];
-
             catou.save( function(error, result) {
                 catou.taskIds.should.have.length(3);
-                should.exist(catou.taskIds[0].id);
-                should.exist(catou.taskIds[1].id);
-                should.exist(catou.taskIds[2].id);
+                should.exist(catou.taskIds[0]);
+                should.exist(catou.taskIds[1]);
+                should.exist(catou.taskIds[2]);
+                should.exist(catou.tasks[0].id);
+                should.exist(catou.tasks[1].id);
+                should.exist(catou.tasks[2].id);
+
                 done();
             }, {saveJoin: true});
         });
         it('get should be able to get joined documents', function(done) {
-            var catou = Cat.get(catou.id, function(error, result) {
+            Cat.get(catou.id, function(error, result) {
                 result.taskIds.should.have.length(3);
-                should.exist(result.taskIds[0].id);
-                should.exist(result.taskIds[1].id);
-                should.exist(resuld.taskIds[2].id);
-
+                should.exist(result.taskIds[0]);
+                should.exist(result.taskIds[1]);
+                should.exist(result.taskIds[2]);
+                should.exist(result.tasks[0].id);
+                should.exist(result.tasks[1].id);
+                should.exist(result.tasks[2].id);
+                catou.tasks.should.have.length(3);
                 done();
             }, {getJoin: true})
         });
         it('get should be able to get joined documents -- and they should be `saved`', function(done) {
-            var catou = Cat.get(catou.id, function(error, result) {
-                should(result.getDocument().docSettings.saved, true)
-                should(result.tasks[0].getDocument().docSettings.saved, true)
-                should(result.tasks[1].getDocument().docSettings.saved, true)
-                should(result.tasks[2].getDocument().docSettings.saved, true)
-
+            Cat.get(catou.id, function(error, result) {
+                should(result.tasks[0].getDocument().docSettings.saved, true);
+                should(result.tasks[1].getDocument().docSettings.saved, true);
+                should(result.tasks[2].getDocument().docSettings.saved, true);
                 done();
             }, {getJoin: true})
         });
         it('getAll should work', function(done) {
+            Cat.getAll([catou.id], 'id', function(error, result) {
+                result.should.have.length(1);
+                result[0].taskIds.should.have.length(3);
+                should.exist(result[0].taskIds[0]);
+                should.exist(result[0].taskIds[1]);
+                should.exist(result[0].taskIds[2]);
+                should.exist(result[0].tasks[0].id);
+                should.exist(result[0].tasks[1].id);
+                should.exist(result[0].tasks[2].id);
+                catou.tasks.should.have.length(3);
+                done();
+            }, {getJoin: true})
         });
-        it('filter should work -- nested joins', function(done) {
+        it('filter should work', function(done) {
+            Cat.filter(function(doc) { return doc("id").eq(catou.id) }, function(error, result) {
+                result.should.have.length(1);
+                result[0].taskIds.should.have.length(3);
+                should.exist(result[0].taskIds[0]);
+                should.exist(result[0].taskIds[1]);
+                should.exist(result[0].taskIds[2]);
+                should.exist(result[0].tasks[0].id);
+                should.exist(result[0].tasks[1].id);
+                should.exist(result[0].tasks[2].id);
+                catou.tasks.should.have.length(3);
+                done();
+            }, {getJoin: true})
+
+
         });
     })
-    */
 
 })

@@ -171,6 +171,8 @@ options is an object with the fields
 _Note_: Thinky does not currently keep track of the created objects (to avoid leaks), so
 new objects are going to be created even if they somehow already exist.
 
+options can be {getJoin: Boolean}
+
 
 __Model.getAll(__ value or [values], indexName, callback, options __)__
 
@@ -180,6 +182,8 @@ options is an object with the fields
 - `getJoin` which is a boolean and define if you want to get back joined documents or not.
 _Note_: Thinky does not currently keep track of the created objects (to avoid leaks), so
 new objects are going to be created even if they somehow already exist.
+
+options can be {getJoin: Boolean}
 
 
 
@@ -191,6 +195,8 @@ options is an object with the fields
 - `getJoin` which is a boolean and define if you want to get back joined documents or not.
 _Note_: Thinky does not currently keep track of the created objects (to avoid leaks), so
 new objects are going to be created even if they somehow already exist.
+
+options can be {getJoin: Boolean}
 
 
 
@@ -277,7 +283,17 @@ kitty.save(function(err, result) {
 
 __Model.hasMany(__ model, fieldName, joinClause __)__
 
-_Not implemented yet_
+Example:
+```javascript
+Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
+Task = thinky.createModel('Task', {id: String, task: String});
+Cat.hasMany(Task, 'tasks', {leftKey: 'taskIds', rightKey: 'id'});
+
+catou = new Cat({name: "Catou"});
+task1 = new Task({task: "Catch the red dot"});
+task2 = new Task({task: "Eat"});
+task3 = new Task({task: "Sleep"});
+```
 
 #### Document
 
@@ -308,12 +324,14 @@ those in the same class).
 
 
 
-__Document.save(__ callback __)__
+__Document.save(__ callback, options __)__
 
 Save the object in the database. Thinky will call insert or update depending
 on whether how the object was created.
 
 The event 'save' is triggered if the document is saved.
+
+The object `options` can be {saveJoin: Boolean}
 
 
 __Document.merge(__ newDoc, replace __)__
