@@ -1,7 +1,7 @@
 # Thinky
 
 JavaScript ORM for RethinkDB.  
-_Note_: Alpha release
+_Note_: Beta release
 
 ### Quick start 
 
