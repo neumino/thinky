@@ -1,2 +1,2 @@
-markdown: redcarpet
+markdown: maruku
 pygments: true
