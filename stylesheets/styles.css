@@ -7,7 +7,8 @@ body{
     margin: 0px;
     padding: 0px;
     min-height: 100%;
-    background: url(../images/squairy_light.png);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: #fafafa;
 }
 navigation{
     display: block;
@@ -54,12 +55,19 @@ navigation li{
 }
 
 header{
+    width: 100%;
+    margin: 0px;
+    padding: 110px 0px 50px 0px;
+    text-align: center;
+    background: url(../images/squairy_light.png);
+    -moz-box-shadow:    inset 0px 0px 8px 0px #ccc;
+    -webkit-box-shadow: inset 0px 0px 8px 0px #ccc;
+    box-shadow:         inset 0px 0px 8px 0px #ccc;
+
+}
+header .content {
     width: 900px;
     margin: 0px auto 30px auto;
-    padding: 100px 0px 100px 0px;
-    border-bottom: 2px dotted #ccc;
-    margin-top: 30px;
-    text-align: center;
 }
 header li{
     display: inline-block;
@@ -72,7 +80,23 @@ header li .btn{
 header li a{
     width: 120px;
 }
+
+#content{
+    border-top: 1px dotted #ccc;
+    min-width: 100%;
+    padding-top: 0px;
+    font-family: Verdana;
+    font-size: 0.9em;
+    text-align: justify;
+}
 section{
     width: 900px;
-    margin: 20px auto;
+    margin: 40px auto 0px auto;
+}
+
+footer{
+    width: 900px;
+    margin: 40px auto 0px auto;
+    padding: 20px 0px 40px 0px;
+    border-top: 1px dotted #ccc;
 }

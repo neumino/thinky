@@ -17,17 +17,21 @@
         <link rel="stylesheet" href="stylesheets/styles.css">
         <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
         <link rel="stylesheet" href="stylesheets/bootstrap-responsive.min.css">
+        <link rel="stylesheet" href="stylesheets/prettify.css">
+
+        <script src="javascripts/prettify.js"></script>
     </head>
-    <body>
+    <body onload="prettyPrint()">
     <div class="wrapper">
     <navigation>
         <ul>
-            <li><a href="">Download</a></li>
-            <li><a href="">Quickstart</a></li>
-            <li><a href="">Docs</a></li>
-            <li><a href="">Examples</a></li>
-            <li><a href="">Github project</a></li>
-            <li><a href="">About</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="https://github.com/neumino/thinky/zipball/master">Download</a></li>
+            <li><a href="/#quickstart">Quickstart</a></li>
+            <li><a href="/documentation.html">Documentation</a></li>
+            <li><a href="/example.html">Examples</a></li>
+            <li><a href="https://github.com/neumino/thinky/">Github project</a></li>
+            <li><a href="/about.html">About</a></li>
         </ul>
     </navigation>
     <header>
@@ -39,15 +43,17 @@
                 <a class="btn" href="https://github.com/neumino/thinky/zipball/master">Download</a>
             </li>
             <li>
-                <a class="btn" href="https://github.com/neumino/thinky/quickstart.html">Quickstart</a>
+                <a class="btn" href="/#quickstart">Quickstart</a>
             </li>
             <li>
-                <a class="btn" href="https://github.com/neumino/thinky/documentation.html">Documentation</a>
+                <a class="btn" href="/documentation.html">Documentation</a>
             </li>
 
         </ul>
     </header>
 
+    <div id="content">
+    <a id="quickstart"></a>
     <section>
         <h3>
             <a name="quick-start" class="anchor" href="#quick-start"></a>
@@ -58,10 +64,11 @@
 
     <pre><code>npm install thinky</code></pre>
 
-    <h4>Use:</h4>
+    </section>
+    <section>
 
-```javascript
-var thinky = require('thinky');
+    <h4>Use:</h4>
+<pre class="prettyprint"><code>var thinky = require('thinky');
 thinky.init({});
 
 // Create a model
@@ -96,8 +103,11 @@ kitty.save(function(err, result) {
     }
     */
 })
-```
+</code></pre>
 
+
+    </section>
+    <section>
 
         <h4>
             <a name="license" class="anchor" href="#license"></a>
@@ -124,10 +134,13 @@ kitty.save(function(err, result) {
     </section>
 
     <footer>
-        <p><small>Author: Michel Tu -- <a href="mailto:orphee@gmail.com">orphee@gmail.com</a> -- <a href="http://www.justonepixel.com">www.justonepixel.com</a></small></p>
-        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a></small></p>
+        <p><small>
+            Author: Michel Tu -- <a href="mailto:orphee@gmail.com">orphee@gmail.com</a> -- <a href="http://www.justonepixel.com">www.justonepixel.com</a><br/>
+            Hosted on <a href="https://pages.github.com">GitHub Pages</a>
+        </small></p>
     </footer>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
 
+    </div>
 </body>
 </html>
