@@ -3,9 +3,9 @@ layout: index
 ---
 
 
-### Quickstart
+## Quickstart
 
-#### Install
+### Install
 
 ```bash
 npm install thinky
@@ -36,8 +36,8 @@ kitty.hello(); // Log "Hello, I'm Kitty
 kitty.save(function(err, result) {
     if (err) throw err;
     console.log("Kitty and Michel have been saved in the database");
-    /*
     console.log(kitty);
+    /*
     {
         id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
         name: "Catou",
@@ -51,7 +51,7 @@ kitty.save(function(err, result) {
 })
 ```
 
-#### License
+### License
 
 Copyright (c) 2013 Michel Tu [orphee@gmail.com](orphee@gmail.com).
 

@@ -90,6 +90,30 @@ header li a{
     font-size: 0.9em;
     text-align: justify;
 }
+#content h2{
+    padding-top: 40px;
+    font-size: 20px;
+    line-height: 20px;
+}
+#content h3{
+    padding-top: 40px;
+    font-size: 17px;
+    line-height: 17px;
+}
+#content h4{
+    padding-top: 40px;
+    font-size: 13px;
+    line-height: 13px;
+}
+#content h1+h2{
+    padding-top: 10px;
+}
+#content h2+h3{
+    padding-top: 10px;
+}
+#content h3+h4{
+    padding-top: 10px;
+}
 section{
     width: 900px;
     margin: 40px auto 0px auto;
@@ -101,3 +125,4 @@ footer{
     padding: 20px 0px 40px 0px;
     border-top: 1px dotted #ccc;
 }
+
