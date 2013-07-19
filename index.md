@@ -12,7 +12,8 @@ npm install thinky
 ```
 
 ### Use
-```
+
+```javascript
 var thinky = require('thinky');
 thinky.init({});
 
@@ -46,6 +47,7 @@ kitty.save(function(err, result) {
             name: Michel
         }
     }
+    Youpi!
     */
 })
 ```
