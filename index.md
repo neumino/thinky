@@ -12,42 +12,43 @@ npm install thinky
 ```
 
 ### Use
+```
+var thinky = require('thinky');
+thinky.init({});
 
-    var thinky = require('thinky');
-    thinky.init({});
+// Create a model
+var Cat = thinky.createModel('Cat', {name: String, idHuman: String}); 
 
-    // Create a model
-    var Cat = thinky.createModel('Cat', {name: String, idHuman: String}); 
+// Create custom methods
+Cat.define('hello', function() { console.log("Hello, I'm "+this.name) });
 
-    // Create custom methods
-    Cat.define('hello', function() { console.log("Hello, I'm "+this.name) });
+// Join models
+var Human = thinky.createModel('Human', {name: String}); 
+Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'})
 
-    // Join models
-    var Human = thinky.createModel('Human', {name: String}); 
-    Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'})
+// Create a new object
+kitty = new Cat({name: 'Kitty'});
+michel = new Human({name: Michel});
+kitty.owner = michel;
 
-    // Create a new object
-    kitty = new Cat({name: 'Kitty'});
-    michel = new Human({name: Michel});
-    kitty.owner = michel;
-
-    kitty.hello(); // Log "Hello, I'm Kitty
-    kitty.save(function(err, result) {
-        if (err) throw err;
-        console.log("Kitty and Michel have been saved in the database");
-        /*
-        console.log(kitty);
-        {
-            id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
-            name: "Catou",
-            idHuman: "3851d8b4-5358-43f2-ba23-f4d481358901",
-            owner: {
-                id: "3851d8b4-5358-43f2-ba23-f4d481358901",
-                name: Michel
-            }
+kitty.hello(); // Log "Hello, I'm Kitty
+kitty.save(function(err, result) {
+    if (err) throw err;
+    console.log("Kitty and Michel have been saved in the database");
+    /*
+    console.log(kitty);
+    {
+        id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+        name: "Catou",
+        idHuman: "3851d8b4-5358-43f2-ba23-f4d481358901",
+        owner: {
+            id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+            name: Michel
         }
-        */
-    })
+    }
+    */
+})
+```
 
 
 #### License
