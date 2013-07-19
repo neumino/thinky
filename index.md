@@ -48,7 +48,7 @@ kitty.save(function(err, result) {
         }
     }
     */
-})
+}, {saveJoin: true})
 ```
 
 ### License
