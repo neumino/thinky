@@ -1,5 +1,3 @@
 markdown: redcarpet
 pygments: true
 markdown_ext:  markdown,mkd,mkdn,md
-textile_ext:   textile
-
