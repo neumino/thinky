@@ -1,58 +1,25 @@
-<!DOCTYPE html>
-<!--[if lt IE 7 ]> <html class="ie ltie7 ltie8 ltie9" lang="en"> <![endif]-->
-<!--[if IE 7 ]>    <html class="ie ie7 ltie8 ltie9" lang="en"> <![endif]-->
-<!--[if IE 8 ]>    <html class="ie ie8 ltie9" lang="en"> <![endif]-->
-<!--[if IE 9 ]>    <html class="ie ie9 ltie10" lang="en"> <![endif]-->
-<!--[if gt IE 9]><!--> <html lang="en" class=""> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <meta name="keywords" content=""/>
-        <meta name="description" content=""/>
-        <meta name="viewport" content="width=device-width">
-        <meta name="author" content="Michel Tu"/>
-        <title>Thinky -- JavaScript ORM for RethinkDB</title>
-        <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-        <!--[if ie 9]><style type="text/css" media="screen">.filter{behavior: url(ie9-gradient-fix.htc);}</style><![endif]-->
-        <link rel="stylesheet" href="stylesheets/styles.css">
-        <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
-        <link rel="stylesheet" href="stylesheets/bootstrap-responsive.min.css">
-        <link rel="stylesheet" href="stylesheets/prettify.css">
+---
+layout: default
+---
+<header>
+    <h1 class="header">Thinky</h1>
+    <p class="header-description">Cute JavaScript ORM for RethinkDB</p>
 
-        <script src="javascripts/prettify.js"></script>
-    </head>
-    <body>
-    <div class="wrapper">
-    <navigation>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="https://github.com/neumino/thinky/zipball/master">Download</a></li>
-            <li><a href="/#quickstart">Quickstart</a></li>
-            <li><a href="/documentation.html">Documentation</a></li>
-            <li><a href="/example.html">Examples</a></li>
-            <li><a href="https://github.com/neumino/thinky/">Github project</a></li>
-            <li><a href="/about.html">About</a></li>
-        </ul>
-    </navigation>
-    <header>
-        <h1 class="header">Thinky</h1>
-        <p class="header-description">Cute JavaScript ORM for RethinkDB</p>
+    <ul>
+        <li>
+            <a class="btn" href="https://github.com/neumino/thinky/zipball/master">Download</a>
+        </li>
+        <li>
+            <a class="btn" href="/#quickstart">Quickstart</a>
+        </li>
+        <li>
+            <a class="btn" href="/documentation.html">Documentation</a>
+        </li>
 
-        <ul>
-            <li>
-                <a class="btn" href="https://github.com/neumino/thinky/zipball/master">Download</a>
-            </li>
-            <li>
-                <a class="btn" href="/#quickstart">Quickstart</a>
-            </li>
-            <li>
-                <a class="btn" href="/documentation.html">Documentation</a>
-            </li>
+    </ul>
+</header>
 
-        </ul>
-    </header>
-
-    <div id="content">
+<div id="content">
     <a id="quickstart"></a>
     <section>
         <h3>
@@ -61,14 +28,16 @@
         </h3>
 
     <h4>Install:</h4>
-
-    <pre><code>npm install thinky</code></pre>
+```
+npm install thinky
+```
 
     </section>
     <section>
 
     <h4>Use:</h4>
-<pre class="prettyprint"><code>var thinky = require('thinky');
+```
+var thinky = require('thinky');
 thinky.init({});
 
 // Create a model
@@ -103,7 +72,8 @@ kitty.save(function(err, result) {
     }
     */
 })
-</code></pre>
+dfds
+```
 
 
     </section>
@@ -132,15 +102,4 @@ kitty.save(function(err, result) {
         OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
         DEALINGS IN THE SOFTWARE.</p>
     </section>
-
-    <footer>
-        <p><small>
-            Author: Michel Tu -- <a href="mailto:orphee@gmail.com">orphee@gmail.com</a> -- <a href="http://www.justonepixel.com">www.justonepixel.com</a><br/>
-            Hosted on <a href="https://pages.github.com">GitHub Pages</a>
-        </small></p>
-    </footer>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-
-    </div>
-</body>
-</html>
+</div>
