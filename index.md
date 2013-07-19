@@ -5,7 +5,7 @@ layout: index
 
 ### Quickstart
 
-#### Installaa
+#### Install
 
 ```bash
 npm install thinky
@@ -47,11 +47,9 @@ kitty.save(function(err, result) {
             name: Michel
         }
     }
-    Youpi!
     */
 })
 ```
-
 
 #### License
 
