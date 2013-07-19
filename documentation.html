@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html class="ie ltie7 ltie8 ltie9" lang="en"> <![endif]-->
+<!--[if IE 7 ]>    <html class="ie ie7 ltie8 ltie9" lang="en"> <![endif]-->
+<!--[if IE 8 ]>    <html class="ie ie8 ltie9" lang="en"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie ie9 ltie10" lang="en"> <![endif]-->
+<!--[if gt IE 9]><!--> <html lang="en" class=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="keywords" content=""/>
+        <meta name="description" content=""/>
+        <meta name="viewport" content="width=device-width">
+        <meta name="author" content="Michel Tu"/>
+        <title>Thinky -- JavaScript ORM for RethinkDB</title>
+        <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+        <!--[if ie 9]><style type="text/css" media="screen">.filter{behavior: url(ie9-gradient-fix.htc);}</style><![endif]-->
+        <link rel="stylesheet" href="stylesheets/styles.css">
+        <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
+        <link rel="stylesheet" href="stylesheets/bootstrap-responsive.min.css">
+        <link rel="stylesheet" href="stylesheets/prettify.css">
+
+        <script src="javascripts/prettify.js"></script>
+    </head>
+    <body onload="prettyPrint()">
+    <div class="wrapper">
+    <navigation>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="https://github.com/neumino/thinky/zipball/master">Download</a></li>
+            <li><a href="index.html#quickstart">Quickstart</a></li>
+            <li><a href="documentation.html">Documentation</a></li>
+            <li><a href="example.hml">Examples</a></li>
+            <li><a href="https://github.com/neumino/thinky/">Github project</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+    </navigation>
+    <div id="content">
+    <section>
+        <h3>Documentation</h3>
+        <h4>Thinky</h4>
+
+        <div id="thinky.init">
+            <a href="#thinky.init" class="doc-entry">Thinky.init</a>( options )
+            <p><em>options</em> is an object that can have the following fields:</p>
+            <ul>
+                <li>host: String, RethinkDB host (default value: "localhost")</li>
+                <li>port: Number, RethinkDB port (default value: 28015)</li>
+                <li>db: Default database (default value: "test")</li>
+                <li>poolMax: Maximum number of connections in the pool (default value: 10)</li>
+                <li>poolMin: Minimum number of connections in the pool (default value: 1)</li>
+                <li>enforce: Object with 3 fields:
+                    <ul>
+                        <li>missing: Throw an error if a field is missing (default value false)</li>
+                        <li>extra: Throw an error if an extra field is provided (default value false)</li>
+                        <li>type: Throw an error if a field does match the expected type (default value true)</li>
+                    </ul>
+                </li>
+            </ul>
+            `init`
+            <p></p>
+        </div>
+
+        <div id="">
+            <a href="#" class="doc-entry"></a>
+        </div>
+
+    </section>
+    <section>
+        <h4>Model</h4>
+    </section>
+    <section>
+        <h4>Document</h4>
+    </section>
+
+
+    <footer>
+        <p><small>
+            Author: Michel Tu -- <a href="mailto:orphee@gmail.com">orphee@gmail.com</a> -- <a href="http://www.justonepixel.com">www.justonepixel.com</a><br/>
+            Hosted on <a href="https://pages.github.com">GitHub Pages</a>
+        </small></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    </div>
+</body>
+</html>
