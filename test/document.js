@@ -37,12 +37,11 @@ describe('Document', function(){
             should.equal(catou.helloDoc(), 'hello, my name is Catou');
         });
     });
+
     describe('define', function(){
         it('should not add the function for other documents', function(){
             should.not.exist(minou.helloDoc);
         });
-    });
-    describe('define', function(){
         it('should not add the function for new documents', function(){
             minou = new Cat({name: 'Minou'});
             should.not.exist(minou.helloDoc);
@@ -68,7 +67,7 @@ describe('Document', function(){
         it('should throw if schema is enforced -- extra field', function(){
             Cat = thinky.createModel('Cat', { id: Number, name: String }, {enforce: true});
             catou = new Cat({id: 1, name: 'Catou'});
-            (function() { catou.merge({id: 2, name: 'CatouBis', extraField: 3});}).should.throw('An extra field `extraField` not defined in the schema was found.');
+            (function() { catou.merge({id: 2, name: 'CatouBis', extraField: 3});}).should.throw('An extra field `[extraField]` not defined in the schema was found.');
         });
         it('should throw if schema is enforced -- missing field', function(){
             Cat = thinky.createModel('Cat', { id: Number, name: String }, {enforce: true});
@@ -80,11 +79,6 @@ describe('Document', function(){
             catou = new Cat({id: 1, name: 'Catou'});
             (function() { catou.merge({id: 'nonValidValue', name: 'CatouBis', extraField: 3});}).should.throw('Value for [id] must be a Number');
         });
-
-
-
-    });
-    describe('merge', function() {
         it('should emit the event `change`', function(done){
             Cat = thinky.createModel('Cat', { id: Number, name: String });
             catou = new Cat({id: 1, name: 'Catou'});
@@ -109,8 +103,6 @@ describe('Document', function(){
                 done();
             })
         });
-    });
-    describe('save', function() {
         it('should not change the reference of the object', function(done){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
@@ -120,8 +112,6 @@ describe('Document', function(){
                 done();
             })
         });
-    });
-    describe('save', function() {
         it('should not change the reference of the object', function(done){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             minou = new Cat({name: 'Minou'});
@@ -131,10 +121,6 @@ describe('Document', function(){
                 done();
             })
         });
-    });
-
-
-    describe('save', function() {
         it('should update the document in the database', function(done){
             var value = 'Catouuuuu';
             catou.name = value;
@@ -144,8 +130,6 @@ describe('Document', function(){
                 done();
             })
         });
-    });
-    describe('save', function() {
         it('should update the document (in place)', function(done){
             var value = 'Catouuuuu';
             catou.name = value;
