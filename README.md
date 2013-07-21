@@ -51,7 +51,7 @@ kitty.save(function(err, result) {
 
 ### Docs
 
-See https://github.com/neumino/thinky/tree/master/doc/
+http://neumino.github.io/thinky/documentation.html
 
 
 ### Run the tests
@@ -64,13 +64,16 @@ mocha
 You are welcome to do a pull request.
 
 
-### TODO
-- Joins with lambda functions
+### Roadmap
+- Add examples on how to use Thinky.
+- Clean/reorganize tests and add more tests.
+- Let Thinky cache results so objects so there are no copies of the same document.
+- Joins with lambda functions.
 - Decide what to do with null (does it throw when checked against a Number?)
-- Promises?
 - Do not drain the pool when poolMin/poolMax are changed
-- Write examples
-- Clean tests
+- Promises?
+- Need something? Just ask :-)
+
 
 ### About
 Author: Michel Tu -- orphee@gmail.com -- www.justonepixel.com
