@@ -461,6 +461,16 @@ describe('Model', function(){
             })
         });
     });
+    describe('execute', function() {
+        it('should be able to execute arbitrary queries', function(done){
+            Cat = thinky.createModel('Cat', { id: String, name: String });
+            Cat.execute( r.db('test').table('Cat').limit(1), function(error, result) {
+                should.not.exists(error);
+                result.should.have.length(1);
+                done();
+            })
+        })
+    })
     describe('filter', function() {
         var Cat;
         var scope = {}

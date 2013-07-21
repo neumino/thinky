@@ -65,6 +65,7 @@ You are welcome to do a pull request.
 
 
 ### Roadmap
+- Stick closer to the driver -- Things will be chainable
 - Add examples on how to use Thinky.
 - Clean/reorganize tests and add more tests.
 - Let Thinky cache results so objects so there are no copies of the same document.
