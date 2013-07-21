@@ -118,6 +118,18 @@ section{
     width: 900px;
     margin: 40px auto 0px auto;
 }
+.documentation a, .documentation a:hover{
+    color: #000;
+    text-decoration: none;
+}
+.documentation .anchor{
+    margin-top: 30px;
+    display: block;
+}
+.documentation .anchor-first{
+    margin-top: 10px;
+    display: block;
+}
 
 footer{
     width: 900px;
