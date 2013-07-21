@@ -195,6 +195,7 @@ with `object.hello()`. You will have to use `object.__proto__.hello()`
 __Model.execute(__ query, callback __)__ [»](#model.execute)
 
 Executes the `query` and call the `callback` with two arguments
+
 - `error` if any error occured
 - an instance of the model or an array of instances
 
@@ -647,6 +648,12 @@ __Model.checkType(__ result, doc, originalDoc, schema, key, type, typeOf, prefix
 
 For every key of an object provided to create an instance of a model, we are going to check
 the type of the value and see if it is a valid one or not.
+
+
+<a id="model.\_execute" class="anchor-first"></a>
+__Model.\_execute(__ query, callback __)__ [»](#model._execute)
+
+Similar to `Model.execute` but just call `callback` without wrapping it.
 
 
 ### Document
