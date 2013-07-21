@@ -191,6 +191,17 @@ _Note_: The methods are bound to the prototype of the object. So if the instance
 with `object.hello()`. You will have to use `object.__proto__.hello()`
 
 
+<a id="model.execute" class="anchor-first"></a>
+__Model.execute(__ query, callback __)__ [»](#model.execute)
+
+Executes the `query` and call the `callback` with two arguments
+- `error` if any error occured
+- an instance of the model or an array of instances
+
+This method lets you execute arbitrary queries as long as they return objects
+from the table.
+
+
 
 <a id="model.setSchema" class="anchor"></a>
 __Model.setSchema(__ schema __)__ [»](#model.setschema)
