@@ -141,8 +141,22 @@ describe('Document', function(){
             })
         });
     });
+    describe('delete', function() {
+        it('should delete the doc', function(done){
+            Cat = thinky.createModel('Cat', { id: String, name: String });
+            catou = new Cat({name: 'Catou'});
 
-    
+            catou.save( function(error, result) {
+                should.exist(result.id);
+                catou.delete( null, function(error, result) {
+                    catou.getDocSettings().saved.should.be.false
+                    done();
+                })
+            })
+        });
+    });
+
+
     // Test listener
     describe('on', function() {
         it('should execute the callback when the even is emitted', function(done){

@@ -509,7 +509,7 @@ describe('Model', function(){
             });
         });
         it('retrieve documents in the database', function(done){
-            Cat.filter(function(doc) { return r.expr([catouCopy.id, minouCopy.id]).contains(doc("id")) },
+            Cat.filter(function(doc) { return r.expr([scope.catou.id, scope.minou.id]).contains(doc("id")) },
                 null,
                 function(error, result) {
                     should.not.exists(error);
@@ -706,6 +706,34 @@ describe('Model', function(){
                 done();
             })
         });
+        it('should be able to delete the joined doc -- nested joins', function(done) {
+            Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
+            Human = thinky.createModel('Human', {id: String, ownerName: String, idMom: String});
+            Mother = thinky.createModel('Mother', {id: String, motherName: String});
+            Human.hasOne(Mother, 'mom', {leftKey: 'idMom', rightKey: 'id'});
+            Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
+
+            var owner = new Human({ownerName: "Michel"});
+            var catou = new Cat({name: "Catou"});
+            var mother = new Mother({motherName: "Mom"});
+            catou['owner'] = owner;
+            owner['mom'] = mother;
+
+            catou.save( function(error, result) {
+                should.exist(catou.id);
+                should.exist(catou.idHuman);
+                should.exist(catou.owner.id);
+                catou_id = catou.id;
+                catou.delete( {deleteJoin: true}, function(error, result) {
+                    catou.getDocSettings().saved.should.be.false
+                    catou.owner.getDocSettings().saved.should.be.false
+                    catou.owner.mom.getDocSettings().saved.should.be.false
+                    done();
+                })
+            }, {saveJoin: true});
+        });
+
+
         it('getAll should work -- nested joins', function(done) {
             Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
             Human = thinky.createModel('Human', {id: String, ownerName: String, idMom: String});
