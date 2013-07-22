@@ -580,7 +580,7 @@ those in the same class).
 
 
 <a id="document.save" class="anchor"></a>
-__Document.save(__ callback, options __)__ [»](#document.save)
+__Document.save(__ options, callback __)__ [»](#document.save)
 
 Save the object in the database. Thinky will call insert or update depending
 on whether how the object was created.
