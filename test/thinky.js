@@ -110,7 +110,7 @@ describe('Thinky', function(){
             thinky.setOption('db', value);
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
-            catou.save( function(error, result) {
+            catou.save(null, function(error, result) {
                 should.equal(error.name, 'RqlRuntimeError');
                 done();
             })

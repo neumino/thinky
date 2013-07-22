@@ -384,12 +384,12 @@ describe('Model', function(){
         it('should add a field id -- Testing model', function(done){
             var Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
-            catou.save( function(error, result) {
+            catou.save(null, function(error, result) {
                 g.catouCopy = result;
 
                 should.exist(result.id);
                 var minou = new Cat({name: 'Minou'});
-                minou.save( function(error, result) {
+                minou.save(null, function(error, result) {
                     minouCopy = result;
                     done();
                 });
@@ -403,12 +403,12 @@ describe('Model', function(){
         it('-- init --', function(done){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             var catou = new Cat({name: 'Catou'});
-            catou.save( function(error, result) {
+            catou.save(null, function(error, result) {
                 scope.catou = result;
                 should.exist(result.id);
 
                 var minou = new Cat({name: 'Minou'});
-                minou.save( function(error, result) {
+                minou.save(null, function(error, result) {
                     scope.minou = result;
                     done();
                 });
@@ -453,12 +453,12 @@ describe('Model', function(){
         it('-- init --', function(done){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             var catou = new Cat({name: 'Catou'});
-            catou.save( function(error, result) {
+            catou.save(null, function(error, result) {
                 scope.catou = result;
                 should.exist(result.id);
 
                 var minou = new Cat({name: 'Minou'});
-                minou.save( function(error, result) {
+                minou.save(null, function(error, result) {
                     scope.minou = result;
                     done();
                 });
@@ -497,12 +497,12 @@ describe('Model', function(){
         it('-- init --', function(done){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             var catou = new Cat({name: 'Catou'});
-            catou.save( function(error, result) {
+            catou.save(null, function(error, result) {
                 scope.catou = result;
                 should.exist(result.id);
 
                 var minou = new Cat({name: 'Minou'});
-                minou.save( function(error, result) {
+                minou.save(null, function(error, result) {
                     scope.minou = result;
                     done();
                 });
@@ -659,12 +659,12 @@ describe('Model', function(){
             var owner = new Human({ownerName: "Michel"});
             var catou = new Cat({name: "Catou"});
             catou['owner'] = owner;
-            catou.save( function(error, result) {
+            catou.save({saveJoin: true}, function(error, result) {
                 should.exist(catou.id);
                 should.exist(catou.idHuman);
                 should.exist(catou.owner.id);
                 done();
-            }, {saveJoin: true});
+            });
         });
         it('should be able to save the joined doc -- nested joins', function(done) {
             Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
@@ -679,13 +679,13 @@ describe('Model', function(){
             catou['owner'] = owner;
             owner['mom'] = mother;
 
-            catou.save( function(error, result) {
+            catou.save( {saveJoin: true}, function(error, result) {
                 should.exist(catou.id);
                 should.exist(catou.idHuman);
                 should.exist(catou.owner.id);
                 catou_id = catou.id;
                 done();
-            }, {saveJoin: true});
+            });
         });
         it('get should be able to get joined documents', function(done) {
             var catou = Cat.get(catou_id, {getJoin: true}, function(error, result) {
@@ -719,7 +719,7 @@ describe('Model', function(){
             catou['owner'] = owner;
             owner['mom'] = mother;
 
-            catou.save( function(error, result) {
+            catou.save( {saveJoin: true}, function(error, result) {
                 should.exist(catou.id);
                 should.exist(catou.idHuman);
                 should.exist(catou.owner.id);
@@ -730,7 +730,7 @@ describe('Model', function(){
                     catou.owner.mom.getDocSettings().saved.should.be.false
                     done();
                 })
-            }, {saveJoin: true});
+            });
         });
 
 
@@ -747,7 +747,7 @@ describe('Model', function(){
             catou['owner'] = owner;
             owner['mom'] = mother;
 
-            catou.save( function(error, result) {
+            catou.save({saveJoin: true}, function(error, result) {
                 should.exist(catou.id);
                 should.exist(catou.idHuman);
                 should.exist(catou.owner.id);
@@ -758,7 +758,7 @@ describe('Model', function(){
                 catou1['owner'] = owner1;
                 owner1['mom'] = mother1;
 
-                catou1.save( function(error, result) {
+                catou1.save({saveJoin: true}, function(error, result) {
                     Cat.getAll([catou.id, catou1.id], {index: 'id', getJoin: true}, function(error, result) {
                         result.should.have.length(2);
 
@@ -777,9 +777,9 @@ describe('Model', function(){
                         done();
 
                     })
-                }, {saveJoin: true})
+                })
 
-            }, {saveJoin: true});
+            });
         });
         it('filter should work -- nested joins', function(done) {
             Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
@@ -794,7 +794,7 @@ describe('Model', function(){
             catou['owner'] = owner;
             owner['mom'] = mother;
 
-            catou.save( function(error, result) {
+            catou.save({saveJoin: true}, function(error, result) {
                 should.exist(catou.id);
                 should.exist(catou.idHuman);
                 should.exist(catou.owner.id);
@@ -805,7 +805,7 @@ describe('Model', function(){
                 catou1['owner'] = owner1;
                 owner1['mom'] = mother1;
 
-                catou1.save( function(error, result) {
+                catou1.save({saveJoin: true}, function(error, result) {
                     Cat.filter(function(doc) { return r.expr([catou.id, catou1.id]).contains(doc("id")) },
                         {getJoin: true},
                         function(error, result) {
@@ -826,9 +826,9 @@ describe('Model', function(){
                             done();
                         }
                     )
-                }, {saveJoin: true})
+                })
 
-            }, {saveJoin: true});
+            });
         });
     })
 
@@ -852,7 +852,7 @@ describe('Model', function(){
             task2 = new Task({task: "Eat"});
             task3 = new Task({task: "Sleep"});
             catou.tasks = [task1, task2, task3];
-            catou.save( function(error, result) {
+            catou.save({saveJoin: true}, function(error, result) {
                 catou.taskIds.should.have.length(3);
                 should.exist(catou.taskIds[0]);
                 should.exist(catou.taskIds[1]);
@@ -862,7 +862,7 @@ describe('Model', function(){
                 should.exist(catou.tasks[2].id);
 
                 done();
-            }, {saveJoin: true});
+            });
         });
         it('get should be able to get joined documents', function(done) {
             Cat.get(catou.id, {getJoin: true}, function(error, result) {

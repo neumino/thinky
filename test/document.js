@@ -98,7 +98,7 @@ describe('Document', function(){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
 
-            catou.save( function(error, result) {
+            catou.save(null, function(error, result) {
                 should.exist(result.id);
                 done();
             })
@@ -106,7 +106,7 @@ describe('Document', function(){
         it('should not change the reference of the object', function(done){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
-            catou.save( function(error, result) {
+            catou.save(null, function(error, result) {
                 should.equal(catou, result);
                 catouCopy = result;
                 done();
@@ -115,7 +115,7 @@ describe('Document', function(){
         it('should not change the reference of the object', function(done){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             minou = new Cat({name: 'Minou'});
-            minou.save( function(error, result) {
+            minou.save(null, function(error, result) {
                 should.equal(minou, result);
                 minouCopy = result;
                 done();
@@ -125,7 +125,7 @@ describe('Document', function(){
             var value = 'Catouuuuu';
             catou.name = value;
 
-            catou.save( function(error, result) {
+            catou.save(null, function(error, result) {
                 should.equal(result.name, value);
                 done();
             })
@@ -134,7 +134,7 @@ describe('Document', function(){
             var value = 'Catouuuuu';
             catou.name = value;
 
-            catou.save( function(error, result) {
+            catou.save(null, function(error, result) {
                 should.equal(catou, result);
 
                 done();
@@ -146,7 +146,7 @@ describe('Document', function(){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
 
-            catou.save( function(error, result) {
+            catou.save(null, function(error, result) {
                 should.exist(result.id);
                 catou.delete( null, function(error, result) {
                     catou.getDocSettings().saved.should.be.false
