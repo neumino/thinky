@@ -591,6 +591,17 @@ The argument `options` can have the following fields:
 
 - `saveJoin`, which is a boolean. If set to true, the joined documents will be saved (default value is false).
 
+<a id="document.delete" class="anchor"></a>
+__Document.delete(__ options, callback __)__ [»](#document.delete)
+
+Delete the object in the database. 
+
+The event `delete` is triggered if the document is successfully deleted.
+
+The argument `options` can have the following fields:
+
+- `deleteJoin`, which is a boolean. If set to true, the joined documents will be deleted (default value is false).
+
 
 <a id="document.merge" class="anchor"></a>
 __Document.merge(__ newDoc, replace __)__ [»](#document.merge)
