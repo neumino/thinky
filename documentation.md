@@ -229,19 +229,20 @@ Returns the primary key of the model.
 
 
 <a id="model.get" class="anchor"></a>
-__Model.get(__ id, callback, options __)__ [»](#model.get)
+__Model.get(__ id, options, callback __)__ [»](#model.get)
 
-Retrieve a document (or documents) by primary keys.
+Retrieves a document (or documents) by primary keys.
+Returns the query. The query is not executed if callback is not passed.
 
 - `id` can be
     - The value of the primary key of the object you want to retrieve
     - An array of values of the primary keys of the objects you want to retrieve
-- `callback` is the callback that is going to be called. Two arguments are passed to the callback:
-    - `error`, which is the error if one occured.
-    - `result` an instance of the model or an array of instances.
 - options can only have the field
     - `getJoin` which is a boolean. If set to `true`, the `result` passed to the callback
     will be the instance of the classe with its joined documents.
+- `callback` is the callback that is going to be called. Two arguments are passed to the callback:
+    - `error`, which is the error if one occured.
+    - `result` an instance of the model or an array of instances.
 
 
 _Note_: Thinky does not currently keep track of the created objects (to avoid leaks), so
@@ -249,10 +250,11 @@ new objects are going to be created even if they somehow already exist.
 
 
 
-<a id="model.getll" class="anchor"></a>
-__Model.getAll(__ value, indexName, callback, options __)__ [»](#model.getall)
+<a id="model.getall" class="anchor"></a>
+__Model.getAll(__ value, options, callback __)__ [»](#model.getall)
 
-Retrieve documents with a secondary index.
+Retrieves documents with a secondary index.
+Returns the query. The query is not executed if callback is not passed.
 
 - `value` can be
     - The value of the secondary index of the object you want to retrieve
@@ -262,15 +264,17 @@ Retrieve documents with a secondary index.
     - `error`, which is the error if one occured.
     - `result` an array of instances.
 - options can only have the field
+    - `index`: The index used. The default value will be the primary key
     - `getJoin` which is a boolean. If set to `true`, the `result` passed to the callback
     will be the instance of the classe with its joined documents.
 
 
 
 <a id="model.filter" class="anchor"></a>
-__Model.filter(__ filterFunction, callback, options  __)__ [»](#model.filter)
+__Model.filter(__ filterFunction, options, callback  __)__ [»](#model.filter)
 
-Retrieve documents based on the filterFunction
+Retrieve documents based on the filterFunction.
+Returns the query. The query is not executed if callback is not passed.
 
 - `filterFunction` is an anynonymous function passed in the query to filter the results we want.
 - `callback` is the callback that is going to be called. Two arguments are passed to the callback:
@@ -281,12 +285,33 @@ Retrieve documents based on the filterFunction
     will be the instance of the classe with its joined documents.
 
 
+<a id="model.skip" class="anchor"></a>
+__Model.skip(__ skipValue, options, callback  __)__ [»](#model.skip)
+
+Retrieve documents of the model and skip `skipValue` documents.
+Returns the query. The query is not executed if callback is not passed.
+
+
+<a id="model.limit" class="anchor"></a>
+__Model.limit(__ limitValue, options, callback  __)__ [»](#model.limit)
+
+Retrieve documents and limit to `limitValue` documents.
+Returns the query. The query is not executed if callback is not passed.
+
+<a id="model.orderby" class="anchor"></a>
+__Model.orderBy(__ field, options, callback  __)__ [»](#model.orderby)
+
+Order results by `field`.
+`field` can be a single field or an array of fields.
+
+Returns the query. The query is not executed if callback is not passed.
 
 
 <a id="model.count" class="anchor"></a>
 __Model.count()__ [»](#model.count)
 
 Returns the number of elements in the table of your model.
+Returns the query. The query is not executed if callback is not passed.
 
 
 <a id="model.addlistener" class="anchor"></a>
@@ -499,6 +524,37 @@ Cat.get( 'b7588193-7fb7-42da-8ee3-897392df3738', function(err, result) {
 
 
 ```
+
+### Query
+
+<a id="query.get" class="anchor-first"></a>
+__Query.get(__ id, options, callback __)__ [»](#query.get)
+
+
+<a id="query.getAll" class="anchor"></a>
+__Query.getAll(__ value, options, callback __)__ [»](#query.getall)
+
+
+<a id="query.filter" class="anchor"></a>
+_Query.filter(__ filterFunction, options, callback  __)__ [»](#query.filter)
+
+
+<a id="query.skip" class="anchor"></a>
+__Model.skip(__ skipValue, options, callback  __)__ [»](#model.skip)
+
+
+<a id="query.limit" class="anchor"></a>
+__Model.limit(__ limitValue, options, callback  __)__ [»](#model.limit)
+
+
+<a id="query.orderby" class="anchor"></a>
+__Query.orderBy(__ field, options, callback  __)__ [»](#model.orderby)
+
+
+<a id="query.count" class="anchor"></a>
+__Query.count()__ [»](#query.count)
+
+
 
 ### Document
 
