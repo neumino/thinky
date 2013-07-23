@@ -164,6 +164,19 @@ describe('Document', function(){
                 })
             })
         });
+        it('should delete the doc -- other signature', function(done){
+            Cat = thinky.createModel('Cat', { id: String, name: String });
+            catou = new Cat({name: 'Catou'});
+
+            catou.save(null, function(error, result) {
+                should.exist(result.id);
+                catou.delete(function(error, result) {
+                    catou.getDocSettings().saved.should.be.false
+                    done();
+                })
+            })
+        });
+
     });
 
 
