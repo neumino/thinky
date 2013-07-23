@@ -103,6 +103,16 @@ describe('Document', function(){
                 done();
             })
         });
+        it('should add a field id -- Testing document -- other signature', function(done){
+            Cat = thinky.createModel('Cat', { id: String, name: String });
+            catou = new Cat({name: 'Catou'});
+
+            catou.save(function(error, result) {
+                should.exist(result.id);
+                done();
+            })
+        });
+
         it('should not change the reference of the object', function(done){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
