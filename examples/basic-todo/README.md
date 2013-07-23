@@ -1,4 +1,4 @@
-# Basic example for Thinky
+# Basic Todo app with Thinky
 
 ## Original code
 
