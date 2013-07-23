@@ -229,7 +229,7 @@ Returns the primary key of the model.
 
 
 <a id="model.get" class="anchor"></a>
-__Model.get(__ id, options, callback __)__ [»](#model.get)
+__Model.get(__ id, callback __)__ [»](#model.get)
 
 Retrieves a document (or documents) by primary keys.
 Returns the query. The query is not executed if callback is not passed.
@@ -237,9 +237,6 @@ Returns the query. The query is not executed if callback is not passed.
 - `id` can be
     - The value of the primary key of the object you want to retrieve
     - An array of values of the primary keys of the objects you want to retrieve
-- options can only have the field
-    - `getJoin` which is a boolean. If set to `true`, the `result` passed to the callback
-    will be the instance of the classe with its joined documents.
 - `callback` is the callback that is going to be called. Two arguments are passed to the callback:
     - `error`, which is the error if one occured.
     - `result` an instance of the model or an array of instances.
@@ -265,13 +262,12 @@ Returns the query. The query is not executed if callback is not passed.
     - `result` an array of instances.
 - options can only have the field
     - `index`: The index used. The default value will be the primary key
-    - `getJoin` which is a boolean. If set to `true`, the `result` passed to the callback
     will be the instance of the classe with its joined documents.
 
 
 
 <a id="model.filter" class="anchor"></a>
-__Model.filter(__ filterFunction, options, callback  __)__ [»](#model.filter)
+__Model.filter(__ filterFunction, callback  __)__ [»](#model.filter)
 
 Retrieve documents based on the filterFunction.
 Returns the query. The query is not executed if callback is not passed.
@@ -280,31 +276,38 @@ Returns the query. The query is not executed if callback is not passed.
 - `callback` is the callback that is going to be called. Two arguments are passed to the callback:
     - `error`, which is the error if one occured.
     - `result` an array of instances.
-- options can only have the field
-    - `getJoin` which is a boolean. If set to `true`, the `result` passed to the callback
-    will be the instance of the classe with its joined documents.
 
 
 <a id="model.skip" class="anchor"></a>
-__Model.skip(__ skipValue, options, callback  __)__ [»](#model.skip)
+__Model.skip(__ skipValue, callback  __)__ [»](#model.skip)
 
 Retrieve documents of the model and skip `skipValue` documents.
 Returns the query. The query is not executed if callback is not passed.
 
 
 <a id="model.limit" class="anchor"></a>
-__Model.limit(__ limitValue, options, callback  __)__ [»](#model.limit)
+__Model.limit(__ limitValue, callback  __)__ [»](#model.limit)
 
 Retrieve documents and limit to `limitValue` documents.
 Returns the query. The query is not executed if callback is not passed.
 
 <a id="model.orderby" class="anchor"></a>
-__Model.orderBy(__ field, options, callback  __)__ [»](#model.orderby)
+__Model.orderBy(__ field, callback  __)__ [»](#model.orderby)
 
 Order results by `field`.
 `field` can be a single field or an array of fields.
 
 Returns the query. The query is not executed if callback is not passed.
+
+
+<a id="model.getjoin" class="anchor"></a>
+__Model.getJoin(__ callback  __)__ [»](#model.getjoin)
+
+Order results by `field`.
+`field` can be a single field or an array of fields.
+
+Returns the query. The query is not executed if callback is not passed.
+
 
 
 <a id="model.count" class="anchor"></a>
@@ -527,8 +530,13 @@ Cat.get( 'b7588193-7fb7-42da-8ee3-897392df3738', function(err, result) {
 
 ### Query
 
+_Note_: These methods are the same as the one defined on Model.
+The Query function is defined so you can chain methods (like with the
+driver).
+
+
 <a id="query.get" class="anchor-first"></a>
-__Query.get(__ id, options, callback __)__ [»](#query.get)
+__Query.get(__ id, callback __)__ [»](#query.get)
 
 
 <a id="query.getAll" class="anchor"></a>
@@ -536,23 +544,27 @@ __Query.getAll(__ value, options, callback __)__ [»](#query.getall)
 
 
 <a id="query.filter" class="anchor"></a>
-_Query.filter(__ filterFunction, options, callback  __)__ [»](#query.filter)
+_Query.filter(__ filterFunction, callback  __)__ [»](#query.filter)
 
 
 <a id="query.skip" class="anchor"></a>
-__Model.skip(__ skipValue, options, callback  __)__ [»](#model.skip)
+__Model.skip(__ skipValue, callback  __)__ [»](#model.skip)
 
 
 <a id="query.limit" class="anchor"></a>
-__Model.limit(__ limitValue, options, callback  __)__ [»](#model.limit)
+__Model.limit(__ limitValue, callback  __)__ [»](#model.limit)
 
 
 <a id="query.orderby" class="anchor"></a>
-__Query.orderBy(__ field, options, callback  __)__ [»](#model.orderby)
+__Query.orderBy(__ field, callback  __)__ [»](#model.orderby)
 
 
 <a id="query.count" class="anchor"></a>
 __Query.count()__ [»](#query.count)
+
+<a id="query.getjoin" class="anchor"></a>
+__Query.getJoin(__ callback __)__ [»](#query.getjoin)
+
 
 
 
