@@ -415,13 +415,13 @@ describe('Model', function(){
             });
         });
         it('should retrieve a document in the database', function(done){
-            Cat.get(scope.catou.id, null, function(error, result) {
+            Cat.get(scope.catou.id, function(error, result) {
                 should(_.isEqual(result, scope.catou));
                 done();
             })
         });
         it('should retrieve documents in the database', function(done){
-            Cat.get([scope.catou.id, scope.minou.id], null, function(error, result) {
+            Cat.get([scope.catou.id, scope.minou.id], function(error, result) {
                 should.not.exists(error);
                 result.should.have.length(2);
                 should((result[0].id === scope.catou.id) || (result[0].id === scope.minou.id));
@@ -430,7 +430,7 @@ describe('Model', function(){
         });
         //TODO Move this test elsewhere // just testing chaining for now
         it('with limit should work', function(done){
-            Cat.get([scope.catou.id, scope.minou.id]).skip(1).limit(1, null, function(error, result) {
+            Cat.get([scope.catou.id, scope.minou.id]).skip(1).limit(1, function(error, result) {
                 should.not.exists(error);
                 result.should.have.length(1);
                 should((result[0].id === scope.catou.id) || (result[0].id === scope.minou.id));
@@ -510,7 +510,6 @@ describe('Model', function(){
         });
         it('retrieve documents in the database', function(done){
             Cat.filter(function(doc) { return r.expr([scope.catou.id, scope.minou.id]).contains(doc("id")) },
-                null,
                 function(error, result) {
                     should.not.exists(error);
                     result.should.have.length(2);
@@ -520,7 +519,6 @@ describe('Model', function(){
         });
         it('should return many documents', function(done){
             Cat.filter(function(doc) { return true },
-                null,
                 function(error, result) {
                     should.not.exists(error);
                     should(result.length > 2);
@@ -534,7 +532,6 @@ describe('Model', function(){
         it('should return the number of document in the table', function(done){
             var Cat = thinky.createModel('Cat', { id: String, name: String });
             Cat.filter(function(doc) { return true },
-                null,
                 function(error, result) {
                     should.not.exists(error);
                     Cat.count( function(error, resultCount) {
@@ -688,7 +685,7 @@ describe('Model', function(){
             });
         });
         it('get should be able to get joined documents', function(done) {
-            var catou = Cat.get(catou_id, {getJoin: true}, function(error, result) {
+            var catou = Cat.get(catou_id).getJoin().run(function(error, result) {
                 should.not.exist(error);
                 should.exist(result.id);
                 should.exist(result.idHuman);
@@ -699,7 +696,7 @@ describe('Model', function(){
             })
         });
         it('get should be able to get joined documents -- and they should be `saved`', function(done) {
-            var catou = Cat.get(catou_id, {getJoin: true}, function(error, result) {
+            var catou = Cat.get(catou_id).getJoin().run(function(error, result) {
                 should(result.getDocument().docSettings.saved, true)
                 should(result.owner.getDocument().docSettings.saved, true)
                 should(result.owner.mom.getDocument().docSettings.saved, true)
@@ -759,22 +756,23 @@ describe('Model', function(){
                 owner1['mom'] = mother1;
 
                 catou1.save({saveJoin: true}, function(error, result) {
-                    Cat.getAll([catou.id, catou1.id], {index: 'id', getJoin: true}, function(error, result) {
-                        result.should.have.length(2);
+                    Cat.getAll([catou.id, catou1.id], {index: 'id'})
+                        .getJoin(function(error, result) {
+                            result.should.have.length(2);
 
-                        should.exist(result[0].id);
-                        should.exist(result[0].idHuman);
-                        should.exist(result[0].owner.id);
-                        should.exist(result[0].owner.idMom);
-                        should.exist(result[0].owner.mom.id);
+                            should.exist(result[0].id);
+                            should.exist(result[0].idHuman);
+                            should.exist(result[0].owner.id);
+                            should.exist(result[0].owner.idMom);
+                            should.exist(result[0].owner.mom.id);
 
-                        should.exist(result[1].id);
-                        should.exist(result[1].idHuman);
-                        should.exist(result[1].owner.id);
-                        should.exist(result[1].owner.idMom);
-                        should.exist(result[1].owner.mom.id);
+                            should.exist(result[1].id);
+                            should.exist(result[1].idHuman);
+                            should.exist(result[1].owner.id);
+                            should.exist(result[1].owner.idMom);
+                            should.exist(result[1].owner.mom.id);
 
-                        done();
+                            done();
 
                     })
                 })
@@ -806,8 +804,8 @@ describe('Model', function(){
                 owner1['mom'] = mother1;
 
                 catou1.save({saveJoin: true}, function(error, result) {
-                    Cat.filter(function(doc) { return r.expr([catou.id, catou1.id]).contains(doc("id")) },
-                        {getJoin: true},
+                    Cat.filter(function(doc) { return r.expr([catou.id, catou1.id]).contains(doc("id")) })
+                        .getJoin().run(
                         function(error, result) {
                             result.should.have.length(2);
 
@@ -865,7 +863,7 @@ describe('Model', function(){
             });
         });
         it('get should be able to get joined documents', function(done) {
-            Cat.get(catou.id, {getJoin: true}, function(error, result) {
+            Cat.get(catou.id).getJoin().run(function(error, result) {
                 result.taskIds.should.have.length(3);
                 should.exist(result.taskIds[0]);
                 should.exist(result.taskIds[1]);
@@ -878,7 +876,7 @@ describe('Model', function(){
             })
         });
         it('get should be able to get joined documents -- and they should be `saved`', function(done) {
-            Cat.get(catou.id, {getJoin: true}, function(error, result) {
+            Cat.get(catou.id).getJoin().run(function(error, result) {
                 should(result.tasks[0].getDocument().docSettings.saved, true);
                 should(result.tasks[1].getDocument().docSettings.saved, true);
                 should(result.tasks[2].getDocument().docSettings.saved, true);
@@ -886,7 +884,7 @@ describe('Model', function(){
             })
         });
         it('getAll should work', function(done) {
-            Cat.getAll([catou.id], {getJoin: true, index: 'id'}, function(error, result) {
+            Cat.getAll([catou.id], {index: 'id'}).getJoin().run(function(error, result) {
                 result.should.have.length(1);
                 result[0].taskIds.should.have.length(3);
                 should.exist(result[0].taskIds[0]);
@@ -901,21 +899,18 @@ describe('Model', function(){
         });
 
         it('filter should work', function(done) {
-            Cat.filter(function(doc) { return doc("id").eq(catou.id) },
-                {getJoin: true},
-                function(error, result) {
-                    result.should.have.length(1);
-                    result[0].taskIds.should.have.length(3);
-                    should.exist(result[0].taskIds[0]);
-                    should.exist(result[0].taskIds[1]);
-                    should.exist(result[0].taskIds[2]);
-                    should.exist(result[0].tasks[0].id);
-                    should.exist(result[0].tasks[1].id);
-                    should.exist(result[0].tasks[2].id);
-                    catou.tasks.should.have.length(3);
-                    done();
-                } 
-            )
+            Cat.filter(function(doc) { return doc("id").eq(catou.id) }).getJoin().run(function(error, result) {
+                result.should.have.length(1);
+                result[0].taskIds.should.have.length(3);
+                should.exist(result[0].taskIds[0]);
+                should.exist(result[0].taskIds[1]);
+                should.exist(result[0].taskIds[2]);
+                should.exist(result[0].tasks[0].id);
+                should.exist(result[0].tasks[1].id);
+                should.exist(result[0].tasks[2].id);
+                catou.tasks.should.have.length(3);
+                done();
+            })
         });
     })
 
