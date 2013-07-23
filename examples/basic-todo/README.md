@@ -3,13 +3,13 @@
 ## Original code
 
 The original source code is from [dreamerslab](http://dreamerslab.com)
-- See their [https://github.com/dreamerslab.com)[github page].
+- See their [github page](https://github.com/dreamerslab.com).
 - The tutorial was about express, see their [blog post](http://dreamerslab.com/blog/en/write-a-todo-list-with-express-and-mongodb/).
 
 We merely change a dozen of lines to use thinky and rethinkdb instead of mongoose and mongodb.
 
 
-## Run the app
+## Install and run the app
 
 Install the dependencies
 
@@ -40,7 +40,7 @@ Start the app
 node app.js
 ```
 
-Open your browser to `http://localhost:3001/`
+Open your browser to `http://localhost:3001/` and here you go!
 
 
 ## What has changed?
@@ -72,7 +72,7 @@ Note that we can provide default value in the schema.
 ```
 
 ### routes/index.js
-The only things that changed are the name of the method:
+The only things that changed are the names of the methods:
 
 - `find` is `filter`
 - `sort` is `orderBy`
