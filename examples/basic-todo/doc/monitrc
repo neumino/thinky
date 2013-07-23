@@ -1,0 +1,27 @@
+# save this file to /etc/monit/conf.d/todo.monitrc
+# or save it as /etc/monit/monitrc
+# $ sudo monit start todo
+# more monit configs on http://portable.easylife.tw/2407#ixzz1co2a6ygK
+
+set logfile /srv/www/todo/log/monit.log
+
+check system express-todo-example.dreamerslab.com
+      start "/sbin/start todo" with timeout 60 seconds
+      stop "/sbin/stop todo"
+      if loadavg (1min) > 4 then alert
+      if loadavg (5min) > 2 then alert
+      if memory usage > 75% then alert
+      if memory usage > 95% then restart
+      if swap usage > 25% then alert
+      if cpu usage (user) > 70% then alert
+      if cpu usage (user) > 90% then restart
+      if cpu usage (system) > 30% then alert
+      if cpu usage (wait) > 20% then alert
+
+check host todo with address 127.0.0.1
+      start "/sbin/start todo" with timeout 60 seconds
+      stop "/sbin/stop todo"
+      if failed port 3001 protocol HTTP
+        request /
+        with timeout 5 seconds
+        then restart
