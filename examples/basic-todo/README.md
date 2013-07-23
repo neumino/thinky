@@ -6,7 +6,7 @@ The original source code is from [dreamerslab](http://dreamerslab.com)
 - See their [github page](https://github.com/dreamerslab.com).
 - The tutorial was about express, see their [blog post](http://dreamerslab.com/blog/en/write-a-todo-list-with-express-and-mongodb/).
 
-We merely change a dozen of lines to use thinky and rethinkdb instead of mongoose and mongodb.
+We merely changed a dozen of lines to use thinky and rethinkdb instead of mongoose and mongodb.
 
 
 ## Install and run the app
