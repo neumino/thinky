@@ -191,7 +191,7 @@ _Note_: The methods are bound to the prototype of the object. So if the instance
 with `object.hello()`. You will have to use `object.__proto__.hello()`
 
 
-<a id="model.execute" class="anchor-first"></a>
+<a id="model.execute" class="anchor"></a>
 __Model.execute(__ query, callback __)__ [»](#model.execute)
 
 Executes the `query` and call the `callback` with two arguments
