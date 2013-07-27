@@ -31,7 +31,7 @@ michel = new Human({name: Michel});
 kitty.owner = michel;
 
 kitty.hello(); // Log "Hello, I'm Kitty
-kitty.save(function(err, result) {
+kitty.save({saveJoin: true}, function(err, result) {
     if (err) throw err;
     console.log("Kitty and Michel have been saved in the database");
     /*
