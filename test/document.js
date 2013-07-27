@@ -435,7 +435,6 @@ describe('Document', function(){
             var task3 = new Task({task: "Sleep"});
             catou.tasks = [task1, task2, task3];
             catou.save({saveJoin: true}, function(error, result) {
-
                 catou.delete(function(error, result) {
                     should.equal(catou.getDocSettings().saved, false);
                     should.equal(catou.tasks[0].getDocSettings().saved, true);

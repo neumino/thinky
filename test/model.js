@@ -8,15 +8,14 @@ thinky.init({})
 
 describe('Model', function(){
     //var Cat, catou, minou, catou_id, catouCopy, minouCopy, Dog, dogou, Human, owner;
-    var g = {};
     describe('createModel', function(){
-        var Cat, Dog;
         it('Create model', function(){
-            Cat = thinky.createModel('Cat', { catName: String });
+            var Cat = thinky.createModel('Cat', { catName: String });
             should.exist(Cat);
         });
         it('should create another Model', function() {
-            Dog = thinky.createModel('Dog', { dogName: String });
+            var Cat = thinky.createModel('Cat', { catName: String });
+            var Dog = thinky.createModel('Dog', { dogName: String });
             Cat.should.not.equal(Dog)
             Cat.__proto__.should.not.equal(Dog.__proto__)
         });
@@ -24,33 +23,42 @@ describe('Model', function(){
 
     // Test new
     describe('new', function(){
-        var Cat, catou, minou, Dog, dogou;
-        it('-- init --', function() {
-            Cat = thinky.createModel('Cat', { catName: String });
-            Dog = thinky.createModel('Dog', { dogName: String });
-        });
         it('should create a new instance of the Model', function() {
-            catou = new Cat({catName: 'Catou'});
+            var Cat = thinky.createModel('Cat', { catName: String });
+            var catou = new Cat({catName: 'Catou'});
+
             should(Object.prototype.toString.call(catou) === '[object Object]');
             should.equal(catou.catName, 'Catou');
         });
         it('should create another new instance of the Model', function() {
-            minou = new Cat({catName: 'Minou'});
-            should(Object.prototype.toString.call(catou) === '[object Object]');
+            var Cat = thinky.createModel('Cat', { catName: String });
+            var minou = new Cat({catName: 'Minou'});
+
+            should(Object.prototype.toString.call(minou) === '[object Object]');
             should.equal(minou.catName, 'Minou');
         });
         it('should create documents with different settings', function() {
+            var Cat = thinky.createModel('Cat', { catName: String });
+            var catou = new Cat({catName: 'Catou'});
+            var minou = new Cat({catName: 'Minou'});
+
             minou.getDocSettings().should.not.equal(catou.getDocSettings());
         });
         it('should not change the previous instances', function() {
-            catou = new Cat({catName: 'Catou'});
-            should(Object.prototype.toString.call(catou) === '[object Object]');
+            var Cat = thinky.createModel('Cat', { catName: String });
+            var catou = new Cat({catName: 'Catou'});
+
             should.equal(catou.catName, 'Catou');
         });
         it('should not interfer with previously created instances of other classes', function() {
-            dogou = new Dog({dogName: "Dogou"});
+            var Cat = thinky.createModel('Cat', { catName: String });
+            var Dog = thinky.createModel('Dog', { dogName: String });
+            var catou = new Cat({catName: 'Catou'});
+            var dogou = new Dog({dogName: "Dogou"});
+
             should(dogou.getModel().name, 'Dog');
             should(catou.getModel().name, 'Cat');
+
             catou = new Cat({catName: 'Catou'});
             should(dogou.getModel().name, 'Dog');
             should(catou.getModel().name, 'Cat');
@@ -385,8 +393,6 @@ describe('Model', function(){
             var Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
             catou.save(null, function(error, result) {
-                g.catouCopy = result;
-
                 should.exist(result.id);
                 var minou = new Cat({name: 'Minou'});
                 minou.save(null, function(error, result) {
@@ -448,39 +454,62 @@ describe('Model', function(){
         });
     });
     describe('getAll', function() {
-        var Cat;
-        var scope = {}
-        it('-- init --', function(done){
-            Cat = thinky.createModel('Cat', { id: String, name: String });
+        it('should retrieve some documents in the database -- single values', function(done){
+            var Cat = thinky.createModel('Cat', { id: String, name: String });
+            var catou = new Cat({name: 'Catou'});
+            catou.save(null, function(error, result) {
+                Cat.getAll(catou.name, {index: 'name'}, function(error, result) {
+                    if (error) throw error;
+                    should.not.exist(error);
+                    should(result.length >= 1);
+                    done();
+                })
+            });
+        });
+        it('should retrieve some documents in the database -- multiple values', function(done){
+            var Cat = thinky.createModel('Cat', { id: String, name: String });
             var catou = new Cat({name: 'Catou'});
             catou.save(null, function(error, result) {
                 if (error) throw error;
-                scope.catou = result;
-                should.exist(result.id);
 
                 var minou = new Cat({name: 'Minou'});
                 minou.save(null, function(error, result) {
                     if (error) throw error;
-                    scope.minou = result;
-                    done();
+                    Cat.getAll([catou.name, minou.name], {index: 'name'}, function(error, result) {
+                        should.not.exists(error);
+                        should(result.length >= 2);
+                        done();
+                    });
+
                 });
             });
         });
-        it('should retrieve some documents in the database -- single values', function(done){
-            Cat.getAll(scope.catou.name, {index: 'name'}, function(error, result) {
-                if (error) throw error;
-                should.not.exist(error);
-                should(result.length >= 1);
-                done();
+        it('should work with hasMany joins', function(done) {
+            var Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
+            var Task = thinky.createModel('Task', {id: String, task: String});
+            Cat.hasMany(Task, 'tasks', {leftKey: 'taskIds', rightKey: 'id'});
+
+            var catou = new Cat({name: "Catou"});
+            var task1 = new Task({task: "Catch the red dot"});
+            var task2 = new Task({task: "Eat"});
+            var task3 = new Task({task: "Sleep"});
+            catou.tasks = [task1, task2, task3];
+            catou.save({saveJoin: true}, function(error, firstResult) {
+                Cat.getAll([catou.id], {index: 'id'}).getJoin().run(function(error, result) {
+                    result.should.have.length(1);
+                    result[0].taskIds.should.have.length(3);
+                    should.exist(result[0].taskIds[0]);
+                    should.exist(result[0].taskIds[1]);
+                    should.exist(result[0].taskIds[2]);
+                    should.exist(result[0].tasks[0].id);
+                    should.exist(result[0].tasks[1].id);
+                    should.exist(result[0].tasks[2].id);
+                    catou.tasks.should.have.length(3);
+                    done();
+                })
             })
         });
-        it('should retrieve some documents in the database -- multiple values', function(done){
-            Cat.getAll([scope.catou.name, scope.minou.name], {index: 'name'}, function(error, result) {
-                should.not.exists(error);
-                should(result.length >= 2);
-                done();
-            })
-        });
+
     });
 
     describe('execute', function() {
@@ -529,6 +558,32 @@ describe('Model', function(){
                 }
             )
         });
+        it('should work with a hasMany relation', function(done) {
+            var Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
+            var Task = thinky.createModel('Task', {id: String, task: String});
+            Cat.hasMany(Task, 'tasks', {leftKey: 'taskIds', rightKey: 'id'});
+
+            var catou = new Cat({name: "Catou"});
+            var task1 = new Task({task: "Catch the red dot"});
+            var task2 = new Task({task: "Eat"});
+            var task3 = new Task({task: "Sleep"});
+            catou.tasks = [task1, task2, task3];
+            catou.save({saveJoin: true}, function(error, firstResult) {
+                Cat.filter(function(doc) { return doc("id").eq(catou.id) }).getJoin().run(function(error, result) {
+                    result.should.have.length(1);
+                    result[0].taskIds.should.have.length(3);
+                    should.exist(result[0].taskIds[0]);
+                    should.exist(result[0].taskIds[1]);
+                    should.exist(result[0].taskIds[2]);
+                    should.exist(result[0].tasks[0].id);
+                    should.exist(result[0].tasks[1].id);
+                    should.exist(result[0].tasks[2].id);
+                    catou.tasks.should.have.length(3);
+                    done();
+                })
+            })
+        });
+
     });
 
     describe('count', function() {
@@ -553,27 +608,29 @@ describe('Model', function(){
         it('should add a listener on the model', function() {
             var Cat = thinky.createModel('Cat', {name: String});
             Cat.on('test', function() { });
-            should.exists(Cat.getModel()._listeners['test']);
-            Cat.getModel()._listeners['test'].should.have.length(1);
+            should.exists(Cat.listeners('test'));
+            Cat.listeners('test').should.have.length(1);
         });
-        it('should add a listener on the model', function(done) {
+        it('should add a listener on the model -- and emit should trigger it', function(done) {
             var Cat = thinky.createModel('Cat', {name: String});
-            Cat.on('test', function() { done(); });
-            catou = new Cat({name: 'Catou'});
-            catou.emit('test');
+            Cat.on('haha', function() {
+                done();
+            });
+            var catou = new Cat({name: 'Catou'});
+            catou.emit('haha');
         });
         it('should not pollute other/new models', function() {
             var Cat = thinky.createModel('Cat', {name: String});
             should.not.exist(Cat.getModel()._listeners['test']);
         });
         it('should be able to add more than one listener', function() {
-            var count = 0
             var Cat = thinky.createModel('Cat', {name: String});
             Cat.on('test', function() {});
             Cat.on('test', function() {});
             Cat.getModel()._listeners['test'].should.have.length(2);
         });
     });
+
     describe('off', function() {
         it('should remove one listener if the event and listener are provided', function() {
             var Cat = thinky.createModel('Cat', {name: String});
@@ -628,8 +685,8 @@ describe('Model', function(){
         });
     });
 
-    describe('listeners', function() {
-         it('should return the listeners for the event', function() {
+    describe('once', function() {
+         it('should be triggered once then remove', function() {
             var Cat = thinky.createModel('Cat', {name: String});
             var fn = function() {};
             Cat.on('test', fn);
@@ -650,8 +707,8 @@ describe('Model', function(){
     describe('hasOne', function() {
         var Cat, Human, Mother;
         it('should add a new key in model.joins', function() {
-            Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
-            Human = thinky.createModel('Human', {id: String, ownerName: String});
+            var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
+            var Human = thinky.createModel('Human', {id: String, ownerName: String});
             Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
             should.exist(Cat.getModel().joins['owner']);
         });
@@ -704,9 +761,9 @@ describe('Model', function(){
         });
 
         it('getAll should work -- nested joins', function(done) {
-            Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
-            Human = thinky.createModel('Human', {id: String, ownerName: String, idMom: String});
-            Mother = thinky.createModel('Mother', {id: String, motherName: String});
+            var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
+            var Human = thinky.createModel('Human', {id: String, ownerName: String, idMom: String});
+            var Mother = thinky.createModel('Mother', {id: String, motherName: String});
             Human.hasOne(Mother, 'mom', {leftKey: 'idMom', rightKey: 'id'});
             Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
 
@@ -752,9 +809,9 @@ describe('Model', function(){
             });
         });
         it('filter should work -- nested joins', function(done) {
-            Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
-            Human = thinky.createModel('Human', {id: String, ownerName: String, idMom: String});
-            Mother = thinky.createModel('Mother', {id: String, motherName: String});
+            var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
+            var Human = thinky.createModel('Human', {id: String, ownerName: String, idMom: String});
+            var Mother = thinky.createModel('Mother', {id: String, motherName: String});
             Human.hasOne(Mother, 'mom', {leftKey: 'idMom', rightKey: 'id'});
             Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
 
@@ -805,8 +862,8 @@ describe('Model', function(){
     describe('hasMany', function() {
         var Cat, catou, Task, task1, task2, task3;
         it('should add a new key in model.joins', function() {
-            Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
-            Task = thinky.createModel('Task', {id: String, task: String});
+            var Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
+            var Task = thinky.createModel('Task', {id: String, task: String});
             Cat.hasMany(Task, 'tasks', {leftKey: 'taskIds', rightKey: 'id'});
 
             should.exist(Cat.getModel().joins['tasks']);
@@ -864,57 +921,7 @@ describe('Model', function(){
                 })
             })
         });
-        it('getAll should work', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
-            var Task = thinky.createModel('Task', {id: String, task: String});
-            Cat.hasMany(Task, 'tasks', {leftKey: 'taskIds', rightKey: 'id'});
 
-            var catou = new Cat({name: "Catou"});
-            var task1 = new Task({task: "Catch the red dot"});
-            var task2 = new Task({task: "Eat"});
-            var task3 = new Task({task: "Sleep"});
-            catou.tasks = [task1, task2, task3];
-            catou.save({saveJoin: true}, function(error, firstResult) {
-                Cat.getAll([catou.id], {index: 'id'}).getJoin().run(function(error, result) {
-                    result.should.have.length(1);
-                    result[0].taskIds.should.have.length(3);
-                    should.exist(result[0].taskIds[0]);
-                    should.exist(result[0].taskIds[1]);
-                    should.exist(result[0].taskIds[2]);
-                    should.exist(result[0].tasks[0].id);
-                    should.exist(result[0].tasks[1].id);
-                    should.exist(result[0].tasks[2].id);
-                    catou.tasks.should.have.length(3);
-                    done();
-                })
-            })
-        });
-
-        it('filter should work', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
-            var Task = thinky.createModel('Task', {id: String, task: String});
-            Cat.hasMany(Task, 'tasks', {leftKey: 'taskIds', rightKey: 'id'});
-
-            var catou = new Cat({name: "Catou"});
-            var task1 = new Task({task: "Catch the red dot"});
-            var task2 = new Task({task: "Eat"});
-            var task3 = new Task({task: "Sleep"});
-            catou.tasks = [task1, task2, task3];
-            catou.save({saveJoin: true}, function(error, firstResult) {
-                Cat.filter(function(doc) { return doc("id").eq(catou.id) }).getJoin().run(function(error, result) {
-                    result.should.have.length(1);
-                    result[0].taskIds.should.have.length(3);
-                    should.exist(result[0].taskIds[0]);
-                    should.exist(result[0].taskIds[1]);
-                    should.exist(result[0].taskIds[2]);
-                    should.exist(result[0].tasks[0].id);
-                    should.exist(result[0].tasks[1].id);
-                    should.exist(result[0].tasks[2].id);
-                    catou.tasks.should.have.length(3);
-                    done();
-                })
-            })
-        });
     })
-
 })
+
