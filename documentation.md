@@ -364,6 +364,8 @@ Returns all the listeners for this event. These listeners can be
 - The listeners passed in `addListener/on`
 - Object like this one:
 
+If event is null or undefined, the object containing all the listeners will be returned.
+
 ```
 {
     once: true,
