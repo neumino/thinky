@@ -454,11 +454,13 @@ describe('Model', function(){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             var catou = new Cat({name: 'Catou'});
             catou.save(null, function(error, result) {
+                if (error) throw error;
                 scope.catou = result;
                 should.exist(result.id);
 
                 var minou = new Cat({name: 'Minou'});
                 minou.save(null, function(error, result) {
+                    if (error) throw error;
                     scope.minou = result;
                     done();
                 });
@@ -466,6 +468,7 @@ describe('Model', function(){
         });
         it('should retrieve some documents in the database -- single values', function(done){
             Cat.getAll(scope.catou.name, {index: 'name'}, function(error, result) {
+                if (error) throw error;
                 should.not.exist(error);
                 should(result.length >= 1);
                 done();
@@ -652,61 +655,10 @@ describe('Model', function(){
             Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
             should.exist(Cat.getModel().joins['owner']);
         });
-        it('should be able to save the joined doc', function(done) {
-            var owner = new Human({ownerName: "Michel"});
-            var catou = new Cat({name: "Catou"});
-            catou['owner'] = owner;
-            catou.save({saveJoin: true}, function(error, result) {
-                should.exist(catou.id);
-                should.exist(catou.idHuman);
-                should.exist(catou.owner.id);
-                done();
-            });
-        });
-        it('should be able to save the joined doc -- nested joins', function(done) {
-            Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
-            Human = thinky.createModel('Human', {id: String, ownerName: String, idMom: String});
-            Mother = thinky.createModel('Mother', {id: String, motherName: String});
-            Human.hasOne(Mother, 'mom', {leftKey: 'idMom', rightKey: 'id'});
-            Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
-
-            var owner = new Human({ownerName: "Michel"});
-            var catou = new Cat({name: "Catou"});
-            var mother = new Mother({motherName: "Mom"});
-            catou['owner'] = owner;
-            owner['mom'] = mother;
-
-            catou.save( {saveJoin: true}, function(error, result) {
-                should.exist(catou.id);
-                should.exist(catou.idHuman);
-                should.exist(catou.owner.id);
-                catou_id = catou.id;
-                done();
-            });
-        });
         it('get should be able to get joined documents', function(done) {
-            var catou = Cat.get(catou_id).getJoin().run(function(error, result) {
-                should.not.exist(error);
-                should.exist(result.id);
-                should.exist(result.idHuman);
-                should.exist(result.owner.id);
-                should.exist(result.owner.idMom);
-                should.exist(result.owner.mom.id);
-                done();
-            })
-        });
-        it('get should be able to get joined documents -- and they should be `saved`', function(done) {
-            var catou = Cat.get(catou_id).getJoin().run(function(error, result) {
-                should(result.getDocument().docSettings.saved, true)
-                should(result.owner.getDocument().docSettings.saved, true)
-                should(result.owner.mom.getDocument().docSettings.saved, true)
-                done();
-            })
-        });
-        it('should be able to delete the joined doc -- nested joins', function(done) {
-            Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
-            Human = thinky.createModel('Human', {id: String, ownerName: String, idMom: String});
-            Mother = thinky.createModel('Mother', {id: String, motherName: String});
+            var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
+            var Human = thinky.createModel('Human', {id: String, ownerName: String, idMom: String});
+            var Mother = thinky.createModel('Mother', {id: String, motherName: String});
             Human.hasOne(Mother, 'mom', {leftKey: 'idMom', rightKey: 'id'});
             Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
 
@@ -716,20 +668,40 @@ describe('Model', function(){
             catou['owner'] = owner;
             owner['mom'] = mother;
 
-            catou.save( {saveJoin: true}, function(error, result) {
-                should.exist(catou.id);
-                should.exist(catou.idHuman);
-                should.exist(catou.owner.id);
-                catou_id = catou.id;
-                catou.delete( {deleteJoin: true}, function(error, result) {
-                    catou.getDocSettings().saved.should.be.false
-                    catou.owner.getDocSettings().saved.should.be.false
-                    catou.owner.mom.getDocSettings().saved.should.be.false
+            catou.save( {saveJoin: true}, function(error, firstResult) {
+                Cat.get(catou.id).getJoin().run(function(error, result) {
+                    should.not.exist(error);
+                    should.exist(result.id);
+                    should.exist(result.idHuman);
+                    should.exist(result.owner.id);
+                    should.exist(result.owner.idMom);
+                    should.exist(result.owner.mom.id);
                     done();
                 })
             });
         });
+        it('get should be able to get joined documents -- and they should be `saved`', function(done) {
+            var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
+            var Human = thinky.createModel('Human', {id: String, ownerName: String, idMom: String});
+            var Mother = thinky.createModel('Mother', {id: String, motherName: String});
+            Human.hasOne(Mother, 'mom', {leftKey: 'idMom', rightKey: 'id'});
+            Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
 
+            var owner = new Human({ownerName: "Michel"});
+            var catou = new Cat({name: "Catou"});
+            var mother = new Mother({motherName: "Mom"});
+            catou['owner'] = owner;
+            owner['mom'] = mother;
+
+            catou.save( {saveJoin: true}, function(error, firstResult) {
+                Cat.get(catou.id).getJoin().run(function(error, result) {
+                    should.equal(result.getDocument().docSettings.saved, true)
+                    should.equal(result.owner.getDocument().docSettings.saved, true)
+                    should.equal(result.owner.mom.getDocument().docSettings.saved, true)
+                    done();
+                })
+            })
+        });
 
         it('getAll should work -- nested joins', function(done) {
             Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
@@ -844,72 +816,103 @@ describe('Model', function(){
             should(Cat.getModel().joins['tasks'].joinClause.rightKey, 'id');
         });
 
-        it('should be able to save the joined doc', function(done) {
+        it('get should be able to get joined documents', function(done) {
+            var Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
+            var Task = thinky.createModel('Task', {id: String, task: String});
+            Cat.hasMany(Task, 'tasks', {leftKey: 'taskIds', rightKey: 'id'});
+
             catou = new Cat({name: "Catou"});
             task1 = new Task({task: "Catch the red dot"});
             task2 = new Task({task: "Eat"});
             task3 = new Task({task: "Sleep"});
             catou.tasks = [task1, task2, task3];
-            catou.save({saveJoin: true}, function(error, result) {
-                catou.taskIds.should.have.length(3);
-                should.exist(catou.taskIds[0]);
-                should.exist(catou.taskIds[1]);
-                should.exist(catou.taskIds[2]);
-                should.exist(catou.tasks[0].id);
-                should.exist(catou.tasks[1].id);
-                should.exist(catou.tasks[2].id);
+            catou.save({saveJoin: true}, function(error, firstResult) {
+                if (error) throw error;
 
-                done();
+                Cat.get(catou.id).getJoin().run(function(error, result) {
+                    result.taskIds.should.have.length(3);
+                    should.exist(result.taskIds[0]);
+                    should.exist(result.taskIds[1]);
+                    should.exist(result.taskIds[2]);
+                    should.exist(result.tasks[0].id);
+                    should.exist(result.tasks[1].id);
+                    should.exist(result.tasks[2].id);
+                    catou.tasks.should.have.length(3);
+                    done();
+                })
             });
-        });
-        it('get should be able to get joined documents', function(done) {
-            Cat.get(catou.id).getJoin().run(function(error, result) {
-                result.taskIds.should.have.length(3);
-                should.exist(result.taskIds[0]);
-                should.exist(result.taskIds[1]);
-                should.exist(result.taskIds[2]);
-                should.exist(result.tasks[0].id);
-                should.exist(result.tasks[1].id);
-                should.exist(result.tasks[2].id);
-                catou.tasks.should.have.length(3);
-                done();
-            })
+
         });
         it('get should be able to get joined documents -- and they should be `saved`', function(done) {
-            Cat.get(catou.id).getJoin().run(function(error, result) {
-                should(result.tasks[0].getDocument().docSettings.saved, true);
-                should(result.tasks[1].getDocument().docSettings.saved, true);
-                should(result.tasks[2].getDocument().docSettings.saved, true);
-                done();
+            var Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
+            var Task = thinky.createModel('Task', {id: String, task: String});
+            Cat.hasMany(Task, 'tasks', {leftKey: 'taskIds', rightKey: 'id'});
+
+            catou = new Cat({name: "Catou"});
+            task1 = new Task({task: "Catch the red dot"});
+            task2 = new Task({task: "Eat"});
+            task3 = new Task({task: "Sleep"});
+            catou.tasks = [task1, task2, task3];
+            catou.save({saveJoin: true}, function(error, firstResult) {
+                if (error) throw error;
+
+                Cat.get(catou.id).getJoin().run(function(error, result) {
+                    should(result.tasks[0].getDocument().docSettings.saved, true);
+                    should(result.tasks[1].getDocument().docSettings.saved, true);
+                    should(result.tasks[2].getDocument().docSettings.saved, true);
+                    done();
+                })
             })
         });
         it('getAll should work', function(done) {
-            Cat.getAll([catou.id], {index: 'id'}).getJoin().run(function(error, result) {
-                result.should.have.length(1);
-                result[0].taskIds.should.have.length(3);
-                should.exist(result[0].taskIds[0]);
-                should.exist(result[0].taskIds[1]);
-                should.exist(result[0].taskIds[2]);
-                should.exist(result[0].tasks[0].id);
-                should.exist(result[0].tasks[1].id);
-                should.exist(result[0].tasks[2].id);
-                catou.tasks.should.have.length(3);
-                done();
+            var Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
+            var Task = thinky.createModel('Task', {id: String, task: String});
+            Cat.hasMany(Task, 'tasks', {leftKey: 'taskIds', rightKey: 'id'});
+
+            var catou = new Cat({name: "Catou"});
+            var task1 = new Task({task: "Catch the red dot"});
+            var task2 = new Task({task: "Eat"});
+            var task3 = new Task({task: "Sleep"});
+            catou.tasks = [task1, task2, task3];
+            catou.save({saveJoin: true}, function(error, firstResult) {
+                Cat.getAll([catou.id], {index: 'id'}).getJoin().run(function(error, result) {
+                    result.should.have.length(1);
+                    result[0].taskIds.should.have.length(3);
+                    should.exist(result[0].taskIds[0]);
+                    should.exist(result[0].taskIds[1]);
+                    should.exist(result[0].taskIds[2]);
+                    should.exist(result[0].tasks[0].id);
+                    should.exist(result[0].tasks[1].id);
+                    should.exist(result[0].tasks[2].id);
+                    catou.tasks.should.have.length(3);
+                    done();
+                })
             })
         });
 
         it('filter should work', function(done) {
-            Cat.filter(function(doc) { return doc("id").eq(catou.id) }).getJoin().run(function(error, result) {
-                result.should.have.length(1);
-                result[0].taskIds.should.have.length(3);
-                should.exist(result[0].taskIds[0]);
-                should.exist(result[0].taskIds[1]);
-                should.exist(result[0].taskIds[2]);
-                should.exist(result[0].tasks[0].id);
-                should.exist(result[0].tasks[1].id);
-                should.exist(result[0].tasks[2].id);
-                catou.tasks.should.have.length(3);
-                done();
+            var Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
+            var Task = thinky.createModel('Task', {id: String, task: String});
+            Cat.hasMany(Task, 'tasks', {leftKey: 'taskIds', rightKey: 'id'});
+
+            var catou = new Cat({name: "Catou"});
+            var task1 = new Task({task: "Catch the red dot"});
+            var task2 = new Task({task: "Eat"});
+            var task3 = new Task({task: "Sleep"});
+            catou.tasks = [task1, task2, task3];
+            catou.save({saveJoin: true}, function(error, firstResult) {
+                Cat.filter(function(doc) { return doc("id").eq(catou.id) }).getJoin().run(function(error, result) {
+                    result.should.have.length(1);
+                    result[0].taskIds.should.have.length(3);
+                    should.exist(result[0].taskIds[0]);
+                    should.exist(result[0].taskIds[1]);
+                    should.exist(result[0].taskIds[2]);
+                    should.exist(result[0].tasks[0].id);
+                    should.exist(result[0].tasks[1].id);
+                    should.exist(result[0].tasks[2].id);
+                    catou.tasks.should.have.length(3);
+                    done();
+                })
             })
         });
     })

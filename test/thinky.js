@@ -110,11 +110,11 @@ describe('Thinky', function(){
             thinky.setOption('db', value);
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
-            catou.save(null, function(error, result) {
+            catou.save(function(error, result) {
                 should.equal(error.name, 'RqlRuntimeError');
+                thinky.setOption('db', 'test');
                 done();
             })
-            thinky.setOption('db', 'test');
         })
     });
     describe('setOptions', function(){
