@@ -65,9 +65,8 @@ You are welcome to do a pull request.
 
 
 ### Roadmap
-- Clean the code to save/delete -- My eyes are bleeding...
-- Add examples on how to use Thinky.
 - Clean/reorganize tests and add more tests.
+- Add examples on how to use Thinky.
 - Let Thinky cache results so objects so there are no copies of the same document.
 - Joins with lambda functions.
 - Decide what to do with null (does it throw when checked against a Number?)
