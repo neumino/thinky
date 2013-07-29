@@ -88,7 +88,7 @@ exports.post = function (req, res) {
 exports.postAndAuthors = function (req, res) {
     var id = req.params.id;
     // Retrieve a post and all the authors that exist
-    // This currently cannot be done in one query with Thinky -- feature on the roadmap
+    // This currently cannot be done in one query with Thinky -- the feature is on the roadmap
     Post.get(id).run(function(error, post) {
         Author.run(function(error, authors) {
             res.json({
