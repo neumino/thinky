@@ -562,15 +562,19 @@ _Query.filter(__ filterFunction, callback  __)__ [»](#query.filter)
 
 
 <a id="query.skip" class="anchor"></a>
-__Model.skip(__ skipValue, callback  __)__ [»](#model.skip)
+__Model.skip(__ skipValue, callback  __)__ [»](#query.skip)
 
 
 <a id="query.limit" class="anchor"></a>
-__Model.limit(__ limitValue, callback  __)__ [»](#model.limit)
+__Model.limit(__ limitValue, callback  __)__ [»](#query.limit)
 
 
 <a id="query.orderby" class="anchor"></a>
-__Query.orderBy(__ field, callback  __)__ [»](#model.orderby)
+__Query.orderBy(__ field, callback  __)__ [»](#query.orderby)
+
+
+<a id="query.delete" class="anchor"></a>
+__Query.get(__ id, callback __)__ [»](#query.delete)
 
 
 <a id="query.count" class="anchor"></a>
