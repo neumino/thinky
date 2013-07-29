@@ -296,6 +296,8 @@ __Model.orderBy(__ field, callback  __)__ [»](#model.orderby)
 
 Order results by `field`.
 `field` can be a single field or an array of fields.
+Fields that start with a `-` will be ordered in a descending way.
+
 
 Returns the query. The query is not executed if callback is not passed.
 
@@ -315,6 +317,16 @@ __Model.count()__ [»](#model.count)
 
 Returns the number of elements in the table of your model.
 Returns the query. The query is not executed if callback is not passed.
+
+<a id="model.run" class="anchor"></a>
+__Model.run(__ callback __)__ [»](#model.run)
+
+Retrieves all the documents.
+
+`callback` is the callback that is going to be called. Two arguments are passed to the callback:
+
+- `error`, which is the error if one occured.
+- `result` an array of instances.
 
 
 <a id="model.addlistener" class="anchor"></a>
@@ -441,7 +453,7 @@ Cat.get('0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a', function(err, result) {
 
 
 <a id="model.hasmany" class="anchor"></a>
-__Model.hasMany(__ model, fieldName, joinClause __)__ [»](#model.hasmany)
+__Model.hasMany(__ model, fieldName, joinClause, options __)__ [»](#model.hasmany)
 
 Create a "has one" relation between two models. The arguments are
 
@@ -451,14 +463,16 @@ Create a "has one" relation between two models. The arguments are
     - `leftKey`: The key of this model - the one on which you are calling `hasJoin` -, that will be used to do the join.
     This field is an array of values.
     - `rightKey`: The key of the model - that you passed as an argument -, that will be used to do the join.
+- `options` can be an object with a field `orderBy` that map the field(s) that you want to orderBy with. Prepending a
+field with a `-` will be considered as a descending order
 
 
 Example:
 
 ```javascript
-Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
-Task = thinky.createModel('Task', {id: String, task: String});
-Cat.hasMany(Task, 'tasks', {leftKey: 'taskIds', rightKey: 'id'});
+Cat = thinky.createModel('Cat', {id: String, name: String});
+Task = thinky.createModel('Task', {id: String, task: String, catId: String});
+Cat.hasMany(Task, 'tasks', {leftKey: 'id', rightKey: 'catId'});
 
 cat = new Cat({name: "Catou"});
 task1 = new Task({task: "Catch the red dot"});
@@ -466,66 +480,64 @@ task2 = new Task({task: "Eat"});
 task3 = new Task({task: "Sleep"});
 
 cat.tasks = [task1, task2, task3];
-cat.save( function(err, result) {
+cat.save({saveJoin: true}, function(err, result) {
     if (err) throw err;
-    console.log(result); // Note: cat === result
+
+    // Note: cat === result
+    console.log(result);
     /* will print
     {
         id: 'b7588193-7fb7-42da-8ee3-897392df3738',
         name: 'Catou',
-        taskIds: [
-            'd4333984-f7c6-48cb-a64e-8d9666d9eaf0',
-            '09b2eba9-0d26-4e6c-b735-da2442e1caa6',
-            '5cc7eb9e-f924-4cae-89b5-95db19753b0b'
-        ],
         tasks: [
             {
                 id: 'd4333984-f7c6-48cb-a64e-8d9666d9eaf0',
-                task: 'Catch the red dot'
+                task: 'Catch the red dot',
+                catId: 'b7588193-7fb7-42da-8ee3-897392df3738'
             },
             {
                 id: '09b2eba9-0d26-4e6c-b735-da2442e1caa6',
-                task: 'Eat'
+                task: 'Eat',
+                catId: 'b7588193-7fb7-42da-8ee3-897392df3738'
             },
             {
                 id: '5cc7eb9e-f924-4cae-89b5-95db19753b0b',
-                task: 'Sleep'
+                task: 'Sleep',
+                catId: 'b7588193-7fb7-42da-8ee3-897392df3738'
             }
         ]
     }
     */
-}, {saveJoin: true})
+})
 
 // Retrieve joined documents
-Cat.get( 'b7588193-7fb7-42da-8ee3-897392df3738', function(err, result) {
+Cat.get( 'b7588193-7fb7-42da-8ee3-897392df3738').getJoin( function(err, result) {
     if (err) throw err;
     console.log(result);
     /* will print
     {
         id: 'b7588193-7fb7-42da-8ee3-897392df3738',
         name: 'Catou',
-        taskIds: [
-            'd4333984-f7c6-48cb-a64e-8d9666d9eaf0',
-            '09b2eba9-0d26-4e6c-b735-da2442e1caa6',
-            '5cc7eb9e-f924-4cae-89b5-95db19753b0b'
-        ],
         tasks: [
             {
                 id: 'd4333984-f7c6-48cb-a64e-8d9666d9eaf0',
-                task: 'Catch the red dot'
+                task: 'Catch the red dot',
+                catId: 'b7588193-7fb7-42da-8ee3-897392df3738'
             },
             {
                 id: '09b2eba9-0d26-4e6c-b735-da2442e1caa6',
-                task: 'Eat'
+                task: 'Eat',
+                catId: 'b7588193-7fb7-42da-8ee3-897392df3738'
             },
             {
                 id: '5cc7eb9e-f924-4cae-89b5-95db19753b0b',
-                task: 'Sleep'
+                task: 'Sleep',
+                catId: 'b7588193-7fb7-42da-8ee3-897392df3738'
             }
         ]
     }
     */
-}, {saveJoin: true})
+})
 
 
 ```
@@ -605,6 +617,12 @@ The event `save` is triggered if the document is successfully saved.
 The argument `options` can have the following fields:
 
 - `saveJoin`, which is a boolean. If set to true, the joined documents will be saved (default value is false).
+
+<a id="document.update" class="anchor"></a>
+__Document.update(__ callback __)__ [»](#document.update)
+
+Update the object in the database that has the same primary key.
+
 
 <a id="document.delete" class="anchor"></a>
 __Document.delete(__ callback __)__ [»](#document.delete)
