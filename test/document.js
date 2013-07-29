@@ -223,6 +223,7 @@ describe('Document', function(){
                 done();
             });
         });
+
         it('should be able to save the joined doc -- hasOne', function(done) {
             var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
             var Human = thinky.createModel('Human', {id: String, ownerName: String});
@@ -240,6 +241,7 @@ describe('Document', function(){
                 done();
             });
         });
+
         it('should keep the references when saving joined documents -- hasOne', function(done) {
             var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
             var Human = thinky.createModel('Human', {id: String, ownerName: String});
@@ -259,6 +261,7 @@ describe('Document', function(){
                 done();
             });
         });
+
         it('should marked joined documents that are saved `saved` -- hasOne', function(done) {
             var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
             var Human = thinky.createModel('Human', {id: String, ownerName: String});
@@ -299,9 +302,9 @@ describe('Document', function(){
         });
 
         it('should not save the joined docs by default -- hasMany', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
-            var Task = thinky.createModel('Task', {id: String, task: String});
-            Cat.hasMany(Task, 'tasks', {leftKey: 'taskIds', rightKey: 'id'});
+            var Cat = thinky.createModel('Cat', {id: String, name: String});
+            var Task = thinky.createModel('Task', {id: String, catId: String, task: String});
+            Cat.hasMany(Task, 'tasks', {leftKey: 'id', rightKey: 'catId'});
 
             var catou = new Cat({name: "Catou"});
             var task1 = new Task({task: "Catch the red dot"});
@@ -309,7 +312,6 @@ describe('Document', function(){
             var task3 = new Task({task: "Sleep"});
             catou.tasks = [task1, task2, task3];
             catou.save(function(error, result) {
-                should.not.exist(catou.taskIds);
                 should.not.exist(catou.tasks[0].id);
                 should.not.exist(catou.tasks[1].id);
                 should.not.exist(catou.tasks[2].id);
@@ -318,9 +320,9 @@ describe('Document', function(){
             });
         });
         it('should be able to save the joined doc -- hasMany', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
-            var Task = thinky.createModel('Task', {id: String, task: String});
-            Cat.hasMany(Task, 'tasks', {leftKey: 'taskIds', rightKey: 'id'});
+            var Cat = thinky.createModel('Cat', {id: String, name: String});
+            var Task = thinky.createModel('Task', {id: String, catId: String, task: String});
+            Cat.hasMany(Task, 'tasks', {leftKey: 'id', rightKey: 'catId'});
 
             var catou = new Cat({name: "Catou"});
             var task1 = new Task({task: "Catch the red dot"});
@@ -328,18 +330,16 @@ describe('Document', function(){
             var task3 = new Task({task: "Sleep"});
             catou.tasks = [task1, task2, task3];
             catou.save({saveJoin: true}, function(error, result) {
-                catou.taskIds.should.have.length(3);
-                should.exist(catou.taskIds[0]);
-                should.exist(catou.taskIds[1]);
-                should.exist(catou.taskIds[2]);
-                should.exist(catou.tasks[0].id);
-                should.exist(catou.tasks[1].id);
-                should.exist(catou.tasks[2].id);
+                should.exist(task1.id);
+                should.exist(task2.id);
+                should.exist(task3.id);
+                should.equal(task1.catId, catou.id);
+                should.equal(task2.catId, catou.id);
+                should.equal(task3.catId, catou.id);
 
                 done();
             });
         });
-
     });
 
     describe('delete', function() {
@@ -424,10 +424,10 @@ describe('Document', function(){
             });
         });
 
-        it('should not save the joined doc by default -- hasMany', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
-            var Task = thinky.createModel('Task', {id: String, task: String});
-            Cat.hasMany(Task, 'tasks', {leftKey: 'taskIds', rightKey: 'id'});
+        it('should not delete the joined doc by default -- hasMany', function(done) {
+            var Cat = thinky.createModel('Cat', {id: String, name: String});
+            var Task = thinky.createModel('Task', {id: String, catId: String, task: String});
+            Cat.hasMany(Task, 'tasks', {leftKey: 'id', rightKey: 'catId'});
 
             var catou = new Cat({name: "Catou"});
             var task1 = new Task({task: "Catch the red dot"});
@@ -445,10 +445,11 @@ describe('Document', function(){
                 });
             });
         });
+
         it('should be able to delete joined docs -- hasMany', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String, taskIds: [String]});
-            var Task = thinky.createModel('Task', {id: String, task: String});
-            Cat.hasMany(Task, 'tasks', {leftKey: 'taskIds', rightKey: 'id'});
+            var Cat = thinky.createModel('Cat', {id: String, name: String});
+            var Task = thinky.createModel('Task', {id: String, catId: String, task: String});
+            Cat.hasMany(Task, 'tasks', {leftKey: 'id', rightKey: 'catId'});
 
             var catou = new Cat({name: "Catou"});
             var task1 = new Task({task: "Catch the red dot"});
@@ -456,7 +457,6 @@ describe('Document', function(){
             var task3 = new Task({task: "Sleep"});
             catou.tasks = [task1, task2, task3];
             catou.save({saveJoin: true}, function(error, result) {
-
                 catou.delete({deleteJoin: true}, function(error, result) {
                     should.equal(catou.getDocSettings().saved, false);
                     should.equal(catou.tasks[0].getDocSettings().saved, false);
