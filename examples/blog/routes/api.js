@@ -137,7 +137,7 @@ exports.editPost = function (req, res) {
 };
 
 
-// Post authors
+// Things related to authors
 exports.authors = function (req, res) {
     // Get all authors
     Author.run(function(error, authors) {
@@ -194,7 +194,7 @@ exports.editAuthor = function (req, res) {
 };
 
 
-
+// Things related to comments
 exports.addComment = function (req, res) {
     // Create a comment
     var newComment = new Comment(req.body);
