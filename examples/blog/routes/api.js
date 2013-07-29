@@ -117,7 +117,11 @@ exports.deletePost = function (req, res) {
 
     // Delete the post
     Post.get(id).delete( function(error, result) {
-        res.json((error != null) && (result.deleted === 1));
+        res.json({
+            error: error,
+            result: result
+        });
+
     });
 };
 exports.editPost = function (req, res) {
@@ -125,7 +129,10 @@ exports.editPost = function (req, res) {
 
     // Update the post
     newPost.update( function(error, post) {
-        res.json((error != null) && (post != null));
+        res.json({
+            error: error,
+            post: post
+        });
     });
 };
 
@@ -168,14 +175,21 @@ exports.deleteAuthor = function (req, res) {
     var id = req.params.id;
     // Delete an author
     Author.get(id).delete( function(error, result) {
-        res.json((error != null) && (result.deleted === 1));
+        res.json({
+            error: error,
+            result: result
+        })
+
     });
 };
 exports.editAuthor = function (req, res) {
     // Update an author
     var newAuthor = new Author(req.body);
-    newAuthor.update( function(error, post) {
-        res.json((error != null) && (post != null));
+    newAuthor.update( function(error, author) {
+        res.json({
+            error: error,
+            author: author
+        })
     });
 };
 
@@ -199,6 +213,9 @@ exports.deleteComment = function (req, res) {
     var id = req.params.id;
     // Delete a comment
     Comment.get(id).delete( function(error, result) {
-        res.json((error != null) && (result.deleted === 1));
+        res.json({
+            error: error,
+            result: result
+        })
     });
 };
