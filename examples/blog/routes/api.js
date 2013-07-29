@@ -42,7 +42,7 @@ Post.hasMany(Comment, 'comments', {leftKey: 'id', rightKey: 'postId'}, {orderBy:
 exports.posts = function (req, res) {
     // We order by date (desc) and joined the author and comments
     Post.orderBy('-date').getJoin().run(function(error, posts) {
-        if (Object.prototype.toString.call(posts) === '[object Array]') {
+        if (Array.isArray(posts)) {
             // Convert dates to a human readable format
             for(var i=0; i< posts.length; i++) {
                 var fullDate = new Date(posts[i].date);
