@@ -70,7 +70,7 @@ var createAuthorTable = function() {
             console.log('Table `Comment` created');
         }
         else {
-            console.log('Error: Table `Comment` not created');
+            console.log('Error: Table `Author` not created');
         }
         createCommentIndex()
     });
