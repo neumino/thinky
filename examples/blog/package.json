@@ -1,0 +1,11 @@
+{
+    "name": "thinky-blog-example"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "express": ">= 3.3.4"
+    , "jade": ">= 0.34.1"
+    , "thinky": ">= 0.2.11",
+    , "rethinkdb": ">= 1.7.0-2"
+  }
+}

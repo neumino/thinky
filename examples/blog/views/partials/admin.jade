@@ -1,0 +1,9 @@
+p There are {{posts.length}} posts
+div(ng-repeat='post in posts')
+    h3 {{post.title}}
+    div {{post.text}}
+    a(href='/fullPost/{{post.id}}') More
+    |  - 
+    a(href='/editPost/{{post.id}}') Edit
+    |  - 
+    a(href='/deletePost/{{post.id}}') Delete
