@@ -76,7 +76,7 @@ You are welcome to do a pull request.
 
 
 ### About
-Author: Michel Tu -- orphee@gmail.com -- www.justonepixel.com -- https://twitter.com/neumino
+Author: Michel Tu -- orphee@gmail.com -- [blog](http://blog.justonepixel.com) -- [twitter](https://twitter.com/neumino)
 
 ### License
 Copyright (c) 2013 Michel Tu <orphee@gmail.com>
