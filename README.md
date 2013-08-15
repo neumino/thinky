@@ -57,6 +57,7 @@ http://neumino.github.io/thinky/documentation.html
 ### Run the tests
 
 ```
+node init.js
 mocha
 ```
 

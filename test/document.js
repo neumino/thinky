@@ -1,10 +1,16 @@
 var thinky = require('../lib/index.js');
+var config = require('../config.js');
 var should = require('should');
 var assert = require('assert');
 var r = require('rethinkdb');
 var _ = require('underscore');
 
-thinky.init({})
+thinky.init({
+    host: config.host,
+    port: config.port,
+    db: config.db
+})
+
 
 describe('Document', function(){
     describe('getDocument', function(){

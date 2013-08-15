@@ -1,4 +1,5 @@
 var thinky = require('../lib/index.js');
+var config = require('../config.js');
 var should = require('should');
 var r = require('rethinkdb');
 
@@ -9,7 +10,12 @@ describe('Thinky', function(){
     // Testing pool
     describe('init', function(){
         it('should create a pool', function(){
-            thinky.init({})
+            thinky.init({
+                host: config.host,
+                port: config.port,
+                db: config.db
+            })
+
             should.exist(thinky.pool);
         })
     });

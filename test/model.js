@@ -1,10 +1,16 @@
 var thinky = require('../lib/index.js');
+var config = require('../config.js');
 var should = require('should');
 var assert = require('assert');
 var r = require('rethinkdb');
 var _ = require('underscore');
 
-thinky.init({})
+thinky.init({
+    host: config.host,
+    port: config.port,
+    db: config.db
+})
+
 
 describe('Model', function(){
     //var Cat, catou, minou, catou_id, catouCopy, minouCopy, Dog, dogou, Human, owner;
@@ -510,7 +516,7 @@ describe('Model', function(){
     describe('execute', function() {
         it('should be able to execute arbitrary queries', function(done){
             Cat = thinky.createModel('Cat', { id: String, name: String });
-            Cat.execute( r.db('test').table('Cat').limit(1), function(error, result) {
+            Cat.execute( r.db(config.db).table('Cat').limit(1), function(error, result) {
                 should.not.exists(error);
                 result.should.have.length(1);
                 done();
