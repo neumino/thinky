@@ -11,14 +11,34 @@ r.connect({
     if (error) throw error;
 
     connection = conn;
-    createDb(config.db, function() {
-        createTable('Cat', function() { createIndex('Cat', 'name') })
-        createTable('Dog')
-        createTable('Human')
-        createTable('Task', function() { createIndex('Task', 'catId') })
-        createTable('Mother')
+    dropDb(config.db, function() {
+        createDb(config.db, function() {
+            createTable('Cat', function() { createIndex('Cat', 'name') })
+            createTable('Dog')
+            createTable('Human')
+            createTable('Task', function() { createIndex('Task', 'catId') })
+            createTable('Mother')
+            createTable('CatTaskLink', function() { createIndex('CatTaskLink', 'catId'); createIndex('CatTaskLink', 'taskId') })
+        })
     })
 });
+
+function dropDb(name, cb) {
+    r.dbDrop(name).run(connection, function(error, result) {
+        if (error) console.log(error);
+        if ((result != null) && (result.created === 1)) {
+            console.log('Db `'+name+'` created');
+        }
+        else {
+            console.log('Error: Database `'+config.db+'` was not deleted.');
+        }
+
+        if (typeof cb === 'function') {
+            cb()
+        }
+
+    });
+}
 
 function createDb(name, cb) {
     r.dbCreate(config.db).run(connection, function(error, result) {
@@ -30,7 +50,7 @@ function createDb(name, cb) {
             }
         }
         else {
-            console.log('Error: Table Human not created');
+            console.log('Error: Database `'+name+'` not created');
         }
     });
 }
@@ -45,7 +65,7 @@ function createTable(name, cb) {
             }
         }
         else {
-            console.log('Error: Table Human not created');
+            console.log('Error: Table `'+name+'` not created');
         }
     });
 }
