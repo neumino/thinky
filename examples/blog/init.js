@@ -67,10 +67,10 @@ var createAuthorTable = function() {
         if (error) console.log(error);
     
         if ((result != null) && (result.created === 1)) {
-            console.log('Table `Comment` created');
+            console.log('Table `Author` created');
         }
         else {
-            console.log('Error: Table `Comment` not created');
+            console.log('Error: Table `Author` not created');
         }
         createCommentIndex()
     });
