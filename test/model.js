@@ -956,7 +956,54 @@ describe('Model', function(){
                 })
             })
         });
+        it('should work for n-n relations', function(done) {
+            console.log('')
+            console.log('')
+            console.log('---------------------')
+            console.log('')
+            console.log('')
+            var Cat = thinky.createModel('Cat', {id: String, name: String});
+            var CatTaskLink = thinky.createModel('CatTaskLink', {id: String, catId: String, taskId: String})
+            var Task = thinky.createModel('Task', {id: String, catId: String, task: String});
 
+            Cat.hasMany(CatTaskLink, 'tasks', {leftKey: 'id', rightKey: 'catId'});
+            CatTaskLink.hasOne(Task, 'task', {leftKey: 'taskId', rightKey: 'id'});
+
+            var catou = new Cat({name: "Catou"});
+            
+            var link1 = new CatTaskLink({});
+            var link2 = new CatTaskLink({});
+            var link3 = new CatTaskLink({});
+
+            catou.tasks = [link1, link2, link3];
+
+            var task1 = new Task({task: "Catch the red dot"});
+            var task2 = new Task({task: "Eat"});
+            var task3 = new Task({task: "Sleep"});
+
+            link1.task = task1;
+            link2.task = task2;
+            link3.task = task3;
+
+
+            catou.save({saveJoin: true}, function(error, result) {
+                if (error) throw error;
+
+                should.exist(result.id);
+                result.tasks.should.have.length(3);
+                should.exist(result.tasks[0].id);
+                should.exist(result.tasks[1].id);
+                should.exist(result.tasks[2].id);
+                should.exist(result.tasks[0].task.id);
+                should.exist(result.tasks[1].task.id);
+                should.exist(result.tasks[2].task.id);
+
+                Cat.get(catou.id).getJoin().run(function(error, result) {
+                    done()
+                })
+            })
+
+        })
     })
 })
 
