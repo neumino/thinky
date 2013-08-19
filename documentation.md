@@ -256,13 +256,11 @@ Returns the query. The query is not executed if callback is not passed.
 - `value` can be
     - The value of the secondary index of the object you want to retrieve
     - An array of values for the secondary indexes
-- `indexName` is the name of the index used
+- options can only have the field
+    - `index`: The index used. The default value will be the primary key
 - `callback` is the callback that is going to be called. Two arguments are passed to the callback:
     - `error`, which is the error if one occured.
     - `result` an array of instances.
-- options can only have the field
-    - `index`: The index used. The default value will be the primary key
-    will be the instance of the classe with its joined documents.
 
 
 
