@@ -964,7 +964,7 @@ describe('Model', function(){
             console.log('')
             var Cat = thinky.createModel('Cat', {id: String, name: String});
             var CatTaskLink = thinky.createModel('CatTaskLink', {id: String, catId: String, taskId: String})
-            var Task = thinky.createModel('Task', {id: String, catId: String, task: String});
+            var Task = thinky.createModel('Task', {id: String, task: String});
 
             Cat.hasMany(CatTaskLink, 'tasks', {leftKey: 'id', rightKey: 'catId'});
             CatTaskLink.hasOne(Task, 'task', {leftKey: 'taskId', rightKey: 'id'});
