@@ -18,13 +18,13 @@ var thinky = require('thinky');
 thinky.init({});
 
 // Create a model
-var Cat = thinky.createModel('Cat', {name: String, idHuman: String}); 
+var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String}); 
 
 // Create custom methods
 Cat.define('hello', function() { console.log("Hello, I'm "+this.name) });
 
 // Join models
-var Human = thinky.createModel('Human', {name: String}); 
+var Human = thinky.createModel('Human', {id: String, name: String}); 
 Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'})
 
 // Create a new object
