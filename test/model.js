@@ -524,6 +524,66 @@ describe('Model', function(){
         })
     })
 
+    describe('pluck', function() {
+        var Cat;
+        var scope = {}
+        it('should pluck multiple fields', function(done){
+            Cat = thinky.createModel('Cat', { id: String, name: String, privateField: String });
+            var catou = new Cat({name: 'Catou', privateField: 'Pshiiii'});
+            catou.save( function(error, result) {
+                if (error) throw error;
+                Cat.get(catou.id).pluck(['id', 'name'], function(err, result) {
+                    should.exist(result);
+                    should.not.exist(result.privateField);
+                    done();
+                });
+            })
+        });
+        it('should pluck a single field', function(done){
+            Cat = thinky.createModel('Cat', { id: String, name: String, privateField: String });
+            var catou = new Cat({name: 'Catou', privateField: 'Pshiiii'});
+            catou.save( function(error, result) {
+                if (error) throw error;
+                Cat.get(catou.id).pluck('id', function(err, result) {
+                    should.exist(result);
+                    should.not.exist(result.privateField);
+                    should(!result.hasOwnProperty('name'));
+                    done();
+                });
+            })
+        });
+    });
+
+    describe('without', function() {
+        var Cat;
+        var scope = {}
+        it('should remove a field', function(done){
+            Cat = thinky.createModel('Cat', { id: String, name: String, privateField: String });
+            var catou = new Cat({name: 'Catou', privateField: 'Pshiiii'});
+            catou.save( function(error, result) {
+                if (error) throw error;
+                Cat.get(catou.id).without('privateField', function(err, result) {
+                    should.exist(result);
+                    should.not.exist(result.privateField);
+                    done();
+                });
+            })
+        });
+        it('should remove a field -- passing an array', function(done){
+            Cat = thinky.createModel('Cat', { id: String, name: String, privateField: String });
+            var catou = new Cat({name: 'Catou', privateField: 'Pshiiii'});
+            catou.save( function(error, result) {
+                if (error) throw error;
+                Cat.get(catou.id).without(['privateField'], function(err, result) {
+                    should.exist(result);
+                    should.not.exist(result.privateField);
+                    done();
+                });
+            })
+        });
+    });
+
+
     describe('filter', function() {
         var Cat;
         var scope = {}
