@@ -262,6 +262,31 @@ Returns the query. The query is not executed if callback is not passed.
     - `error`, which is the error if one occured.
     - `result` an array of instances.
 
+<a id="model.pluck" class="anchor"></a>
+__Model.pluck(__ field[s], options, callback __)__ [»](#model.pluck)
+
+Pluck the field[s] provided.
+Returns the query. The query is not executed if callback is not passed.
+
+- `field[s]` can be
+    - A string representing one field (the one to pluck)
+    - An array of fields to pluck
+- `callback` is the callback that is going to be called. Two arguments are passed to the callback:
+    - `error`, which is the error if one occured.
+    - `result` an array of instances.
+
+<a id="model.without" class="anchor"></a>
+__Model.without(__ field[s], options, callback __)__ [»](#model.withou)
+
+Remove the field[s] provided.
+Returns the query. The query is not executed if callback is not passed.
+
+- `field[s]` can be
+    - A string representing one field (the one to remove)
+    - An array of fields to remove
+- `callback` is the callback that is going to be called. Two arguments are passed to the callback:
+    - `error`, which is the error if one occured.
+    - `result` an array of instances.
 
 
 <a id="model.filter" class="anchor"></a>
@@ -553,6 +578,12 @@ __Query.get(__ id, callback __)__ [»](#query.get)
 
 <a id="query.getAll" class="anchor"></a>
 __Query.getAll(__ value, options, callback __)__ [»](#query.getall)
+
+<a id="query.pluck" class="anchor"></a>
+__Query.pluck(__ field[s], options, callback __)__ [»](#query.pluck)
+
+<a id="query.without" class="anchor"></a>
+__Query.without(__ field[s], options, callback __)__ [»](#query.without)
 
 
 <a id="query.filter" class="anchor"></a>
