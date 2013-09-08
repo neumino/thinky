@@ -21,7 +21,7 @@ __Thinky.init(__ options __)__ [»](#thinky.init)
     - `missing`: Throw an error if a field is missing (default value false)
     - `extra`: Throw an error if an extra field is provided (default value false)
     - `type`: Throw an error if a field does match the expected type (default value true)
-- `dateFormat` the date format returned
+- `timeFormat` the date format returned
     - `native`: Default value -- Native JavaScript Date objects will be returned
     - `raw`: ReQL raw Date objects will be returned
 
@@ -50,7 +50,7 @@ Returns the value for `optionName`. Possible values:
     - `missing`: Throw an error if a field is missing (default value false)
     - `extra`: Throw an error if an extra field is provided (default value false)
     - `type`: Throw an error if a field does match the expected type (default value true)
-
+- `timeFormat` the date format returned
 
 
 
@@ -123,6 +123,8 @@ _Note about Date_: You can pass a native Date object in a Date field or a raw Re
     timezone: <timezone> // like '+00:00'
 }
 ```
+The returned type is defined by the `timeFormat` option set in the `thinky` module. The local timezone is not saved if you
+use native objects for the moment.
 
 When an object with the field `_type` is passed, the enforce field will be use to overwrite the global settings for enforcing the schema
 
