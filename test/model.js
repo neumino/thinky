@@ -95,6 +95,23 @@ describe('Model', function(){
             should(Object.prototype.toString.call(minou) === '[object Object]');
             should.equal(minou.fieldBoolean, value);
         });
+        it('should save Date fields', function() {
+            var Cat = thinky.createModel('Cat', { fieldDate: Date });
+            var minou = new Cat({fieldDate: new Date()});
+            should(minou.fieldDate instanceof Date === true);
+        });
+        it('should save Date fields', function() {
+            var Cat = thinky.createModel('Cat', { fieldDate: Date });
+            var now = Date.now()
+            var minou = new Cat({fieldDate: {
+                $reql_type$: 'TIME',
+                epoch_time: now,
+                timezone: '+00:00'
+            }});
+            should.equal(minou.fieldDate.$reql_type$, 'TIME');
+            should.equal(minou.fieldDate.epoch_time, now);
+            should.equal(minou.fieldDate.timezone, '+00:00');
+        });
         it('should save Nested fields', function() {
             var Cat = thinky.createModel('Cat', { nested: { fieldString: String } });
             var value = "Hello, I'm a nested string field"

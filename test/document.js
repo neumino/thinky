@@ -177,7 +177,44 @@ describe('Document', function(){
                 });
             });
         });
-        
+
+        // Testing dates
+        it('should save/retrieve date in native format', function(done){
+            var date = new Date();
+
+            var Cat = thinky.createModel('Cat', { id: String, name: String, date: Date });
+            var catou = new Cat({name: 'Catou', date: date});
+
+            catou.save(null, function(error, result) {
+                should.equal(result.date.toString(), date.toString())
+                Cat.get(catou.id).run(function(error, result) {
+                    should.equal(result.date.toString(), date.toString())
+                    done();
+                });
+            });
+        });
+        it('should save a date with a raw format and return a native date object', function(done){
+            var date = new Date();
+            var dateObj = {
+                $reql_type$: 'TIME',
+                epoch_time: date.getTime()/1000,
+                timezone: '+00:00'
+            }
+
+            var Cat = thinky.createModel('Cat', { id: String, name: String, date: Date });
+            var catou = new Cat({name: 'Catou', date: dateObj});
+
+            catou.save(null, function(error, result) {
+                should.equal(result.date.toString(), date.toString())
+                Cat.get(catou.id).run(function(error, result) {
+                    should.equal(result.date.toString(), date.toString())
+                    done();
+                });
+            });
+        });
+
+   
+
         // Testing events with save
         it('should emit the event `save` on insert', function(done){
             var Cat = thinky.createModel('Cat', { id: String, name: String });
