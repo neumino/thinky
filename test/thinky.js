@@ -48,6 +48,36 @@ describe('Thinky', function(){
             should.equal(thinky.getOption('poolMax'), value);
         })
     });
+    describe('timeFormat', function(){
+        it('should have timeFormat work with `raw`', function(done){
+            thinky.setOption('timeFormat', 'raw');
+            var date = new Date();
+            var dateObj = {
+                $reql_type$: 'TIME',
+                epoch_time: date.getTime()/1000,
+                timezone: '+00:00'
+            }
+
+            var Cat = thinky.createModel('Cat', { id: String, name: String, date: Date });
+            var catou = new Cat({name: 'Catou', date: dateObj});
+
+            catou.save(null, function(error, result) {
+                should.equal(result.date.$reql_type$, 'TIME')
+                should.equal(result.date.epoch_time, date.getTime()/1000)
+
+                Cat.get(catou.id).run(function(error, result) {
+                    should.equal(result.date.$reql_type$, 'TIME')
+                    should.equal(result.date.epoch_time, date.getTime()/1000)
+
+                    // Switching back to default settings
+                    thinky.setOption('timeFormat', 'native');
+                    done();
+                });
+            });
+
+        })
+    });
+
     describe('getOptions', function(){
         it('should return all options', function(){
             should.exist(thinky.getOptions().host);
