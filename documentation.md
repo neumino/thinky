@@ -21,6 +21,9 @@ __Thinky.init(__ options __)__ [»](#thinky.init)
     - `missing`: Throw an error if a field is missing (default value false)
     - `extra`: Throw an error if an extra field is provided (default value false)
     - `type`: Throw an error if a field does match the expected type (default value true)
+- `dateFormat` the date format returned
+    - `native`: Default value -- Native JavaScript Date objects will be returned
+    - `raw`: ReQL raw Date objects will be returned
 
 _Note_: Passing a boolean for `enforce` will set all three fields of enforce to this value.
 
@@ -93,6 +96,7 @@ Create a new model
     - `String`
     - `Number`
     - `Boolean`
+    - `Date`
     - An array with one type (like `[String]`, `[Number]`, `[{name: String, age: Number}]`
     - An object that contains a valid schema
     - An object with a _type field which is `String`, `Number` or `Boolean`. Such object can contains options
@@ -110,6 +114,15 @@ Create a new model
         - `extra`: Throw an error if an extra field is provided (default value false)
         - `type`: Throw an error if a field does match the expected type (default value true)
 
+_Note about Date_: You can pass a native Date object in a Date field or a raw ReQL date object:
+
+```
+{
+    $reql_type$: 'TIME',
+    epoch_time: <time>, // In seconds -- don't forget to divide by 1000 if you use Date.now()
+    timezone: <timezone> // like '+00:00'
+}
+```
 
 When an object with the field `_type` is passed, the enforce field will be use to overwrite the global settings for enforcing the schema
 
