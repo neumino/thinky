@@ -475,6 +475,13 @@ describe('Model', function(){
                 done();
             })
         });
+        it('should return null if document does not exist', function(done){
+            Cat.get('FAKE_ID', function(error, result){
+                should.not.exist(error);
+                should.not.exist(result);
+                done();
+            });
+        });
     });
     describe('getAll', function() {
         it('should retrieve some documents in the database -- single values', function(done){
