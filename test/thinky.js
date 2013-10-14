@@ -147,7 +147,7 @@ describe('Thinky', function(){
             Cat = thinky.createModel('Cat', { id: String, name: String });
             catou = new Cat({name: 'Catou'});
             catou.save(function(error, result) {
-                should.equal(error.name, 'RqlRuntimeError');
+                should.equal(error.name, 'RqlDriverError');
                 thinky.setOption('db', 'test');
                 done();
             })
