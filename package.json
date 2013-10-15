@@ -26,6 +26,11 @@
   },
   "dependencies":{
     "generic-pool": ">= 2.0.3",
-    "rethinkdb": ">= 1.7.0-2"
+    "rethinkdb": ">= 1.9.0-0"
+  },
+  "devDependencies": {
+    "mocha": ">= 1.13.0",
+    "should": ">= 1.2.2",
+    "underscore": ">= 1.5.2"
   }
 }
