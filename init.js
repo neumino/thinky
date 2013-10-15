@@ -3,6 +3,8 @@ var config = require('./config.js');
 var util = require('util');
 
 var connection;
+var indexCreated = 0;
+var indexToCreate = 4;
 r.connect({
     host: config.host,
     port: config.port,
@@ -13,12 +15,12 @@ r.connect({
     connection = conn;
     dropDb(config.db, function() {
         createDb(config.db, function() {
-            createTable('Cat', function() { createIndex('Cat', 'name') })
+            createTable('Cat', function() { createIndex('Cat', 'name', done) })
             createTable('Dog')
             createTable('Human')
-            createTable('Task', function() { createIndex('Task', 'catId') })
+            createTable('Task', function() { createIndex('Task', 'catId', done) })
             createTable('Mother')
-            createTable('CatTaskLink', function() { createIndex('CatTaskLink', 'catId'); createIndex('CatTaskLink', 'taskId') })
+            createTable('CatTaskLink', function() { createIndex('CatTaskLink', 'catId', done); createIndex('CatTaskLink', 'taskId', done) })
         })
     })
 });
@@ -83,4 +85,12 @@ function createIndex(table, name, cb) {
             console.log('Error: Index '+name+' not created');
         }
     });
+}
+
+function done() {
+    indexCreated++;
+    if (indexCreated === indexToCreate) {
+        console.log('Init script complete, please check for errors.')
+        connection.close()
+    }
 }
