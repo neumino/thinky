@@ -101,13 +101,15 @@ describe('Thinky', function(){
         })
         it('should create a new pool if the user change the host', function(){
             var previousPool = thinky.pool;
-            var value = '127.0.0.1';
+            var value = 'xx.xx.xx.xx'; // non valid host
 
             thinky.setOption('host', value);
 
             should(previousPool);
             should(thinky.pool);
             thinky.pool.should.not.equal(previousPool);
+
+            thinky.setOption('host', config.host);
         })
         it('should create a new pool if the user change the port', function(){
             var previousPool = thinky.pool;
