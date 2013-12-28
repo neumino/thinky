@@ -815,6 +815,7 @@ describe('Model', function(){
                     should.exist(result.owner.id);
                     should.exist(result.owner.idMom);
                     should.exist(result.owner.mom.id);
+
                     done();
                 })
             });
@@ -1078,6 +1079,115 @@ describe('Model', function(){
                 should.exist(result.tasks[2].task.id);
 
                 Cat.get(catou.id).getJoin().run(function(error, result) {
+                    should.exist(result.tasks[0].id);
+                    should.exist(result.tasks[1].id);
+                    should.exist(result.tasks[2].id);
+                    should.exist(result.tasks[0].task.id);
+                    should.exist(result.tasks[1].task.id);
+                    should.exist(result.tasks[2].task.id);
+
+                    done()
+                })
+            })
+
+        })
+    })
+    describe('Bidirectional relations', function() {
+        it('should work for 1-1 relations', function(done) {
+            var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
+            var Human = thinky.createModel('Human', {id: String, ownerName: String, idCat: String});
+            Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
+            Human.hasOne(Cat, 'cat', {leftKey: 'idCat', rightKey: 'id'});
+
+            var owner = new Human({ownerName: "MichelBidirection"});
+            var catou = new Cat({name: "CatouBidirection"});
+
+            catou['owner'] = owner;
+
+            catou.save( {saveJoin: true}, function(error, firstResult) {
+                Cat.get(catou.id).getJoin().run(function(error, result) {
+                    should.not.exist(error);
+                    should.exist(result.id);
+                    should.exist(result.idHuman);
+                    should.exist(result.owner.id);
+
+                    done();
+                })
+            });
+        })
+        it('should work for 1-1 relations', function(done) {
+            var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
+            var Human = thinky.createModel('Human', {id: String, ownerName: String, idCat: String});
+            Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
+            Human.hasOne(Cat, 'cat', {leftKey: 'idCat', rightKey: 'id'});
+
+            var owner = new Human({ownerName: "MichelBidirection"});
+            var catou = new Cat({name: "CatouBidirection"});
+
+            owner['cat'] = catou;
+
+            owner.save( {saveJoin: true}, function(error, firstResult) {
+                Human.get(owner.id).getJoin().run(function(error, result) {
+                    should.not.exist(error);
+                    should.exist(result.id);
+                    should.exist(result.idCat);
+                    should.exist(result.cat.id);
+
+                    done();
+                })
+            });
+        })
+
+
+        it('should work for n-n relations', function(done) {
+            var Cat = thinky.createModel('Cat', {id: String, name: String});
+            var CatTaskLink = thinky.createModel('CatTaskLink', {id: String, catId: String, taskId: String})
+            var Task = thinky.createModel('Task', {id: String, task: String});
+
+            Cat.hasMany(CatTaskLink, 'tasks', {leftKey: 'id', rightKey: 'catId'});
+            CatTaskLink.hasOne(Task, 'task', {leftKey: 'taskId', rightKey: 'id'});
+
+            // The example doesn't make that much sense here, but that's just a test
+            Task.hasMany(CatTaskLink, 'tasks', {leftKey: 'id', rightKey: 'taskId'});
+            CatTaskLink.hasOne(Cat, 'cat', {leftKey: 'catId', rightKey: 'id'});
+
+
+            var catou = new Cat({name: "Catou"});
+            
+            var link1 = new CatTaskLink({});
+            var link2 = new CatTaskLink({});
+            var link3 = new CatTaskLink({});
+
+            catou.tasks = [link1, link2, link3];
+
+            var task1 = new Task({task: "Catch the red dot"});
+            var task2 = new Task({task: "Eat"});
+            var task3 = new Task({task: "Sleep"});
+
+            link1.task = task1;
+            link2.task = task2;
+            link3.task = task3;
+
+            catou.save({saveJoin: true}, function(error, result) {
+                if (error) throw error;
+
+                should.exist(result.id);
+                result.tasks.should.have.length(3);
+                should.exist(result.tasks[0].id);
+                should.exist(result.tasks[1].id);
+                should.exist(result.tasks[2].id);
+                should.exist(result.tasks[0].task.id);
+                should.exist(result.tasks[1].task.id);
+                should.exist(result.tasks[2].task.id);
+
+                Cat.get(catou.id).getJoin().run(function(error, result) {
+                    should.exist(result.tasks[0].id);
+                    should.exist(result.tasks[1].id);
+                    should.exist(result.tasks[2].id);
+                    should.exist(result.tasks[0].task.id);
+                    should.exist(result.tasks[1].task.id);
+                    should.exist(result.tasks[2].task.id);
+
                     done()
                 })
             })
