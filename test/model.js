@@ -1041,11 +1041,6 @@ describe('Model', function(){
             })
         });
         it('should work for n-n relations', function(done) {
-            console.log('')
-            console.log('')
-            console.log('---------------------')
-            console.log('')
-            console.log('')
             var Cat = thinky.createModel('Cat', {id: String, name: String});
             var CatTaskLink = thinky.createModel('CatTaskLink', {id: String, catId: String, taskId: String})
             var Task = thinky.createModel('Task', {id: String, task: String});
