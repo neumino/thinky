@@ -1,6 +1,6 @@
 {
   "name": "thinky",
-  "version": "0.2.15",
+  "version": "0.2.16",
   "description": "RethinkDB ORM for Node.js",
   "main": "lib/index.js",
   "directories": {
@@ -26,7 +26,7 @@
   },
   "dependencies":{
     "generic-pool": ">= 2.0.3",
-    "rethinkdb": ">= 1.9.0-0"
+    "rethinkdb": ">= 1.11.0-0"
   },
   "devDependencies": {
     "mocha": ">= 1.13.0",
