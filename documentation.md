@@ -277,6 +277,8 @@ Returns the query. The query is not executed if callback is not passed.
     - `error`, which is the error if one occured.
     - `result` an array of instances.
 
+_Note_: If you are using a compound index, you must wrap your values in an array.
+
 <a id="model.pluck" class="anchor"></a>
 __Model.pluck(__ field[s], options, callback __)__ [»](#model.pluck)
 
