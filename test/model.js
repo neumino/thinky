@@ -578,6 +578,34 @@ describe('Model', function(){
         });
     });
 
+    describe('update', function() {
+        it('should update all docs', function(done){
+            Cat = thinky.createModel('Cat', { id: String, name: String, privateField: String });
+            Cat.update({newField: "newValue"}, function(error, result) {
+                if (error) throw error;
+                should(result.errors == 0);
+                should(result.replaced > 0);
+                done();
+            })
+        })
+    });
+
+    describe('delete', function() {
+        it('should delete all docs', function(done){
+            Cat = thinky.createModel('Cat', { id: String, name: String, privateField: String });
+            Cat.delete(function(error, result) {
+                if (error) throw error;
+                should(result.errors == 0);
+                should(result.deleted > 0);
+                Cat.run(function(error, result) {
+                    if (error) throw error;
+                    should(result.length == 0);
+                    done();
+                })
+            })
+        })
+    });
+
     describe('without', function() {
         var Cat;
         var scope = {}
