@@ -341,6 +341,17 @@ Fields that start with a `-` will be ordered in a descending way.
 
 Returns the query. The query is not executed if callback is not passed.
 
+<a id="model.delete" class="anchor"></a>
+__Model.delete(__ callback  __)__ [»](#model.delete)
+
+Returns the query. The query is not executed if callback is not passed.
+
+<a id="model.update" class="anchor"></a>
+__Model.update(__ update, callback  __)__ [»](#model.update)
+
+Returns the query. The query is not executed if callback is not passed.
+
+
 
 <a id="model.getjoin" class="anchor"></a>
 __Model.getJoin(__ callback  __)__ [»](#model.getjoin)
@@ -606,6 +617,11 @@ __Query.without(__ field[s], options, callback __)__ [»](#query.without)
 <a id="query.filter" class="anchor"></a>
 _Query.filter(__ filterFunction, callback  __)__ [»](#query.filter)
 
+<a id="query.delete" class="anchor"></a>
+_Query.delete(__ callback  __)__ [»](#query.delete)
+
+<a id="query.update" class="anchor"></a>
+_Query.update(__ update, callback  __)__ [»](#query.update)
 
 <a id="query.skip" class="anchor"></a>
 __Model.skip(__ skipValue, callback  __)__ [»](#query.skip)
