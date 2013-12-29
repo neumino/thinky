@@ -1166,6 +1166,28 @@ describe('Model', function(){
             });
         })
 
+        it('should work for 1-1 relations for the same model', function(done) {
+            var Human = thinky.createModel('Human', {id: String, name: String, idFather: String});
+            Human.hasOne(Human, 'father', {leftKey: 'idFather', rightKey: 'id'});
+
+            var michel = new Human({name: "Michel"});
+            var hung = new Human({name: "Hung"});
+
+            michel['father'] = hung;
+
+            michel.save( {saveJoin: true}, function(error, firstResult) {
+                Human.get(michel.id).getJoin().run(function(error, result) {
+                    should.not.exist(error);
+                    should.exist(result.id);
+                    should.exist(result.idFather);
+                    should.exist(result.father.id);
+
+                    done();
+                })
+            });
+        })
+
+
 
         it('should work for n-n relations', function(done) {
             var Cat = thinky.createModel('Cat', {id: String, name: String});
