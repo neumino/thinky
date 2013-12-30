@@ -1187,6 +1187,27 @@ describe('Model', function(){
             });
         })
 
+        it('should work for 1-1 relations for the same model -- even for pairs)', function(done) {
+            var Human = thinky.createModel('Human', {id: String, name: String, idBestFriend: String});
+            Human.hasOne(Human, 'bestFriend', {leftKey: 'idBestFriend', rightKey: 'id'});
+
+            var michel = new Human({name: "Michel"});
+            var laurent = new Human({name: "Laurent"});
+
+            michel['bestFriend'] = laurent;
+            laurent['bestFriend'] = michel;
+
+            michel.save( {saveJoin: true}, function(error, firstResult) {
+                Human.get(michel.id).getJoin().run(function(error, result) {
+                    should.not.exist(error);
+                    should.exist(result.id);
+                    should.exist(result.idBestFriend);
+                    should.exist(result.bestFriend.id);
+                    should.exist(result.bestFriend.idBestFriend);
+                    done();
+                });
+            });
+        });
 
 
         it('should work for n-n relations', function(done) {
