@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "mocha": ">= 1.13.0",
+    "async": ">= 0.2.9",
     "should": ">= 1.2.2",
     "underscore": ">= 1.5.2"
   }

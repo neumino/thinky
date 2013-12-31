@@ -1,96 +1,69 @@
 var r = require('rethinkdb');
 var config = require('./config.js');
 var util = require('util');
+var async = require('async');
 
 var connection;
-var indexCreated = 0;
-var indexToCreate = 4;
-r.connect({
-    host: config.host,
-    port: config.port,
-    db: config.db
-}, function(error, conn) {
-    if (error) throw error;
 
-    connection = conn;
-    dropDb(config.db, function() {
-        createDb(config.db, function() {
-            createTable('Cat', function() { createIndex('Cat', 'name', done) })
-            createTable('Dog')
-            createTable('Human')
-            createTable('Task', function() { createIndex('Task', 'catId', done) })
-            createTable('Mother')
-            createTable('CatTaskLink', function() { createIndex('CatTaskLink', 'catId', done); createIndex('CatTaskLink', 'taskId', done) })
-        })
-    })
+function log() {
+    var args = Array.prototype.slice.apply(arguments);
+    console.log.apply(console, args);
+}
+
+function connect(cb) {
+    r.connect({
+        host: config.host,
+        port: config.port,
+        db: config.db
+    }, function(error, conn) {
+        if (error) throw error;
+        log("Connection initialized.");
+        connection = conn;
+        cb();
+    });
+};
+
+function createEmptyDb(cb) {
+    r.dbDrop(config.db).run(connection, function(error, result) {
+        // The error that matters it the one thrown by dbCreate
+        r.dbCreate(config.db).run(connection, function(error, result) {
+            if (error) throw error;
+            log("  Database", config.db, "created");
+            cb();
+        });
+    });
+};
+
+function createTable(tableName, cb) {
+    r.tableCreate(tableName).run(connection, function(error, result) {
+        if (error) throw error;
+        log("    ", tableName, "created.");
+        cb();
+    });
+};
+
+
+function createIndex(args, cb) {
+    var tableName = args[0];
+    var indexName = args[1];
+    r.table(tableName).indexCreate(indexName).run( connection, function(error, result) {
+        if (error) throw error;
+        log("      ", indexName, "for the table", tableName, "created.");
+        cb();
+    });
+};
+
+
+connect(function() {
+    createEmptyDb(function() {
+        async.map(["Cat", "Dog", "Human", "Task", "Mother", "CatTaskLink"], createTable, function() {
+            async.map([["Cat", "name"], ["Task", "catId"], ["CatTaskLink", "catId"], ["CatTaskLink", "taskId"]], createIndex, function() {
+                log("");
+                log("All databases/tables/indexes created.")
+                log("Run `mocha` to execute the tests.")
+                log("");
+                connection.close();
+            });
+        });
+    });
 });
-
-function dropDb(name, cb) {
-    r.dbDrop(name).run(connection, function(error, result) {
-        if (error) console.log(error);
-        if ((result != null) && (result.created === 1)) {
-            console.log('Db `'+name+'` created');
-        }
-        else {
-            console.log('Error: Database `'+config.db+'` was not deleted.');
-        }
-
-        if (typeof cb === 'function') {
-            cb()
-        }
-
-    });
-}
-
-function createDb(name, cb) {
-    r.dbCreate(config.db).run(connection, function(error, result) {
-        if (error) throw error;
-        if ((result != null) && (result.created === 1)) {
-            console.log('Db `'+name+'` created');
-            if (typeof cb === 'function') {
-                cb()
-            }
-        }
-        else {
-            console.log('Error: Database `'+name+'` not created');
-        }
-    });
-}
-
-function createTable(name, cb) {
-    r.db(config.db).tableCreate(name).run(connection, function(error, result) {
-        if (error) throw error;
-        if ((result != null) && (result.created === 1)) {
-            console.log('Table `'+name+'` created');
-            if (typeof cb === 'function') {
-                cb()
-            }
-        }
-        else {
-            console.log('Error: Table `'+name+'` not created');
-        }
-    });
-}
-
-function createIndex(table, name, cb) {
-    r.db(config.db).table(table).indexCreate(name).run(connection, function(error, result) {
-        if (error) throw error;
-        if ((result != null) && (result.created === 1)) {
-            console.log('Index `'+name+'` created');
-            if (typeof cb === 'function') {
-                cb()
-            }
-        }
-        else {
-            console.log('Error: Index '+name+' not created');
-        }
-    });
-}
-
-function done() {
-    indexCreated++;
-    if (indexCreated === indexToCreate) {
-        console.log('Init script complete, please check for errors.')
-        connection.close()
-    }
-}
