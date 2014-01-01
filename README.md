@@ -80,7 +80,7 @@ You are welcome to do a pull request.
 
 ### Contributors
 
-- [@nikaspran](https://github.com/nikaspran)
+- [nikaspran](https://github.com/nikaspran)
 - [wezs](https://github.com/wezs)
 
 ### License
