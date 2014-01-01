@@ -177,6 +177,17 @@ describe('Document', function(){
                 });
             });
         });
+        it('should work if there is a circular reference', function(){
+            var Cat = thinky.createModel('Cat', { id: String, friend: Object });
+            var catou = new Cat({name: 'Catou'});
+            catou.friend = catou;
+
+
+            (function() {
+                catou.save(null, function(error, result) {})
+            }).should.throw('Nesting depth limit exceeded\nYou probably have a circular reference somewhere, outside joined fields.');
+        });
+
 
         // Testing dates
         it('should save/retrieve date in native format', function(done){
@@ -398,6 +409,16 @@ describe('Document', function(){
                 })
             })
         });
+        it('should throw an error if we try to delete a document that was not saved', function(){
+            var Cat = thinky.createModel('Cat', { id: String, name: String });
+            var catou = new Cat({name: 'Catou'});
+
+            (function() {
+                catou.delete( null, function(error, result) { })
+            }).should.throw('The document was not saved and therefore cannot be deleted.');
+
+        });
+
         it('should delete the doc -- other signature', function(done){
             var Cat = thinky.createModel('Cat', { id: String, name: String });
             var catou = new Cat({name: 'Catou'});
