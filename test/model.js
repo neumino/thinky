@@ -98,6 +98,7 @@ describe('Model', function(){
         it('should save Date fields', function() {
             var Cat = thinky.createModel('Cat', { fieldDate: Date });
             var minou = new Cat({fieldDate: new Date()});
+            should.exist(minou.fieldDate)
             should(minou.fieldDate instanceof Date === true);
         });
         it('should save Date fields', function() {
@@ -286,6 +287,13 @@ describe('Model', function(){
             should(Object.prototype.toString.call(minou) === '[object Object]');
             should.equal(minou.fieldArray.join(), value.join());
         });
+        it('should save Date fields (with _type)', function() {
+            var Cat = thinky.createModel('Cat', { fieldDate: {_type: Date} });
+            var minou = new Cat({fieldDate: new Date()});
+            should.exist(minou.fieldDate)
+            should((minou.fieldDate instanceof Date) === true);
+        });
+
 
 
         // Testing enforce on the model level
