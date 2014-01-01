@@ -4,8 +4,7 @@ div.author(ng-repeat='author in authors')
         a.edit(href='/editAuthor/{{author.id}}') Edit
         a.delete(href='/deleteAuthor/{{author.id}}') Delete
 
-    h3
-        {{author.name}}
+    h3 {{author.name}}
 
     div.data
         div.field Email:
