@@ -490,6 +490,20 @@ describe('Model', function(){
                 done();
             });
         });
+        it('should return multiple documents if `id` is an array', function(done){
+            var cat1 = new Cat({name: "Cat1"});
+            var cat2 = new Cat({name: "Cat2"});
+            cat1.save(function(error, result) {
+                cat2.save(function(error, result) {
+                    Cat.get([cat1.id, cat2.id]).getJoin().run(function(error, result) {
+                        should.not.exist(error);
+                        should(result.length == 2);
+                        done()
+                    })
+                })
+            })
+        });
+
     });
     describe('getAll', function() {
         it('should retrieve some documents in the database -- single values', function(done){
