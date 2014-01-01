@@ -75,8 +75,13 @@ You are welcome to do a pull request.
 - Need something? Just ask :-)
 
 
-### About
-Author: Michel Tu -- orphee@gmail.com -- [blog](http://blog.justonepixel.com) -- [twitter](https://twitter.com/neumino)
+### Author
+- Michel Tu -- orphee@gmail.com -- [blog](http://blog.justonepixel.com) -- [twitter](https://twitter.com/neumino)
+
+### Contributors
+
+- [@nikaspran](https://github.com/nikaspran)
+- [wezs](https://github.com/wezs)
 
 ### License
 Copyright (c) 2013 Michel Tu <orphee@gmail.com>
