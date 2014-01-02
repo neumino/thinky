@@ -1,4 +1,5 @@
 # Thinky
+<a href="https://app.wercker.com/project/bykey/e5ab679f3412f8f86ef6488b31004fed"><img alt="Wercker status" src="https://app.wercker.com/status/e5ab679f3412f8f86ef6488b31004fed" align="right" /></a>
 
 JavaScript ORM for RethinkDB.  
 
@@ -9,7 +10,7 @@ Install:
 npm install thinky
 ```
 
-Use
+Use:
 ```javascript
 var thinky = require('thinky');
 thinky.init({});
