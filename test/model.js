@@ -1287,5 +1287,143 @@ describe('Model', function(){
 
         })
     })
+
+    describe('Relations should be "deletable"', function() {
+        it('for hasOne - removing only the relation - null and without saveJoin', function(done) {
+            var Human = thinky.createModel('Human', {id: String, name: String, idFather: String});
+            Human.hasOne(Human, 'father', {leftKey: 'idFather', rightKey: 'id'});
+
+            var michel = new Human({name: "Michel"});
+            var hung = new Human({name: "Hung"});
+
+            michel['father'] = hung;
+
+            michel.save( {saveJoin: true}, function(error, firstResult) {
+                if (error) throw error;
+                michel.idFather = null;
+
+                michel.save( function(error, result) {
+                    if (error) throw error;
+                    Human.get(michel.id).getJoin().run(function(error, result) {
+                        if (error) throw error;
+                        should.not.exist(error);
+                        should.exist(result.id);
+                        should.not.exist(result.idFather);
+                        should.not.exist(result.father);
+
+                        done();
+                    })
+                })
+            });
+        })
+        it('for hasOne - removing only the relation - null and with saveJoin', function(done) {
+            var Human = thinky.createModel('Human', {id: String, name: String, idFather: String});
+            Human.hasOne(Human, 'father', {leftKey: 'idFather', rightKey: 'id'});
+
+            var michel = new Human({name: "Michel"});
+            var hung = new Human({name: "Hung"});
+
+            michel['father'] = hung;
+
+            michel.save( {saveJoin: true}, function(error, firstResult) {
+                if (error) throw error;
+                michel.idFather = null;
+                michel.father = null;
+
+                michel.save( {saveJoin: true}, function(error, result) {
+                    if (error) throw error;
+                    Human.get(michel.id).getJoin().run(function(error, result) {
+                        if (error) throw error;
+                        should.not.exist(error);
+                        should.exist(result.id);
+                        should.not.exist(result.idFather);
+                        should.not.exist(result.father);
+
+                        done();
+                    })
+                })
+            });
+        })
+        it('for hasOne - removing only the relation - delete and without saveJoin', function(done) {
+            var Human = thinky.createModel('Human', {id: String, name: String, idFather: String});
+            Human.hasOne(Human, 'father', {leftKey: 'idFather', rightKey: 'id'});
+
+            var michel = new Human({name: "Michel"});
+            var hung = new Human({name: "Hung"});
+
+            michel['father'] = hung;
+
+            michel.save( {saveJoin: true}, function(error, firstResult) {
+                if (error) throw error;
+                delete michel.idFather
+
+                michel.save( function(error, result) {
+                    if (error) throw error;
+                    Human.get(michel.id).getJoin().run(function(error, result) {
+                        if (error) throw error;
+                        should.not.exist(error);
+                        should.exist(result.id);
+                        should.not.exist(result.idFather);
+                        should.not.exist(result.father);
+
+                        done();
+                    })
+                })
+            });
+        })
+        it('for hasOne - removing only the relation - delete and with saveJoin', function(done) {
+            var Human = thinky.createModel('Human', {id: String, name: String, idFather: String});
+            Human.hasOne(Human, 'father', {leftKey: 'idFather', rightKey: 'id'});
+
+            var michel = new Human({name: "Michel"});
+            var hung = new Human({name: "Hung"});
+
+            michel['father'] = hung;
+
+            michel.save( {saveJoin: true}, function(error, firstResult) {
+                if (error) throw error;
+                delete michel.idFather;
+                delete michel.father;
+
+                michel.save( {saveJoin: true}, function(error, result) {
+                    if (error) throw error;
+                    Human.get(michel.id).getJoin().run(function(error, result) {
+                        if (error) throw error;
+                        should.not.exist(error);
+                        should.exist(result.id);
+                        should.not.exist(result.idFather);
+                        should.not.exist(result.father);
+
+                        done();
+                    })
+                })
+            });
+        })
+
+        it('for hasMany', function(done) {
+            var Cat = thinky.createModel('Cat', {id: String, name: String});
+            var Task = thinky.createModel('Task', {id: String, catId: String, task: String});
+            Cat.hasMany(Task, 'tasks', {leftKey: 'id', rightKey: 'catId'}, {orderBy: '-id'});
+
+            catou = new Cat({name: "Catou"});
+            task1 = new Task({task: "Catch the red dot"});
+            task2 = new Task({task: "Eat"});
+            task3 = new Task({task: "Sleep"});
+            catou.tasks = [task1, task2, task3];
+            catou.save({saveJoin: true}, function(error, firstResult) {
+                if (error) throw error;
+                task1.catId = null;
+
+                Cat.get(catou.id).getJoin().run(function(error, result) {
+                    if (error) throw error;
+
+                    should(result.tasks.length === 2);
+                    done();
+                })
+            })
+        });
+
+           
+    })
 })
 
