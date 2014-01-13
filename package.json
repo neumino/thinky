@@ -1,6 +1,6 @@
 {
   "name": "thinky",
-  "version": "0.2.22",
+  "version": "0.2.23",
   "description": "RethinkDB ORM for Node.js",
   "main": "lib/index.js",
   "directories": {

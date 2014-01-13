@@ -1231,6 +1231,101 @@ describe('Model', function(){
             });
         });
 
+        it('pairs and double save should work', function(done) {
+            var Human = thinky.createModel('Human', {id: String, name: String, idBestFriend: String});
+            Human.hasOne(Human, 'bestFriend', {leftKey: 'idBestFriend', rightKey: 'id'});
+
+            var michel = new Human({name: "Michel"});
+            var laurent = new Human({name: "Laurent"});
+
+            michel['bestFriend'] = laurent;
+            laurent['bestFriend'] = michel;
+
+            michel.save( {saveJoin: true}, function(error, result) {
+                should.not.exist(error);
+
+                // Make sure we didn't create new objects
+                should(michel.bestFriend === laurent);
+                should(laurent.bestFriend === michel);
+
+                Human.get(michel.id).getJoin().run(function(error, firstResult) {
+                    should.not.exist(error);
+                    should.exist(firstResult.id);
+                    should.exist(firstResult.idBestFriend);
+                    should.exist(firstResult.bestFriend.id);
+                    should.exist(firstResult.bestFriend.idBestFriend);
+
+                    laurent.save(function(error, result) {
+                        should.exist(result.id === michel.id);
+                        should.exist(result.idBestFriend === michel.idBestFriend);
+                        should.exist(result.bestFriend.id === michel.bestFriend.id);
+                        should.exist(result.bestFriend.idBestFriend === result.bestFriend.idBestFriend);
+                        done();
+                    });
+                });
+            });
+        });
+
+        it('pairs and double save should work (insert AND update)', function(done) {
+            var Human = thinky.createModel('Human', {id: String, name: String, idBestFriend: String});
+            Human.hasOne(Human, 'bestFriend', {leftKey: 'idBestFriend', rightKey: 'id'});
+
+            var michel = new Human({name: "Michel"});
+            var laurent = new Human({name: "Laurent"});
+
+            michel['bestFriend'] = laurent;
+            laurent['bestFriend'] = michel;
+
+            michel.save( {saveJoin: true}, function(error, result) {
+                should.not.exist(error);
+
+                // Make sure we didn't create new objects
+                should(michel.bestFriend === laurent);
+                should(laurent.bestFriend === michel);
+
+                Human.get(michel.id).getJoin().run(function(error, firstResult) {
+                    should.not.exist(error);
+                    should.exist(firstResult.id);
+                    should.exist(firstResult.idBestFriend);
+                    should.exist(firstResult.bestFriend.id);
+                    should.exist(firstResult.bestFriend.idBestFriend);
+
+                    laurent.name = "Laurent II";
+                    michel.name = "Michel II";
+
+                    michel.save( function(error, result) {
+                        should.not.exist(error);
+                        should.equal(result.id, michel.id);
+                        should.equal(result.idBestFriend, michel.idBestFriend);
+                        should.equal(result.bestFriend.id, michel.bestFriend.id);
+                        should.equal(result.bestFriend.idBestFriend, result.bestFriend.idBestFriend);
+
+                        Human.get(michel.id).getJoin().run(function(error, result) {
+                            should.not.exist(error);
+                            should.equal(michel.name, result.name)
+                            should.equal(result.bestFriend.name, "Laurent")
+
+                            michel.save( {saveJoin: true}, function(error, result) {
+                                should.not.exist(error);
+                                should.equal(michel.name, result.name)
+                                should.equal(laurent.name, result.bestFriend.name)
+
+                                Human.get(michel.id).getJoin().run(function(error, result) {
+                                    should.equal(michel.name, result.name)
+                                    should.equal(result.bestFriend.name, "Laurent II")
+
+                                    done();
+                                });
+                            });
+                        });
+
+                    });
+                });
+            });
+        });
+
+
+
 
         it('should work for n-n relations', function(done) {
             var Cat = thinky.createModel('Cat', {id: String, name: String});
