@@ -293,6 +293,26 @@ describe('Model', function(){
             should.exist(minou.fieldDate)
             should((minou.fieldDate instanceof Date) === true);
         });
+		it('should use the default function for Date fields (with _type)', function() {
+			var Cat = thinky.createModel('Cat', { fieldDate: {_type: Date, default: function(){return new Date;}} });
+			var minou = new Cat();
+			should.exist(minou.fieldDate);
+			should((minou.fieldDate instanceof Date) === true);
+		});
+		it('should use the default value for Date fields (with _type)', function() {
+			var now = Date.now();
+
+			var Cat = thinky.createModel('Cat', { fieldDate: {_type: Date, default: function(){return {
+				$reql_type$: 'TIME',
+				epoch_time: now,
+				timezone: '+00:00'
+			};}} });
+
+			var minou = new Cat();
+			should.equal(minou.fieldDate.$reql_type$, 'TIME');
+			should.equal(minou.fieldDate.epoch_time, now);
+			should.equal(minou.fieldDate.timezone, '+00:00');
+		});
 
 
 
