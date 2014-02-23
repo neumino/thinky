@@ -364,6 +364,47 @@ describe('Model', function(){
             var Cat = thinky.createModel('Cat', { fieldString: {_type: String, enforce: {type: true, missing: true, extra: true}}} );
             (function() { minou = new Cat({}) }).should.throw('Value for [fieldString] must be defined')
         });
+
+        it('Test validator - 1', function() {
+            var Cat = thinky.createModel('Cat',
+                { fieldString: String },
+                { validator: function() { throw new Error("No document shall pass") } });
+
+            (function() { minou = new Cat({fieldString: "foo"}) }).should.throw('No document shall pass')
+        });
+        it('Test validator - 2', function() {
+            var Cat = thinky.createModel('Cat',
+                { fieldString: String },
+                { validator: function() { } });
+
+            minou = new Cat({fieldString: "foo"});
+        });
+        it('Test validator - 3', function() {
+            var Cat = thinky.createModel('Cat',
+                { fieldString: String },
+                { validator: function() {
+                        if (this.fieldString !== "foo") {
+                            throw new Error("fieldString was not `foo`");
+                        }
+                    }
+                });
+
+            minou = new Cat({fieldString: "foo"});
+        });
+        it('Test validator - 4', function() {
+            var Cat = thinky.createModel('Cat',
+                { fieldString: String },
+                { validator: function() {
+                        if (this.fieldString !== "foo") {
+                            throw new Error("fieldString was not `foo`");
+                        }
+                    }
+                });
+            (function() { minou = new Cat({fieldString: "notfoo"}) }).should.throw('fieldString was not `foo`')
+        });
+
+
+
     });
 
     
