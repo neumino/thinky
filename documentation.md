@@ -86,8 +86,8 @@ __Thinky.disconnect()__  [»](#thinky.setoptions)
 Close all the connections.
 
 
-<a id="thinky.disconnect" class="anchor"></a>
-__Thinky.createModel(__ name, schema, options __)__ [»](#thinky.setoptions)
+<a id="thinky.createModel" class="anchor"></a>
+__Thinky.createModel(__ name, schema, options __)__ [»](#thinky.createModel)
 
 Create a new model
 
