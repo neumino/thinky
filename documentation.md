@@ -87,7 +87,7 @@ Close all the connections.
 
 
 <a id="thinky.disconnect" class="anchor"></a>
-__Thinky.createModel(__ name, schema, settings __)__ [»](#thinky.setoptions)
+__Thinky.createModel(__ name, schema, options __)__ [»](#thinky.setoptions)
 
 Create a new model
 
@@ -113,6 +113,8 @@ Create a new model
         - `missing`: Throw an error if a field is missing (default value false)
         - `extra`: Throw an error if an extra field is provided (default value false)
         - `type`: Throw an error if a field does match the expected type (default value true)
+    - `validator`: A function that is executed after creating an object. The context is
+the document created. You can use it to validate your document by throwing errors if some conditions are not met.
 
 _Note about Date_: You can pass a native Date object in a Date field or a raw ReQL date object:
 
