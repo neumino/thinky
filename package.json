@@ -1,8 +1,8 @@
 {
   "name": "thinky",
-  "version": "0.2.25",
+  "version": "1.0.0",
   "description": "RethinkDB ORM for Node.js",
-  "main": "lib/index.js",
+  "main": "lib/thinky.js",
   "directories": {
     "test": "test"
   },
@@ -20,18 +20,13 @@
   "author": "Michel Tu <orphee@gmail.com> (http://justonepixel.com/)",
   "license": "MIT",
   "readmeFilename": "README.md",
-  "gitHead": "1983ded4bd82ebcee75ce07e874479ec25eb40ce",
   "bugs": {
     "url": "https://github.com/neumino/thinky/issues"
   },
   "dependencies":{
-    "generic-pool": ">= 2.0.3",
-    "rethinkdb": ">= 1.11.0-0"
+    "rethinkdbdash": ">= 1.12.0"
   },
   "devDependencies": {
-    "mocha": ">= 1.13.0",
-    "async": ">= 0.2.9",
-    "should": ">= 1.2.2",
-    "underscore": ">= 1.5.2"
+    "mocha": ">= 1.13.0"
   }
 }

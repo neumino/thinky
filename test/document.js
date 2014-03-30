@@ -1,587 +1,771 @@
-var thinky = require('../lib/index.js');
-var config = require('../config.js');
-var should = require('should');
+var config = require(__dirname+'/../config.js');
+var thinky = require(__dirname+'/../lib/thinky.js')(config);
+var r = thinky.r;
+
+var util = require(__dirname+'/util.js');
 var assert = require('assert');
-var r = require('rethinkdb');
-var _ = require('underscore');
 
-thinky.init({
-    host: config.host,
-    port: config.port,
-    db: config.db
-})
+/*
+describe('generateDefault', function(){
+    it('String - constant', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultValue = util.s4();
 
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: {_type: String, default: defaultValue}
+        }, {init: false})
 
-describe('Document', function(){
-    describe('getDocument', function(){
-        it('should return different objects', function(){
-            var Cat = thinky.createModel('Cat', { id: String, name: String, age: 20});
-            var catou = new Cat({name: 'Catou'});
-            var minou = new Cat({name: 'Minou'});
+        doc = new Model({
+            id: str
+        })
 
-            should.exist(catou.getDocument());
-            catou.getDocument().should.not.equal(minou.getDocument());
-        });
+        assert.equal(doc.id, str);
+        assert.equal(doc.field, defaultValue);
     });
-    describe('getModel', function() {
-        it('should return a model shared by all instances of the model', function(){
-            var Cat = thinky.createModel('Cat', { id: String, name: String, age: 20});
-            var catou = new Cat({name: 'Catou'});
-            var minou = new Cat({name: 'Minou'});
+    it('String - function', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultValue = util.s4();
 
-            should.exist(catou.getModel());
-            should.equal(catou.getModel(), minou.getModel());
-        });
-    });
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: {_type: String, default: function() {
+                return defaultValue;
+            }}
+        }, {init: false})
 
+        doc = new Model({
+            id: str
+        })
 
-    // Test define
-    describe('definePrivate', function() {
-        it('should save a method', function() {
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
-            var minou = new Cat({name: 'Minou'});
-            catou.definePrivate('helloDoc', function() { return 'hello, my name is '+this.name; })
-
-            should.equal(catou.helloDoc(), 'hello, my name is Catou');
-        });
-        it('should not add the function for other documents', function(){
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
-            var minou = new Cat({name: 'Minou'});
-            catou.definePrivate('helloDoc', function() { return 'hello, my name is '+this.name; })
-
-            should.not.exist(minou.helloDoc);
-        });
-        it('should not add the function for new documents', function(){
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
-            catou.definePrivate('helloDoc', function() { return 'hello, my name is '+this.name; })
-            var minou = new Cat({name: 'Minou'});
-
-            should.not.exist(minou.helloDoc);
-        });
+        assert.equal(doc.id, str);
+        assert.equal(doc.field, defaultValue);
     });
 
-    // Test merge 
-    describe('merge', function() {
-        it('should merge all fields', function(){
-            var Cat = thinky.createModel('Cat', { id: Number, name: String }, {enforce: true});
-            var catou = new Cat({id: 1, name: 'Catou'});
-            catou.merge({id: 2, name: 'CatouBis'});
+    it('String - function - Test binding', function(){
+        var name = util.s4();
+        var str = util.s4();
 
-            should.equal(catou.id, 2);
-            should.equal(catou.name, 'CatouBis');
-        });
-        it('should not throw if merge is recursif (default settings) even if the schema is enforced', function(){
-            var Cat = thinky.createModel('Cat', { id: Number, name: String }, {enforce: true});
-            var catou = new Cat({id: 1, name: 'Catou'});
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: {_type: String, default: function() {
+                return this.id;
+            }}
+        }, {init: false})
 
-            catou.merge({name: 'CatouTer'});
-            should.equal(catou.id, 1);
-            should.equal(catou.name, 'CatouTer');
-        });
-        it('should throw if schema is enforced -- extra field', function(){
-            var Cat = thinky.createModel('Cat', { id: Number, name: String }, {enforce: true});
-            var catou = new Cat({id: 1, name: 'Catou'});
+        doc = new Model({
+            id: str
+        })
 
-            (function() { catou.merge({id: 2, name: 'CatouBis', extraField: 3});}).should.throw('An extra field `[extraField]` not defined in the schema was found.');
-        });
-        it('should throw if schema is enforced -- missing field', function(){
-            var Cat = thinky.createModel('Cat', { id: Number, name: String }, {enforce: true});
-            var catou = new Cat({id: 1, name: 'Catou'});
-
-            (function() { catou.merge({name: 'catoubis'}, true);}).should.throw('Value for [id] must be defined')
-        });
-        it('should throw if schema is enforced -- wrong type field', function(){
-            var Cat = thinky.createModel('Cat', { id: Number, name: String }, {enforce: true});
-            var catou = new Cat({id: 1, name: 'Catou'});
-
-            (function() { catou.merge({id: 'nonValidValue', name: 'CatouBis', extraField: 3});}).should.throw('Value for [id] must be a Number');
-        });
-        it('should emit the event `change`', function(done){
-            var Cat = thinky.createModel('Cat', { id: Number, name: String });
-            var catou = new Cat({id: 1, name: 'Catou'});
-            catou.on('change', function() {
-                done();
-            });
-            catou.merge({name: 'CatouBis'});
-        });
+        assert.equal(doc.id, str);
+        assert.equal(doc.field, str);
     });
 
+    it('Number - constant', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultValue = util.random();
 
-    // Test against the database
-    describe('save', function() {
-        it('should add a field id -- Testing document', function(done){
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: {_type: Number, default: defaultValue}
+        }, {init: false})
 
-            catou.save(null, function(error, result) {
-                should.exist(result.id);
-                done();
-            })
-        });
-        it('should add a field id -- Testing document -- other signature', function(done){
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
+        doc = new Model({
+            id: str
+        })
 
-            catou.save(function(error, result) {
-                should.exist(result.id);
-                done();
-            });
-        });
+        assert.equal(doc.id, str);
+        assert.equal(doc.field, defaultValue);
+    });
+    it('Number - function', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultValue = util.random();
 
-        it('should not change the reference of the object', function(done){
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: {_type: Number, default: function() {
+                return defaultValue;
+            }}
+        }, {init: false})
 
-            catou.save(null, function(error, result) {
-                should.equal(catou, result);
-                done();
-            });
-        });
-        it('should update the document in the database', function(done){
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
+        doc = new Model({
+            id: str
+        })
 
-            catou.save(null, function(error, result) {
-                var value = 'Catouuuuu';
-                catou.name = value;
+        assert.equal(doc.id, str);
+        assert.equal(doc.field, defaultValue);
+    });
 
-                // Make sure that the doc is saved, so we are going to trigger an update next time
-                should.equal(catou.getDocSettings().saved, true);
+    it('Bool - constant', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultValue = util.bool();
 
-                catou.save(null, function(error, result) {
-                    Cat.get(catou.id).run(function(error, result) {
-                        should.equal(result.name, value);
-                        done();
-                    });
-                });
-            });
-        });
-        it('should update the document (in place)', function(done){
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: {_type: Boolean, default: defaultValue}
+        }, {init: false})
 
-            catou.save(null, function(error, result) {
-                var value = 'Catouuuuu';
-                catou.name = value;
+        doc = new Model({
+            id: str
+        })
 
-                // Make sure that the doc is saved, so we are going to trigger an update next time
-                should.equal(catou.getDocSettings().saved, true);
+        assert.equal(doc.id, str);
+        assert.equal(doc.field, defaultValue);
+    });
+    it('Bool - function', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultValue = util.bool();
 
-                catou.save(null, function(error, result) {
-                    should.equal(catou, result);
-                    should.equal(catou.name, value);
-                    done();
-                });
-            });
-        });
-        it('should work if there is a circular reference', function(){
-            var Cat = thinky.createModel('Cat', { id: String, friend: Object });
-            var catou = new Cat({name: 'Catou'});
-            catou.friend = catou;
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: {_type: Boolean, default: function() {
+                return defaultValue;
+            }}
+        }, {init: false})
 
+        doc = new Model({
+            id: str
+        })
 
-            (function() {
-                catou.save(null, function(error, result) {})
-            }).should.throw('Nesting depth limit exceeded\nYou probably have a circular reference somewhere, outside joined fields.');
-        });
+        assert.equal(doc.id, str);
+        assert.equal(doc.field, defaultValue);
+    });
 
+    it('Array - constant', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultValue = [1,2,3];
 
-        // Testing dates
-        it('should save/retrieve date in native format', function(done){
-            var date = new Date();
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: {_type: Array, default: defaultValue}
+        }, {init: false})
 
-            var Cat = thinky.createModel('Cat', { id: String, name: String, date: Date });
-            var catou = new Cat({name: 'Catou', date: date});
+        doc = new Model({
+            id: str
+        })
 
-            catou.save(null, function(error, result) {
-                should.equal(result.date.toString(), date.toString())
-                Cat.get(catou.id).run(function(error, result) {
-                    should.equal(result.date.toString(), date.toString())
-                    done();
-                });
-            });
-        });
-        it('should save a date with a raw format and return a native date object', function(done){
-            var date = new Date();
-            var dateObj = {
-                $reql_type$: 'TIME',
-                epoch_time: date.getTime()/1000,
-                timezone: '+00:00'
+        assert.equal(doc.id, str);
+        assert.deepEqual(doc.field, defaultValue);
+    });
+    it('Array - function', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultValue = [1,2,3];
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: {_type: Array, default: function() {
+                return defaultValue;
+            }}
+        }, {init: false})
+
+        doc = new Model({
+            id: str
+        })
+
+        assert.equal(doc.id, str);
+        assert.deepEqual(doc.field, defaultValue);
+    });
+    it('Object - constant', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultValue = {foo: "bar"};
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: {_type: Object, default: defaultValue}
+        }, {init: false})
+
+        doc = new Model({
+            id: str
+        })
+
+        assert.equal(doc.id, str);
+        assert.deepEqual(doc.field, defaultValue);
+    });
+    it('Object - function', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultValue = {foo: "bar"};
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: {_type: Object, default: function() {
+                return defaultValue;
+            }}
+        }, {init: false})
+
+        doc = new Model({
+            id: str
+        })
+
+        assert.equal(doc.id, str);
+        assert.deepEqual(doc.field, defaultValue);
+    });
+    it('Object - constant', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultValue = {foo: "bar"};
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: {_type: Object, default: defaultValue}
+        }, {init: false})
+
+        doc = new Model({
+            id: str
+        })
+
+        assert.equal(doc.id, str);
+        assert.deepEqual(doc.field, defaultValue);
+        assert.notStrictEqual(doc.field, defaultValue);
+    });
+
+    it('Number - nested value', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultValue = util.random();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            nested: {
+                _type: Object,
+                schema: {
+                    field: {_type: Number, default: defaultValue}
+                },
+                default: {}
             }
+        }, {init: false})
 
-            var Cat = thinky.createModel('Cat', { id: String, name: String, date: Date });
-            var catou = new Cat({name: 'Catou', date: dateObj});
+        doc = new Model({
+            id: str
+        })
 
-            catou.save(null, function(error, result) {
-                should.equal(result.date.toString(), date.toString())
-                Cat.get(catou.id).run(function(error, result) {
-                    should.equal(result.date.toString(), date.toString())
-                    done();
-                });
-            });
-        });
-
-   
-
-        // Testing events with save
-        it('should emit the event `save` on insert', function(done){
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catName = 'Catou'
-            var catou = new Cat({name: catName});
-            catou.on('save', function(doc) {
-                should.equal(doc.name, catName);
-                done();
-            });
-            catou.save();
-        });
-        it('should emit the event `save` on update', function(done) {
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var oldName = 'Catou I';
-            var newName = 'Catou II';
-            var catou = new Cat({name: oldName});
-
-            catou.save(function(error, result) {
-                if (error) throw error;
-                catou.name = newName;
-                
-                catou.on('save', function(doc, oldDoc) {
-                    should.equal(doc.name, newName);
-                    should.equal(oldDoc.name, oldName);
-                    done();
-                });
-
-                catou.save( function(error, result) {
-                    if (error) throw error;
-                    catou.off('save');
-                });
-            });
-        });
-
-        // Testing with joins
-        it('should not save the joined document by default -- hasOne', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
-            var Human = thinky.createModel('Human', {id: String, ownerName: String});
-            Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
-
-            var owner = new Human({ownerName: "Michel"});
-            var catou = new Cat({name: "Catou"});
-            catou['owner'] = owner;
-
-            catou.save(function(error, result) {
-                should.exist(catou.id);
-                should.not.exist(catou.idHuman);
-                should.not.exist(catou.owner.id);
-                done();
-            });
-        });
-
-        it('should be able to save the joined doc -- hasOne', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
-            var Human = thinky.createModel('Human', {id: String, ownerName: String});
-            Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
-
-            var owner = new Human({ownerName: "Michel"});
-            var catou = new Cat({name: "Catou"});
-            catou['owner'] = owner;
-
-            catou.save({saveJoin: true}, function(error, result) {
-                should.exist(catou.id);
-                should.exist(catou.idHuman);
-                should.exist(catou.owner.id);
-
-                done();
-            });
-        });
-
-        it('should keep the references when saving joined documents -- hasOne', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
-            var Human = thinky.createModel('Human', {id: String, ownerName: String});
-            Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
-
-            var owner = new Human({ownerName: "Michel"});
-            var catou = new Cat({name: "Catou"});
-            catou['owner'] = owner;
-            var catouOriginal = catou;
-
-            catou.save({saveJoin: true}, function(error, result) {
-                should.equal(catou.owner, owner)
-                should.equal(catouOriginal, catou)
-
-                catou.getDocSettings().saved.should.be.true
-                catou.owner.getDocSettings().saved.should.be.true
-                done();
-            });
-        });
-
-        it('should marked joined documents that are saved `saved` -- hasOne', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
-            var Human = thinky.createModel('Human', {id: String, ownerName: String});
-            Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
-
-            var owner = new Human({ownerName: "Michel"});
-            var catou = new Cat({name: "Catou"});
-            catou['owner'] = owner;
-            var catouOriginal = catou;
-
-            catou.save({saveJoin: true}, function(error, result) {
-                catou.getDocSettings().saved.should.be.true
-                catou.owner.getDocSettings().saved.should.be.true
-                done();
-            });
-        });
-
-
-        it('should be able to save the joined doc -- nested hasOne', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
-            var Human = thinky.createModel('Human', {id: String, ownerName: String, idMom: String});
-            var Mother = thinky.createModel('Mother', {id: String, motherName: String});
-            Human.hasOne(Mother, 'mom', {leftKey: 'idMom', rightKey: 'id'});
-            Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
-
-            var owner = new Human({ownerName: "Michel"});
-            var catou = new Cat({name: "Catou"});
-            var mother = new Mother({motherName: "Mom"});
-            catou['owner'] = owner;
-            owner['mom'] = mother;
-
-            catou.save( {saveJoin: true}, function(error, result) {
-                should.exist(catou.id);
-                should.exist(catou.idHuman);
-                should.exist(catou.owner.id);
-                done();
-            });
-        });
-
-        it('should not save the joined docs by default -- hasMany', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String});
-            var Task = thinky.createModel('Task', {id: String, catId: String, task: String});
-            Cat.hasMany(Task, 'tasks', {leftKey: 'id', rightKey: 'catId'});
-
-            var catou = new Cat({name: "Catou"});
-            var task1 = new Task({task: "Catch the red dot"});
-            var task2 = new Task({task: "Eat"});
-            var task3 = new Task({task: "Sleep"});
-            catou.tasks = [task1, task2, task3];
-            catou.save(function(error, result) {
-                should.not.exist(catou.tasks[0].id);
-                should.not.exist(catou.tasks[1].id);
-                should.not.exist(catou.tasks[2].id);
-
-                done();
-            });
-        });
-        it('should be able to save the joined doc -- hasMany', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String});
-            var Task = thinky.createModel('Task', {id: String, catId: String, task: String});
-            Cat.hasMany(Task, 'tasks', {leftKey: 'id', rightKey: 'catId'});
-
-            var catou = new Cat({name: "Catou"});
-            var task1 = new Task({task: "Catch the red dot"});
-            var task2 = new Task({task: "Eat"});
-            var task3 = new Task({task: "Sleep"});
-            catou.tasks = [task1, task2, task3];
-            catou.save({saveJoin: true}, function(error, result) {
-                should.exist(task1.id);
-                should.exist(task2.id);
-                should.exist(task3.id);
-                should.equal(task1.catId, catou.id);
-                should.equal(task2.catId, catou.id);
-                should.equal(task3.catId, catou.id);
-
-                done();
-            });
-        });
+        assert.equal(doc.id, str);
+        assert.equal(doc.nested.field, defaultValue);
     });
 
-    describe('delete', function() {
-        it('should delete the doc', function(done){
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
+    it('Array - nested value - 1', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultArray = [1,2,3];
+        var defaultValue = util.random();
 
-            catou.save(null, function(error, result) {
-                should.exist(result.id);
-                catou.delete( null, function(error, result) {
-                    catou.getDocSettings().saved.should.be.false
-                    done();
-                })
-            })
-        });
-        it('should throw an error if we try to delete a document that was not saved', function(){
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
-
-            (function() {
-                catou.delete( null, function(error, result) { })
-            }).should.throw('The document was not saved and therefore cannot be deleted.');
-
-        });
-
-        it('should delete the doc -- other signature', function(done){
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
-
-            catou.save(null, function(error, result) {
-                should.exist(result.id);
-                catou.delete(function(error, result) {
-                    catou.getDocSettings().saved.should.be.false
-                    done();
-                })
-            })
-        });
-        it('should not delete the joined doc by default -- hasOne joins', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
-            var Human = thinky.createModel('Human', {id: String, ownerName: String, idMom: String});
-            var Mother = thinky.createModel('Mother', {id: String, motherName: String});
-            Human.hasOne(Mother, 'mom', {leftKey: 'idMom', rightKey: 'id'});
-            Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
-
-            var owner = new Human({ownerName: "Michel"});
-            var catou = new Cat({name: "Catou"});
-            var mother = new Mother({motherName: "Mom"});
-            catou['owner'] = owner;
-            owner['mom'] = mother;
-
-            catou.save( {saveJoin: true}, function(error, result) {
-                should.exist(catou.id);
-                should.exist(catou.idHuman);
-                should.exist(catou.owner.id);
-
-                catou.delete(function(error, result) {
-                    if (error) throw error;
-                    should.equal(result, 1);
-
-                    catou.getDocSettings().saved.should.be.false
-                    catou.owner.getDocSettings().saved.should.be.true
-                    catou.owner.mom.getDocSettings().saved.should.be.true
-                    done();
-                })
-            });
-        });
-
-        it('should be able to delete the joined doc -- hasOne joins', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String});
-            var Human = thinky.createModel('Human', {id: String, ownerName: String, idMom: String});
-            var Mother = thinky.createModel('Mother', {id: String, motherName: String});
-            Human.hasOne(Mother, 'mom', {leftKey: 'idMom', rightKey: 'id'});
-            Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'});
-
-            var owner = new Human({ownerName: "Michel"});
-            var catou = new Cat({name: "Catou"});
-            var mother = new Mother({motherName: "Mom"});
-            catou['owner'] = owner;
-            owner['mom'] = mother;
-
-            catou.save( {saveJoin: true}, function(error, result) {
-                should.exist(catou.id);
-                should.exist(catou.idHuman);
-                should.exist(catou.owner.id);
-
-                catou.delete( {deleteJoin: true}, function(error, result) {
-                    catou.getDocSettings().saved.should.be.false
-                    catou.owner.getDocSettings().saved.should.be.false
-                    catou.owner.mom.getDocSettings().saved.should.be.false
-                    done();
-                })
-            });
-        });
-
-        it('should not delete the joined doc by default -- hasMany', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String});
-            var Task = thinky.createModel('Task', {id: String, catId: String, task: String});
-            Cat.hasMany(Task, 'tasks', {leftKey: 'id', rightKey: 'catId'});
-
-            var catou = new Cat({name: "Catou"});
-            var task1 = new Task({task: "Catch the red dot"});
-            var task2 = new Task({task: "Eat"});
-            var task3 = new Task({task: "Sleep"});
-            catou.tasks = [task1, task2, task3];
-            catou.save({saveJoin: true}, function(error, result) {
-                catou.delete(function(error, result) {
-                    should.equal(catou.getDocSettings().saved, false);
-                    should.equal(catou.tasks[0].getDocSettings().saved, true);
-                    should.equal(catou.tasks[1].getDocSettings().saved, true);
-                    should.equal(catou.tasks[2].getDocSettings().saved, true);
-
-                    done();
-                });
-            });
-        });
-
-        it('should be able to delete joined docs -- hasMany', function(done) {
-            var Cat = thinky.createModel('Cat', {id: String, name: String});
-            var Task = thinky.createModel('Task', {id: String, catId: String, task: String});
-            Cat.hasMany(Task, 'tasks', {leftKey: 'id', rightKey: 'catId'});
-
-            var catou = new Cat({name: "Catou"});
-            var task1 = new Task({task: "Catch the red dot"});
-            var task2 = new Task({task: "Eat"});
-            var task3 = new Task({task: "Sleep"});
-            catou.tasks = [task1, task2, task3];
-            catou.save({saveJoin: true}, function(error, result) {
-                catou.delete({deleteJoin: true}, function(error, result) {
-                    should.equal(catou.getDocSettings().saved, false);
-                    should.equal(catou.tasks[0].getDocSettings().saved, false);
-                    should.equal(catou.tasks[1].getDocSettings().saved, false);
-                    should.equal(catou.tasks[2].getDocSettings().saved, false);
-
-                    done();
-                });
-            });
-        });
-    });
-
-
-    // Test listener
-    describe('on', function() {
-        it('should execute the callback when the even is emitted', function(done){
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
-            catou.on('testEvent', function() {
-                done();
-            });
-            catou.emit('testEvent');
-        });
-        it('should add a listener', function() {
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
-            catou.on('testEvent', function() {
-            });
-            catou.listeners.should.have.length(1);
-        });
-    });
-    describe('off', function() {
-        it('should be the same as removeListener', function() {
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
-
-            should(catou.off, catou.removeListener);
-        });
-        it('should remove a listener', function() {
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
-            var listener = function() {}
-            catou.on('testEvent', listener);
-            catou.off('testEvent', listener);
-
-            catou.listeners('testEvent').should.have.length(0);
-        });
-    });
-    // TODO test that all methods from the EventEmitter have been copied
-    
-    describe('merge', function() {
-        it('should emit the event `change`', function(done){
-            var Cat = thinky.createModel('Cat', { id: String, name: String });
-            var catou = new Cat({name: 'Catou'});
-            var listener = function() {
-                catou.removeAllListeners('save');
-                done();
+        var Model = thinky.createModel(name, {
+            id: String,
+            nested: {
+                _type: Array,
+                schema: {
+                    field: {_type: Number, default: defaultValue}
+                },
+                default: defaultArray 
             }
+        }, {init: false})
 
-            catou.on('change', listener);
-            catou.merge({name: 'CatouBis'});
+        doc = new Model({
+            id: str
+        })
+
+        assert.equal(doc.id, str);
+        assert.deepEqual(doc.nested, defaultArray);
+    });
+    it('Array - nested value - 2', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultArray = [1,2,3];
+        var defaultValue = util.random();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            nested: {
+                _type: Array,
+                schema: {
+                    field: {
+                        _type: Object, 
+                        schema: {value: {_type: Number, default: defaultValue} }
+                    }
+                },
+                default: defaultArray 
+            }
+        }, {init: false})
+
+        doc = new Model({
+            id: str,
+            nested: []
+        })
+
+        assert.equal(doc.id, str);
+        assert.deepEqual(doc.nested, []);
+    });
+    it('Array - nested value - 3', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultArray = [1,2,3];
+        var defaultValue = util.random();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            nested: {
+                _type: Array,
+                schema: {
+                    _type: Object,
+                    schema: {
+                        field: {_type: Number, default: defaultValue}
+                    }
+                },
+                default: defaultArray 
+            }
+        }, {init: false})
+
+        doc = new Model({
+            id: str,
+            nested: [{}]
+
+        })
+
+        assert.equal(doc.id, str);
+        assert.deepEqual(doc.nested, [{field: defaultValue}]);
+    });
+    it('Array - nested value - 4', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultArray = [1,2,3];
+        var defaultValue = util.random();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            nested: [{
+                _type: Object,
+                schema: {
+                    field: {_type: Number, default: defaultValue}
+                }
+            }]
+        }, {init: false})
+
+        doc = new Model({
+            id: str,
+            nested: [{}]
+
+        })
+
+        assert.equal(doc.id, str);
+        assert.deepEqual(doc.nested, [{field: defaultValue}]);
+    });
+    it('Object - deep nested - 1', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultValue = {foo: "bar"};
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            nested: {
+                _type: Object,
+                schema: {
+                    field1: {_type: Number, default: 1},
+                    field2: {_type: String, default: "hello"}
+                }
+            }
+        }, {init: false})
+
+        doc = new Model({
+            id: str
+        })
+
+        assert.equal(doc.id, str);
+        assert.deepEqual(doc, { id: str });
+    });
+    it('Object - deep nested - 2', function(){
+        var name = util.s4();
+        var str = util.s4();
+        var defaultValue = {foo: "bar"};
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            nested: {
+                _type: Object,
+                schema: {
+                    field1: {_type: Number, default: 1},
+                    field2: {_type: String, default: "hello"}
+                },
+                default: {}
+            }
+        }, {init: false})
+
+        doc = new Model({
+            id: str
+        })
+
+        assert.equal(doc.id, str);
+        assert.deepEqual(doc, { id: str, nested: { field1: 1, field2: 'hello' } });
+    });
+});
+*/
+
+describe('validate', function(){
+    it('String - wrong type - type: "strict"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String
+        }, {init: false, enforce_type: 'strict'})
+
+        doc = new Model({
+            id: str,
+            field: 1
+        })
+
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be a string.")
         });
     });
-})
+    it('String - wrong type  - type: "loose"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String
+        }, {init: false, enforce_type: 'loose'})
+
+        doc = new Model({
+            id: str,
+            field: 1
+        })
+
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be a string or null.")
+        });
+
+    });
+    it('String - wrong type  - type: "none"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String
+        }, {init: false, enforce_type: 'none'})
+
+        doc = new Model({
+            id: str,
+            field: 1
+        })
+
+        doc.validate();
+    });
+    it('String - undefined - type: "strict"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String
+        }, {init: false, enforce_type: 'strict'})
+
+        doc = new Model({
+            id: str,
+            field: undefined
+        })
+
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be a string.")
+        });
+    });
+    it('String - undefined  - type: "loose"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String
+        }, {init: false, enforce_type: 'loose'})
+
+        doc = new Model({
+            id: str,
+            field: undefined
+        })
+
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be a string or null.")
+        });
+    });
+    it('String - undefined  - type: "none"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String
+        }, {init: false, enforce_type: 'none'})
+
+        doc = new Model({
+            id: str,
+            field: undefined
+        })
+
+        doc.validate();
+    });
+    it('String - undefined  - type: "none"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String
+        }, {init: false, enforce_type: 'none', enforce_missing: true})
+
+        doc = new Model({
+            id: str,
+            field: undefined
+        })
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
+        });
+
+    });
+    it('String - null - type: "strict"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String
+        }, {init: false, enforce_type: 'strict'})
+
+        doc = new Model({
+            id: str,
+            field: null 
+        })
+
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be a string.")
+        });
+    });
+    it('String - null  - type: "loose"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String
+        }, {init: false, enforce_type: 'loose'})
+
+        doc = new Model({
+            id: str,
+            field: null 
+        })
+
+        doc.validate();
+    });
+    it('String - null  - type: "none"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String
+        }, {init: false, enforce_type: 'none'})
+
+        doc = new Model({
+            id: str,
+            field: null
+        })
+
+        doc.validate();
+    });
+    it('Number - wrong type - type: "strict"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Number
+        }, {init: false, enforce_type: 'strict'})
+
+        doc = new Model({
+            id: str,
+            field: "hello"
+        })
+
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be a number.")
+        });
+    });
+    it('Number - wrong type  - type: "loose"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Number 
+        }, {init: false, enforce_type: 'loose'})
+
+        doc = new Model({
+            id: str,
+            field: "hello"
+        })
+
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be a number or null.")
+        });
+
+    });
+    it('Number - wrong type  - type: "none"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Number
+        }, {init: false, enforce_type: 'none'})
+
+        doc = new Model({
+            id: str,
+            field: "hello"
+        })
+
+        doc.validate();
+    });
+    it('Boolean - wrong type - type: "strict"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Boolean
+        }, {init: false, enforce_type: 'strict'})
+
+        doc = new Model({
+            id: str,
+            field: "hello"
+        })
+
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be a boolean.")
+        });
+    });
+    it('Boolean - wrong type  - type: "loose"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Boolean 
+        }, {init: false, enforce_type: 'loose'})
+
+        doc = new Model({
+            id: str,
+            field: "hello"
+        })
+
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be a boolean or null.")
+        });
+
+    });
+    it('Boolean - wrong type  - type: "none"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Boolean
+        }, {init: false, enforce_type: 'none'})
+
+        doc = new Model({
+            id: str,
+            field: "hello"
+        })
+
+        doc.validate();
+    });
+    it('Date - wrong type - type: "strict"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Date 
+        }, {init: false, enforce_type: 'strict'})
+
+        doc = new Model({
+            id: str,
+            field: "hello"
+        })
+
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be a date.")
+        });
+    });
+    it('Date - wrong type  - type: "loose"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field:  Date
+        }, {init: false, enforce_type: 'loose'})
+
+        doc = new Model({
+            id: str,
+            field: "hello"
+        })
+
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be a date or null.")
+        });
+
+    });
+    it('Date - wrong type  - type: "none"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Boolean
+        }, {init: false, enforce_type: 'none'})
+
+        doc = new Model({
+            id: str,
+            field: "hello"
+        })
+
+        doc.validate();
+    });
+
+
+});
+
