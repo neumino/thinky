@@ -34,7 +34,7 @@ describe('Options', function(){
     });
 
     it('Options on a model', function(){
-        var name = util.s4();
+        var name = util.s8();
         Model = thinky.createModel(name, {id: String, name: String}, {
             timeFormat: 'native',
             enforce_extra: false,
@@ -62,7 +62,7 @@ describe('Options', function(){
 
     });
     it('Options on a document', function(){
-        var name = util.s4();
+        var name = util.s8();
         Model = thinky.createModel(name, {id: String, name: String});
 
         var doc = new Model({}, {

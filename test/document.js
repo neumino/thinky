@@ -5,12 +5,11 @@ var r = thinky.r;
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
 
-/*
 describe('generateDefault', function(){
     it('String - constant', function(){
-        var name = util.s4();
-        var str = util.s4();
-        var defaultValue = util.s4();
+        var name = util.s8();
+        var str = util.s8();
+        var defaultValue = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -25,9 +24,9 @@ describe('generateDefault', function(){
         assert.equal(doc.field, defaultValue);
     });
     it('String - function', function(){
-        var name = util.s4();
-        var str = util.s4();
-        var defaultValue = util.s4();
+        var name = util.s8();
+        var str = util.s8();
+        var defaultValue = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -45,8 +44,8 @@ describe('generateDefault', function(){
     });
 
     it('String - function - Test binding', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -64,8 +63,8 @@ describe('generateDefault', function(){
     });
 
     it('Number - constant', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultValue = util.random();
 
         var Model = thinky.createModel(name, {
@@ -81,8 +80,8 @@ describe('generateDefault', function(){
         assert.equal(doc.field, defaultValue);
     });
     it('Number - function', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultValue = util.random();
 
         var Model = thinky.createModel(name, {
@@ -101,8 +100,8 @@ describe('generateDefault', function(){
     });
 
     it('Bool - constant', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultValue = util.bool();
 
         var Model = thinky.createModel(name, {
@@ -118,8 +117,8 @@ describe('generateDefault', function(){
         assert.equal(doc.field, defaultValue);
     });
     it('Bool - function', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultValue = util.bool();
 
         var Model = thinky.createModel(name, {
@@ -138,8 +137,8 @@ describe('generateDefault', function(){
     });
 
     it('Array - constant', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultValue = [1,2,3];
 
         var Model = thinky.createModel(name, {
@@ -155,8 +154,8 @@ describe('generateDefault', function(){
         assert.deepEqual(doc.field, defaultValue);
     });
     it('Array - function', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultValue = [1,2,3];
 
         var Model = thinky.createModel(name, {
@@ -174,8 +173,8 @@ describe('generateDefault', function(){
         assert.deepEqual(doc.field, defaultValue);
     });
     it('Object - constant', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultValue = {foo: "bar"};
 
         var Model = thinky.createModel(name, {
@@ -191,8 +190,8 @@ describe('generateDefault', function(){
         assert.deepEqual(doc.field, defaultValue);
     });
     it('Object - function', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultValue = {foo: "bar"};
 
         var Model = thinky.createModel(name, {
@@ -210,8 +209,8 @@ describe('generateDefault', function(){
         assert.deepEqual(doc.field, defaultValue);
     });
     it('Object - constant', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultValue = {foo: "bar"};
 
         var Model = thinky.createModel(name, {
@@ -229,8 +228,8 @@ describe('generateDefault', function(){
     });
 
     it('Number - nested value', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultValue = util.random();
 
         var Model = thinky.createModel(name, {
@@ -253,8 +252,8 @@ describe('generateDefault', function(){
     });
 
     it('Array - nested value - 1', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultArray = [1,2,3];
         var defaultValue = util.random();
 
@@ -277,8 +276,8 @@ describe('generateDefault', function(){
         assert.deepEqual(doc.nested, defaultArray);
     });
     it('Array - nested value - 2', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultArray = [1,2,3];
         var defaultValue = util.random();
 
@@ -305,8 +304,8 @@ describe('generateDefault', function(){
         assert.deepEqual(doc.nested, []);
     });
     it('Array - nested value - 3', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultArray = [1,2,3];
         var defaultValue = util.random();
 
@@ -334,8 +333,8 @@ describe('generateDefault', function(){
         assert.deepEqual(doc.nested, [{field: defaultValue}]);
     });
     it('Array - nested value - 4', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultArray = [1,2,3];
         var defaultValue = util.random();
 
@@ -359,8 +358,8 @@ describe('generateDefault', function(){
         assert.deepEqual(doc.nested, [{field: defaultValue}]);
     });
     it('Array - nested value - 5', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultArray = [1,2,3];
         var defaultValue = util.random();
 
@@ -385,8 +384,8 @@ describe('generateDefault', function(){
     });
 
     it('Object - deep nested - 1', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultValue = {foo: "bar"};
 
         var Model = thinky.createModel(name, {
@@ -408,8 +407,8 @@ describe('generateDefault', function(){
         assert.deepEqual(doc, { id: str });
     });
     it('Object - deep nested - 2', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultValue = {foo: "bar"};
 
         var Model = thinky.createModel(name, {
@@ -432,8 +431,8 @@ describe('generateDefault', function(){
         assert.deepEqual(doc, { id: str, nested: { field1: 1, field2: 'hello' } });
     });
     it('Object - deep nested - 3', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultValue = {foo: "bar"};
 
         var Model = thinky.createModel(name, {
@@ -452,8 +451,8 @@ describe('generateDefault', function(){
         assert.deepEqual(doc, { id: str});
     });
     it('Object - deep nested - 4', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
         var defaultValue = {foo: "bar"};
 
         var Model = thinky.createModel(name, {
@@ -474,11 +473,10 @@ describe('generateDefault', function(){
     });
 
 });
-*/
 describe('validate', function(){
     it('String - wrong type - type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -497,8 +495,8 @@ describe('validate', function(){
         });
     });
     it('String - wrong type  - type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -518,8 +516,8 @@ describe('validate', function(){
 
     });
     it('String - wrong type  - type: "none"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -534,8 +532,8 @@ describe('validate', function(){
         doc.validate();
     });
     it('String - undefined - type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -554,8 +552,8 @@ describe('validate', function(){
         });
     });
     it('String - undefined  - type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -574,8 +572,8 @@ describe('validate', function(){
         });
     });
     it('String - undefined  - type: "none"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -590,8 +588,8 @@ describe('validate', function(){
         doc.validate();
     });
     it('String - undefined  - type: "none"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -610,8 +608,8 @@ describe('validate', function(){
 
     });
     it('String - null - type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -630,8 +628,8 @@ describe('validate', function(){
         });
     });
     it('String - null  - type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -646,8 +644,8 @@ describe('validate', function(){
         doc.validate();
     });
     it('String - null  - type: "none"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -662,8 +660,8 @@ describe('validate', function(){
         doc.validate();
     });
     it('Number - wrong type - type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -682,8 +680,8 @@ describe('validate', function(){
         });
     });
     it('Number - wrong type  - type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -703,8 +701,8 @@ describe('validate', function(){
 
     });
     it('Number - wrong type  - type: "none"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -719,8 +717,8 @@ describe('validate', function(){
         doc.validate();
     });
     it('Boolean - wrong type - type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -739,8 +737,8 @@ describe('validate', function(){
         });
     });
     it('Boolean - wrong type  - type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -760,8 +758,8 @@ describe('validate', function(){
 
     });
     it('Boolean - wrong type  - type: "none"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -776,8 +774,8 @@ describe('validate', function(){
         doc.validate();
     });
     it('Date - wrong type - type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -796,8 +794,8 @@ describe('validate', function(){
         });
     });
     it('Date - wrong type  - type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -816,8 +814,8 @@ describe('validate', function(){
         });
     });
     it('Date - wrong type  - type: "none"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -832,8 +830,8 @@ describe('validate', function(){
         doc.validate();
     });
     it('Date - raw type - type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -848,8 +846,8 @@ describe('validate', function(){
         doc.validate();
     });
     it('Date - raw type - missing timezone - type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -867,8 +865,8 @@ describe('validate', function(){
         });
     });
     it('Date - raw type - missing epoch_time - type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -887,8 +885,8 @@ describe('validate', function(){
 
     });
     it('Array - missing - enforce_missing: true', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -906,8 +904,8 @@ describe('validate', function(){
         });
     });
     it('Array - undefined - enforce_type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -925,8 +923,8 @@ describe('validate', function(){
         });
     });
     it('Array - undefined - enforce_type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -944,8 +942,8 @@ describe('validate', function(){
         });
     });
     it('Array - wrong type - enforce_type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -964,8 +962,8 @@ describe('validate', function(){
         });
     });
     it('Array - wrong type - enforce_type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -984,8 +982,8 @@ describe('validate', function(){
         });
     });
     it('Array - wrong type - enforce_type: "none"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -999,8 +997,8 @@ describe('validate', function(){
         doc.validate();
     });
     it('Array - wrong type inside - enforce_type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1019,8 +1017,8 @@ describe('validate', function(){
         });
     });
     it('Array - wrong type inside - enforce_type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1039,8 +1037,8 @@ describe('validate', function(){
         });
     });
     it('Array - wrong type inside - enforce_type: "none"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1055,8 +1053,8 @@ describe('validate', function(){
         doc.validate();
     });
     it('Array - wrong type inside - not first - enforce_type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1075,8 +1073,8 @@ describe('validate', function(){
         });
     });
     it('Array - wrong type inside - not first - enforce_type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1095,8 +1093,8 @@ describe('validate', function(){
         });
     });
     it('Array - wrong type inside - not first - enforce_type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1115,8 +1113,8 @@ describe('validate', function(){
         });
     });
     it('Array - null - enforce_type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1131,8 +1129,8 @@ describe('validate', function(){
         doc.validate();
     });
     it('Object - undefined - enforce_missing: true', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1150,8 +1148,8 @@ describe('validate', function(){
         });
     });
     it('Object - undefined - enforce_type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1169,8 +1167,8 @@ describe('validate', function(){
         });
     });
     it('Object - undefined - enforce_type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1188,8 +1186,8 @@ describe('validate', function(){
         });
     });
     it('Object - undefined - enforce_type: "none"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1203,8 +1201,8 @@ describe('validate', function(){
         doc.validate();
     });
     it('Object - undefined - enforce_type: "none"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1218,8 +1216,8 @@ describe('validate', function(){
         doc.validate();
     });
     it('Object - nested - enforce_type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1239,8 +1237,8 @@ describe('validate', function(){
         });
     });
     it('Object - nested wrong type - enforce_type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1261,8 +1259,8 @@ describe('validate', function(){
         });
     });
     it('Object - nested wrong type - enforce_type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1283,8 +1281,8 @@ describe('validate', function(){
         });
     });
     it('Object - nested wrong type - enforce_type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1305,8 +1303,8 @@ describe('validate', function(){
         });
     });
     it('Object - Empty - enforce_type: "strict"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String
@@ -1322,8 +1320,8 @@ describe('validate', function(){
     });
 
     it('Object - nested wrong type 2 - enforce_type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1344,8 +1342,8 @@ describe('validate', function(){
         });
     });
     it('Object - nested wrong type 3 - enforce_type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1366,8 +1364,8 @@ describe('validate', function(){
         });
     });
     it('Object - nested wrong type 4 - enforce_type: "loose"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1388,8 +1386,8 @@ describe('validate', function(){
         });
     });
     it('Object - nested wrong type 5 - enforce_type: "none"', function(){
-        var name = util.s4();
-        var str = util.s4();
+        var name = util.s8();
+        var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
@@ -1405,5 +1403,4 @@ describe('validate', function(){
 
         doc.validate();
     });
-
 });

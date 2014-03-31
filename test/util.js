@@ -3,6 +3,11 @@ function s4() {
 };
 module.exports.s4 = s4;
 
+function s8() {
+    return s4()+s4();
+};
+module.exports.s8 = s8;
+
 function uuid() {
     return s4()+s4()+s4()+s4()+s4()+s4()+s4()+s4();
 }
