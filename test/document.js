@@ -5,6 +5,7 @@ var r = thinky.r;
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
 
+/*
 describe('generateDefault', function(){
     it('String - constant', function(){
         var name = util.s4();
@@ -475,7 +476,6 @@ describe('generateDefault', function(){
 });
 */
 describe('validate', function(){
-    /*
     it('String - wrong type - type: "strict"', function(){
         var name = util.s4();
         var str = util.s4();
@@ -1337,8 +1337,6 @@ describe('validate', function(){
             field: {}
         })
 
-        console.log(doc);
-
         assert.throws(function() {
             doc.validate();
         }, function(error) {
@@ -1361,7 +1359,27 @@ describe('validate', function(){
             field: {}
         })
 
-        console.log(doc);
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field][foo] must be a number or null.")
+        });
+    });
+    it('Object - nested wrong type 4 - enforce_type: "loose"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: {
+                foo: {_type: Number, default: "foo"}
+            }
+        }, {init: false, enforce_missing: false, enforce_type: "loose"})
+
+        doc = new Model({
+            id: str,
+            field: {}
+        })
 
         assert.throws(function() {
             doc.validate();
@@ -1369,4 +1387,23 @@ describe('validate', function(){
             return (error instanceof Error) && (error.message === "Value for [field][foo] must be a number or null.")
         });
     });
+    it('Object - nested wrong type 5 - enforce_type: "none"', function(){
+        var name = util.s4();
+        var str = util.s4();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: {
+                foo: {_type: Number}
+            }
+        }, {init: false, enforce_missing: false, enforce_type: "none"})
+
+        doc = new Model({
+            id: str,
+            field: {}
+        })
+
+        doc.validate();
+    });
+
 });
