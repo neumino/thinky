@@ -5,6 +5,7 @@ var r = thinky.r;
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
 
+/*
 describe('createModel', function(){
     var name = util.s8();
     it('Create a new model', function(){
@@ -32,6 +33,7 @@ describe('createModel', function(){
         assert(model1 !== model2);
     });
 });
+*/
 
 
 describe('Model', function() {
@@ -91,19 +93,40 @@ describe('Model', function() {
         assert.equal(otherDoc.str, otherStr);
 
         assert.notEqual(otherDoc.getModel(), doc.getModel());
-        assert.equal(doc.getModel().getName(), name);
-        assert.equal(otherDoc.getModel().getName(), otherName);
+        assert.equal(doc.getName(), name);
+        assert.equal(otherDoc.getName(), otherName);
     });
 });
 
 describe("Joins", function() {
-    it('hasOne', function() {
-        var name = s8();
-        var model = thinky.createModel(name, { id: String });
+    it('hasOne should save the join', function() {
+        var name = util.s8();
+        var model = thinky.createModel(name, { id: String, otherId: String });
 
-        var otherName = s8();
+        var otherName = util.s8();
         var otherModel = thinky.createModel(otherName, { id: String });
 
-        model.hasOne()
+        model.hasOne(otherModel, "otherDoc", "otherId", "id");
+        assert(model._getModel()._joins[otherModel._getModel()._name])
     });
+    it('hasOne should create an index', function(done) {
+        var name = util.s8();
+        var model = thinky.createModel(name, { id: String, otherId: String });
+
+        var foreignKey = util.s8();
+
+        var otherName = util.s8();
+        var schema = {id: String};
+        schema[foreignKey] = String;
+        var otherModel = thinky.createModel(otherName, schema);
+
+        model.hasOne(otherModel, "otherDoc", "otherId", foreignKey);
+
+        setTimeout(function() {
+            r.table(otherModel.getName()).indexWait(foreignKey).run().then(function() {
+                done();
+            }).error(done);
+        }, 5000)
+    });
+
 });
