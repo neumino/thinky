@@ -34,7 +34,6 @@ describe('createModel', function(){
     });
 });
 */
-/*
 describe('Model', function() {
     var name = util.s8();
 
@@ -96,10 +95,8 @@ describe('Model', function() {
         assert.equal(otherDoc.getName(), otherName);
     });
 });
-*/
 
 describe("Joins", function() {
-    /*
     it('hasOne should save the join', function() {
         var name = util.s8();
         var model = thinky.createModel(name, { id: String, otherId: String });
@@ -110,7 +107,7 @@ describe("Joins", function() {
         model.hasOne(otherModel, "otherDoc", "otherId", "id");
         assert(model._getModel()._joins[otherModel._getModel()._name])
     });
-    */
+    /*
     it('hasOne should create an index', function(done) {
         var name = util.s8();
         var model = thinky.createModel(name, { id: String, otherId: String });
@@ -127,7 +124,6 @@ describe("Joins", function() {
         setTimeout(function() {
             r.table(otherModel.getName()).indexList().run().then(function(cursor) {
                 cursor.toArray().then(function(result) {
-                    console.log(result);
                     r.table(otherModel.getName()).indexWait(foreignKey).run().then(function() {
                         done();
                     }).error(done);
@@ -137,5 +133,5 @@ describe("Joins", function() {
 
         }, 2000)
     });
-
+    */
 });
