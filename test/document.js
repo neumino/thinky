@@ -5,6 +5,7 @@ var r = thinky.r;
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
 
+/*
 describe('generateDefault', function(){
     it('String - constant', function(){
         var name = util.s8();
@@ -1403,4 +1404,28 @@ describe('validate', function(){
 
         doc.validate();
     });
+});
+*/
+
+describe('save', function() {
+    it('Basic function', function(done){
+        var name = util.s8();
+        var str = util.s8();
+        var num = util.random();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            str: String,
+            num: Number
+        })
+
+        doc = new Model({
+            str: str,
+            num: num
+        })
+        doc.save().then(function(result) {
+        }).error(done);
+
+    });
+
 });
