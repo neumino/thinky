@@ -5,7 +5,6 @@ var r = thinky.r;
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
 
-/*
 describe('createModel', function(){
     var name = util.s8();
     it('Create a new model', function(){
@@ -13,16 +12,15 @@ describe('createModel', function(){
         assert(model);
     });
     it('Check if the table was created', function(done){
-        setTimeout(function() {
+        model.on("ready", function() {
             r.tableList().run().then(function(cursor) {
                 cursor.toArray().then(function(result) {
                     assert.notEqual(result.indexOf(name), -1)
                     done();
                 }).error(done);
             }).error(done)
-        }, 1000);
+        });
     });
-
     it('Create multiple models', function(){
         var name1 = util.s8();
         var model1 = thinky.createModel(name1, {id: String, name: String})
@@ -33,7 +31,6 @@ describe('createModel', function(){
         assert(model1 !== model2);
     });
 });
-*/
 describe('Model', function() {
     var name = util.s8();
 
@@ -99,16 +96,40 @@ describe('Model', function() {
 describe("Joins", function() {
     it('hasOne should save the join', function() {
         var name = util.s8();
-        var model = thinky.createModel(name, { id: String, otherId: String });
+        var model = thinky.createModel(name, { id: String});
 
         var otherName = util.s8();
-        var otherModel = thinky.createModel(otherName, { id: String });
+        var otherModel = thinky.createModel(otherName, { id: String, otherId: String });
 
         model.hasOne(otherModel, "otherDoc", "otherId", "id");
         assert(model._getModel()._joins[otherModel._getModel()._name])
     });
-    /*
-    it('hasOne should create an index', function(done) {
+    it('hasOne should create an index on the other model', function(done) {
+        var name = util.s8();
+        var model = thinky.createModel(name, { id: String, foreignKeyName: String });
+
+        var foreignKey = util.s8();
+
+        var otherName = util.s8();
+        var schema = {id: String};
+        schema[foreignKey] = String;
+        var otherModel = thinky.createModel(otherName, schema);
+
+        model.hasOne(otherModel, "otherDoc", "modelId", foreignKey);
+
+        model.on("ready", function() {
+            r.table(otherModel.getName()).indexList().run().then(function(cursor) {
+                cursor.toArray().then(function(result) {
+                    r.table(otherModel.getName()).indexWait(foreignKey).run().then(function() {
+                        done();
+                    }).error(done);
+                });
+
+            }).error(done);
+
+        })
+    });
+    it('BelongsTo should create an index on the model called', function(done) {
         var name = util.s8();
         var model = thinky.createModel(name, { id: String, otherId: String });
 
@@ -119,9 +140,34 @@ describe("Joins", function() {
         schema[foreignKey] = String;
         var otherModel = thinky.createModel(otherName, schema);
 
-        model.hasOne(otherModel, "otherDoc", "otherId", foreignKey);
+        model.belongsTo(otherModel, "otherDoc", foreignKey, "otherId");
 
-        setTimeout(function() {
+        model.on("ready", function() {
+            r.table(model.getName()).indexList().run().then(function(cursor) {
+                cursor.toArray().then(function(result) {
+                    r.table(model.getName()).indexWait(foreignKey).run().then(function() {
+                        done();
+                    }).error(done);
+                });
+
+            }).error(done);
+
+        })
+    });
+    it('hasMany should create an index on the other model', function(done) {
+        var name = util.s8();
+        var model = thinky.createModel(name, { id: String });
+
+        var foreignKey = util.s8();
+
+        var otherName = util.s8();
+        var schema = {id: String};
+        schema[foreignKey] = String;
+        var otherModel = thinky.createModel(otherName, schema);
+
+        model.hasMany(otherModel, "otherDoc", "modelId", foreignKey);
+
+        model.on("ready", function() {
             r.table(otherModel.getName()).indexList().run().then(function(cursor) {
                 cursor.toArray().then(function(result) {
                     r.table(otherModel.getName()).indexWait(foreignKey).run().then(function() {
@@ -131,7 +177,7 @@ describe("Joins", function() {
 
             }).error(done);
 
-        }, 2000)
+        })
     });
-    */
+
 });
