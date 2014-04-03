@@ -1408,24 +1408,58 @@ describe('validate', function(){
 */
 
 describe('save', function() {
-    it('Basic function', function(done){
-        var name = util.s8();
-        var str = util.s8();
-        var num = util.random();
+    describe('Basic', function() {
+        var Model;
+        before(function() {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number
+            })
+        });
 
-        var Model = thinky.createModel(name, {
-            id: String,
-            str: String,
-            num: Number
-        })
+        it('Save when the table is not yet ready', function(done){
+            var str = util.s8();
+            var num = util.random();
 
-        doc = new Model({
-            str: str,
-            num: num
-        })
-        doc.save().then(function(result) {
-        }).error(done);
+            doc = new Model({
+                str: str,
+                num: num
+            })
+            doc.save().then(function(result) {
+                done();
 
+            }).error(done);
+        });
+        it('Save then the table is ready', function(done){
+            var str = util.s8();
+            var num = util.random();
+
+            doc = new Model({
+                str: str,
+                num: num
+            })
+            doc.save().then(function(result) {
+                done();
+            }).error(done);
+        });
+        it('Save the document should be updated on place', function(done){
+            var str = util.s8();
+            var num = util.random();
+
+            doc = new Model({
+                str: str,
+                num: num
+            })
+            doc.save().then(function(result) {
+                assert.strictEqual(doc, result);
+                assert.equal(doc.str, str);
+                assert.equal(doc.num, num);
+                assert.notEqual(doc.id, undefined);
+                done();
+            }).error(done);
+        });
     });
 
 });
