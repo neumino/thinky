@@ -88,5 +88,18 @@ describe('Model queries', function(){
             done();
         }).error(done);
     });
+    it('Model.get() should return the expected document', function(done){
+        Model.get(data[0].id).run().then(function(result) {
+            assert.deepEqual(data[0], result);
+            done();
+        }).error(done);
+    });
+    it('Model.get() should return an instance of the model', function(done){
+        Model.get(data[0].id).run().then(function(result) {
+            assert.deepEqual(result.__proto__.constructor, Model);
+            assert.deepEqual(result.constructor, Model);
+            done();
+        }).error(done);
+    });
 
 });
