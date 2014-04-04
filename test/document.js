@@ -1459,5 +1459,27 @@ describe('save', function() {
             }).error(done);
         });
     });
+    describe("Joins - hasOne", function() {
+        var Model, OtherModel;
+        before(function() {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number
+            })
 
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number
+                foreignKey: String
+            })
+            Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey")
+        });
+
+        it('save shouls save only one doc', function(done) {
+        })
+    });
 });
