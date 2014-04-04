@@ -102,7 +102,7 @@ describe("Joins", function() {
         var otherModel = thinky.createModel(otherName, { id: String, otherId: String });
 
         model.hasOne(otherModel, "otherDoc", "otherId", "id");
-        assert(model._getModel()._joins[otherModel._getModel()._name])
+        assert(model._getModel()._joins["otherDoc"])
     });
     it('hasOne should create an index on the other model', function(done) {
         var name = util.s8();

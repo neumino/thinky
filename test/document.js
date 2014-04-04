@@ -1416,6 +1416,21 @@ describe('save', function() {
                 num: Number
             })
         });
+        it('Save should change the status of the doc', function(done){
+            var str = util.s8();
+            var num = util.random();
+
+            doc = new Model({
+                str: str,
+                num: num
+            })
+            assert.equal(doc.isSaved(), false);
+            doc.save().then(function(result) {
+                assert.equal(doc.isSaved(), true);
+                done();
+
+            }).error(done);
+        });
 
         it('Save when the table is not yet ready', function(done){
             var str = util.s8();
@@ -1473,13 +1488,56 @@ describe('save', function() {
             OtherModel = thinky.createModel(otherName, {
                 id: String,
                 str: String,
-                num: Number
+                num: Number,
                 foreignKey: String
             })
             Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey")
         });
 
         it('save shouls save only one doc', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+            doc.save().then(function(doc) {
+                assert.equal(typeof doc.id, 'string')
+                assert.equal(doc.str, docValues.str);
+                assert.equal(doc.num, docValues.num);
+                done();
+            }).error(done);
+        })
+        it('save should not change the joined document', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+            doc.save().then(function(doc) {
+                assert.strictEqual(doc.otherDoc, otherDoc)
+                done();
+            }).error(done);
+        })
+        it('saveAll should save everything', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+                assert.equal(doc.otherDoc.isSaved(), true);
+                assert.equal(typeof doc.id, 'string')
+                assert.equal(doc.str, docValues.str);
+                assert.equal(doc.num, docValues.num);
+
+                assert.strictEqual(doc.otherDoc, otherDoc)
+                assert.strictEqual(doc.otherDoc.foreignKey, doc.id)
+                done();
+            }).error(done);
         })
     });
 });
