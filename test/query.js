@@ -101,5 +101,30 @@ describe('Model queries', function(){
             done();
         }).error(done);
     });
+    it('Model.filter() should work', function(done){
+        Model.filter(true).run().then(function(result) {
+            assert.equal(result.length, 3);
 
+            var newBag = {};
+            for(var i=0; i<result.length; i++) {
+                newBag[result[i].id] = result[i]
+            }
+            assert.equal(result.length, 3);
+            assert.deepEqual(bag, newBag);
+
+            for(var i=0; i<result.length; i++) {
+                assert(result[i] instanceof Document);
+                assert.deepEqual(result[i].__proto__.constructor, Model);
+                assert.deepEqual(result[i].constructor, Model);
+            }
+            done();
+
+        }).error(done);
+    });
+    it('Model.filter(false) should work', function(done){
+        Model.filter(false).run().then(function(result) {
+            assert.equal(result.length, 0);
+            done();
+        }).error(done);
+    });
 });
