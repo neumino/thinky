@@ -88,6 +88,22 @@ describe('Model queries', function(){
             done();
         }).error(done);
     });
+    it('Model.add(1).run() should be able to error', function(done){
+        Model.add(1).run().then(function(result) {
+            done(new Error("The promise should not be resolved."))
+        }).error(function(error) {
+            assert(error.message.match(/^Expected type DATUM but found TABLE/));
+            done();
+        });
+    });
+    it('Model.map(1).run should error', function(done){
+        Model.map(function() { return 1 }).run().then(function(result) {
+            done(new Error("The promise should not be resolved."))
+        }).error(function(error) {
+            assert.equal(error.message, "The results could not be converted to instances of `"+Model.getName()+"`\nDetailed error: To create a new instance, you must pass an object")
+            done();
+        });
+    });
     it('Model.get() should return the expected document', function(done){
         Model.get(data[0].id).run().then(function(result) {
             assert.deepEqual(data[0], result);
@@ -127,7 +143,7 @@ describe('Model queries', function(){
             done();
         }).error(done);
     });
-    it('Model.execute should work', function(done){
+    it('Model.execute should not return instances of the model', function(done){
         Model.execute().then(function(result) {
             assert(!(result[0] instanceof Document));
             assert.equal(result.length, 3);
@@ -141,14 +157,13 @@ describe('Model queries', function(){
             done();
         }).error(done);
     });
-    it('Model.map(1).run should error', function(done){
-        Model.map(function() { return 1 }).run().then(function(result) {
+    it('Model.add(1).execute() should be able to error', function(done){
+        Model.add(1).execute().then(function(result) {
             done(new Error("The promise should not be resolved."))
         }).error(function(error) {
-            assert.equal(error.message, "The results could not be converted to instances of `"+Model.getName()+"`\nDetailed error: To create a new instance, you must pass an object")
+            assert(error.message.match(/^Expected type DATUM but found TABLE/));
             done();
         });
     });
-
 });
 
