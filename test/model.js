@@ -5,6 +5,7 @@ var r = thinky.r;
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
 
+/*
 describe('createModel', function(){
     var name = util.s8();
     it('Create a new model', function(){
@@ -92,6 +93,7 @@ describe('Model', function() {
         assert.equal(otherDoc.getName(), otherName);
     });
 });
+*/
 
 describe("Joins", function() {
     it('hasOne should save the join', function() {
@@ -117,7 +119,7 @@ describe("Joins", function() {
 
         model.hasOne(otherModel, "otherDoc", "modelId", foreignKey);
 
-        model.on("ready", function() {
+        otherModel.on("ready", function() {
             r.table(otherModel.getName()).indexList().run().then(function(cursor) {
                 cursor.toArray().then(function(result) {
                     r.table(otherModel.getName()).indexWait(foreignKey).run().then(function() {
@@ -165,9 +167,9 @@ describe("Joins", function() {
         schema[foreignKey] = String;
         var otherModel = thinky.createModel(otherName, schema);
 
-        model.hasMany(otherModel, "otherDoc", "modelId", foreignKey);
+        model.hasMany(otherModel, "otherDocs", "modelId", foreignKey);
 
-        model.on("ready", function() {
+        otherModel.on("ready", function() {
             r.table(otherModel.getName()).indexList().run().then(function(cursor) {
                 cursor.toArray().then(function(result) {
                     r.table(otherModel.getName()).indexWait(foreignKey).run().then(function() {
@@ -180,4 +182,57 @@ describe("Joins", function() {
         })
     });
 
+    it('hasAndBelongsToMany should create indexes and a new table', function(done) {
+        var name = util.s8();
+        var model = thinky.createModel(name, { id: String, notid1: String });
+
+        var otherName = util.s8();
+        var otherModel = thinky.createModel(otherName, { id: String, notid2: String });
+
+        model.hasAndBelongsToMany(otherModel, "otherDocs", "notid1", "notid2");
+
+        otherModel.on("ready", function() {
+        })
+
+        var linkName;
+        if(model.getName() < otherModel.getName()) {
+            linkName = model.getName()+"_"+otherModel.getName();
+        }
+        else {
+            linkName = otherModel.getName()+"_"+model.getName();
+        }
+
+        model.on("ready", function() {
+            r.table(otherModel.getName()).indexList().run().then(function(cursor) {
+                cursor.toArray().then(function(result) {
+                    /*
+                    if (result.indexOf(otherModel.getName()) === -1) {
+                        done(new Error("Table for otherModel not found."))
+                    }
+                    else if (result.indexOf(linkName) === -1) {
+                        done(new Error("Table for link not found."))
+                    }
+                    else{
+                    */
+                        console.log(0)
+                        r.table(model.getName()).indexWait("notid1").run().then(function() {
+                            console.log(1)
+                            r.table(model.getName()).indexWait("notid2").run().then(function() {
+                                console.log(2)
+                                r.table(linkName).indexWait("notid1").run().then(function() {
+                                    console.log(3)
+                                    r.table(linkName).indexWait("notid2").run().then(function() {
+                                        console.log(4)
+                                        done();
+                                    }).error(done);
+                                }).error(done);
+                            }).error(done);
+                        }).error(done);
+                    //}
+                });
+
+            }).error(done);
+
+        })
+    });
 });
