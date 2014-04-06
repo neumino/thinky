@@ -1428,7 +1428,6 @@ describe('save', function() {
             doc.save().then(function(result) {
                 assert.equal(doc.isSaved(), true);
                 done();
-
             }).error(done);
         });
 
