@@ -1612,5 +1612,190 @@ describe('save', function() {
             }).error(done);
         })
     });
+    describe("Joins - hasAndBelongsTo", function() {
+        var Model, OtherModel;
+        before(function() {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number
+            })
+
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number
+            })
+            Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id")
+        });
+        it('save shouls save only one doc', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            doc.otherDocs = otherDocs;
+
+            doc.save().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+                for(var i=0; i<otherDocs.length; i++) {
+                    assert.equal(doc.otherDocs[i].isSaved(), false);
+                }
+                assert.equal(typeof doc.id, 'string')
+                assert.equal(doc.str, docValues.str);
+                assert.equal(doc.num, docValues.num);
+                done();
+            }).error(done);
+        })
+        it('save should not change the joined document', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            doc.otherDocs = otherDocs;
+
+            doc.save().then(function(doc) {
+                assert.strictEqual(doc.otherDocs, otherDocs)
+                done();
+            }).error(done);
+        })
+        it('saveAll should save everything', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            doc.otherDocs = otherDocs;
+
+            doc.saveAll().then(function(doc) {
+                var linkName;
+                if(Model.getName() < OtherModel.getName()) {
+                    linkName = Model.getName()+"_"+OtherModel.getName();
+                }
+                else {
+                    linkName = OtherModel.getName()+"_"+Model.getName();
+                }
+
+                r.table(linkName).run().then(function(cursor) {
+                    cursor.toArray().then(function(result) {
+                        assert.equal(result.length, 3)
+
+                        assert.equal(doc.isSaved(), true);
+                        for(var i=0; i<otherDocs.length; i++) {
+                            assert.equal(doc.otherDocs[i].isSaved(), true);
+                            assert.equal(typeof doc.otherDocs[i].id, 'string');
+                        }
+                        assert.equal(typeof doc.id, 'string')
+                        assert.equal(doc.str, docValues.str);
+                        assert.equal(doc.num, docValues.num);
+
+                        assert.strictEqual(doc.otherDocs, otherDocs)
+                        done();
+                    })
+                })
+
+            }).error(done);
+        })
+        it('saveAll should create new links with the good id', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [
+                new OtherModel({str: util.s8(), num: util.random()}),
+                new OtherModel({str: util.s8(), num: util.random()}),
+                new OtherModel({str: util.s8(), num: util.random()})
+            ];
+            doc.otherDocs = otherDocs;
+
+            doc.saveAll().then(function(doc) {
+                var linkName, found;
+
+                if(Model.getName() < OtherModel.getName()) {
+                    linkName = Model.getName()+"_"+OtherModel.getName();
+                }
+                else {
+                    linkName = OtherModel.getName()+"_"+Model.getName();
+                }
+                r.table(linkName).run().then(function(cursor) {
+                    cursor.toArray().then(function(result) {
+                        var total = 0;
+                        // Check id
+                        for(var i=0; i<result.length; i++) {
+                            found = false
+                            for(var j=0; j<otherDocs.length; j++) {
+                                if (Model.getName() < OtherModel.getName()) {
+                                    if (result[i].id === doc.id+"_"+otherDocs[j].id) {
+                                        total++;
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                else {
+                                    if (result[i].id === otherDocs[j].id+"_"+doc.id) {
+                                        total++;
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        assert.equal(total, 3);
+
+                        done();
+                    })
+                }).error(done);
+
+                
+            }).error(done);
+        })
+        it('saveAll should create new links with the secondary value', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [
+                new OtherModel({str: util.s8(), num: util.random()}),
+                new OtherModel({str: util.s8(), num: util.random()}),
+                new OtherModel({str: util.s8(), num: util.random()})
+            ];
+            doc.otherDocs = otherDocs;
+
+            doc.saveAll().then(function(doc) {
+                for(var i=0; i<otherDocs.length; i++) {
+                    assert.equal(doc.otherDocs[i].isSaved(), true);
+                    assert.equal(typeof doc.otherDocs[i].id, 'string');
+                }
+
+                var linkName, found;
+
+                if(Model.getName() < OtherModel.getName()) {
+                    linkName = Model.getName()+"_"+OtherModel.getName();
+                }
+                else {
+                    linkName = OtherModel.getName()+"_"+Model.getName();
+                }
+                r.table(linkName).run().then(function(cursor) {
+                    cursor.toArray().then(function(result) {
+                        var total = 0;
+                        // Testing the values of the primary key
+                        for(var i=0; i<result.length; i++) {
+                            if (result[i][Model.getName()+"_id"] ===  doc.id) {
+                                found = false;
+                                for(var j=0; j<otherDocs.length; j++) {
+                                    if (result[i][OtherModel.getName()+"_id"] === otherDocs[j].id) {
+                                        total++;
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                assert(found);
+                            }
+                        }
+
+                        assert.equal(total, 3);
+                        done();
+                    })
+                }).error(done);
+
+                
+            }).error(done);
+        })
+
+    });
+
 
 });
