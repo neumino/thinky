@@ -1650,7 +1650,11 @@ describe('save', function() {
         it('save should not change the joined document', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
             var doc = new Model(docValues);
-            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            var otherDocs = [
+                new OtherModel({str: util.s8(), num: util.random()}),
+                new OtherModel({str: util.s8(), num: util.random()}),
+                new OtherModel({str: util.s8(), num: util.random()})
+            ];
             doc.otherDocs = otherDocs;
 
             doc.save().then(function(doc) {
@@ -1661,10 +1665,19 @@ describe('save', function() {
         it('saveAll should save everything', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
             var doc = new Model(docValues);
-            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            var otherDocs = [
+                new OtherModel({str: util.s8(), num: util.random()}),
+                new OtherModel({str: util.s8(), num: util.random()}),
+                new OtherModel({str: util.s8(), num: util.random()})
+            ];
             doc.otherDocs = otherDocs;
 
             doc.saveAll().then(function(doc) {
+                for(var i=0; i<otherDocs.length; i++) {
+                    assert.equal(doc.otherDocs[i].isSaved(), true);
+                    assert.equal(typeof doc.otherDocs[i].id, 'string');
+                }
+
                 var linkName;
                 if(Model.getName() < OtherModel.getName()) {
                     linkName = Model.getName()+"_"+OtherModel.getName();
@@ -1678,10 +1691,6 @@ describe('save', function() {
                         assert.equal(result.length, 3)
 
                         assert.equal(doc.isSaved(), true);
-                        for(var i=0; i<otherDocs.length; i++) {
-                            assert.equal(doc.otherDocs[i].isSaved(), true);
-                            assert.equal(typeof doc.otherDocs[i].id, 'string');
-                        }
                         assert.equal(typeof doc.id, 'string')
                         assert.equal(doc.str, docValues.str);
                         assert.equal(doc.num, docValues.num);
