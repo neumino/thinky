@@ -6,7 +6,6 @@ var Document = require(__dirname+'/../lib/document.js');
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
 
-/*
 describe('Model queries', function(){
     var Model;
     var data = [];
@@ -167,7 +166,6 @@ describe('Model queries', function(){
         });
     });
 });
-*/
 
 describe('getJoin', function(){
     describe("Joins - hasOne", function() {
@@ -179,6 +177,7 @@ describe('getJoin', function(){
                 str: String,
                 num: Number
             })
+
 
             var otherName = util.s8();
             OtherModel = thinky.createModel(otherName, {
@@ -199,17 +198,21 @@ describe('getJoin', function(){
                 done();
             });
         });
-        it('should retrieve joined documents', function(done) {
-            setTimeout(function() {
-            Model.getJoin().run().then(function(result) {
-                console.log(JSON.stringify(doc, null, 2));
-                console.log(JSON.stringify(result, null, 2));
+        it('should retrieve joined documents with object', function(done) {
+            Model.get(doc.id).getJoin().run().then(function(result) {
                 assert.deepEqual(doc, result);
                 assert(doc.isSaved());
                 assert(doc.otherDoc.isSaved());
                 done()
             }).error(done);
-            }, 2000)
+        })
+        it('should retrieve joined documents with sequence', function(done) {
+            Model.filter({id: doc.id}).getJoin().run().then(function(result) {
+                assert.deepEqual([doc], result);
+                assert(doc.isSaved());
+                assert(doc.otherDoc.isSaved());
+                done()
+            }).error(done);
         })
     })
 });
