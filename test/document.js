@@ -2065,10 +2065,11 @@ describe('delete', function() {
             doc.otherDoc = otherDoc;
             doc.saveAll().then(function(doc) {
                 assert.equal(doc.isSaved(), true);
-
                 Model.get(doc.id).getJoin().run().then(function(doc) {
+
                     assert.equal(doc.otherDoc.__proto__._belongTo[Model.getName()].doc, doc);
                     doc.otherDoc.delete().then(function(result) {
+
                         assert.equal(doc.foreignKey, undefined)
                         assert.equal(doc.result, undefined)
                         OtherModel.filter({id: otherDoc.id}).run().then(function(result) {
@@ -2214,9 +2215,28 @@ describe('delete', function() {
 
             })
         });
+        it('delete on a joined document should keep the database consistent', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            doc.otherDocs = otherDocs;
+
+            var toDeleteDoc = otherDocs[1];
+
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+                var otherDoc = new Model(docValues);
+
+                toDeleteDoc.delete().then(function() {
+                    r.table(doc._getModel()._joins.otherDocs.link).getAll(toDeleteDoc.id, {index: OtherModel.getName()+"_id"}).run().then(function(cursor) {
+                        cursor.toArray().then(function(result) {
+                            assert.equal(result.length, 0);
+                            done();
+                        })
+                    })
+                }).error(done);
+            })
+        });
     });
-
-
-
-
 });
