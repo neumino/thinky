@@ -1681,7 +1681,7 @@ describe('save', function() {
             }).error(done);
         })
     });
-    describe("Joins - hasAndBelongsTo", function() {
+    describe("Joins - hasAndBelongsToMany", function() {
         var Model, OtherModel;
         before(function() {
             var name = util.s8();
