@@ -194,6 +194,7 @@ describe('getJoin', function(){
             doc = new Model(docValues);
             var otherDoc = new OtherModel(otherDocValues);
             doc.otherDoc = otherDoc;
+
             doc.saveAll().then(function(doc) {
                 done();
             });
@@ -201,18 +202,122 @@ describe('getJoin', function(){
         it('should retrieve joined documents with object', function(done) {
             Model.get(doc.id).getJoin().run().then(function(result) {
                 assert.deepEqual(doc, result);
-                assert(doc.isSaved());
-                assert(doc.otherDoc.isSaved());
+                assert(result.isSaved());
+                assert(result.otherDoc.isSaved());
                 done()
             }).error(done);
         })
         it('should retrieve joined documents with sequence', function(done) {
             Model.filter({id: doc.id}).getJoin().run().then(function(result) {
                 assert.deepEqual([doc], result);
-                assert(doc.isSaved());
-                assert(doc.otherDoc.isSaved());
+                assert(result[0].isSaved());
+                assert(result[0].otherDoc.isSaved());
                 done()
             }).error(done);
         })
     })
+    describe("Joins - belongsTo", function() {
+        var Model, OtherModel, doc
+        before(function(done) {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number,
+                foreignKey: String
+            })
+
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number
+            })
+            Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id")
+
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+
+            doc.saveAll().then(function(doc) {
+                done();
+            });
+        });
+        it('should retrieve joined documents with object', function(done) {
+            Model.get(doc.id).getJoin().run().then(function(result) {
+                assert.deepEqual(doc, result);
+                assert(result.isSaved());
+                assert(result.otherDoc.isSaved());
+                done()
+            }).error(done);
+        })
+        it('should retrieve joined documents with sequence', function(done) {
+            Model.filter({id: doc.id}).getJoin().run().then(function(result) {
+                assert.deepEqual([doc], result);
+                assert(result[0].isSaved());
+                assert(result[0].otherDoc.isSaved());
+                done()
+            }).error(done);
+        })
+    })
+    describe("Joins - hasMany", function() {
+        var Model, OtherModel, doc;
+        before(function(done) {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number
+            })
+
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number,
+                foreignKey: String
+            })
+            Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey")
+
+            var docValues = {str: util.s8(), num: util.random()}
+            doc = new Model(docValues);
+            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            doc.otherDocs = otherDocs;
+
+            doc.saveAll().then(function(doc) {
+                util.sortById(doc.otherDocs);
+                done();
+            }).error(done);
+
+        });
+        it('should retrieve joined documents with object', function(done) {
+            Model.get(doc.id).getJoin().run().then(function(result) {
+                util.sortById(result.otherDocs);
+
+                assert.deepEqual(doc, result);
+                assert(result.isSaved());
+                for(var i=0; i<result.otherDocs.length; i++) {
+                    assert.equal(result.otherDocs[i].isSaved(), true);
+                }
+                done()
+            }).error(done);
+        })
+        it('should retrieve joined documents with sequence', function(done) {
+            Model.filter({id: doc.id}).getJoin().run().then(function(result) {
+                util.sortById(result[0].otherDocs);
+
+                assert.deepEqual([doc], result);
+                assert(result[0].isSaved());
+                for(var i=0; i<result[0].otherDocs.length; i++) {
+                    assert.equal(result[0].otherDocs[i].isSaved(), true);
+                }
+
+                done()
+            }).error(done);
+        })
+    })
+
 });
