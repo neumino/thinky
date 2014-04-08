@@ -2056,6 +2056,37 @@ describe('delete', function() {
 
             })
         });
+        it('delete should delete the foreign key of its parent (the result of a get)', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+                Model.get(doc.id).getJoin().run().then(function(doc) {
+                    assert.equal(doc.otherDoc.__proto__._belongTo[Model.getName()].doc, doc);
+                    doc.otherDoc.delete().then(function(result) {
+                        assert.equal(doc.foreignKey, undefined)
+                        assert.equal(doc.result, undefined)
+                        OtherModel.filter({id: otherDoc.id}).run().then(function(result) {
+                            assert.equal(result.length, 0);
+
+                            Model.filter({id: doc.id}).run().then(function(result) {
+                                assert.equal(result.length, 1);
+                                assert.deepEqual(result[0], doc);
+                                assert.equal(result[0].foreignKey, undefined)
+                                done();
+                            }).error(done);
+
+                        });
+                    }).error(done);
+                }).error(done);
+            })
+        });
+
 
     });
 
