@@ -1608,6 +1608,19 @@ describe('save', function() {
                 done();
             }).error(done);
         })
+        it('saveAll should save a referene to this in the belongsTo doc', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+            doc.saveAll().then(function(doc2) {
+                assert.equal(doc.otherDoc.__proto__._belongLinks[Model.getName()].doc, doc);
+                done();
+            }).error(done);
+        })
+
     });
 
     describe("Joins - hasMany", function() {
@@ -1968,6 +1981,84 @@ describe('delete', function() {
             })
         });
     });
+    describe('belongsTo', function() {
+        var Model, doc;
+        before(function() {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number,
+                foreignKey: String
+            })
+
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number
+            })
+
+            Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id")
+        });
+        it('delete should delete only the document and update the other', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+                doc.delete().then(function() {
+                    Model.run().then(function(result) {
+                        assert.equal(result.length, 0);
+
+                        OtherModel.run().then(function(result) {
+                            assert.equal(result.length, 1);
+                            assert.deepEqual(result[0], otherDoc);
+                            done();
+                        }).error(done);
+
+                    });
+                }).error(done);
+
+            })
+        });
+        it('delete should delete the foreign key of its parent', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+
+                assert.equal(doc.otherDoc.__proto__._belongLinks[Model.getName()].doc, doc);
+                doc.otherDoc.delete().then(function(result) {
+                    assert.equal(doc.foreignKey, undefined)
+                    assert.equal(doc.result, undefined)
+                    OtherModel.filter({id: otherDoc.id}).run().then(function(result) {
+                        assert.equal(result.length, 0);
+
+                        Model.filter({id: doc.id}).run().then(function(result) {
+                            assert.equal(result.length, 1);
+                            assert.deepEqual(result[0], doc);
+                            assert.equal(result[0].foreignKey, undefined)
+                            done();
+                        }).error(done);
+
+                    });
+                }).error(done);
+
+            })
+        });
+
+    });
+
     describe('hasMany', function() {
         var Model, doc;
         before(function() {
