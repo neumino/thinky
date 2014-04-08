@@ -1874,3 +1874,199 @@ describe('save', function() {
         })
     });
 });
+
+describe('delete', function() {
+    describe('Basic', function() {
+        var Model, doc;
+        before(function(done) {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number
+            })
+
+            var str = util.s8();
+            var num = util.random();
+
+            doc = new Model({
+                str: str,
+                num: num
+            })
+            assert.equal(doc.isSaved(), false);
+            doc.save().then(function(result) {
+                assert.equal(typeof doc.id, 'string');
+                assert.equal(doc.isSaved(), true);
+                done();
+            }).error(done);
+        });
+        it('should delete the document', function(done) {
+            doc.delete().then(function() {
+                Model.run().then(function(result) {
+                    assert.equal(result.length, 0);
+                    done();
+                });
+            }).error(done);
+        });
+        it('should set the doc unsaved', function(done) {
+            doc.save().then(function(result) {
+                assert.equal(typeof doc.id, 'string');
+                assert.equal(doc.isSaved(), true);
+                doc.delete().then(function() {
+                    Model.run().then(function(result) {
+                        assert.equal(doc.isSaved(), false);
+                        done();
+                    });
+                }).error(done);
+            }).error(done);
+        });
+    });
+    describe('hasOne', function() {
+        var Model, doc;
+        before(function() {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number
+            })
+
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number,
+                foreignKey: String
+            })
+
+            Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey")
+        });
+        it('delete should delete only the document and update the other', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+                doc.delete().then(function() {
+                    Model.run().then(function(result) {
+                        assert.equal(result.length, 0);
+                        assert.equal(otherDoc.foreignKey, undefined);
+
+                        OtherModel.run().then(function(result) {
+                            assert.equal(result.length, 1);
+                            assert.deepEqual(result[0], otherDoc);
+                            done();
+                        }).error(done);
+
+                    });
+                }).error(done);
+
+            })
+        });
+    });
+    describe('hasMany', function() {
+        var Model, doc;
+        before(function() {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number
+            })
+
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number,
+                foreignKey: String
+            })
+
+            Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey")
+        });
+        it('delete should delete only the document and update the other', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            doc.otherDocs = otherDocs;
+
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+                doc.delete().then(function() {
+                    Model.run().then(function(result) {
+                        assert.equal(result.length, 0);
+                        for(var i=0; i<otherDocs.length; i++) {
+                            assert.equal(otherDocs[i].foreignKey, undefined);
+                        }
+
+                        OtherModel.run().then(function(result) {
+                            assert.equal(result.length, 3);
+                            assert.deepEqual(util.sortById(result), util.sortById(otherDocs));
+                            done();
+                        }).error(done);
+
+                    });
+                }).error(done);
+
+            })
+        });
+    });
+    describe('hasAndBelongsToMany', function() {
+        var Model, doc;
+        before(function() {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number
+            })
+
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number
+            })
+
+            Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id")
+        });
+        it('delete should delete only the document and update the other', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            doc.otherDocs = otherDocs;
+
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+                doc.delete().then(function() {
+                    Model.run().then(function(result) {
+                        assert.equal(result.length, 0);
+
+                        OtherModel.run().then(function(result) {
+                            assert.equal(result.length, 3);
+                            assert.deepEqual(util.sortById(result), util.sortById(otherDocs));
+                            r.table(Model._joins.otherDocs.link).run().then(function(cursor) {
+                                cursor.toArray().then(function(result) {
+                                    assert.equal(result.length, 0);
+                                    done();
+                                }).error(done);
+                            }).error(done);
+                        }).error(done);
+
+                    });
+                }).error(done);
+
+            })
+        });
+    });
+
+
+
+
+});
