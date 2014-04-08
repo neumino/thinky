@@ -1616,7 +1616,7 @@ describe('save', function() {
             var otherDoc = new OtherModel(otherDocValues);
             doc.otherDoc = otherDoc;
             doc.saveAll().then(function(doc2) {
-                assert.equal(doc.otherDoc.__proto__._belongLinks[Model.getName()].doc, doc);
+                assert.equal(doc.otherDoc.__proto__._belongTo[Model.getName()].doc, doc);
                 done();
             }).error(done);
         })
@@ -2037,7 +2037,7 @@ describe('delete', function() {
                 assert.equal(doc.isSaved(), true);
 
 
-                assert.equal(doc.otherDoc.__proto__._belongLinks[Model.getName()].doc, doc);
+                assert.equal(doc.otherDoc.__proto__._belongTo[Model.getName()].doc, doc);
                 doc.otherDoc.delete().then(function(result) {
                     assert.equal(doc.foreignKey, undefined)
                     assert.equal(doc.result, undefined)
