@@ -1403,6 +1403,45 @@ describe('validate', function(){
 
         doc.validate();
     });
+    it('it should check joined Document too', function(done) {
+        var name = util.s8();
+        var otherName = util.s8();
+
+        var str1 = util.s8();
+        var str2 = util.s8();
+        var str3 = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String
+        }, {init: false, enforce_type: 'strict'})
+
+        var OtherModel = thinky.createModel(otherName, {
+            id: String,
+            field: String,
+            otherId: String
+        }, {init: false, enforce_type: 'loose'})
+
+        Model.hasOne(OtherModel, "otherDoc", "otherId", "id");
+
+        doc = new Model({
+            id: str1,
+            field: str2,
+            otherDoc: {
+                id: str3,
+                field: 1
+            }
+        })
+
+        try{
+            doc.validate();
+        }
+        catch(err) {
+            assert.equal(err.message, "Value for [otherDoc][field] must be a string or null.");
+            done();
+        }
+    });
+
 });
 
 describe('save', function() {
