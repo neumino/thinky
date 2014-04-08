@@ -45,6 +45,15 @@ describe('Model', function() {
         assert(util.isPlainObject(doc));
         assert.equal(doc.str, str);
     });
+    it('Create two instances with the same argument of the Model', function() {
+        var str = util.s8();
+        var docValues = {str: str};
+        var doc1 = new Model(docValues);
+        var doc2 = new Model(docValues);
+
+        assert.notStrictEqual(doc1, doc2);
+    });
+
     it('Two instances should be different', function() {
         var str1 = util.s8();
         var str2 = util.s8();

@@ -2086,6 +2086,34 @@ describe('delete', function() {
                 }).error(done);
             })
         });
+        it('delete on a joined document should keep the database consistent', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var joinedDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new Model(docValues);
+            var joinedDoc = new OtherModel(joinedDocValues);
+
+            doc.otherDoc = joinedDoc;
+            otherDoc.otherDoc = joinedDoc;
+
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+                otherDoc.saveAll().then(function(otherDoc) {
+                    assert.equal(otherDoc.isSaved(), true);
+
+                    Model.getAll(joinedDoc.id, {index: 'foreignKey'}).run().then(function(result) {
+                        assert.equal(result.length, 2);
+                        doc.otherDoc.delete().then(function() {
+                            Model.getAll(joinedDoc.id, {index: 'foreignKey'}).run().then(function(result) {
+                                assert.equal(result.length, 0);
+                                done();
+                            })
+                        }).error(done);
+                    }).error(done);
+                })
+            })
+        });
 
 
     });
