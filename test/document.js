@@ -1508,7 +1508,13 @@ describe('save', function() {
                 assert.equal(doc.num, docValues.num);
                 done();
             }).error(done);
-        })
+        });
+        it('new should create instances of Document for joined documents too', function() {
+            var docValues = {str: util.s8(), num: util.random(), otherDoc: {str: util.s8(), num: util.random()}}
+            doc = new Model(docValues);
+            assert.equal(doc._getModel()._name, Model.getName())
+            assert.equal(doc.otherDoc._getModel()._name, OtherModel.getName())
+        });
         it('save should not change the joined document', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
             var otherDocValues = {str: util.s8(), num: util.random()}
