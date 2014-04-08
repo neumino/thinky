@@ -6,7 +6,6 @@ var Document = require(__dirname+'/../lib/document.js');
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
 
-/*
 describe('Model queries', function(){
     var Model;
     var data = [];
@@ -167,10 +166,8 @@ describe('Model queries', function(){
         });
     });
 });
-*/
 
 describe('getJoin', function(){
-    /*
     describe("Joins - hasOne", function() {
         var Model, OtherModel, doc
         before(function(done) {
@@ -322,7 +319,6 @@ describe('getJoin', function(){
             }).error(done);
         })
     })
-    */
     describe("Joins - hasAndBelongsToMany", function() {
         var Model, OtherModel, doc;
         before(function(done) {
@@ -348,14 +344,12 @@ describe('getJoin', function(){
 
             doc.saveAll().then(function(doc) {
                 util.sortById(doc.otherDocs);
-                console.log(JSON.stringify(doc, null, 2));
                 done();
             }).error(done);
 
         });
         it('should retrieve joined documents with object', function(done) {
             Model.get(doc.id).getJoin().run().then(function(result) {
-                console.log(JSON.stringify(result, null, 2));
                 util.sortById(result.otherDocs);
 
                 assert.deepEqual(doc, result);
@@ -366,7 +360,6 @@ describe('getJoin', function(){
                 done()
             }).error(done);
         })
-        /*
         it('should retrieve joined documents with sequence', function(done) {
             Model.filter({id: doc.id}).getJoin().run().then(function(result) {
                 util.sortById(result[0].otherDocs);
@@ -380,7 +373,6 @@ describe('getJoin', function(){
                 done()
             }).error(done);
         })
-        */
     })
 
 
