@@ -31,6 +31,21 @@ describe('createModel', function(){
         assert(model1 !== model2);
     });
 });
+describe('[_]getModel', function(){
+
+    it('_getModel', function(){
+        var name = util.s8();
+        var model = thinky.createModel(name, {id: String, name: String}, {init: false})
+        assert(model._getModel().hasOwnProperty('_name'));
+    });
+    it('getName', function(){
+        var name = util.s8();
+        var model = thinky.createModel(name, {id: String, name: String}, {init: false})
+        assert(model.__proto__.__proto__.hasOwnProperty('getName'));
+        assert.equal(model.getName(), name);
+    });
+
+});
 describe('Model', function() {
     var name = util.s8();
 
