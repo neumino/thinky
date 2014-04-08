@@ -100,7 +100,7 @@ describe('Model queries', function(){
         Model.map(function() { return 1 }).run().then(function(result) {
             done(new Error("The promise should not be resolved."))
         }).error(function(error) {
-            assert.equal(error.message, "The results could not be converted to instances of `"+Model.getName()+"`\nDetailed error: To create a new instance, you must pass an object")
+            assert.equal(error.message, "The results could not be converted to instances of `"+Model.getName()+"`\nDetailed error: Cannot build a new instance of `"+Model.getName()+"` without an object")
             done();
         });
     });
