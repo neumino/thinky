@@ -1980,6 +1980,52 @@ describe('save', function() {
 
         })
     });
+    describe('saveAll with missing docs for hasMany', function() {
+        var Model, OtherModel;
+        before(function() {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number
+            })
+
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number,
+                foreignKey: String
+            })
+
+            Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey")
+        });
+        it('Should update link', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            doc.otherDocs = otherDocs;
+
+            doc.saveAll().then(function() {
+                assert(doc.isSaved())
+                for(var i=0; i<doc.otherDocs.length; i++) {
+                    assert(doc.otherDocs[i].isSaved())
+                }
+                var removedDoc = doc.otherDocs.splice(1, 1);
+                doc.saveAll().then(function() {
+                    OtherModel.getAll(doc.id, {index: "foreignKey"}).run().then(function(result) {
+                        assert.equal(result.length, 2);
+                        OtherModel.run().then(function(result) {
+                            assert.equal(result.length, 3);
+                            done();
+                        });
+
+                    });
+                });
+            }).error(done);
+
+        })
+    });
 });
 
 
