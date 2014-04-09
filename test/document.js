@@ -5,6 +5,7 @@ var r = thinky.r;
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
 
+
 describe('generateDefault', function(){
     it('String - constant', function(){
         var name = util.s8();
@@ -1445,6 +1446,7 @@ describe('validate', function(){
 });
 
 describe('save', function() {
+    
     describe('Basic', function() {
         var Model;
         before(function() {
@@ -1661,7 +1663,7 @@ describe('save', function() {
             var otherDoc = new OtherModel(otherDocValues);
             doc.otherDoc = otherDoc;
             doc.saveAll().then(function(doc2) {
-                assert.equal(doc.otherDoc.__proto__._belongTo[Model.getName()].doc, doc);
+                assert.equal(doc.otherDoc.__proto__._belongsTo[Model.getName()].doc, doc);
                 done();
             }).error(done);
         })
@@ -1931,7 +1933,55 @@ describe('save', function() {
             }).error(done);
         })
     });
+    
+    describe('saveAll with missing docs for hasOne', function() {
+        var Model, OtherModel;
+        before(function() {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number
+            })
+
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number,
+                foreignKey: String
+            })
+
+            Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey")
+        });
+        it('Should update link', function(done) {
+            var doc = new Model({
+                id: util.s8(),
+                str: util.s8(),
+                num: util.random()
+            })
+            var otherDoc = new OtherModel({
+                id: util.s8(),
+                str: util.s8(),
+                num: util.random()
+            })
+            doc.otherDoc = otherDoc;
+            doc.saveAll().then(function() {
+                assert(doc.isSaved())
+                assert(doc.otherDoc.isSaved())
+                doc.otherDoc = null;
+                doc.saveAll().then(function() {
+                    OtherModel.get(otherDoc.id).run().then(function(result) {
+                        assert.equal(result.foreignKey, undefined);
+                        done();
+                    });
+                });
+            }).error(done);
+
+        })
+    });
 });
+
 
 describe('delete', function() {
     describe('Basic', function() {
@@ -2082,7 +2132,7 @@ describe('delete', function() {
                 assert.equal(doc.isSaved(), true);
 
 
-                assert.equal(doc.otherDoc.__proto__._belongTo[Model.getName()].doc, doc);
+                assert.equal(doc.otherDoc.__proto__._belongsTo[Model.getName()].doc, doc);
                 doc.otherDoc.delete().then(function(result) {
                     assert.equal(doc.foreignKey, undefined)
                     assert.equal(doc.result, undefined)
@@ -2112,7 +2162,7 @@ describe('delete', function() {
                 assert.equal(doc.isSaved(), true);
                 Model.get(doc.id).getJoin().run().then(function(doc) {
 
-                    assert.equal(doc.otherDoc.__proto__._belongTo[Model.getName()].doc, doc);
+                    assert.equal(doc.otherDoc.__proto__._belongsTo[Model.getName()].doc, doc);
                     doc.otherDoc.delete().then(function(result) {
 
                         assert.equal(doc.foreignKey, undefined)
@@ -2285,3 +2335,4 @@ describe('delete', function() {
         });
     });
 });
+
