@@ -1445,8 +1445,9 @@ describe('validate', function(){
 
 });
 
+
 describe('save', function() {
-    
+     
     describe('Basic', function() {
         var Model;
         before(function() {
@@ -2067,7 +2068,63 @@ describe('save', function() {
 
         })
     });
+    
+    
+    describe('saveAll with missing docs for hasAndBelongsToMany', function() {
+        var Model, OtherModel;
+        before(function() {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number,
+                foreignKey: String
+            })
 
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number
+            })
+
+            Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id")
+        });
+        it('Should remove link', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            doc.otherDocs = otherDocs;
+
+            doc.saveAll().then(function() {
+                assert(doc.isSaved())
+                for(var i=0; i<otherDocs.length; i++) {
+                    assert(doc.otherDocs[i].isSaved())
+                }
+                var removedDoc = doc.otherDocs.splice(1, 1);
+                doc.saveAll().then(function(result) {
+                    assert.equal(doc.otherDocs.length, 2);
+                    assert.equal(result.otherDocs.length, 2);
+
+                    var linkName;
+                    if(Model.getName() < OtherModel.getName()) {
+                        linkName = Model.getName()+"_"+OtherModel.getName();
+                    }
+                    else {
+                        linkName = OtherModel.getName()+"_"+Model.getName();
+                    }
+                    r.table(linkName).count().run().then(function(result) {
+                        assert.equal(result, 2);
+
+                        Model.get(doc.id).getJoin().run().then(function(result) {
+                            assert.equal(result.otherDocs.length, 2);
+                            done();
+                        }).error(done);
+                    }).error(done);
+                }).error(done);
+            }).error(done);
+        })
+    });
 });
 
 
