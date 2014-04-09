@@ -128,6 +128,134 @@ describe("Joins", function() {
         model.hasOne(otherModel, "otherDoc", "otherId", "id");
         assert(model._getModel()._joins["otherDoc"])
     });
+    it('hasOne should throw if it uses a field already used by another relation', function(done) {
+        var name = util.s8();
+        var model = thinky.createModel(name, { id: String}, {init: false});
+
+        var otherName = util.s8();
+        var otherModel = thinky.createModel(otherName, { id: String, otherId: String }, {init: false});
+
+        var anotherName = util.s8();
+        var anotherModel = thinky.createModel(anotherName, { id: String, otherId: String }, {init: false});
+
+
+        model.hasOne(otherModel, "otherDoc", "otherId", "id");
+        try{
+            model.hasOne(anotherModel, "otherDoc", "otherId", "id");
+        }
+        catch(err) {
+            assert.equal(err.message, "The field `otherDoc` is already used by another relation.")
+            done();
+        }
+    });
+    it('belongsTo should throw if it uses a field already used by another relation', function(done) {
+        var name = util.s8();
+        var model = thinky.createModel(name, { id: String}, {init: false});
+
+        var otherName = util.s8();
+        var otherModel = thinky.createModel(otherName, { id: String, otherId: String }, {init: false});
+
+        var anotherName = util.s8();
+        var anotherModel = thinky.createModel(anotherName, { id: String, otherId: String }, {init: false});
+
+
+        model.belongsTo(otherModel, "otherDoc", "otherId", "id");
+        try{
+            model.belongsTo(anotherModel, "otherDoc", "otherId", "id");
+        }
+        catch(err) {
+            assert.equal(err.message, "The field `otherDoc` is already used by another relation.")
+            done();
+        }
+    });
+    it('hasMany should throw if it uses a field already used by another relation', function(done) {
+        var name = util.s8();
+        var model = thinky.createModel(name, { id: String}, {init: false});
+
+        var otherName = util.s8();
+        var otherModel = thinky.createModel(otherName, { id: String, otherId: String }, {init: false});
+
+        var anotherName = util.s8();
+        var anotherModel = thinky.createModel(anotherName, { id: String, otherId: String }, {init: false});
+
+
+        model.hasMany(otherModel, "otherDoc", "otherId", "id");
+        try{
+            model.hasMany(anotherModel, "otherDoc", "otherId", "id");
+        }
+        catch(err) {
+            assert.equal(err.message, "The field `otherDoc` is already used by another relation.")
+            done();
+        }
+    });
+    it('hasAndBelongsToMany should throw if it uses a field already used by another relation', function(done) {
+        var name = util.s8();
+        var model = thinky.createModel(name, { id: String}, {init: false});
+
+        var otherName = util.s8();
+        var otherModel = thinky.createModel(otherName, { id: String, otherId: String }, {init: false});
+
+        var anotherName = util.s8();
+        var anotherModel = thinky.createModel(anotherName, { id: String, otherId: String }, {init: false});
+
+
+        model.hasAndBelongsToMany(otherModel, "otherDoc", "otherId", "id");
+        try{
+            model.hasAndBelongsToMany(anotherModel, "otherDoc", "otherId", "id");
+        }
+        catch(err) {
+            assert.equal(err.message, "The field `otherDoc` is already used by another relation.")
+            done();
+        }
+    });
+    it('hasOne should throw if the first argument is not a model', function(done) {
+        var name = util.s8();
+        var model = thinky.createModel(name, { id: String}, {init: false});
+
+        try{
+            model.hasOne(function() {}, "otherDoc", "otherId", "id");
+        }
+        catch(err) {
+            assert.equal(err.message, "First argument of `hasOne` must be a Model");
+            done();
+        }
+    });
+    it('belongsTo should throw if the first argument is not a model', function(done) {
+        var name = util.s8();
+        var model = thinky.createModel(name, { id: String}, {init: false});
+
+        try{
+            model.belongsTo(function() {}, "otherDoc", "otherId", "id");
+        }
+        catch(err) {
+            assert.equal(err.message, "First argument of `belongsTo` must be a Model");
+            done();
+        }
+    });
+    it('hasMany should throw if the first argument is not a model', function(done) {
+        var name = util.s8();
+        var model = thinky.createModel(name, { id: String}, {init: false});
+
+        try{
+            model.hasMany(function() {}, "otherDoc", "otherId", "id");
+        }
+        catch(err) {
+            assert.equal(err.message, "First argument of `hasMany` must be a Model");
+            done();
+        }
+    });
+    it('hasAndBelongsToMany should throw if the first argument is not a model', function(done) {
+        var name = util.s8();
+        var model = thinky.createModel(name, { id: String}, {init: false});
+
+        try{
+            model.hasAndBelongsToMany(function() {}, "otherDoc", "otherId", "id");
+        }
+        catch(err) {
+            assert.equal(err.message, "First argument of `hasAndBelongsToMany` must be a Model");
+            done();
+        }
+    });
     it('hasOne should create an index on the other model', function(done) {
         var name = util.s8();
         var model = thinky.createModel(name, { id: String, foreignKeyName: String });
