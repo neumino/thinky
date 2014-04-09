@@ -2026,6 +2026,48 @@ describe('save', function() {
 
         })
     });
+    describe('saveAll with missing docs for belongsTo', function() {
+        var Model, OtherModel;
+        before(function() {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number,
+                foreignKey: String
+            })
+
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number
+            })
+
+            Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id")
+        });
+        it('Should update link', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel({str: util.s8(), num: util.random()});
+            doc.otherDoc = otherDoc;
+
+            doc.saveAll().then(function() {
+                assert(doc.isSaved())
+                assert.equal(typeof doc.foreignKey, 'string')
+                doc.otherDoc = null;
+                doc.saveAll().then(function() {
+                    assert(doc.foreignKey, undefined);
+                    OtherModel.run().then(function(result) {
+                        assert.equal(result.length, 1);
+                        done();
+                    });
+                });
+            }).error(done);
+
+        })
+    });
+
 });
 
 
