@@ -37,3 +37,27 @@ function sortById(ar) {
     })
 }
 module.exports.sortById = sortById;
+
+function deepCopy(value) {
+    var result;
+    if (isPlainObject(value) === true) {
+        result = {};
+        for(var key in value) {
+            if (value.hasOwnProperty(key)) {
+                result[key] = deepCopy(value[key]);
+            }
+        }
+        return result;
+    }
+    else if (Array.isArray(value)) {
+        result = []
+        for(var i=0; i<value.length; i++) {
+            result.push(deepCopy(value[i]));
+        }
+        return result;
+    }
+    else {
+        return value;
+    }
+}
+module.exports.deepCopy = deepCopy;

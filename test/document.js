@@ -7,6 +7,7 @@ var assert = require('assert');
 
 
 describe('generateDefault', function(){
+    /*
     it('String - constant', function(){
         var name = util.s8();
         var str = util.s8();
@@ -2220,6 +2221,82 @@ describe('delete', function() {
 
             })
         });
+        it('deleteAll should delete everything', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+                doc.deleteAll().then(function() {
+                    assert.equal(doc.isSaved(), false);
+                    assert.equal(otherDoc.isSaved(), false);
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.equal(result, null);
+                        OtherModel.get(otherDoc.id).run().then(function(result) {
+                            assert.equal(result, null);
+                            done();
+                        }).error(done);
+
+                    });
+                }).error(done);
+
+            })
+        });
+        it('deleteAll should delete everything', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+                doc.deleteAll({otherDoc: true}).then(function() {
+                    assert.equal(doc.isSaved(), false);
+                    assert.equal(otherDoc.isSaved(), false);
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.equal(result, null);
+                        OtherModel.get(otherDoc.id).run().then(function(result) {
+                            assert.equal(result, null);
+                            done();
+                        }).error(done);
+
+                    });
+                }).error(done);
+
+            })
+        });
+        it('deleteAll with wrong modelToDelete should delete only the document and update the other', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+                doc.deleteAll({foo: "bar"}).then(function() {
+                    Model.run().then(function(result) {
+                        assert.equal(result.length, 0);
+                        assert.equal(otherDoc.foreignKey, undefined);
+
+                        OtherModel.get(otherDoc.id).run().then(function(result) {
+                            assert.deepEqual(result, otherDoc);
+                            done();
+                        }).error(done);
+
+                    });
+                }).error(done);
+
+            })
+        });
+
     });
     describe('belongsTo', function() {
         var Model, doc;
@@ -2241,34 +2318,121 @@ describe('delete', function() {
 
             Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id")
         });
-        it('delete should delete only the document and update the other', function(done) {
+        it('delete should delete only the document and not update the other', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
             var otherDocValues = {str: util.s8(), num: util.random()}
 
             var doc = new Model(docValues);
             var otherDoc = new OtherModel(otherDocValues);
             doc.otherDoc = otherDoc;
+
             doc.saveAll().then(function(doc) {
                 assert.equal(doc.isSaved(), true);
 
+                otherDocCopy = util.deepCopy(doc.otherDoc);
+
                 doc.delete().then(function() {
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.equal(result, null);
 
-                    Model.run().then(function(result) {
-                        assert.equal(result.length, 0);
+                        OtherModel.get(otherDoc.id).run().then(function(result) {
+                            assert.deepEqual(result, otherDoc);
+                            assert.deepEqual(result, otherDocCopy);
 
-                        OtherModel.run().then(function(result) {
-                            assert.equal(result.length, 1);
-                            assert.deepEqual(result[0], otherDoc);
                             done();
                         }).error(done);
 
                     });
                 }).error(done);
+            })
+        });
+        it('deleteAll should delete everything', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
 
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+                doc.deleteAll().then(function(result) {
+                    assert.equal(doc.isSaved(), false);
+                    assert.equal(doc.otherDoc.isSaved(), false);
+
+                    assert.equal(result.isSaved(), false);
+                    assert.equal(result.otherDoc.isSaved(), false);
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.equal(result, null);
+
+                        OtherModel.get(otherDoc.id).run().then(function(result) {
+                            assert.deepEqual(result, null);
+                            done();
+                        }).error(done);
+
+                    });
+                }).error(done);
+            })
+        });
+        it('deleteAll should delete everything when given the appropriate modelToDelete', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+                doc.deleteAll({otherDoc: true}).then(function(result) {
+                    assert.equal(doc.isSaved(), false);
+                    assert.equal(doc.otherDoc.isSaved(), false);
+
+                    assert.equal(result.isSaved(), false);
+                    assert.equal(result.otherDoc.isSaved(), false);
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.equal(result, null);
+
+                        OtherModel.get(otherDoc.id).run().then(function(result) {
+                            assert.deepEqual(result, null);
+                            done();
+                        }).error(done);
+
+                    });
+                }).error(done);
+            })
+        });
+        it('delete should delete only the document with non matching modelToDelete', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+                otherDocCopy = util.deepCopy(doc.otherDoc);
+
+                doc.deleteAll({foo: true}).then(function() {
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.equal(result, null);
+
+                        OtherModel.get(otherDoc.id).run().then(function(result) {
+                            assert.deepEqual(result, otherDoc);
+                            assert.deepEqual(result, otherDocCopy);
+
+                            done();
+                        }).error(done);
+
+                    });
+                }).error(done);
             })
         });
     });
-
     describe('hasMany', function() {
         var Model, doc;
         before(function() {
@@ -2299,13 +2463,15 @@ describe('delete', function() {
                 assert.equal(doc.isSaved(), true);
 
                 doc.delete().then(function() {
-                    Model.run().then(function(result) {
-                        assert.equal(result.length, 0);
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.equal(result, null);1
+                        assert.equal(doc.isSaved(), false);
                         for(var i=0; i<otherDocs.length; i++) {
                             assert.equal(otherDocs[i].foreignKey, undefined);
+                            assert.equal(otherDocs[i].isSaved(), true);
                         }
 
-                        OtherModel.run().then(function(result) {
+                        OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 3);
                             assert.deepEqual(util.sortById(result), util.sortById(otherDocs));
                             done();
@@ -2316,7 +2482,96 @@ describe('delete', function() {
 
             })
         });
+        it('delete should delete only the document and update the other -- non matching modelToDelete', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            doc.otherDocs = otherDocs;
+
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+                doc.deleteAll({foo: true}).then(function() {
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.equal(result, null);1
+                        assert.equal(doc.isSaved(), false);
+                        for(var i=0; i<otherDocs.length; i++) {
+                            assert.equal(otherDocs[i].foreignKey, undefined);
+                            assert.equal(otherDocs[i].isSaved(), true);
+                        }
+
+                        OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
+                            assert.equal(result.length, 3);
+                            assert.deepEqual(util.sortById(result), util.sortById(otherDocs));
+                            done();
+                        }).error(done);
+
+                    });
+                }).error(done);
+
+            })
+        });
+        it('deleteAll should delete everything', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            doc.otherDocs = otherDocs;
+
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+                doc.deleteAll().then(function(result) {
+                    assert.strictEqual(result, doc);
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.equal(result, null);
+                        assert.equal(doc.isSaved(), false);
+                        for(var i=0; i<otherDocs.length; i++) {
+                            assert.equal(otherDocs[i].isSaved(), false);
+                            // We want to keep the foreign key -- consistent yet unsaved data
+                            assert.notEqual(otherDocs[i].foreignKey, undefined);
+                        }
+
+                        OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
+                            assert.equal(result.length, 0);
+                            done();
+                        }).error(done);
+
+                    });
+                }).error(done);
+            })
+        });
+        it('deleteAll should delete everything -- with modelToDelete', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            doc.otherDocs = otherDocs;
+
+            doc.saveAll().then(function(doc) {
+                assert.equal(doc.isSaved(), true);
+
+                doc.deleteAll({otherDocs: true}).then(function(result) {
+                    assert.strictEqual(result, doc);
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.equal(result, null);
+                        assert.equal(doc.isSaved(), false);
+                        for(var i=0; i<otherDocs.length; i++) {
+                            assert.equal(otherDocs[i].isSaved(), false);
+                            // We want to keep the foreign key -- consistent yet unsaved data
+                            assert.notEqual(otherDocs[i].foreignKey, undefined);
+                        }
+
+                        OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
+                            assert.equal(result.length, 0);
+                            done();
+                        }).error(done);
+
+                    });
+                }).error(done);
+
+            })
+        });
     });
+    */
     describe('hasAndBelongsToMany', function() {
         var Model, doc;
         before(function() {
@@ -2343,13 +2598,16 @@ describe('delete', function() {
             doc.otherDocs = otherDocs;
 
             doc.saveAll().then(function(doc) {
-                assert.equal(doc.isSaved(), true);
+                doc.delete().then(function(result) {
+                    assert.strictEqual(doc, result);
+                    assert.equal(doc.isSaved(), false);
+                    for(var i=0; i<otherDocs.length; i++) {
+                        assert.equal(doc.otherDocs[i].isSaved(), true)
+                    }
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.equal(result, null);
 
-                doc.delete().then(function() {
-                    Model.run().then(function(result) {
-                        assert.equal(result.length, 0);
-
-                        OtherModel.run().then(function(result) {
+                        OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 3);
                             assert.deepEqual(util.sortById(result), util.sortById(otherDocs));
                             r.table(Model._joins.otherDocs.link).run().then(function(cursor) {
@@ -2365,6 +2623,71 @@ describe('delete', function() {
 
             })
         });
+        it('deleteAll should delete only the document and update the other -- with non matching modelToDelete', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            doc.otherDocs = otherDocs;
+
+            doc.saveAll().then(function(doc) {
+                doc.deleteAll({foo: true}).then(function() {
+                    assert.equal(doc.isSaved(), false);
+                    for(var i=0; i<otherDocs.length; i++) {
+                        assert.equal(doc.otherDocs[i].isSaved(), true)
+                    }
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.equal(result, null);
+
+                        OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
+                            assert.equal(result.length, 3);
+                            assert.deepEqual(util.sortById(result), util.sortById(otherDocs));
+                            r.table(Model._joins.otherDocs.link).run().then(function(cursor) {
+                                cursor.toArray().then(function(result) {
+                                    assert.equal(result.length, 0);
+                                    done();
+                                }).error(done);
+                            }).error(done);
+                        }).error(done);
+
+                    });
+                }).error(done);
+
+            })
+        });
+        it('deleteAll should delete everything', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            doc.otherDocs = otherDocs;
+
+            doc.saveAll().then(function(doc) {
+                doc.deleteAll().then(function() {
+                    assert.equal(doc.isSaved(), false);
+                    for(var i=0; i<otherDocs.length; i++) {
+                        assert.equal(doc.otherDocs[i].isSaved(), false)
+                    }
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.equal(result, null);
+
+                        OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
+                            assert.equal(result.length, 0);
+
+                            r.table(Model._joins.otherDocs.link).run().then(function(cursor) {
+                                cursor.toArray().then(function(result) {
+                                    assert.equal(result.length, 0);
+                                    done();
+                                }).error(done);
+                            }).error(done);
+                        }).error(done);
+
+                    });
+                }).error(done);
+
+            })
+        });
+
     });
+    /*
+    */
 });
 
