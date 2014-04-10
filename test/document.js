@@ -1664,7 +1664,7 @@ describe('save', function() {
             var otherDoc = new OtherModel(otherDocValues);
             doc.otherDoc = otherDoc;
             doc.saveAll().then(function(doc2) {
-                assert.equal(doc.otherDoc.__proto__._belongsTo[Model.getName()].doc, doc);
+                assert.equal(doc.otherDoc.__proto__._parents._belongsTo[Model.getName()][0].doc, doc);
                 done();
             }).error(done);
         })
@@ -2252,6 +2252,7 @@ describe('delete', function() {
                 assert.equal(doc.isSaved(), true);
 
                 doc.delete().then(function() {
+
                     Model.run().then(function(result) {
                         assert.equal(result.length, 0);
 
@@ -2266,97 +2267,6 @@ describe('delete', function() {
 
             })
         });
-        it('delete should delete the foreign key of its parent', function(done) {
-            var docValues = {str: util.s8(), num: util.random()}
-            var otherDocValues = {str: util.s8(), num: util.random()}
-
-            var doc = new Model(docValues);
-            var otherDoc = new OtherModel(otherDocValues);
-            doc.otherDoc = otherDoc;
-            doc.saveAll().then(function(doc) {
-                assert.equal(doc.isSaved(), true);
-
-
-                assert.equal(doc.otherDoc.__proto__._belongsTo[Model.getName()].doc, doc);
-                doc.otherDoc.delete().then(function(result) {
-                    assert.equal(doc.foreignKey, undefined)
-                    assert.equal(doc.result, undefined)
-                    OtherModel.filter({id: otherDoc.id}).run().then(function(result) {
-                        assert.equal(result.length, 0);
-
-                        Model.filter({id: doc.id}).run().then(function(result) {
-                            assert.equal(result.length, 1);
-                            assert.deepEqual(result[0], doc);
-                            assert.equal(result[0].foreignKey, undefined)
-                            done();
-                        }).error(done);
-
-                    });
-                }).error(done);
-
-            })
-        });
-        it('delete should delete the foreign key of its parent (the result of a get)', function(done) {
-            var docValues = {str: util.s8(), num: util.random()}
-            var otherDocValues = {str: util.s8(), num: util.random()}
-
-            var doc = new Model(docValues);
-            var otherDoc = new OtherModel(otherDocValues);
-            doc.otherDoc = otherDoc;
-            doc.saveAll().then(function(doc) {
-                assert.equal(doc.isSaved(), true);
-                Model.get(doc.id).getJoin().run().then(function(doc) {
-
-                    assert.equal(doc.otherDoc.__proto__._belongsTo[Model.getName()].doc, doc);
-                    doc.otherDoc.delete().then(function(result) {
-
-                        assert.equal(doc.foreignKey, undefined)
-                        assert.equal(doc.result, undefined)
-                        OtherModel.filter({id: otherDoc.id}).run().then(function(result) {
-                            assert.equal(result.length, 0);
-
-                            Model.filter({id: doc.id}).run().then(function(result) {
-                                assert.equal(result.length, 1);
-                                assert.deepEqual(result[0], doc);
-                                assert.equal(result[0].foreignKey, undefined)
-                                done();
-                            }).error(done);
-
-                        });
-                    }).error(done);
-                }).error(done);
-            })
-        });
-        it('delete on a joined document should keep the database consistent', function(done) {
-            var docValues = {str: util.s8(), num: util.random()}
-            var joinedDocValues = {str: util.s8(), num: util.random()}
-
-            var doc = new Model(docValues);
-            var otherDoc = new Model(docValues);
-            var joinedDoc = new OtherModel(joinedDocValues);
-
-            doc.otherDoc = joinedDoc;
-            otherDoc.otherDoc = joinedDoc;
-
-            doc.saveAll().then(function(doc) {
-                assert.equal(doc.isSaved(), true);
-                otherDoc.saveAll().then(function(otherDoc) {
-                    assert.equal(otherDoc.isSaved(), true);
-
-                    Model.getAll(joinedDoc.id, {index: 'foreignKey'}).run().then(function(result) {
-                        assert.equal(result.length, 2);
-                        doc.otherDoc.delete().then(function() {
-                            Model.getAll(joinedDoc.id, {index: 'foreignKey'}).run().then(function(result) {
-                                assert.equal(result.length, 0);
-                                done();
-                            })
-                        }).error(done);
-                    }).error(done);
-                })
-            })
-        });
-
-
     });
 
     describe('hasMany', function() {
@@ -2453,29 +2363,6 @@ describe('delete', function() {
                     });
                 }).error(done);
 
-            })
-        });
-        it('delete on a joined document should keep the database consistent', function(done) {
-            var docValues = {str: util.s8(), num: util.random()}
-            var doc = new Model(docValues);
-            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
-            doc.otherDocs = otherDocs;
-
-            var toDeleteDoc = otherDocs[1];
-
-            doc.saveAll().then(function(doc) {
-                assert.equal(doc.isSaved(), true);
-
-                var otherDoc = new Model(docValues);
-
-                toDeleteDoc.delete().then(function() {
-                    r.table(doc._getModel()._joins.otherDocs.link).getAll(toDeleteDoc.id, {index: OtherModel.getName()+"_id"}).run().then(function(cursor) {
-                        cursor.toArray().then(function(result) {
-                            assert.equal(result.length, 0);
-                            done();
-                        })
-                    })
-                }).error(done);
             })
         });
     });
