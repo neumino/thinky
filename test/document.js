@@ -7,7 +7,6 @@ var assert = require('assert');
 
 
 describe('generateDefault', function(){
-    /*
     it('String - constant', function(){
         var name = util.s8();
         var str = util.s8();
@@ -2571,7 +2570,6 @@ describe('delete', function() {
             })
         });
     });
-    */
     describe('hasAndBelongsToMany', function() {
         var Model, doc;
         before(function() {
@@ -2685,9 +2683,38 @@ describe('delete', function() {
 
             })
         });
+        it('deleteAll should delete everything -- with the appropriate modelToDelete', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+            doc.otherDocs = otherDocs;
+
+            doc.saveAll().then(function(doc) {
+                doc.deleteAll({otherDocs: true}).then(function() {
+                    assert.equal(doc.isSaved(), false);
+                    for(var i=0; i<otherDocs.length; i++) {
+                        assert.equal(doc.otherDocs[i].isSaved(), false)
+                    }
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.equal(result, null);
+
+                        OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
+                            assert.equal(result.length, 0);
+
+                            r.table(Model._joins.otherDocs.link).run().then(function(cursor) {
+                                cursor.toArray().then(function(result) {
+                                    assert.equal(result.length, 0);
+                                    done();
+                                }).error(done);
+                            }).error(done);
+                        }).error(done);
+
+                    });
+                }).error(done);
+
+            })
+        });
 
     });
-    /*
-    */
 });
 
