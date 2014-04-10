@@ -93,7 +93,7 @@ describe('Options', function(){
 })
 
 describe('Priorities for options', function() {
-    it('Thinky options are used by default', function(done) {
+    it('Thinky options are used by default', function() {
         /*
         Thinky options:
             config['timeFormat'] = 'raw';
@@ -105,15 +105,13 @@ describe('Priorities for options', function() {
         var name = util.s8();
         var Model = thinky.createModel(name, {id: String, name: String});
         var doc = new Model({})
-        try{
+        assert.throws(function() {
             doc.validate();
-        }
-        catch(err) {
-            assert.equal(err.message, "Value for [id] must be defined.")
-            done();
-        }
+        }, function(error) {
+            return error.message === "Value for [id] must be defined.";
+        });
     });
-    it("Thinky options can be overwritten by the Model's one", function(done) {
+    it("Thinky options can be overwritten by the Model's one", function() {
         /*
         Thinky options:
             config['timeFormat'] = 'raw';
@@ -125,16 +123,9 @@ describe('Priorities for options', function() {
         var name = util.s8();
         var Model = thinky.createModel(name, {id: String, name: String}, {enforce_missing: false});
         var doc = new Model({})
-        try{
-            doc.validate();
-        }
-        catch(err) {
-            // enforce missing is false, but enforce_type is still 'strict'
-            assert.equal(err.message, "Value for [id] must be a string.")
-            done();
-        }
+        doc.validate();
     });
-    it("Thinky options can be overwritten by the Document's one", function(done) {
+    it("Thinky options can be overwritten by the Document's one", function() {
         /*
         Thinky options:
             config['timeFormat'] = 'raw';
@@ -146,16 +137,9 @@ describe('Priorities for options', function() {
         var name = util.s8();
         var Model = thinky.createModel(name, {id: String, name: String});
         var doc = new Model({}, {enforce_missing: false})
-        try{
-            doc.validate();
-        }
-        catch(err) {
-            // enforce missing is false, but enforce_type is still 'strict'
-            assert.equal(err.message, "Value for [id] must be a string.")
-            done();
-        }
+        doc.validate();
     });
-    it("Thinky options can be overwritten by the options given to validate", function(done) {
+    it("Thinky options can be overwritten by the options given to validate", function() {
         /*
         Thinky options:
             config['timeFormat'] = 'raw';
@@ -167,16 +151,9 @@ describe('Priorities for options', function() {
         var name = util.s8();
         var Model = thinky.createModel(name, {id: String, name: String});
         var doc = new Model({})
-        try{
-            doc.validate({enforce_missing: false});
-        }
-        catch(err) {
-            // enforce missing is false, but enforce_type is still 'strict'
-            assert.equal(err.message, "Value for [id] must be a string.")
-            done();
-        }
+        doc.validate({enforce_missing: false});
     });
-    it("Thinky options can be overwritten by the options in the schema", function(done) {
+    it("Thinky options can be overwritten by the options in the schema", function() {
         /*
         Thinky options:
             config['timeFormat'] = 'raw';
@@ -188,13 +165,6 @@ describe('Priorities for options', function() {
         var name = util.s8();
         var Model = thinky.createModel(name, {id: {_type: String, options: {enforce_missing: false}}, name: {_type: String, options: {enforce_missing: false}}});
         var doc = new Model({})
-        try{
-            doc.validate();
-        }
-        catch(err) {
-            // enforce missing is false, but enforce_type is still 'strict'
-            assert.equal(err.message, "Value for [id] must be a string.")
-            done();
-        }
+        doc.validate();
     });
 });
