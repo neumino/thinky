@@ -52,6 +52,7 @@ describe('Model queries', function(){
             }).error(done);
         }).error(done);
     });
+    
     it('Model.run() should return', function(done){
         Model.run().then(function(result) {
             done();
@@ -117,6 +118,22 @@ describe('Model queries', function(){
             done();
         }).error(done);
     });
+    
+    it('Model.group("foo").run should work', function(done){
+        Model.group("foo").run({groupFormat: 'raw'}).then(function(result) {
+            for(var i=0; i<result.length; i++) {
+                var group = result[i];
+                for(var i=0; i<group.reduction.length; i++) {
+                    assert(group.reduction[i] instanceof Document);
+                    assert(group.reduction[i].isSaved());
+                }
+            }
+            done()
+        }).error(function(error) {
+            done();
+        });
+    });
+    
     it('Model.filter() should work', function(done){
         Model.filter(true).run().then(function(result) {
             assert.equal(result.length, 3);
@@ -374,6 +391,4 @@ describe('getJoin', function(){
             }).error(done);
         })
     })
-
-
 });
