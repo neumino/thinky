@@ -147,6 +147,20 @@ describe('Model queries', function(){
             done();
         });
     });
+    it('Model.group("foo").run should not create instance of doc with groupFormat=native', function(done){
+        Model.group("foo").run({groupFormat: 'native'}).then(function(result) {
+            for(var i=0; i<result.length; i++) {
+                var group = result[i];
+                for(var i=0; i<group.reduction.length; i++) {
+                    assert.equal(group.reduction[i] instanceof Document, false);
+                }
+            }
+            done()
+        }).error(function(error) {
+            done();
+        });
+    });
+
    
     it('Model.filter() should work', function(done){
         Model.filter(true).run().then(function(result) {
