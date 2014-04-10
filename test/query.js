@@ -119,6 +119,20 @@ describe('Model queries', function(){
         }).error(done);
     });
     
+    it('Model.group("foo").run should work -- without extra argument', function(done){
+        Model.group("foo").run().then(function(result) {
+            for(var i=0; i<result.length; i++) {
+                var group = result[i];
+                for(var i=0; i<group.reduction.length; i++) {
+                    assert(group.reduction[i] instanceof Document);
+                    assert(group.reduction[i].isSaved());
+                }
+            }
+            done()
+        }).error(function(error) {
+            done();
+        });
+    });
     it('Model.group("foo").run should work', function(done){
         Model.group("foo").run({groupFormat: 'raw'}).then(function(result) {
             for(var i=0; i<result.length; i++) {
@@ -133,7 +147,7 @@ describe('Model queries', function(){
             done();
         });
     });
-    
+   
     it('Model.filter() should work', function(done){
         Model.filter(true).run().then(function(result) {
             assert.equal(result.length, 3);
