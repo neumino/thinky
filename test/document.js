@@ -20,7 +20,6 @@ describe('generateDefault', function(){
         doc = new Model({
             id: str
         })
-
         assert.equal(doc.id, str);
         assert.equal(doc.field, defaultValue);
     });

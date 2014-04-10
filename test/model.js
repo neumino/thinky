@@ -112,8 +112,8 @@ describe('Model', function() {
         assert.equal(otherDoc.str, otherStr);
 
         assert.notEqual(otherDoc.getModel(), doc.getModel());
-        assert.equal(doc.getName(), name);
-        assert.equal(otherDoc.getName(), otherName);
+        assert.equal(doc.getModel().getName(), name);
+        assert.equal(otherDoc.getModel().getName(), otherName);
     });
 });
 

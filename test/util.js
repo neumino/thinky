@@ -61,3 +61,8 @@ function deepCopy(value) {
     }
 }
 module.exports.deepCopy = deepCopy;
+
+function log(value) {
+    console.log(JSON.stringify(value, null, 2));
+}
+module.exports.log = log;
