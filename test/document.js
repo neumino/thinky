@@ -493,6 +493,34 @@ describe('save', function() {
                 
             }).error(done);
         })
+        it('saveAll should delete links if they are missing', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+            var otherDocs = [
+                new OtherModel({str: util.s8(), num: util.random()}),
+                new OtherModel({str: util.s8(), num: util.random()}),
+                new OtherModel({str: util.s8(), num: util.random()})
+            ];
+            doc.otherDocs = otherDocs;
+
+            doc.saveAll().then(function(doc) {
+                doc.otherDocs.splice(1, 1);
+                doc.saveAll().then(function(result) {
+                    assert.equal(result.otherDocs.length, 2);
+                    if(Model.getName() < OtherModel.getName()) {
+                        linkName = Model.getName()+"_"+OtherModel.getName();
+                    }
+                    else {
+                        linkName = OtherModel.getName()+"_"+Model.getName();
+                    }
+                    Model.get(doc.id).getJoin().run().then(function(result) {
+                        assert.equal(result.otherDocs.length, 2);
+                        done();
+                    });
+                });
+            }).error(done);
+        })
+
     });
     
     describe('saveAll with missing docs for hasOne', function() {
