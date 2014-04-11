@@ -25,10 +25,11 @@ describe('Advanced cases', function(){
         var values = {};
         var otherValues = {};
         var doc = new Model(values);
-        var otherDoc = new Model(otherValues);
-        
+        var otherDoc = new OtherModel(otherValues);
+
         doc.has = otherDoc;
 
+        //TODO Catch and don't follow circular references in saveAll
         doc.saveAll().then(function(result) {
             assert.equal(typeof result.id, 'string')
             assert.equal(typeof result.has.id, 'string')
@@ -37,7 +38,13 @@ describe('Advanced cases', function(){
             assert.strictEqual(result, doc);
             assert.strictEqual(result.has, doc.has);
             assert.strictEqual(doc.has, otherDoc);
-            done()
+
+            Model.get(doc.id).run().then(function(result) {
+                OtherModel.get(otherDoc.id).run().then(function(result) {
+                    util.log(result);
+                    done()
+                })
+            });
         }).error(done);
     });
 });
