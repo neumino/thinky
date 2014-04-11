@@ -6,6 +6,7 @@ var util = require(__dirname+'/util.js');
 var assert = require('assert');
 
 describe('schema', function(){
+    /*
     it('String', function(){
         var name = util.s8();
         thinky.createModel(name, {id: String}, {init: false})
@@ -1022,8 +1023,24 @@ describe('validate', function(){
         }, function(error) {
             return (error instanceof Error) && (error.message === "The raw date object for [field] is missing the required field epoch_time.")
         });
-
     });
+    */
+    it('Date - r.now', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Date 
+        }, {init: false})
+
+        doc = new Model({
+            id: str,
+            field: r.now()
+        })
+        doc.validate();
+    });
+    /*
     it('Array - missing - enforce_missing: true', function(){
         var name = util.s8();
         var str = util.s8();
@@ -1742,4 +1759,5 @@ describe('validate', function(){
             return error.message === "Value for [otherDocs][0][field] must be a string or null.";
         });
     });
+    */
 });
