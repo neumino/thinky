@@ -1542,6 +1542,63 @@ describe('validate', function(){
 
         doc.validate();
     });
+    it('Extra field - 1', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String
+        }, {init: false, enforce_extra: true})
+
+        doc = new Model({
+            id: str,
+            foo: "hello"
+        })
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return error.message === "Extra field `foo` not allowed.";
+        });
+    });
+    it('Extra field - 2', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            foo: [{bar: String}]
+        }, {init: false, enforce_extra: true})
+
+        doc = new Model({
+            id: str,
+            foo: [{bar: "Hello", buzz: "World"}]
+        })
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return error.message === "Extra field `buzz` in [foo][0] not allowed.";
+        });
+    });
+    it('Extra field - 3', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            foo: {bar: String}
+        }, {init: false, enforce_extra: true})
+
+        doc = new Model({
+            id: str,
+            foo: {bar: "Hello", buzz: "World"}
+        })
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return error.message === "Extra field `buzz` in [foo] not allowed.";
+        });
+    });
+
     it('it should check joined Document too -- hasOne', function() {
         var name = util.s8();
         var otherName = util.s8();
@@ -1685,5 +1742,4 @@ describe('validate', function(){
             return error.message === "Value for [otherDocs][0][field] must be a string or null.";
         });
     });
-
 });
