@@ -27,9 +27,15 @@ describe('Advanced cases', function(){
         var doc = new Model(values);
         var otherDoc = new OtherModel(otherValues);
 
+        var reverse = util.deepCopy(otherDoc);
+        reverse.belongsTo = util.deepCopy(doc);
+
         doc.has = otherDoc;
 
+
         //TODO Catch and don't follow circular references in saveAll
+        Model.on('ready', function() { console.log('model ready')})
+        OtherModel.on('ready', function() { console.log('OtherModel ready')})
         doc.saveAll().then(function(result) {
             assert.equal(typeof result.id, 'string')
             assert.equal(typeof result.has.id, 'string')
@@ -39,9 +45,11 @@ describe('Advanced cases', function(){
             assert.strictEqual(result.has, doc.has);
             assert.strictEqual(doc.has, otherDoc);
 
-            Model.get(doc.id).run().then(function(result) {
-                OtherModel.get(otherDoc.id).run().then(function(result) {
-                    util.log(result);
+            Model.get(doc.id).getJoin().run().then(function(result) {
+                assert.deepEqual(result, doc);
+                OtherModel.get(otherDoc.id).getJoin().run().then(function(result) {
+                    assert.equal(result.id, otherDoc.id);
+                    assert.equal(result.belongsTo.id, doc.id);
                     done()
                 })
             });
