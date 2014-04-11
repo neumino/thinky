@@ -52,7 +52,6 @@ describe('Model queries', function(){
             }).error(done);
         }).error(done);
     });
-    
     it('Model.run() should return', function(done){
         Model.run().then(function(result) {
             done();
@@ -195,17 +194,21 @@ describe('Model queries', function(){
         }).error(done);
     });
     it('Model.execute should not return instances of the model', function(done){
-        Model.execute().then(function(result) {
-            assert(!(result[0] instanceof Document));
-            assert.equal(result.length, 3);
-            done();
+        Model.execute().then(function(cursor) {
+            cursor.toArray().then(function(result) {
+                assert(!(result[0] instanceof Document));
+                assert.equal(result.length, 3);
+                done();
+            });
         }).error(done);
     });
     it('Model.map(1).execute should work', function(done){
-        Model.map(function() { return 1 }).execute().then(function(result) {
-            assert(!(result[0] instanceof Document));
-            assert.equal(result.length, 3);
-            done();
+        Model.map(function() { return 1 }).execute().then(function(cursor) {
+            cursor.toArray().then(function(result) {
+                assert(!(result[0] instanceof Document));
+                assert.equal(result.length, 3);
+                done();
+            })
         }).error(done);
     });
     it('Model.add(1).execute() should be able to error', function(done){
@@ -425,4 +428,78 @@ describe('getJoin', function(){
             }).error(done);
         })
     })
+});
+
+describe('Query.run() should take options', function(){
+    var Model;
+    var data = [];
+    before(function(done) {
+        var name = util.s8();
+        Model = thinky.createModel(name, {
+            id: String,
+            str: String,
+            num: Number
+        })
+        var str = util.s8();
+
+        doc = new Model({
+            str: str,
+            num: 1
+        })
+        doc.save().then(function(result) {
+            data.push(result);
+
+            str = util.s8();
+            doc = new Model({
+                str: str,
+                num: 1
+            }).save().then(function(result) {
+                data.push(result);
+
+                str = util.s8();
+                doc = new Model({
+                    str: str,
+                    num: 2
+                }).save().then(function(result) {
+                    data.push(result);
+
+                    done()
+                }).error(done);
+            }).error(done);
+        }).error(done);
+    });
+
+    it('Query.run() should parse objects in each group', function(done){
+        Model.group('num').run().then(function(result) {
+            assert.equal(result.length, 2);
+            for(var i=0; i<result.length; i++) {
+                assert(result[i].group)
+                assert(result[i].reduction.length > 0)
+                for(var j=0; j<result[i].reduction.length; j++) {
+                    assert.equal(result[i].reduction[j].isSaved(), true);
+                }
+            }
+            done();
+        }).error(done);
+    });
+    it('Query.run({groupFormat: "raw"}) should be ignored', function(done){
+        Model.group('num').run({groupFormat: "raw"}).then(function(result) {
+            assert.equal(result.length, 2);
+            for(var i=0; i<result.length; i++) {
+                assert(result[i].group)
+                assert(result[i].reduction.length > 0)
+            }
+            done();
+        }).error(done);
+    });
+    it('Query.execute({groupFormat: "raw"}) should not be ignored', function(done){
+        Model.group('num').execute({groupFormat: "raw"}).then(function(result) {
+            assert.equal(result.$reql_type$, "GROUPED_DATA");
+            assert.equal(result.data.length, 2);
+            for(var i=0; i<result.data.length; i++) {
+                assert.equal(result.data[i].length, 2)
+            }
+            done();
+        }).error(done);
+    });
 });
