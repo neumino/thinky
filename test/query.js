@@ -118,6 +118,12 @@ describe('Model queries', function(){
             done();
         }).error(done);
     });
+    it('Model.get() should return null if nothing is found', function(done){
+        Model.get("nonExistingId").run().error(function(error) {
+            assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+            done();
+        });
+    });
     
     it('Model.group("foo").run should work -- without extra argument', function(done){
         Model.group("foo").run().then(function(result) {

@@ -793,15 +793,14 @@ describe('delete', function() {
                 doc.deleteAll().then(function() {
                     assert.equal(doc.isSaved(), false);
                     assert.equal(otherDoc.isSaved(), false);
-                    Model.get(doc.id).run().then(function(result) {
-                        assert.equal(result, null);
-                        OtherModel.get(otherDoc.id).run().then(function(result) {
-                            assert.equal(result, null);
+                    Model.get(doc.id).run().error(function(error) {
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        OtherModel.get(otherDoc.id).run().error(function(error) {
+                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getName()+"` with `null`.");
                             done();
-                        }).error(done);
-
+                        });
                     });
-                }).error(done);
+                });
 
             })
         });
@@ -818,15 +817,14 @@ describe('delete', function() {
                 doc.deleteAll({otherDoc: true}).then(function() {
                     assert.equal(doc.isSaved(), false);
                     assert.equal(otherDoc.isSaved(), false);
-                    Model.get(doc.id).run().then(function(result) {
-                        assert.equal(result, null);
-                        OtherModel.get(otherDoc.id).run().then(function(result) {
-                            assert.equal(result, null);
+                    Model.get(doc.id).run().error(function(error) {
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        OtherModel.get(otherDoc.id).run().error(function(error) {
+                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getName()+"` with `null`.");
                             done();
-                        }).error(done);
-
+                        });
                     });
-                }).error(done);
+                });
 
             })
         });
@@ -891,19 +889,18 @@ describe('delete', function() {
                 otherDocCopy = util.deepCopy(doc.otherDoc);
 
                 doc.delete().then(function() {
-                    Model.get(doc.id).run().then(function(result) {
-                        assert.equal(result, null);
+                    Model.get(doc.id).run().error(function(error) {
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
 
                         OtherModel.get(otherDoc.id).run().then(function(result) {
                             assert.deepEqual(result, otherDoc);
                             assert.deepEqual(result, otherDocCopy);
 
                             done();
-                        }).error(done);
-
+                        });
                     });
-                }).error(done);
-            })
+                });
+            });
         });
         it('deleteAll should delete everything', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
@@ -922,17 +919,16 @@ describe('delete', function() {
 
                     assert.equal(result.isSaved(), false);
                     assert.equal(result.otherDoc.isSaved(), false);
-                    Model.get(doc.id).run().then(function(result) {
-                        assert.equal(result, null);
+                    Model.get(doc.id).run().error(function(error) {
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
 
-                        OtherModel.get(otherDoc.id).run().then(function(result) {
-                            assert.deepEqual(result, null);
+                        OtherModel.get(otherDoc.id).run().error(function(error) {
+                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getName()+"` with `null`.");
                             done();
-                        }).error(done);
-
+                        });
                     });
-                }).error(done);
-            })
+                });
+            });
         });
         it('deleteAll should delete everything when given the appropriate modelToDelete', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
@@ -951,16 +947,15 @@ describe('delete', function() {
 
                     assert.equal(result.isSaved(), false);
                     assert.equal(result.otherDoc.isSaved(), false);
-                    Model.get(doc.id).run().then(function(result) {
-                        assert.equal(result, null);
+                    Model.get(doc.id).run().error(function(error) {
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
 
-                        OtherModel.get(otherDoc.id).run().then(function(result) {
-                            assert.deepEqual(result, null);
+                        OtherModel.get(otherDoc.id).run().error(function(error) {
+                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getName()+"` with `null`.");
                             done();
-                        }).error(done);
-
+                        });
                     });
-                }).error(done);
+                });
             })
         });
         it('delete should delete only the document with non matching modelToDelete', function(done) {
@@ -977,19 +972,18 @@ describe('delete', function() {
                 otherDocCopy = util.deepCopy(doc.otherDoc);
 
                 doc.deleteAll({foo: true}).then(function() {
-                    Model.get(doc.id).run().then(function(result) {
-                        assert.equal(result, null);
+                    Model.get(doc.id).run().error(function(error) {
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
 
                         OtherModel.get(otherDoc.id).run().then(function(result) {
                             assert.deepEqual(result, otherDoc);
                             assert.deepEqual(result, otherDocCopy);
 
                             done();
-                        }).error(done);
-
+                        });
                     });
-                }).error(done);
-            })
+                });
+            });
         });
     });
     describe('hasMany', function() {
@@ -1022,8 +1016,8 @@ describe('delete', function() {
                 assert.equal(doc.isSaved(), true);
 
                 doc.delete().then(function() {
-                    Model.get(doc.id).run().then(function(result) {
-                        assert.equal(result, null);1
+                    Model.get(doc.id).run().error(function(error) {
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
                         assert.equal(doc.isSaved(), false);
                         for(var i=0; i<otherDocs.length; i++) {
                             assert.equal(otherDocs[i].foreignKey, undefined);
@@ -1034,12 +1028,10 @@ describe('delete', function() {
                             assert.equal(result.length, 3);
                             assert.deepEqual(util.sortById(result), util.sortById(otherDocs));
                             done();
-                        }).error(done);
-
+                        });
                     });
-                }).error(done);
-
-            })
+                });
+            });
         });
         it('delete should delete only the document and update the other -- non matching modelToDelete', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
@@ -1051,8 +1043,9 @@ describe('delete', function() {
                 assert.equal(doc.isSaved(), true);
 
                 doc.deleteAll({foo: true}).then(function() {
-                    Model.get(doc.id).run().then(function(result) {
-                        assert.equal(result, null);1
+                    Model.get(doc.id).run().error(function(error) {
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        assert.equal(doc.isSaved(), false);
                         assert.equal(doc.isSaved(), false);
                         for(var i=0; i<otherDocs.length; i++) {
                             assert.equal(otherDocs[i].foreignKey, undefined);
@@ -1081,8 +1074,8 @@ describe('delete', function() {
 
                 doc.deleteAll().then(function(result) {
                     assert.strictEqual(result, doc);
-                    Model.get(doc.id).run().then(function(result) {
-                        assert.equal(result, null);
+                    Model.get(doc.id).run().error(function(error) {
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
                         assert.equal(doc.isSaved(), false);
                         for(var i=0; i<otherDocs.length; i++) {
                             assert.equal(otherDocs[i].isSaved(), false);
@@ -1093,11 +1086,10 @@ describe('delete', function() {
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 0);
                             done();
-                        }).error(done);
-
+                        });
                     });
-                }).error(done);
-            })
+                });
+            });
         });
         it('deleteAll should delete everything -- with modelToDelete', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
@@ -1110,8 +1102,8 @@ describe('delete', function() {
 
                 doc.deleteAll({otherDocs: true}).then(function(result) {
                     assert.strictEqual(result, doc);
-                    Model.get(doc.id).run().then(function(result) {
-                        assert.equal(result, null);
+                    Model.get(doc.id).run().error(function(error) {
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
                         assert.equal(doc.isSaved(), false);
                         for(var i=0; i<otherDocs.length; i++) {
                             assert.equal(otherDocs[i].isSaved(), false);
@@ -1122,12 +1114,10 @@ describe('delete', function() {
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 0);
                             done();
-                        }).error(done);
-
+                        });
                     });
-                }).error(done);
-
-            })
+                });
+            });
         });
     });
     describe('hasAndBelongsToMany', function() {
@@ -1162,8 +1152,8 @@ describe('delete', function() {
                     for(var i=0; i<otherDocs.length; i++) {
                         assert.equal(doc.otherDocs[i].isSaved(), true)
                     }
-                    Model.get(doc.id).run().then(function(result) {
-                        assert.equal(result, null);
+                    Model.get(doc.id).run().error(function(error) {
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
 
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 3);
@@ -1172,14 +1162,12 @@ describe('delete', function() {
                                 cursor.toArray().then(function(result) {
                                     assert.equal(result.length, 0);
                                     done();
-                                }).error(done);
-                            }).error(done);
-                        }).error(done);
-
+                                });
+                            });
+                        });
                     });
-                }).error(done);
-
-            })
+                });
+            });
         });
         it('deleteAll should delete only the document and update the other -- with non matching modelToDelete', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
@@ -1193,8 +1181,8 @@ describe('delete', function() {
                     for(var i=0; i<otherDocs.length; i++) {
                         assert.equal(doc.otherDocs[i].isSaved(), true)
                     }
-                    Model.get(doc.id).run().then(function(result) {
-                        assert.equal(result, null);
+                    Model.get(doc.id).run().error(function(error) {
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
 
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 3);
@@ -1224,8 +1212,8 @@ describe('delete', function() {
                     for(var i=0; i<otherDocs.length; i++) {
                         assert.equal(doc.otherDocs[i].isSaved(), false)
                     }
-                    Model.get(doc.id).run().then(function(result) {
-                        assert.equal(result, null);
+                    Model.get(doc.id).run().error(function(error) {
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
 
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 0);
@@ -1255,8 +1243,8 @@ describe('delete', function() {
                     for(var i=0; i<otherDocs.length; i++) {
                         assert.equal(doc.otherDocs[i].isSaved(), false)
                     }
-                    Model.get(doc.id).run().then(function(result) {
-                        assert.equal(result, null);
+                    Model.get(doc.id).run().error(function(error) {
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
 
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 0);
