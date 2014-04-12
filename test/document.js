@@ -1512,4 +1512,196 @@ describe('delete', function() {
         });
 
     });
+    describe('modelToDelete', function() {
+        var Model1, Model2, Model3, Model4, Model5;
+        before(function() {
+            Model1 = thinky.createModel(util.s8(), {
+                id: String,
+                foreignkey31: String
+            })
+
+            Model2 = thinky.createModel(util.s8(), {
+                id: String,
+                foreignkey12: String
+            })
+
+            Model3 = thinky.createModel(util.s8(), {
+                id: String
+            })
+
+            Model4 = thinky.createModel(util.s8(), {
+                id: String,
+                foreignkey14: String
+            })
+
+            Model5 = thinky.createModel(util.s8(), {
+                id: String
+            })
+
+            Model6 = thinky.createModel(util.s8(), {
+                id: String,
+                foreignkey26: String
+            })
+
+
+
+            Model1.hasOne(Model2, "doc2", "id", "foreignkey12")
+            Model1.belongsTo(Model3, "doc3", "foreignkey31", "id")
+            Model1.hasMany(Model4, "docs4", "id", "foreignkey14")
+            Model1.hasAndBelongsToMany(Model5, "docs5", "id", "id")
+
+            Model2.hasOne(Model6, "doc6", "id", "foreignkey26")
+        });
+        it('deleteAll should delete everything', function(done) {
+            var doc1 = new Model1({})
+            var doc2 = new Model2({})
+            var doc3 = new Model3({})
+            var doc41 = new Model4({})
+            var doc42 = new Model4({})
+            var doc51 = new Model5({})
+            var doc52 = new Model5({})
+            var doc6 = new Model6({})
+            doc1.doc2 = doc2;
+            doc1.doc3 = doc3;
+            doc1.docs4 = [doc41, doc42];
+            doc1.docs5 = [doc51, doc52];
+            doc2.doc6 = doc6;
+
+            doc1.saveAll().then(function() {
+                assert.equal(doc1.isSaved(), true);
+                assert.equal(doc2.isSaved(), true);
+                assert.equal(doc3.isSaved(), true);
+                assert.equal(doc41.isSaved(), true);
+                assert.equal(doc42.isSaved(), true);
+                assert.equal(doc51.isSaved(), true);
+                assert.equal(doc52.isSaved(), true);
+                assert.equal(doc6.isSaved(), true);
+                doc1.deleteAll().then(function() {
+                    assert.equal(doc1.isSaved(), false);
+                    assert.equal(doc2.isSaved(), false);
+                    assert.equal(doc3.isSaved(), false);
+                    assert.equal(doc41.isSaved(), false);
+                    assert.equal(doc42.isSaved(), false);
+                    assert.equal(doc51.isSaved(), false);
+                    assert.equal(doc52.isSaved(), false);
+                    assert.equal(doc6.isSaved(), false);
+
+                    done();
+                });
+            }).error(done);
+        });
+        it('deleteAll should follow modelToDelete if provided - 1', function(done) {
+            var doc1 = new Model1({})
+            var doc2 = new Model2({})
+            var doc3 = new Model3({})
+            var doc41 = new Model4({})
+            var doc42 = new Model4({})
+            var doc51 = new Model5({})
+            var doc52 = new Model5({})
+            var doc6 = new Model6({})
+            doc1.doc2 = doc2;
+            doc1.doc3 = doc3;
+            doc1.docs4 = [doc41, doc42];
+            doc1.docs5 = [doc51, doc52];
+            doc2.doc6 = doc6;
+
+            doc1.saveAll().then(function() {
+                assert.equal(doc1.isSaved(), true);
+                assert.equal(doc2.isSaved(), true);
+                assert.equal(doc3.isSaved(), true);
+                assert.equal(doc41.isSaved(), true);
+                assert.equal(doc42.isSaved(), true);
+                assert.equal(doc51.isSaved(), true);
+                assert.equal(doc52.isSaved(), true);
+                assert.equal(doc6.isSaved(), true);
+                doc1.deleteAll({doc2: true}).then(function() {
+                    assert.equal(doc1.isSaved(), false);
+                    assert.equal(doc2.isSaved(), false);
+                    assert.equal(doc3.isSaved(), true);
+                    assert.equal(doc41.isSaved(), true);
+                    assert.equal(doc42.isSaved(), true);
+                    assert.equal(doc51.isSaved(), true);
+                    assert.equal(doc52.isSaved(), true);
+                    assert.equal(doc6.isSaved(), true);
+                    done();
+                });
+            }).error(done);
+        });
+        it('deleteAll should follow modelToDelete if provided - 2', function(done) {
+            var doc1 = new Model1({})
+            var doc2 = new Model2({})
+            var doc3 = new Model3({})
+            var doc41 = new Model4({})
+            var doc42 = new Model4({})
+            var doc51 = new Model5({})
+            var doc52 = new Model5({})
+            var doc6 = new Model6({})
+            doc1.doc2 = doc2;
+            doc1.doc3 = doc3;
+            doc1.docs4 = [doc41, doc42];
+            doc1.docs5 = [doc51, doc52];
+            doc2.doc6 = doc6;
+
+            doc1.saveAll().then(function() {
+                assert.equal(doc1.isSaved(), true);
+                assert.equal(doc2.isSaved(), true);
+                assert.equal(doc3.isSaved(), true);
+                assert.equal(doc41.isSaved(), true);
+                assert.equal(doc42.isSaved(), true);
+                assert.equal(doc51.isSaved(), true);
+                assert.equal(doc52.isSaved(), true);
+                assert.equal(doc6.isSaved(), true);
+                doc1.deleteAll({doc2: {doc6: true}}).then(function() {
+                    assert.equal(doc1.isSaved(), false);
+                    assert.equal(doc2.isSaved(), false);
+                    assert.equal(doc3.isSaved(), true);
+                    assert.equal(doc41.isSaved(), true);
+                    assert.equal(doc42.isSaved(), true);
+                    assert.equal(doc51.isSaved(), true);
+                    assert.equal(doc52.isSaved(), true);
+                    assert.equal(doc6.isSaved(), false);
+
+                    done();
+                });
+            }).error(done);
+        });
+        it('deleteAll should follow modelToDelete if provided - 3', function(done) {
+            var doc1 = new Model1({})
+            var doc2 = new Model2({})
+            var doc3 = new Model3({})
+            var doc41 = new Model4({})
+            var doc42 = new Model4({})
+            var doc51 = new Model5({})
+            var doc52 = new Model5({})
+            var doc6 = new Model6({})
+            doc1.doc2 = doc2;
+            doc1.doc3 = doc3;
+            doc1.docs4 = [doc41, doc42];
+            doc1.docs5 = [doc51, doc52];
+            doc2.doc6 = doc6;
+
+            doc1.saveAll().then(function() {
+                assert.equal(doc1.isSaved(), true);
+                assert.equal(doc2.isSaved(), true);
+                assert.equal(doc3.isSaved(), true);
+                assert.equal(doc41.isSaved(), true);
+                assert.equal(doc42.isSaved(), true);
+                assert.equal(doc51.isSaved(), true);
+                assert.equal(doc52.isSaved(), true);
+                assert.equal(doc6.isSaved(), true);
+                doc1.deleteAll({doc2: true, docs4: true}).then(function() {
+                    assert.equal(doc1.isSaved(), false);
+                    assert.equal(doc2.isSaved(), false);
+                    assert.equal(doc3.isSaved(), true);
+                    assert.equal(doc41.isSaved(), false);
+                    assert.equal(doc42.isSaved(), false);
+                    assert.equal(doc51.isSaved(), true);
+                    assert.equal(doc52.isSaved(), true);
+                    assert.equal(doc6.isSaved(), true);
+
+                    done();
+                });
+            }).error(done);
+        });
+    });
 });
