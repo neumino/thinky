@@ -32,7 +32,6 @@ describe('save', function() {
                 done();
             }).error(done);
         });
-
         it('Save when the table is not yet ready', function(done){
             var str = util.s8();
             var num = util.random();
