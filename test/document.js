@@ -226,7 +226,26 @@ describe('save', function() {
                 done();
             }).error(done);
         })
+        it('saveAll should delete a reference of belongsTo if the document was removed', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
 
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+            doc.saveAll().then(function(doc2) {
+                assert.equal(doc.isSaved(), true);
+                assert.equal(doc.otherDoc.isSaved(), true);
+
+                delete doc.otherDoc;
+                doc.saveAll().then(function(doc2) {
+                    assert.equal(doc.isSaved(), true);
+                    assert.equal(doc.otherId, undefined);
+
+                    done();
+                })
+            }).error(done);
+        })
     });
 
     describe("Joins - hasMany", function() {
