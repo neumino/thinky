@@ -1265,5 +1265,268 @@ describe('Advanced cases', function(){
             }).error(done);
         });
 
+        it('hasAndBelongsToMany -- not primary keys', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String,
+                field1: Number
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String,
+                field2: Number
+            });
+
+            Model.hasAndBelongsToMany(OtherModel, "links", "field1", "field2");
+            OtherModel.hasAndBelongsToMany(Model, "links2", "field2", "field1:");
+
+            var doc1 = new Model({field1: 1});
+            var doc2 = new Model({field1: 2});
+            var otherDoc1 = new OtherModel({field2: 2});
+            var otherDoc2 = new OtherModel({field2: 1});
+            var otherDoc3 = new OtherModel({field2: 1});
+            var otherDoc4 = new OtherModel({field2: 2});
+
+            doc1.links = [otherDoc2, otherDoc3]
+            doc2.links = [otherDoc1, otherDoc4]
+
+            otherDoc1.links2 = [doc2];
+            otherDoc2.links2 = [doc1];
+            otherDoc3.links2 = [doc1];
+            otherDoc4.links2 = [doc2];
+
+            doc1.saveAll().then(function(result) {
+                util.sortById(doc1.links);
+                doc2.saveAll().then(function(result) {
+                    util.sortById(doc2.links);
+
+                    otherDoc4.deleteAll({links2: {links: true}}).then(function(result) {
+                        assert.equal(doc1.isSaved(), true)
+                        assert.equal(doc2.isSaved(), false)
+                        assert.deepEqual([
+                            otherDoc1.isSaved(),
+                            otherDoc2.isSaved(),
+                            otherDoc3.isSaved(),
+                            otherDoc4.isSaved()
+                        ], [false, true, true, false])
+
+                        done();
+                    });
+                });
+            }).error(done);
+        });
+        it('hasAndBelongsToMany -- not primary keys -- doing what should never be done - 1', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String,
+                field1: Number
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String,
+                field2: Number
+            });
+
+            Model.hasAndBelongsToMany(OtherModel, "links", "field1", "field2");
+            OtherModel.hasAndBelongsToMany(Model, "links2", "field2", "field1:");
+
+            var doc1 = new Model({field1: 1});
+            var doc2 = new Model({field1: 2});
+            var otherDoc1 = new OtherModel({field2: 2});
+            var otherDoc2 = new OtherModel({field2: 1});
+            var otherDoc3 = new OtherModel({field2: 1});
+            var otherDoc4 = new OtherModel({field2: 2});
+
+            doc1.links = [otherDoc2, otherDoc3]
+            doc2.links = [otherDoc1, otherDoc3]
+
+            otherDoc1.links2 = [doc2];
+            otherDoc2.links2 = [doc1];
+            otherDoc3.links2 = [doc1];
+            otherDoc4.links2 = [doc2];
+
+            doc1.saveAll().then(function(result) {
+                doc2.saveAll().then(function(result) {
+                    otherDoc4.saveAll().then(function(result) {
+                        util.sortById(doc1.links);
+                        util.sortById(doc2.links);
+
+                        otherDoc4.deleteAll({links2: true}).then(function(result) {
+                            assert.equal(doc1.isSaved(), true)
+                            assert.equal(doc2.isSaved(), false)
+                            assert.deepEqual([
+                                otherDoc1.isSaved(),
+                                otherDoc2.isSaved(),
+                                otherDoc3.isSaved(),
+                                otherDoc4.isSaved()
+                            ], [true, true, true, false])
+
+                            done();
+                        });
+                    });
+                });
+            }).error(done);
+        });
+        it('hasAndBelongsToMany -- not primary keys -- doing what should never be done - 2', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String,
+                field1: Number
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String,
+                field2: Number
+            });
+
+            Model.hasAndBelongsToMany(OtherModel, "links", "field1", "field2");
+            OtherModel.hasAndBelongsToMany(Model, "links2", "field2", "field1:");
+
+            var doc1 = new Model({field1: 1});
+            var doc2 = new Model({field1: 2});
+            var otherDoc1 = new OtherModel({field2: 2});
+            var otherDoc2 = new OtherModel({field2: 1});
+            var otherDoc3 = new OtherModel({field2: 1});
+            var otherDoc4 = new OtherModel({field2: 2});
+
+            doc1.links = [otherDoc2, otherDoc3]
+            doc2.links = [otherDoc1, otherDoc3]
+
+            otherDoc1.links2 = [doc2];
+            otherDoc2.links2 = [doc1];
+            otherDoc3.links2 = [doc1];
+            otherDoc4.links2 = [doc2];
+
+            doc1.saveAll().then(function(result) {
+                doc2.saveAll().then(function(result) {
+                    otherDoc4.saveAll().then(function(result) {
+
+                        util.sortById(doc1.links);
+                        util.sortById(doc2.links);
+
+                        otherDoc4.deleteAll({links2: {links: true}}).then(function(result) {
+                            assert.equal(doc1.isSaved(), true)
+                            assert.equal(doc2.isSaved(), false)
+                            assert.deepEqual([
+                                otherDoc1.isSaved(),
+                                otherDoc2.isSaved(),
+                                otherDoc3.isSaved(),
+                                otherDoc4.isSaved()
+                            ], [false, true, false, false])
+
+                            done();
+                        });
+                    });
+                });
+            }).error(done);
+        });
+        it('hasAndBelongsToMany -- not primary keys -- doing what should never be done - 3', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String,
+                field1: Number
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String,
+                field2: Number
+            });
+
+            Model.hasAndBelongsToMany(OtherModel, "links", "field1", "field2");
+            OtherModel.hasAndBelongsToMany(Model, "links2", "field2", "field1:");
+
+            var doc1 = new Model({field1: 1});
+            var doc2 = new Model({field1: 2});
+            var otherDoc1 = new OtherModel({field2: 2});
+            var otherDoc2 = new OtherModel({field2: 1});
+            var otherDoc3 = new OtherModel({field2: 1});
+            var otherDoc4 = new OtherModel({field2: 2});
+
+            doc1.links = [otherDoc2, otherDoc3]
+            doc2.links = [otherDoc1, otherDoc3]
+
+            otherDoc1.links2 = [doc2];
+            otherDoc2.links2 = [doc1];
+            otherDoc3.links2 = [doc1];
+            otherDoc4.links2 = [doc2];
+
+            doc1.saveAll().then(function(result) {
+                doc2.saveAll().then(function(result) {
+                    otherDoc4.saveAll().then(function(result) {
+                        util.sortById(doc1.links);
+                        util.sortById(doc2.links);
+
+                        otherDoc4.deleteAll({links2: {links: {links2: true}}}).then(function(result) {
+                            assert.equal(doc1.isSaved(), false)
+                            assert.equal(doc2.isSaved(), false)
+                            assert.deepEqual([
+                                otherDoc1.isSaved(),
+                                otherDoc2.isSaved(),
+                                otherDoc3.isSaved(),
+                                otherDoc4.isSaved()
+                            ], [false, true, false, false])
+
+                            done();
+                        });
+                    });
+                });
+            }).error(done);
+        });
+        it('hasAndBelongsToMany -- not primary keys -- doing what should never be done - 4', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String,
+                field1: Number
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String,
+                field2: Number
+            });
+
+            Model.hasAndBelongsToMany(OtherModel, "links", "field1", "field2");
+            OtherModel.hasAndBelongsToMany(Model, "links2", "field2", "field1");
+
+            var doc1 = new Model({field1: 1});
+            var doc2 = new Model({field1: 2});
+            var otherDoc1 = new OtherModel({field2: 2});
+            var otherDoc2 = new OtherModel({field2: 1});
+            var otherDoc3 = new OtherModel({field2: 1});
+            var otherDoc4 = new OtherModel({field2: 2});
+
+            doc1.links = [otherDoc2, otherDoc3]
+            doc2.links = [otherDoc1, otherDoc3]
+
+            otherDoc1.links2 = [doc2];
+            otherDoc2.links2 = [doc1];
+            otherDoc3.links2 = [doc1];
+            otherDoc4.links2 = [doc2];
+
+            doc1.saveAll().then(function(result) {
+                util.sortById(doc1.links);
+                doc2.saveAll().then(function(result) {
+                    util.sortById(doc2.links);
+                    otherDoc4.saveAll().then(function(result) {
+                        otherDoc4.deleteAll({links2: {links: {links2: {links: true}}}}).then(function(result) {
+                            assert.equal(doc1.isSaved(), false)
+                            assert.equal(doc2.isSaved(), false)
+                            assert.deepEqual([
+                                otherDoc1.isSaved(),
+                                otherDoc2.isSaved(),
+                                otherDoc3.isSaved(),
+                                otherDoc4.isSaved()
+                            ], [false, false, false, false])
+
+                            done();
+                        });
+                    });
+                });
+            }).error(done);
+        });
     });
 });
