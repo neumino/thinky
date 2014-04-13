@@ -935,7 +935,6 @@ describe('save', function() {
     })
 });
 
-
 describe('delete', function() {
     describe('Basic', function() {
         var Model, doc;
