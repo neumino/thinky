@@ -428,6 +428,59 @@ describe('getJoin', function(){
             }).error(done);
         })
     })
+    describe('options', function() {
+        it('hasMany - belongsTo', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String,
+                otherId: String
+            });
+
+            Model.hasMany(OtherModel, "has", "id", "otherId");
+            OtherModel.belongsTo(Model, "belongsTo", "otherId", "id");
+
+            var values = {};
+            var otherValues = {};
+            var doc = new Model(values);
+            var otherDocs = [
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues),
+                new OtherModel(otherValues)
+            ];
+
+            doc.has = otherDocs;
+
+            doc.saveAll().then(function(result) {
+                Model.get(doc.id).getJoin({has: { order: "id"}}).run().then(function(result) {
+                    for(var i=0; i<result.has.length; i++) {
+                        for(var j=i+1; j<result.has.length; j++) {
+                            assert(result.has[i].id < result.has[j].id)
+                        }
+                    }
+                });
+            }).error(done);
+        });
+    });
 });
 
 describe('Query.run() should take options', function(){
