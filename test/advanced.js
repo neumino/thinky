@@ -8,7 +8,6 @@ var assert = require('assert');
 var Promise = require('bluebird');
 
 describe('Advanced cases', function(){
-    //TODO test save
     describe('saveAll', function(){
         it('hasOne - belongsTo', function(done) {
             var name = util.s8();
@@ -221,7 +220,7 @@ describe('Advanced cases', function(){
                 assert.strictEqual(doc.has, otherDocs);
 
                 util.sortById(otherDocs);
-                Model.get(doc.id).getJoin({has: { order: "id"}}).run().then(function(result) {
+                Model.get(doc.id).getJoin({has: { _order: "id"}}).run().then(function(result) {
                     assert.equal(result.id, doc.id);
                     assert.equal(result.has[0].id, doc.has[0].id);
                     assert.equal(result.has[1].id, doc.has[1].id);
@@ -278,7 +277,7 @@ describe('Advanced cases', function(){
                 assert.strictEqual(doc.has, otherDocs);
 
                 util.sortById(otherDocs);
-                Model.get(doc.id).getJoin({has: { order: "id"}}).run().then(function(result) {
+                Model.get(doc.id).getJoin({has: { _order: "id"}}).run().then(function(result) {
                     assert.equal(result.id, doc.id);
                     assert.equal(result.has[0].id, doc.has[0].id);
                     assert.equal(result.has[1].id, doc.has[1].id);
@@ -333,7 +332,7 @@ describe('Advanced cases', function(){
                         assert.equal(otherDocs[2].belongsTo.id, doc.id);
 
                         util.sortById(otherDocs);
-                        Model.get(doc.id).getJoin({has: { order: "id"}}).run().then(function(result) {
+                        Model.get(doc.id).getJoin({has: { _order: "id"}}).run().then(function(result) {
                             assert.equal(result.id, doc.id);
                             assert.equal(result.has[0].id, doc.has[0].id);
                             assert.equal(result.has[1].id, doc.has[1].id);
@@ -382,12 +381,12 @@ describe('Advanced cases', function(){
                 util.sortById(doc1.links);
                 doc2.saveAll().then(function(result) {
                     util.sortById(doc2.links);
-                    Model.get(doc1.id).getJoin({links: { order: "id"}}).run().then(function(result) {
+                    Model.get(doc1.id).getJoin({links: { _order: "id"}}).run().then(function(result) {
                         assert.equal(result.id, doc1.id);
                         assert.equal(result.links[0].id, doc1.links[0].id);
                         assert.equal(result.links[1].id, doc1.links[1].id);
                         assert.equal(result.links[2].id, doc1.links[2].id);
-                        Model.get(doc2.id).getJoin({links: { order: "id"}}).run().then(function(result) {
+                        Model.get(doc2.id).getJoin({links: { _order: "id"}}).run().then(function(result) {
                             assert.equal(result.id, doc2.id);
                             assert.equal(result.links[0].id, doc2.links[0].id);
                             assert.equal(result.links[1].id, doc2.links[1].id);
@@ -483,12 +482,12 @@ describe('Advanced cases', function(){
                     util.sortById(otherDoc3.links2);
                     util.sortById(otherDoc4.links2);
 
-                    Model.get(doc1.id).getJoin({links: { order: "id"}}).run().then(function(result) {
+                    Model.get(doc1.id).getJoin({links: { _order: "id"}}).run().then(function(result) {
                         assert.equal(result.id, doc1.id);
                         assert.equal(result.links[0].id, doc1.links[0].id);
                         assert.equal(result.links[1].id, doc1.links[1].id);
                         assert.equal(result.links[2].id, doc1.links[2].id);
-                        Model.get(doc2.id).getJoin({links: { order: "id"}}).run().then(function(result) {
+                        Model.get(doc2.id).getJoin({links: { _order: "id"}}).run().then(function(result) {
                             assert.equal(result.id, doc2.id);
                             assert.equal(result.links[0].id, doc2.links[0].id);
                             assert.equal(result.links[1].id, doc2.links[1].id);
@@ -496,14 +495,14 @@ describe('Advanced cases', function(){
                             OtherModel.get(otherDoc1.id).getJoin().run().then(function(result) {
                                 assert.equal(result.id, otherDoc1.id);
                                 assert.equal(result.links2[0].id, otherDoc1.links2[0].id)
-                                OtherModel.get(otherDoc2.id).getJoin({links2: { order: "id"}}).run().then(function(result) {
+                                OtherModel.get(otherDoc2.id).getJoin({links2: { _order: "id"}}).run().then(function(result) {
                                     assert.equal(result.id, otherDoc2.id);
                                     assert.equal(result.links2[0].id, otherDoc2.links2[0].id)
                                     assert.equal(result.links2[1].id, otherDoc2.links2[1].id)
-                                    OtherModel.get(otherDoc3.id).getJoin({links2: { order: "id"}}).run().then(function(result) {
+                                    OtherModel.get(otherDoc3.id).getJoin({links2: { _order: "id"}}).run().then(function(result) {
                                         assert.equal(result.id, otherDoc3.id);
                                         assert.equal(result.links2[0].id, otherDoc3.links2[0].id)
-                                        OtherModel.get(otherDoc4.id).getJoin({links2: { order: "id"}}).run().then(function(result) {
+                                        OtherModel.get(otherDoc4.id).getJoin({links2: { _order: "id"}}).run().then(function(result) {
                                             assert.equal(result.id, otherDoc4.id);
                                             assert.equal(result.links2[0].id, otherDoc4.links2[0].id)
                                             assert.equal(result.links2[1].id, otherDoc4.links2[1].id)
@@ -1528,5 +1527,456 @@ describe('Advanced cases', function(){
                 });
             }).error(done);
         });
+    });
+    describe('getJoin', function(){
+        it('hasOne - belongsTo', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String,
+                otherId: String
+            });
+
+            Model.hasOne(OtherModel, "has", "id", "otherId");
+            OtherModel.belongsTo(Model, "belongsTo", "otherId", "id");
+
+            var values = {};
+            var otherValues = {};
+            var doc = new Model(values);
+            var otherDoc = new OtherModel(otherValues);
+
+            doc.has = otherDoc;
+            otherDoc.belongsTo = doc;
+
+            doc.saveAll().then(function(result) {
+                Model.get(doc.id).getJoin().run().then(function(result) {
+                    assert.equal(result.id, doc.id);
+                    assert.equal(result.has.id, doc.has.id);
+                    assert.equal(result.has.otherId, doc.has.otherId);
+                    OtherModel.get(otherDoc.id).getJoin().run().then(function(result) {
+                        assert.equal(result.id, doc.has.id);
+                        assert.equal(result.otherId, doc.has.otherId);
+                        assert.equal(result.belongsTo.id, doc.id);
+                        done()
+                    });
+                });
+
+            }).error(done);
+        });
+        it('hasOne - belongsTo - non matching modelToGet', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String,
+                otherId: String
+            });
+
+            Model.hasOne(OtherModel, "has", "id", "otherId");
+            OtherModel.belongsTo(Model, "belongsTo", "otherId", "id");
+
+            var values = {};
+            var otherValues = {};
+            var doc = new Model(values);
+            var otherDoc = new OtherModel(otherValues);
+
+            doc.has = otherDoc;
+            otherDoc.belongsTo = doc;
+
+            doc.saveAll().then(function(result) {
+                Model.get(doc.id).getJoin({foo: true}).run().then(function(result) {
+                    assert.equal(result.id, doc.id);
+                    assert.equal(result.has, undefined);
+                    OtherModel.get(otherDoc.id).getJoin({foo: true}).run().then(function(result) {
+                        assert.equal(result.id, doc.has.id);
+                        assert.equal(result.otherId, doc.has.otherId);
+                        assert.equal(result.belongsTo, undefined);
+                        done()
+                    });
+                });
+
+            }).error(done);
+        });
+        it('hasOne - belongsTo - matching modelToGet', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String,
+                otherId: String
+            });
+
+            Model.hasOne(OtherModel, "has", "id", "otherId");
+            OtherModel.belongsTo(Model, "belongsTo", "otherId", "id");
+
+            var values = {};
+            var otherValues = {};
+            var doc = new Model(values);
+            var otherDoc = new OtherModel(otherValues);
+
+            doc.has = otherDoc;
+            otherDoc.belongsTo = doc;
+
+            doc.saveAll().then(function(result) {
+                Model.get(doc.id).getJoin({has: true}).run().then(function(result) {
+                    util.log(result);
+                    assert.equal(result.id, doc.id);
+                    assert.equal(result.has.id, doc.has.id);
+                    assert.equal(result.has.otherId, doc.has.otherId);
+                    OtherModel.get(otherDoc.id).getJoin({belongsTo: true}).run().then(function(result) {
+                        assert.equal(result.id, doc.has.id);
+                        assert.equal(result.otherId, doc.has.otherId);
+                        assert.equal(result.belongsTo.id, doc.id);
+                        done()
+                    });
+                });
+            }).error(done);
+        });
+        it('hasMany - belongsTo -- matching modelToGet', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String,
+                otherId: String
+            });
+
+            Model.hasMany(OtherModel, "has", "id", "otherId");
+            OtherModel.belongsTo(Model, "belongsTo", "otherId", "id");
+
+            var values = {};
+            var otherValues = {};
+            var doc = new Model(values);
+            var otherDocs = [new OtherModel(otherValues), new OtherModel(otherValues), new OtherModel(otherValues)];
+
+            doc.has = otherDocs;
+            otherDocs[0].belongsTo = doc;
+            otherDocs[1].belongsTo = doc;
+            otherDocs[2].belongsTo = doc;
+
+            doc.saveAll().then(function(result) {
+                Model.get(doc.id).getJoin({has: true}).run().then(function(result) {
+                    assert.equal(result.id, doc.id);
+                    assert.equal(result.has.length, 3);
+
+                    OtherModel.getAll(doc.id, {index: "otherId"}).getJoin({belongsTo: true}).run().then(function(result) {
+                        assert.equal(result.length, 3);
+                        for(var i=0; i<result.length; i++) {
+                            assert.equal(result[i].belongsTo.id, doc.id)
+                        }
+                        done()
+                    })
+                });
+            }).error(done);
+        });
+        it('hasMany - belongsTo -- non matching modelToGet', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String,
+                otherId: String
+            });
+
+            Model.hasMany(OtherModel, "has", "id", "otherId");
+            OtherModel.belongsTo(Model, "belongsTo", "otherId", "id");
+
+            var values = {};
+            var otherValues = {};
+            var doc = new Model(values);
+            var otherDocs = [new OtherModel(otherValues), new OtherModel(otherValues), new OtherModel(otherValues)];
+
+            doc.has = otherDocs;
+            otherDocs[0].belongsTo = doc;
+            otherDocs[1].belongsTo = doc;
+            otherDocs[2].belongsTo = doc;
+
+            doc.saveAll().then(function(result) {
+                Model.get(doc.id).getJoin({foo: true}).run().then(function(result) {
+                    assert.equal(result.id, doc.id);
+                    assert.equal(result.has, undefined);
+
+                    OtherModel.getAll(doc.id, {index: "otherId"}).getJoin({foo: true}).run().then(function(result) {
+                        assert.equal(result.length, 3);
+                        for(var i=0; i<result.length; i++) {
+                            assert.equal(result[i].belongsTo, undefined)
+                        }
+                        done()
+                    })
+                });
+            }).error(done);
+        });
+        it('hasMany - belongsTo -- default, fetch everything', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String,
+                otherId: String
+            });
+
+            Model.hasMany(OtherModel, "has", "id", "otherId");
+            OtherModel.belongsTo(Model, "belongsTo", "otherId", "id");
+
+            var values = {};
+            var otherValues = {};
+            var doc = new Model(values);
+            var otherDocs = [new OtherModel(otherValues), new OtherModel(otherValues), new OtherModel(otherValues)];
+
+            doc.has = otherDocs;
+            otherDocs[0].belongsTo = doc;
+            otherDocs[1].belongsTo = doc;
+            otherDocs[2].belongsTo = doc;
+
+            doc.saveAll().then(function(result) {
+                Model.get(doc.id).getJoin().run().then(function(result) {
+                    assert.equal(result.id, doc.id);
+                    assert.equal(result.has.length, 3);
+
+                    OtherModel.getAll(doc.id, {index: "otherId"}).getJoin().run().then(function(result) {
+                        assert.equal(result.length, 3);
+                        for(var i=0; i<result.length; i++) {
+                            assert.equal(result[i].belongsTo.id, doc.id)
+                        }
+
+                        done()
+                    })
+                });
+            }).error(done);
+        });
+        it('hasAndBelongsToMany -- primary keys -- fetch everything by default', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String
+            });
+
+            Model.hasAndBelongsToMany(OtherModel, "links", "id", "id");
+            OtherModel.hasAndBelongsToMany(Model, "links", "id", "id");
+
+            var values = {};
+            var otherValues = {};
+            var doc1 = new Model({});
+            var doc2 = new Model({});
+            var otherDoc1 = new OtherModel({});
+            var otherDoc2 = new OtherModel({});
+            var otherDoc3 = new OtherModel({});
+            var otherDoc4 = new OtherModel({});
+
+            doc1.links = [otherDoc1, otherDoc2, otherDoc4]
+            doc2.links = [otherDoc2, otherDoc3, otherDoc4]
+
+            doc1.saveAll().then(function(result) {
+                util.sortById(doc1.links);
+                doc2.saveAll().then(function(result) {
+                    util.sortById(doc2.links);
+                    Model.get(doc1.id).getJoin().run().then(function(result) {
+                        assert.equal(result.id, doc1.id);
+                        assert.equal(result.links.length, doc1.links.length);
+                        Model.get(doc2.id).getJoin().run().then(function(result) {
+                            assert.equal(result.id, doc2.id);
+                            assert.equal(result.links.length, doc2.links.length);
+                            done()
+                        })
+                    });
+                });
+            }).error(done);
+        });
+        it('hasAndBelongsToMany -- primary keys -- matching modelToGet', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String
+            });
+
+            Model.hasAndBelongsToMany(OtherModel, "links", "id", "id");
+            OtherModel.hasAndBelongsToMany(Model, "links", "id", "id");
+
+            var values = {};
+            var otherValues = {};
+            var doc1 = new Model({});
+            var doc2 = new Model({});
+            var otherDoc1 = new OtherModel({});
+            var otherDoc2 = new OtherModel({});
+            var otherDoc3 = new OtherModel({});
+            var otherDoc4 = new OtherModel({});
+
+            doc1.links = [otherDoc1, otherDoc2, otherDoc4]
+            doc2.links = [otherDoc2, otherDoc3, otherDoc4]
+
+            doc1.saveAll().then(function(result) {
+                util.sortById(doc1.links);
+                doc2.saveAll().then(function(result) {
+                    util.sortById(doc2.links);
+                    Model.get(doc1.id).getJoin({links: true}).run().then(function(result) {
+                        assert.equal(result.id, doc1.id);
+                        assert.equal(result.links.length, doc1.links.length);
+                        Model.get(doc2.id).getJoin({links: true}).run().then(function(result) {
+                            assert.equal(result.id, doc2.id);
+                            assert.equal(result.links.length, doc2.links.length);
+                            done()
+                        })
+                    });
+                });
+            }).error(done);
+        });
+        it('hasAndBelongsToMany -- primary keys -- non matching modelToGet', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String
+            });
+
+            Model.hasAndBelongsToMany(OtherModel, "links", "id", "id");
+            OtherModel.hasAndBelongsToMany(Model, "links", "id", "id");
+
+            var values = {};
+            var otherValues = {};
+            var doc1 = new Model({});
+            var doc2 = new Model({});
+            var otherDoc1 = new OtherModel({});
+            var otherDoc2 = new OtherModel({});
+            var otherDoc3 = new OtherModel({});
+            var otherDoc4 = new OtherModel({});
+
+            doc1.links = [otherDoc1, otherDoc2, otherDoc4]
+            doc2.links = [otherDoc2, otherDoc3, otherDoc4]
+
+            doc1.saveAll().then(function(result) {
+                util.sortById(doc1.links);
+                doc2.saveAll().then(function(result) {
+                    util.sortById(doc2.links);
+                    Model.get(doc1.id).getJoin({links: true}).run().then(function(result) {
+                        assert.equal(result.id, doc1.id);
+                        assert.equal(result.links.length, doc1.links.length);
+                        Model.get(doc2.id).getJoin({links: true}).run().then(function(result) {
+                            assert.equal(result.id, doc2.id);
+                            assert.equal(result.links.length, doc2.links.length);
+                            done()
+                        })
+                    });
+                });
+            }).error(done);
+        });
+        it('hasAndBelongsToMany -- primary keys -- matching modelToGet with options', function(done) {
+            var name = util.s8();
+            var Model = thinky.createModel(name, {
+                id: String
+            });
+
+            var otherName = util.s8();
+            var OtherModel = thinky.createModel(otherName, {
+                id: String
+            });
+
+            Model.hasAndBelongsToMany(OtherModel, "links", "id", "id");
+            OtherModel.hasAndBelongsToMany(Model, "links", "id", "id");
+
+            var values = {};
+            var otherValues = {};
+            var doc1 = new Model({});
+            var doc2 = new Model({});
+            var otherDoc1 = new OtherModel({});
+            var otherDoc2 = new OtherModel({});
+            var otherDoc3 = new OtherModel({});
+            var otherDoc4 = new OtherModel({});
+
+            doc1.links = [otherDoc1, otherDoc2, otherDoc4]
+            doc2.links = [otherDoc2, otherDoc3, otherDoc4]
+
+            doc1.saveAll().then(function(result) {
+                util.sortById(doc1.links);
+                doc2.saveAll().then(function(result) {
+                    util.sortById(doc2.links);
+                    Model.get(doc1.id).getJoin({links: {_order: "id"}}).run().then(function(result) {
+                        assert.equal(result.id, doc1.id);
+                        assert.equal(result.links[0].id, doc1.links[0].id);
+                        assert.equal(result.links[1].id, doc1.links[1].id);
+                        assert.equal(result.links[2].id, doc1.links[2].id);
+                        Model.get(doc2.id).getJoin({links: {_order: "id"}}).run().then(function(result) {
+                            assert.equal(result.id, doc2.id);
+                            assert.equal(result.links[0].id, doc2.links[0].id);
+                            assert.equal(result.links[1].id, doc2.links[1].id);
+                            assert.equal(result.links[2].id, doc2.links[2].id);
+
+                            done()
+                        })
+                    });
+                });
+            }).error(done);
+        });
+    });
+});
+describe('Advanced cases', function(){
+    it('hasAndBelongsToMany -- pairs', function(done) {
+        var name = util.s8();
+        var Model = thinky.createModel(name, {
+            id: String
+        });
+
+        var otherName = util.s8();
+        var OtherModel = thinky.createModel(otherName, {
+            id: String
+        });
+
+        Model.hasAndBelongsToMany(Model, "links", "id", "id");
+
+        var values = {};
+        var otherValues = {};
+        var doc1 = new Model({});
+        var doc2 = new Model({});
+        var doc3 = new Model({});
+        var doc4 = new Model({});
+        var doc5 = new Model({});
+        var doc6 = new Model({});
+
+        doc1.links = [doc2, doc3];
+        doc2.links = [doc1];
+        doc3.links = [doc1, doc2];
+
+        doc1.saveAll({links: true}).then(function(result) {
+        doc2.saveAll({links: true}).then(function(result) {
+        doc3.saveAll({links: true}).then(function(result) {
+            Model.get(doc1.id).getJoin().run().then(function(result) {
+                assert.equal(result.links, undefined);
+                Model.get(doc1.id).getJoin({links: true}).run().then(function(result) {
+                    assert.equal(result.links.length, 2);
+                    done();
+                });
+            });
+        });
+        });
+        }).error(done);
     });
 });

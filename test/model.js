@@ -419,6 +419,32 @@ describe("Joins", function() {
             }).error(done);
         })
     });
+    it('_order is reserved ', function() {
+        var name = util.s8();
+        var model = thinky.createModel(name, { id: String, notid1: String }, {init: false});
 
+        var otherName = util.s8();
+        var otherModel = thinky.createModel(otherName, { id: String, notid2: String }, {init: false});
 
+        assert.throws(function() {
+            model.hasOne(otherModel, "_order", "notid1", "notid2");
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "The field `_order` is reserved by thinky. Please use another one.")
+        });
+        assert.throws(function() {
+            model.hasMany(otherModel, "_order", "notid1", "notid2");
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "The field `_order` is reserved by thinky. Please use another one.")
+        });
+        assert.throws(function() {
+            model.belongsTo(otherModel, "_order", "notid1", "notid2");
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "The field `_order` is reserved by thinky. Please use another one.")
+        });
+        assert.throws(function() {
+            model.hasAndBelongsToMany(otherModel, "_order", "notid1", "notid2");
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "The field `_order` is reserved by thinky. Please use another one.")
+        });
+    });
 });
