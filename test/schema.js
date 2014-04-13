@@ -1757,3 +1757,135 @@ describe('validate', function(){
         });
     });
 });
+describe('_validator', function(){
+    it('validate on the whole document - bind with the doc - 1 ', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String}
+        }, {init: false, validator: function() {
+                if (this.id !== this.field) {
+                    throw new Error("Expecting `id` value to be `field` value.")
+                }
+            }
+        })
+        var doc = new Model({id: "abc", field: "abc"});
+        doc.validate();
+    });
+    it('validate on the whole document - bind with the doc - 2', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String}
+        }, {init: false, validator: function() {
+                if (this.id !== this.field) {
+                    throw new Error("Expecting `id` value to be `field` value.")
+                }
+            }
+        })
+
+        var doc = new Model({id: "abc", field: ""});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error)
+                && (error.message === "Expecting `id` value to be `field` value.")
+        });
+    });
+    it('validate on the whole document - nested field - 1 ', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String}
+        }, {init: false, validator: function() {
+                if (this.id !== this.nested.field) {
+                    throw new Error("Expecting `id` value to be `field` value.")
+                }
+            }
+        })
+
+        var doc = new Model({id: "abc", nested: {field: "abc"}});
+        doc.validate();
+    });
+    it('validate on the whole document - nested field - 2', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String}
+        }, {init: false, validator: function() {
+                if (this.id !== this.nested.field) {
+                    throw new Error("Expecting `field` value to be `field` value.")
+                }
+            }
+        })
+
+        var doc = new Model({id: "abc", nested: { field: ""}});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error)
+                && (error.message === "Expecting `field` value to be `field` value.")
+        });
+    });
+    it('validate on a field - 1 ', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String, validator: function(value) {
+                if (value !== "abc") {
+                    throw new Error("Expecting `field` value to be 'abc'.")
+                }
+            }}
+        }, {init: false})
+        var doc = new Model({id: "abc", field: "abc"});
+        doc.validate();
+    });
+    it('validate on a field - 2', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String, validator: function(value) {
+                if (value !== "abc") {
+                    throw new Error("Expecting `field` value to be 'abc'.")
+                }
+            }}
+        }, {init: false})
+        var doc = new Model({id: "abc", field: ""});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error)
+                && (error.message === "Expecting `field` value to be 'abc'.")
+        });
+    });
+    it('validate on the whole document - nested field - 1 ', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            nested: {
+                field: {_type: String, validator: function(value) {
+                    if (value !== "abc") {
+                        throw new Error("Expecting `field` value to be 'abc'.")
+                    }
+                }
+            }}
+        }, {init: false})
+
+
+        var doc = new Model({id: "abc", nested: {field: "abc"}});
+        doc.validate();
+    });
+    it('validate on the whole document - nested field - 2', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            nested: {
+                field: {_type: String, validator: function(value) {
+                    if (value !== "abc") {
+                        throw new Error("Expecting `field` value to be 'abc'.")
+                    }
+                }
+            }}
+        }, {init: false})
+
+        var doc = new Model({id: "abc", nested: { field: ""}});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error)
+                && (error.message === "Expecting `field` value to be 'abc'.")
+        });
+    });
+});
