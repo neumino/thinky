@@ -447,3 +447,20 @@ describe("Joins", function() {
         });
     });
 });
+
+describe('define', function(){
+    it('Should be added on the document', function(done) {
+        var Model = thinky.createModel(util.s8(), { id: String, num: Number }, {init: false});
+        Model.define('foo', function() { done() });
+        var doc = new Model({});
+        doc.foo();
+    });
+    it('this should refer to the doc', function(done) {
+        var str = util.s8();
+        var Model = thinky.createModel(util.s8(), { id: String, num: Number }, {init: false});
+        Model.define('foo', function() { assert.equal(this.id, str); done() });
+        var doc = new Model({id: str});
+        doc.foo();
+    });
+
+});
