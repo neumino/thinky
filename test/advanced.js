@@ -1629,7 +1629,6 @@ describe('Advanced cases', function(){
 
             doc.saveAll().then(function(result) {
                 Model.get(doc.id).getJoin({has: true}).run().then(function(result) {
-                    util.log(result);
                     assert.equal(result.id, doc.id);
                     assert.equal(result.has.id, doc.has.id);
                     assert.equal(result.has.otherId, doc.has.otherId);

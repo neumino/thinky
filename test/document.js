@@ -5,7 +5,6 @@ var r = thinky.r;
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
 
-
 describe('save', function() {
     describe('Basic', function() {
         var Model;
@@ -166,7 +165,6 @@ describe('save', function() {
             })
             Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id")
         });
-
         it('save should save only one doc', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
             var otherDocValues = {str: util.s8(), num: util.random()}
@@ -1848,7 +1846,7 @@ describe('purge', function() {
             });
         }).error(done);
     });
-    it('hasAndBelongsToMany -- pk -- purge should clean the database', function() {
+    it('hasAndBelongsToMany -- pk -- purge should clean the database', function(done) {
         var name = util.s8();
         var Model = thinky.createModel(name, {
             id: String
@@ -1873,16 +1871,19 @@ describe('purge', function() {
                         OtherModel.run().then(function(result) {
                             assert(result.length, 3);
                             var link = Model._getModel()._joins.otherDocs.link;
-                            r.table(link).run().then(function(result) {
-                                assert.equal(result.length, 0);
+                            r.table(link).run().then(function(cursor) {
+                                cursor.toArray().then(function(result) {
+                                    assert.equal(result.length, 0);
+                                    done();
+                                });
                             });
                         });
                     });
                 });
             });
-        });
+        }).error(done);;
     });
-    it('hasAndBelongsToMany not called on this model -- pk -- purge should clean the database', function() {
+    it('hasAndBelongsToMany not called on this model -- pk -- purge should clean the database', function(done) {
         var name = util.s8();
         var Model = thinky.createModel(name, {
             id: String
@@ -1907,16 +1908,19 @@ describe('purge', function() {
                         OtherModel.run().then(function(result) {
                             assert(result.length, 2);
                             var link = Model._getModel()._joins.otherDocs.link;
-                            r.table(link).run().then(function(result) {
-                                assert.equal(result.length, 2);
+                            r.table(link).run().then(function(cursor) {
+                                cursor.toArray().then(function(result) {
+                                    assert.equal(result.length, 2);
+                                    done();
+                                });
                             });
                         });
                     });
                 });
             });
-        });
+        }).error(done);
     });
-    it('hasAndBelongsToMany -- not pk -- purge should clean the database', function() {
+    it('hasAndBelongsToMany -- not pk -- purge should clean the database', function(done) {
         var name = util.s8();
         var Model = thinky.createModel(name, {
             id: String,
@@ -1943,16 +1947,19 @@ describe('purge', function() {
                         OtherModel.run().then(function(result) {
                             assert(result.length, 3);
                             var link = Model._getModel()._joins.otherDocs.link;
-                            r.table(link).run().then(function(result) {
-                                assert.equal(result.length, 2);
+                            r.table(link).run().then(function(cursor) {
+                                cursor.toArray().then(function(result) {
+                                    assert.equal(result.length, 2);
+                                    done();
+                                });
                             });
                         });
                     });
                 });
             });
-        });
+        }).error(done);
     });
-    it('hasAndBelongsToMany not called on this model -- not pk -- purge should clean the database', function() {
+    it('hasAndBelongsToMany not called on this model -- not pk -- purge should clean the database', function(done) {
         var name = util.s8();
         var Model = thinky.createModel(name, {
             id: String,
@@ -1979,13 +1986,16 @@ describe('purge', function() {
                         OtherModel.run().then(function(result) {
                             assert(result.length, 2);
                             var link = Model._getModel()._joins.otherDocs.link;
-                            r.table(link).run().then(function(result) {
-                                assert.equal(result.length, 1);
+                            r.table(link).run().then(function(cursor) {
+                                cursor.toArray().then(function(result) {
+                                    assert.equal(result.length, 1);
+                                    done();
+                                });
                             });
                         });
                     });
                 });
             });
-        });
+        }).error(done);
     });
 });
