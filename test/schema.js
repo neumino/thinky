@@ -1756,6 +1756,27 @@ describe('validate', function(){
             return error.message === "Value for [otherDocs][0][field] must be a string or null.";
         });
     });
+    it('Test option validate="oncreate"', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String
+        }, {init: false, enforce_type: 'strict', enforce_missing: true, enforce_extra: true, validate: 'oncreate'})
+
+
+        assert.throws(function() {
+            doc = new Model({
+                id: str,
+                field: 1
+            })
+
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be a string.")
+        });
+    });
+
 });
 describe('_validator', function(){
     it('validate on the whole document - bind with the doc - 1 ', function(){
