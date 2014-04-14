@@ -411,7 +411,7 @@ describe('Advanced cases', function(){
 
             Model.hasAndBelongsToMany(OtherModel, "links", "id", "id");
             
-            // Dirty patch for https://github.com/rethinkdb/rethinkdb/issues/2226
+            // TODO: Dirty patch for https://github.com/rethinkdb/rethinkdb/issues/2226
             setTimeout(function() {
 
             OtherModel.hasAndBelongsToMany(Model, "links2", "id", "id");
