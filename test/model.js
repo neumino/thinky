@@ -415,9 +415,8 @@ describe("Joins", function() {
                         done();
                     }).error(done);
                 });
-
             }).error(done);
-        })
+        });
     });
     it('_order is reserved ', function() {
         var name = util.s8();

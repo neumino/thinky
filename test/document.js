@@ -1704,3 +1704,288 @@ describe('delete', function() {
         });
     });
 });
+describe('purge', function() {
+    it('hasOne -- purge should remove itself + clean the other docs', function(done) {
+        var name = util.s8();
+        var Model = thinky.createModel(name, {
+            id: String
+        })
+
+        var otherName = util.s8();
+        OtherModel = thinky.createModel(otherName, {
+            id: String,
+            foreignKey: String
+        })
+
+        Model.hasOne(OtherModel, "has", "id", "foreignKey")
+        var doc1 = new Model({});
+
+        var otherDoc1 = new OtherModel({});
+        var otherDoc2 = new OtherModel({});
+
+        doc1.has = otherDoc1;
+
+        doc1.saveAll().then(function(doc) {
+            // Create an extra hasOne link -- which is invalid
+            otherDoc2.foreignKey = otherDoc1.foreignKey;
+            otherDoc2.save().then(function(doc) {
+                doc1.purge().then(function() {
+                    Model.run().then(function(result) {
+                        assert.equal(result.length, 0);
+
+                        OtherModel.run().then(function(result) {
+                            assert.equal(result.length, 2);
+                            assert.equal(result[0].foreignKey, undefined);
+                            assert.equal(result[1].foreignKey, undefined);
+                            done();
+                        });
+                    });
+                });
+            });
+        }).error(done);
+    });
+    it('belongsTo -- purge should remove itself', function(done) {
+        var name = util.s8();
+        var Model = thinky.createModel(name, {
+            id: String,
+            foreignKey: String
+        })
+
+        var otherName = util.s8();
+        OtherModel = thinky.createModel(otherName, {
+            id: String
+        })
+
+        Model.belongsTo(OtherModel, "belongsTo", "foreignKey", "id")
+
+        var doc1 = new Model({});
+        var otherDoc1 = new OtherModel({});
+
+        doc1.belongsTo = otherDoc1;
+
+        doc1.saveAll().then(function(doc) {
+            doc1.purge().then(function() {
+                Model.run().then(function(result) {
+                    assert.equal(result.length, 0);
+
+                    OtherModel.run().then(function(result) {
+                        assert.equal(result.length, 1);
+                        done();
+                    });
+                });
+            });
+        }).error(done);
+    });
+    it('belongsTo not called on its own model -- purge should remove itself + clean the other docs', function(done) {
+        var name = util.s8();
+        var Model = thinky.createModel(name, {
+            id: String
+        })
+
+        var otherName = util.s8();
+        var OtherModel = thinky.createModel(otherName, {
+            id: String,
+            foreignKey: String
+        })
+
+        OtherModel.belongsTo(Model, "belongsTo", "foreignKey", "id")
+
+        var doc1 = new Model({});
+        var otherDoc1 = new OtherModel({});
+
+        otherDoc1.belongsTo = doc1;
+
+        otherDoc1.saveAll().then(function(doc) {
+            doc1.purge().then(function() {
+                Model.run().then(function(result) {
+                    assert.equal(result.length, 0);
+
+                    OtherModel.run().then(function(result) {
+                        assert.equal(result.length, 1);
+                        assert.equal(result[0].foreignKey, undefined);
+
+                        assert.equal(otherDoc1.foreignKey, undefined);
+                        done();
+                    });
+                });
+            });
+        }).error(done);
+    });
+
+    it('hasMany -- purge should remove itself', function(done) {
+        var name = util.s8();
+        var Model = thinky.createModel(name, {
+            id: String
+        })
+
+        var otherName = util.s8();
+        var OtherModel = thinky.createModel(otherName, {
+            id: String,
+            foreignKey: String
+        })
+
+        Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey")
+
+        var doc = new Model({});
+        var otherDocs = [new OtherModel({}), new OtherModel({}), new OtherModel({})];
+        doc.otherDocs = otherDocs;
+
+        doc.saveAll().then(function() {
+            var extraDoc = new OtherModel({foreignKey: otherDocs[0].foreignKey});
+            extraDoc.save().then(function() {
+                doc.purge().then(function() {
+                    Model.run().then(function(result) {
+                        assert.equal(result.length, 0);
+                        OtherModel.run().then(function(result) {
+                            assert.equal(result.length, 4);
+                            for(var i=0; i<result.length; i++) {
+                                assert.equal(result[i].foreignKey, undefined)
+                            }
+                            done();
+                        });
+                    })
+                });
+            });
+        }).error(done);
+    });
+    it('hasAndBelongsToMany -- pk -- purge should clean the database', function() {
+        var name = util.s8();
+        var Model = thinky.createModel(name, {
+            id: String
+        })
+
+        var otherName = util.s8();
+        var OtherModel = thinky.createModel(otherName, {
+            id: String
+        })
+
+        Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
+
+        var doc = new Model({});
+        var otherDocs = [new OtherModel({}), new OtherModel({}), new OtherModel({})];
+        doc.otherDocs = otherDocs;
+
+        doc.saveAll().then(function(doc) {
+            Model.get(doc.id).run().then(function(result) {
+                result.purge().then(function() {
+                    Model.run().then(function(result) {
+                        assert.equal(result.length, 0);
+                        OtherModel.run().then(function(result) {
+                            assert(result.length, 3);
+                            var link = Model._getModel()._joins.otherDocs.link;
+                            r.table(link).run().then(function(result) {
+                                assert.equal(result.length, 0);
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+    it('hasAndBelongsToMany not called on this model -- pk -- purge should clean the database', function() {
+        var name = util.s8();
+        var Model = thinky.createModel(name, {
+            id: String
+        })
+
+        var otherName = util.s8();
+        var OtherModel = thinky.createModel(otherName, {
+            id: String
+        })
+
+        Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
+
+        var doc = new Model({});
+        var otherDocs = [new OtherModel({}), new OtherModel({}), new OtherModel({})];
+        doc.otherDocs = otherDocs;
+
+        doc.saveAll().then(function(doc) {
+            OtherModel.get(otherDocs[0].id).run().then(function(result) {
+                result.purge().then(function() {
+                    Model.run().then(function(result) {
+                        assert.equal(result.length, 1);
+                        OtherModel.run().then(function(result) {
+                            assert(result.length, 2);
+                            var link = Model._getModel()._joins.otherDocs.link;
+                            r.table(link).run().then(function(result) {
+                                assert.equal(result.length, 2);
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+    it('hasAndBelongsToMany -- not pk -- purge should clean the database', function() {
+        var name = util.s8();
+        var Model = thinky.createModel(name, {
+            id: String,
+            foo: Number
+        })
+
+        var otherName = util.s8();
+        var OtherModel = thinky.createModel(otherName, {
+            id: String,
+            foo: Number
+        })
+
+        Model.hasAndBelongsToMany(OtherModel, "otherDocs", "foo", "foo");
+
+        var doc = new Model({foo: 1});
+        var otherDocs = [new OtherModel({foo: 2}), new OtherModel({foo: 2}), new OtherModel({foo: 3})];
+        doc.otherDocs = otherDocs;
+
+        doc.saveAll().then(function(doc) {
+            Model.get(doc.id).run().then(function(result) {
+                result.purge().then(function() {
+                    Model.run().then(function(result) {
+                        assert.equal(result.length, 0);
+                        OtherModel.run().then(function(result) {
+                            assert(result.length, 3);
+                            var link = Model._getModel()._joins.otherDocs.link;
+                            r.table(link).run().then(function(result) {
+                                assert.equal(result.length, 2);
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+    it('hasAndBelongsToMany not called on this model -- not pk -- purge should clean the database', function() {
+        var name = util.s8();
+        var Model = thinky.createModel(name, {
+            id: String,
+            foo: Number
+        })
+
+        var otherName = util.s8();
+        var OtherModel = thinky.createModel(otherName, {
+            id: String,
+            foo: Number
+        })
+
+        Model.hasAndBelongsToMany(OtherModel, "otherDocs", "foo", "foo");
+
+        var doc = new Model({foo: 1});
+        var otherDocs = [new OtherModel({foo: 2}), new OtherModel({foo: 2}), new OtherModel({foo: 2})];
+        doc.otherDocs = otherDocs;
+
+        doc.saveAll().then(function(doc) {
+            OtherModel.get(otherDocs[0].id).run().then(function(result) {
+                result.purge().then(function() {
+                    Model.run().then(function(result) {
+                        assert.equal(result.length, 1);
+                        OtherModel.run().then(function(result) {
+                            assert(result.length, 2);
+                            var link = Model._getModel()._joins.otherDocs.link;
+                            r.table(link).run().then(function(result) {
+                                assert.equal(result.length, 1);
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
