@@ -104,9 +104,8 @@ describe('Priorities for options', function() {
         */
         var name = util.s8();
         var Model = thinky.createModel(name, {id: String, name: String});
-        var doc = new Model({})
         assert.throws(function() {
-            doc.validate();
+            var doc = new Model({})
         }, function(error) {
             return error.message === "Value for [id] must be defined.";
         });
@@ -149,7 +148,7 @@ describe('Priorities for options', function() {
             config['validate'] = 'oncreate';
         */
         var name = util.s8();
-        var Model = thinky.createModel(name, {id: String, name: String});
+        var Model = thinky.createModel(name, {id: String, name: String}, {validate: "onsave"});
         var doc = new Model({})
         doc.validate({enforce_missing: false});
     });
