@@ -1,72 +1,101 @@
 ---
-layout: index
+layout: default
 ---
+
 
 
 ## Quickstart
 
 ### Install
 
+Install via `npm`.
+
 ```bash
 npm install thinky
 ```
 
-### Use
+### Example
+
+Create models with schemas.
 
 ```javascript
-var thinky = require('thinky');
-thinky.init({});
+var thinky = require('thinky')();
 
-// Create a model
-var Cat = thinky.createModel('Cat', {id: String, name: String, idHuman: String}); 
+// Create a model - the table is automatically created
+var Post = thinky.createModel("Post", {
+    id: String,
+    title: String,
+    content: String,
+    idAuthor: String
+}); 
 
-// Create custom methods
-Cat.define('hello', function() { console.log("Hello, I'm "+this.name) });
+var Author = thinky.createModel("Author", {
+    id: String,
+    name: String
+});
 
-// Join models
-var Human = thinky.createModel('Human', {id: String, name: String}); 
-Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'})
+// Join the model
+Post.belongsTo(Author, "author", "idAuthor", "id");
+```
 
-// Create a new object
-kitty = new Cat({name: 'Kitty'});
-michel = new Human({name: Michel});
-kitty.owner = michel;
+Save a new post with its author.
 
-kitty.hello(); // Log "Hello, I'm Kitty
-kitty.save(function(err, result) {
-    if (err) throw err;
-    console.log("Kitty and Michel have been saved in the database");
-    console.log(kitty);
+```js
+// Create a new post
+var post = new Post({
+    title: "Hello World!",
+    content: "This is an example."
+});
+
+// Create a new author
+var author = new Author({
+    name: "Michel"
+});
+
+// Join the documents
+post.author = author;
+
+
+post.saveAll().then(function(result) {
     /*
-    {
+    post = result = {
         id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
-        name: "Catou",
-        idHuman: "3851d8b4-5358-43f2-ba23-f4d481358901",
-        owner: {
+        title: "Hello World!",
+        content: "This is an example.",
+        idAuthor: "3851d8b4-5358-43f2-ba23-f4d481358901",
+        author: {
             id: "3851d8b4-5358-43f2-ba23-f4d481358901",
-            name: Michel
+            name: "Michel"
         }
     }
     */
-}, {saveJoin: true})
+});
 ```
 
-### License
+Retrieve a post with its author.
 
-Copyright (c) 2013 Michel Tu [orphee@gmail.com](orphee@gmail.com).
+```js
+Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().then(function(result) {
+    /*
+    result = {
+        id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+        title: "Hello World!",
+        content: "This is an example.",
+        idAuthor: "3851d8b4-5358-43f2-ba23-f4d481358901",
+        author: {
+            id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+            name: "Michel"
+        }
+    }
+    */
+});
+```
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this
-software and associated documentation files (the 'Software'), to deal in the Software
-without restriction, including without limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of the Software, and to permit
-persons to whom the Software is furnished to do so, subject to the following conditions:
+And there is more! Here is a non exhaustive list:
 
-The above copyright notice and this permission notice shall be included in all copies or
-substantial portions of the Software.
+- Enforce schemas.
+- Multiple relations: `hasOne`, `belongsTo`, `hasMany` and `hasAndBelongsToMany`.
+- Automatically create table and indexes.
+- Automatically remove relations when a document is deleted.
 
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
-FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
+Take a look at the <a href="/documentation">documentation</a> to read more!
