@@ -1,8 +1,6 @@
 ---
-layout: default
+layout: documentation
 ---
-
-
 
 ## Quickstart
 
