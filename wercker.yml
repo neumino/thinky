@@ -5,6 +5,7 @@ services:
 build:
   # The steps that will be executed on build
   steps:
+    - apt-get install libprotobuf-dev
     # A step that executes `npm install` command
     - npm-install
     - script:
