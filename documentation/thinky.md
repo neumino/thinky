@@ -104,6 +104,8 @@ The valid types are:
 - `pk`: the primary key of the table. If the primary key is not `"id"`, the `pk`
 field is mandatory.
 
+__TODO__: Write about joined fields
+
 _Example_: Create a basic Model for a `post`.
 
 ```js
