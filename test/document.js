@@ -111,8 +111,8 @@ describe('save', function() {
         it('new should create instances of Document for joined documents too', function() {
             var docValues = {str: util.s8(), num: util.random(), otherDoc: {str: util.s8(), num: util.random()}}
             doc = new Model(docValues);
-            assert.equal(doc._getModel()._name, Model.getName())
-            assert.equal(doc.otherDoc._getModel()._name, OtherModel.getName())
+            assert.equal(doc._getModel()._name, Model.getTableName())
+            assert.equal(doc.otherDoc._getModel()._name, OtherModel.getTableName())
         });
         it('save should not change the joined document', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
@@ -220,7 +220,7 @@ describe('save', function() {
             var otherDoc = new OtherModel(otherDocValues);
             doc.otherDoc = otherDoc;
             doc.saveAll().then(function(doc2) {
-                assert.equal(doc.otherDoc.__proto__._parents._belongsTo[Model.getName()][0].doc, doc);
+                assert.equal(doc.otherDoc.__proto__._parents._belongsTo[Model.getTableName()][0].doc, doc);
                 done();
             }).error(done);
         })
@@ -384,11 +384,11 @@ describe('save', function() {
                 }
 
                 var linkName;
-                if(Model.getName() < OtherModel.getName()) {
-                    linkName = Model.getName()+"_"+OtherModel.getName();
+                if(Model.getTableName() < OtherModel.getTableName()) {
+                    linkName = Model.getTableName()+"_"+OtherModel.getTableName();
                 }
                 else {
-                    linkName = OtherModel.getName()+"_"+Model.getName();
+                    linkName = OtherModel.getTableName()+"_"+Model.getTableName();
                 }
 
                 r.table(linkName).run().then(function(cursor) {
@@ -420,11 +420,11 @@ describe('save', function() {
             doc.saveAll().then(function(doc) {
                 var linkName, found;
 
-                if(Model.getName() < OtherModel.getName()) {
-                    linkName = Model.getName()+"_"+OtherModel.getName();
+                if(Model.getTableName() < OtherModel.getTableName()) {
+                    linkName = Model.getTableName()+"_"+OtherModel.getTableName();
                 }
                 else {
-                    linkName = OtherModel.getName()+"_"+Model.getName();
+                    linkName = OtherModel.getTableName()+"_"+Model.getTableName();
                 }
                 r.table(linkName).run().then(function(cursor) {
                     cursor.toArray().then(function(result) {
@@ -433,7 +433,7 @@ describe('save', function() {
                         for(var i=0; i<result.length; i++) {
                             found = false
                             for(var j=0; j<otherDocs.length; j++) {
-                                if (Model.getName() < OtherModel.getName()) {
+                                if (Model.getTableName() < OtherModel.getTableName()) {
                                     if (result[i].id === doc.id+"_"+otherDocs[j].id) {
                                         total++;
                                         found = true;
@@ -476,21 +476,21 @@ describe('save', function() {
 
                 var linkName, found;
 
-                if(Model.getName() < OtherModel.getName()) {
-                    linkName = Model.getName()+"_"+OtherModel.getName();
+                if(Model.getTableName() < OtherModel.getTableName()) {
+                    linkName = Model.getTableName()+"_"+OtherModel.getTableName();
                 }
                 else {
-                    linkName = OtherModel.getName()+"_"+Model.getName();
+                    linkName = OtherModel.getTableName()+"_"+Model.getTableName();
                 }
                 r.table(linkName).run().then(function(cursor) {
                     cursor.toArray().then(function(result) {
                         var total = 0;
                         // Testing the values of the primary key
                         for(var i=0; i<result.length; i++) {
-                            if (result[i][Model.getName()+"_id"] ===  doc.id) {
+                            if (result[i][Model.getTableName()+"_id"] ===  doc.id) {
                                 found = false;
                                 for(var j=0; j<otherDocs.length; j++) {
-                                    if (result[i][OtherModel.getName()+"_id"] === otherDocs[j].id) {
+                                    if (result[i][OtherModel.getTableName()+"_id"] === otherDocs[j].id) {
                                         total++;
                                         found = true;
                                         break;
@@ -522,11 +522,11 @@ describe('save', function() {
                 doc.otherDocs.splice(1, 1);
                 doc.saveAll().then(function(result) {
                     assert.equal(result.otherDocs.length, 2);
-                    if(Model.getName() < OtherModel.getName()) {
-                        linkName = Model.getName()+"_"+OtherModel.getName();
+                    if(Model.getTableName() < OtherModel.getTableName()) {
+                        linkName = Model.getTableName()+"_"+OtherModel.getTableName();
                     }
                     else {
-                        linkName = OtherModel.getName()+"_"+Model.getName();
+                        linkName = OtherModel.getTableName()+"_"+Model.getTableName();
                     }
                     Model.get(doc.id).getJoin().run().then(function(result) {
                         assert.equal(result.otherDocs.length, 2);
@@ -710,11 +710,11 @@ describe('save', function() {
                     assert.equal(result.otherDocs.length, 2);
 
                     var linkName;
-                    if(Model.getName() < OtherModel.getName()) {
-                        linkName = Model.getName()+"_"+OtherModel.getName();
+                    if(Model.getTableName() < OtherModel.getTableName()) {
+                        linkName = Model.getTableName()+"_"+OtherModel.getTableName();
                     }
                     else {
-                        linkName = OtherModel.getName()+"_"+Model.getName();
+                        linkName = OtherModel.getTableName()+"_"+Model.getTableName();
                     }
                     r.table(linkName).count().run().then(function(result) {
                         assert.equal(result, 2);
@@ -1039,9 +1039,9 @@ describe('delete', function() {
                     assert.equal(doc.isSaved(), false);
                     assert.equal(otherDoc.isSaved(), false);
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
                         OtherModel.get(otherDoc.id).run().error(function(error) {
-                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getName()+"` with `null`.");
+                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getTableName()+"` with `null`.");
                             done();
                         });
                     });
@@ -1063,9 +1063,9 @@ describe('delete', function() {
                     assert.equal(doc.isSaved(), false);
                     assert.equal(otherDoc.isSaved(), false);
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
                         OtherModel.get(otherDoc.id).run().error(function(error) {
-                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getName()+"` with `null`.");
+                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getTableName()+"` with `null`.");
                             done();
                         });
                     });
@@ -1135,7 +1135,7 @@ describe('delete', function() {
 
                 doc.delete().then(function() {
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
 
                         OtherModel.get(otherDoc.id).run().then(function(result) {
                             assert.deepEqual(result, otherDoc);
@@ -1165,10 +1165,10 @@ describe('delete', function() {
                     assert.equal(result.isSaved(), false);
                     assert.equal(result.otherDoc.isSaved(), false);
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
 
                         OtherModel.get(otherDoc.id).run().error(function(error) {
-                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getName()+"` with `null`.");
+                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getTableName()+"` with `null`.");
                             done();
                         });
                     });
@@ -1193,10 +1193,10 @@ describe('delete', function() {
                     assert.equal(result.isSaved(), false);
                     assert.equal(result.otherDoc.isSaved(), false);
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
 
                         OtherModel.get(otherDoc.id).run().error(function(error) {
-                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getName()+"` with `null`.");
+                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getTableName()+"` with `null`.");
                             done();
                         });
                     });
@@ -1218,7 +1218,7 @@ describe('delete', function() {
 
                 doc.deleteAll({foo: true}).then(function() {
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
 
                         OtherModel.get(otherDoc.id).run().then(function(result) {
                             assert.deepEqual(result, otherDoc);
@@ -1262,7 +1262,7 @@ describe('delete', function() {
 
                 doc.delete().then(function() {
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
                         assert.equal(doc.isSaved(), false);
                         for(var i=0; i<otherDocs.length; i++) {
                             assert.equal(otherDocs[i].foreignKey, undefined);
@@ -1289,7 +1289,7 @@ describe('delete', function() {
 
                 doc.deleteAll({foo: true}).then(function() {
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
                         assert.equal(doc.isSaved(), false);
                         assert.equal(doc.isSaved(), false);
                         for(var i=0; i<otherDocs.length; i++) {
@@ -1320,7 +1320,7 @@ describe('delete', function() {
                 doc.deleteAll().then(function(result) {
                     assert.strictEqual(result, doc);
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
                         assert.equal(doc.isSaved(), false);
                         for(var i=0; i<otherDocs.length; i++) {
                             assert.equal(otherDocs[i].isSaved(), false);
@@ -1348,7 +1348,7 @@ describe('delete', function() {
                 doc.deleteAll({otherDocs: true}).then(function(result) {
                     assert.strictEqual(result, doc);
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
                         assert.equal(doc.isSaved(), false);
                         for(var i=0; i<otherDocs.length; i++) {
                             assert.equal(otherDocs[i].isSaved(), false);
@@ -1398,7 +1398,7 @@ describe('delete', function() {
                         assert.equal(doc.otherDocs[i].isSaved(), true)
                     }
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
 
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 3);
@@ -1427,7 +1427,7 @@ describe('delete', function() {
                         assert.equal(doc.otherDocs[i].isSaved(), true)
                     }
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
 
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 3);
@@ -1458,7 +1458,7 @@ describe('delete', function() {
                         assert.equal(doc.otherDocs[i].isSaved(), false)
                     }
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
 
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 0);
@@ -1489,7 +1489,7 @@ describe('delete', function() {
                         assert.equal(doc.otherDocs[i].isSaved(), false)
                     }
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
 
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 0);

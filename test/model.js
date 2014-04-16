@@ -38,11 +38,11 @@ describe('[_]getModel', function(){
         var model = thinky.createModel(name, {id: String, name: String}, {init: false})
         assert(model._getModel().hasOwnProperty('_name'));
     });
-    it('getName', function(){
+    it('getTableName', function(){
         var name = util.s8();
         var model = thinky.createModel(name, {id: String, name: String}, {init: false})
-        assert(model.__proto__.__proto__.hasOwnProperty('getName'));
-        assert.equal(model.getName(), name);
+        assert(model.__proto__.__proto__.hasOwnProperty('getTableName'));
+        assert.equal(model.getTableName(), name);
     });
 
 });
@@ -112,8 +112,8 @@ describe('Model', function() {
         assert.equal(otherDoc.str, otherStr);
 
         assert.notEqual(otherDoc.getModel(), doc.getModel());
-        assert.equal(doc.getModel().getName(), name);
-        assert.equal(otherDoc.getModel().getName(), otherName);
+        assert.equal(doc.getModel().getTableName(), name);
+        assert.equal(otherDoc.getModel().getTableName(), otherName);
     });
 });
 
@@ -270,9 +270,9 @@ describe("Joins", function() {
         model.hasOne(otherModel, "otherDoc", "modelId", foreignKey);
 
         otherModel.on("ready", function() {
-            r.table(otherModel.getName()).indexList().run().then(function(cursor) {
+            r.table(otherModel.getTableName()).indexList().run().then(function(cursor) {
                 cursor.toArray().then(function(result) {
-                    r.table(otherModel.getName()).indexWait(foreignKey).run().then(function() {
+                    r.table(otherModel.getTableName()).indexWait(foreignKey).run().then(function() {
                         done();
                     }).error(done);
                 });
@@ -295,9 +295,9 @@ describe("Joins", function() {
         model.belongsTo(otherModel, "otherDoc", foreignKey, "otherId");
 
         model.on("ready", function() {
-            r.table(model.getName()).indexList().run().then(function(cursor) {
+            r.table(model.getTableName()).indexList().run().then(function(cursor) {
                 cursor.toArray().then(function(result) {
-                    r.table(model.getName()).indexWait(foreignKey).run().then(function() {
+                    r.table(model.getTableName()).indexWait(foreignKey).run().then(function() {
                         done();
                     }).error(done);
                 });
@@ -320,9 +320,9 @@ describe("Joins", function() {
         model.hasMany(otherModel, "otherDocs", "modelId", foreignKey);
 
         otherModel.on("ready", function() {
-            r.table(otherModel.getName()).indexList().run().then(function(cursor) {
+            r.table(otherModel.getTableName()).indexList().run().then(function(cursor) {
                 cursor.toArray().then(function(result) {
-                    r.table(otherModel.getName()).indexWait(foreignKey).run().then(function() {
+                    r.table(otherModel.getTableName()).indexWait(foreignKey).run().then(function() {
                         done();
                     }).error(done);
                 });
@@ -341,17 +341,17 @@ describe("Joins", function() {
         model.hasAndBelongsToMany(otherModel, "otherDocs", "notid1", "notid2");
 
         var linkName;
-        if(model.getName() < otherModel.getName()) {
-            linkName = model.getName()+"_"+otherModel.getName();
+        if(model.getTableName() < otherModel.getTableName()) {
+            linkName = model.getTableName()+"_"+otherModel.getTableName();
         }
         else {
-            linkName = otherModel.getName()+"_"+model.getName();
+            linkName = otherModel.getTableName()+"_"+model.getTableName();
         }
 
         model.on("ready", function() {
-            r.table(model.getName()).indexList().run().then(function(cursor) {
+            r.table(model.getTableName()).indexList().run().then(function(cursor) {
                 cursor.toArray().then(function(result) {
-                    r.table(model.getName()).indexWait("notid1").run().then(function() {
+                    r.table(model.getTableName()).indexWait("notid1").run().then(function() {
                         done();
                     }).error(done);
                 });
@@ -370,17 +370,17 @@ describe("Joins", function() {
         model.hasAndBelongsToMany(otherModel, "otherDocs", "notid1", "notid2");
 
         var linkName;
-        if(model.getName() < otherModel.getName()) {
-            linkName = model.getName()+"_"+otherModel.getName();
+        if(model.getTableName() < otherModel.getTableName()) {
+            linkName = model.getTableName()+"_"+otherModel.getTableName();
         }
         else {
-            linkName = otherModel.getName()+"_"+model.getName();
+            linkName = otherModel.getTableName()+"_"+model.getTableName();
         }
 
         otherModel.on("ready", function() {
-            r.table(otherModel.getName()).indexList().run().then(function(cursor) {
+            r.table(otherModel.getTableName()).indexList().run().then(function(cursor) {
                 cursor.toArray().then(function(result) {
-                    r.table(otherModel.getName()).indexWait("notid2").run().then(function() {
+                    r.table(otherModel.getTableName()).indexWait("notid2").run().then(function() {
                         done();
                     }).error(done);
                 });
@@ -399,11 +399,11 @@ describe("Joins", function() {
         model.hasAndBelongsToMany(otherModel, "otherDocs", "notid1", "notid2");
 
         var linkName;
-        if(model.getName() < otherModel.getName()) {
-            linkName = model.getName()+"_"+otherModel.getName();
+        if(model.getTableName() < otherModel.getTableName()) {
+            linkName = model.getTableName()+"_"+otherModel.getTableName();
         }
         else {
-            linkName = otherModel.getName()+"_"+model.getName();
+            linkName = otherModel.getTableName()+"_"+model.getTableName();
         }
 
         var numReady = 0;
@@ -411,7 +411,7 @@ describe("Joins", function() {
         model.on('ready', function() {
             r.table(linkName).indexList().run().then(function(cursor) {
                 cursor.toArray().then(function(result) {
-                    r.table(otherModel.getName()).indexWait("notid2").run().then(function() {
+                    r.table(otherModel.getTableName()).indexWait("notid2").run().then(function() {
                         done();
                     }).error(done);
                 });

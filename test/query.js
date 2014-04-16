@@ -100,7 +100,7 @@ describe('Model queries', function(){
         Model.map(function() { return 1 }).run().then(function(result) {
             done(new Error("The promise should not be resolved."))
         }).error(function(error) {
-            assert.equal(error.message, "The results could not be converted to instances of `"+Model.getName()+"`\nDetailed error: Cannot build a new instance of `"+Model.getName()+"` without an object")
+            assert.equal(error.message, "The results could not be converted to instances of `"+Model.getTableName()+"`\nDetailed error: Cannot build a new instance of `"+Model.getTableName()+"` without an object")
             done();
         });
     });
@@ -119,7 +119,7 @@ describe('Model queries', function(){
     });
     it('Model.get() should return null if nothing is found', function(done){
         Model.get("nonExistingId").run().error(function(error) {
-            assert.equal(error.message, "Cannot build a new instance of `"+Model.getName()+"` with `null`.");
+            assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
             done();
         });
     });
