@@ -7,7 +7,8 @@ permalink: thinky/
 
 ### Import
 ```
-var thinky = require('thinky')([options])
+var thinky = require('thinky')([options]);
+var r = thinky.r;
 ```
 
 The `options` argument is optional and can have the fields:
@@ -24,14 +25,17 @@ The `options` argument is optional and can have the fields:
     - `port`: client port of the RethinkDB server, default `28015`
     - `db`: the default database, default `"test"`
     - `authKey`: the authentification key to the RethinkDB server, default `""`
-- Options for the schema
+- Options for the schemas
     - `enforce_missing`: `Boolean`, `true` to forbid missing fields.
     - `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema.
     - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`
-- Options for thinky
-    - `timeFormat`: can be `"native"` or `"raw"`. The default value is `"native"`
     - `validate`: can be `"onsave"` or `"oncreate"`. The default value is `"onsave"`
+    - `timeFormat`: can be `"native"` or `"raw"`. The default value is `"native"`
 
+All the options for the schemas can be overwritten when creating them.
+
+_Note_: If you import `thinky` multiple times, the models will not be shared
+between instances.
 
 --------------
 
@@ -40,6 +44,7 @@ The `options` argument is optional and can have the fields:
 ### [thinky.r](#r)
 
 ```js
+var thinky = require('thinky')();
 var r = thinky.r;
 ```
 
@@ -51,6 +56,15 @@ _Example_: You need a reference to `r` to specify a descending order.
 ```js
 var p = Post.orderBy({index: r.desc("createdAt")}).run()
 ```
+
+_Example_: You need a reference to `r` to build a sub-query/predicate.
+
+```js
+var p = Post.filter(function(post) {
+    return r.expr([1,2,3,4]).contains(post("id"))
+}).run()
+```
+
 
 _Example_: You can use `r` to run any query like you would with the driver.
 
@@ -72,39 +86,20 @@ var model = thinky.createModel(tableName, schema, options);
 
 Create a model.
 
-The argument `tableName` must be a string composed of `[a-zA-Z0-0_]`.
+The arguments are:
+
+- `tableName` must be a string composed of `[a-zA-Z0-0_]`.   
 Two models cannot be created with the same `tableName`.
+- `schema` which must be a valid schema.  
+Read more about schemas on [this article](/documentation/schemas/)
+- `options` can be an object with the fields:
+    - `pk`: the primary key of the table.   
+    If the primary key is not `"id"`, the `pk` field is __mandatory__.
+    - `enforce_missing`: `Boolean`, `true` to forbid missing fields, default `"false"`.
+    - `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema, default `"false"`
+    - `enforce_type`: can be `"strict"`, `"loose"` or `"none"`.
 
-
-The schema is represented with an object where each field maps to a type.  
-The valid types are:
-
-- `String`
-- `Boolean`
-- `Number`
-- `Date`
-- An object with the fields:
-    - `_type` (mandatory): Can be `String`/`Boolean`/`Number`/`Date`/`Object`/`Array`
-    - `schema` (optional): The schema if the field `_type` is `Object` or `Array`
-    - `options` (optional):
-        - `enforce_missing`: `Boolean`, `true` to forbid missing fields.
-        - `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema.
-        - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`
-    - `default` (optional): can be constant value or a function that will be called with
-    the document as context.
-- An object that is a valid schema
-- An array with one of the previous type
-
-
-`options` can be an object with the fields:
-
-- `enforce_missing`: `Boolean`, `true` to forbid missing fields.
-- `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema.
-- `enforce_type`: can be `"strict"`, `"loose"`, `"none"`
-- `pk`: the primary key of the table. If the primary key is not `"id"`, the `pk`
-field is mandatory.
-
-__TODO__: Write about joined fields
+Read more about `enforce_missing`/`enforce_extra`/`enforce_type` on [the article](/documentation/schemas/) about schemas.
 
 _Example_: Create a basic Model for a `post`.
 
@@ -131,7 +126,7 @@ var User = thinky.createModel("User", {
 });
 ```
 
-_Example_: Create a model where the field "scores" is an array of `Number`.
+_Example_: Create a model where the field `"scores"` is an array of `Number`.
 
 ```js
 var Game = thinky.createModel("Game", {
@@ -151,6 +146,20 @@ var Post = thinky.createModel("Post",{
     title: String,
     content: String,
     createdAt: {_type: String, default: r.now()}
+});
+```
+
+_Example_: Create a model for a user where the nickname, if not defined, will be its first
+name.
+
+```js
+var Post = thinky.createModel("Post",{
+    id: String,
+    firstname: String,
+    lastname: String,
+    nickname: {_type: String, default: function() {
+        return this.firstname;
+    }}
 });
 ```
 
