@@ -589,9 +589,48 @@ Users.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").run().then(function(michel) {
 document.purge() -> Promise
 ```
 
-Delete a document from the database and all the joined documents.
+Delete a document and will run a range update on the database to remove all
+the references to the current document.
+Joined documents that were not retrieved will also be updated.
+
+The point of this method is to keep your data consitent.
 
 The promise will be resolved with the document.
 
-To delete joined documents that are not directly linked to the document but could
-be in the database, use [purge](#purge).
+_Example_: Delete a user and make sure that no reference to it still exists in
+the database.
+
+
+```js
+var User = thinky.createModel("Post", {
+    id: String,
+    name: String
+});
+
+User.hasAndBelongsToMany(User, "friends", "id", "id")
+
+var michel = new User({
+    name: "Michel"
+});
+var marc = new User({
+    name: "Marc"
+});
+var sophia = new User({
+    name: "Sophia"
+});
+var ben = new User({
+    name: "Ben"
+});
+
+michel.friends = [marc, sophia, ben]
+
+michel.saveAll().then(function(michel) {
+    User.get(michel.id).then(function(michel) {
+        // michel.friends === undefined
+        michel.purge().then(function(michel) {
+            // michel is deleted
+            // marc, sophia and ben relation with michel were deleted 
+        }):
+    }):
+});
+```
