@@ -134,6 +134,10 @@ ul.doc-nav li ul li{
     margin-left: 0px;
     list-style: none;
 }
+#wrapper li.title a{
+    font-weight: bold;
+    color: #000;
+}
 hr{
     height: 1px;
     border-top: 0px;
@@ -143,10 +147,14 @@ hr{
     margin: 40px 40px 20px 40px;
 }
 
-.float-content{
+#float-content{
     margin-left: 240px;
+}
+#float-content li{
+    margin: 8px 0px;
 }
 ul{
     margin: 0px;
     padding: 0px 0px 0px 20px;
 }
+

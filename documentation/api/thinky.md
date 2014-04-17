@@ -88,7 +88,8 @@ Create a model.
 
 The arguments are:
 
-- `tableName` must be a string composed of `[a-zA-Z0-0_]`.   
+- `tableName` is the name of the table used for the model.   
+It must be a string composed of `[a-zA-Z0-0_]`.    
 Two models cannot be created with the same `tableName`.
 - `schema` which must be a valid schema.  
 Read more about schemas on [this article](/documentation/schemas/)

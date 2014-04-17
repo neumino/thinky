@@ -26,3 +26,5 @@ The valid types are:
 - An object that is a valid schema
 - An array with one of the previous type
 
+
+__TODO__: Write about joined fields
