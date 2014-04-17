@@ -5,13 +5,7 @@ permalink: model/
 
 ## Model
 
-A model is returned from [thinky.createModel](/documentation/thinky/#createmodel)
-
-
-<!--
-<div id="getoptions"></div>
-### [getOptions](#getoptions)
--->
+A model is returned from [thinky.createModel](/documentation/api/thinky/#createmodel)
 
 
 <div id="gettablename"></div>
@@ -386,3 +380,140 @@ A user with its friends will look like:
 }
 ```
 
+
+--------------
+
+<div id="querysmethods"></div>
+### [Query's methods](#querysmethods)
+
+All the methods defined on a [Query](/documentation/query/) object are also available on a Model.
+
+In terms of `Query`, a model is equivalent to 
+
+```js
+r.table(model.getTableName())
+```
+
+_Example_: Returns all the posts using [run](/documentation/query/#run).
+
+Suppose the model `Post` is defined with:
+
+```js
+var Post = thinky.createModel("Post", {
+    id: String,
+    title: String,
+    content: String
+})
+```
+
+
+Retrieve all the posts.
+
+```js
+Post.run().then(function(posts) {
+    // `posts` is an array of all the posts.
+});
+```
+
+
+Order all the posts with the field `createdAt`.
+
+```js
+Post.orderBy({index: {createdAt}).run().then(function(posts) {
+    // `posts` is an array of all the posts order by date
+});
+```
+
+
+Map each post to its title.
+
+```js
+Post.map(function(post) {
+    return post("title")
+}).execute().then(function(posts) {
+    // `posts` is an array of all the titles
+});
+```
+
+
+--------------
+
+<div id="eventemittersmethods"></div>
+### [EventEmitter's methods](#eventemittersmethods)
+
+All the methods defined on
+[EventEmitter](http://nodejs.org/api/events.html#events_class_events_eventemitter)
+are available on a model.
+
+The events that can be emited are:
+- `"ready"`: when the table and all the indexes are created.
+- `"retrieved"`: when a document is retrieved from the database.
+
+
+_Example_: Log when a table is ready to use:
+
+```js
+var Post = thinky.createModel("Post", {
+    id: String,
+    title: String,
+    content: String,
+    authorId: String
+});
+
+Post.addListener('ready', function(model) {
+    console.log("Table "+model.getTableName()+" is ready");
+});
+```
+
+_Example_: Update a document every time it is retrieved from the database with
+a field "retrieved" mapped to the current date.
+
+```js
+Post.addListener('retrieved', function(doc) {
+    doc.retrieved = new Date();
+});
+```
+
+--------------
+
+<div id="doceventemittersmethods"></div>
+### [EventEmitter's methods for documents](#doceventemittersmethods)
+
+All the methods defined on
+[EventEmitter](http://nodejs.org/api/events.html#events_class_events_eventemitter) are available
+on a [document](/documentation/api/document/).
+
+For convenience purposes, you can define listeners on the model that will be transmitted on each
+newly created documents. All the methods are the same as in EventEmitter, except that they
+are prefixed with `"doc"` (using camelCase).
+
+The events that can be emited on a document are:
+- `"saving"`: just before a document is saved
+- `"save"`: once a document is saved
+- `"delete"`: once a document is deleted
+
+
+_Example_: Log every post that we save in the database.
+
+```js
+var Post = thinky.createModel("Post", {
+    id: String,
+    title: String,
+    content: String,
+    authorId: String
+});
+
+Post.docAddListener('save', function(post) {
+    console.log("A new post has been saved.");
+    console.log("Saved post'id: "+post.id);
+});
+
+var post = new Post({
+    title: "Hello",
+    content: "First post."
+});
+
+post.save().then(function) {
+    // A message has been logged.
+}).error(console.log);
+```

@@ -134,6 +134,10 @@ ul.doc-nav li ul li{
     margin-left: 0px;
     list-style: none;
 }
+
+ul.doc-nav span{
+    padding-left: 30px;
+}
 #wrapper li.title a{
     font-weight: bold;
     color: #000;
