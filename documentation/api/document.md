@@ -417,7 +417,9 @@ var Account = thinky.createModel("Account", {
 
 User.hasOne(Account, "account", "id", "userId")
 
-User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().run().then(function(user) {
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().run()
+    .then(function(user) {
+
     /*
      * user = {
      *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
@@ -438,7 +440,9 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().run().then(function(u
          *     sold: 2420
          * }
          */
-        Account.get("3851d8b4-5358-43f2-ba23-f4d481358901").then(function(account) {
+        Account.get("3851d8b4-5358-43f2-ba23-f4d481358901").run()
+            .then(function(account) {
+
             /*
              * account = {
              *     id: "3851d8b4-5358-43f2-ba23-f4d481358901",
@@ -450,3 +454,144 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().run().then(function(u
 });
 
 ```
+
+--------------
+
+<div id="deleteall"></div>
+### [deleteAll](#deleteall)
+```
+document.deleteAll([modelToDelete]) -> Promise
+```
+
+Delete a document from the database and all the joined documents it has that are
+currently linked with it.
+
+By default, if `modelToDelete` is not provided, `deleteAll` will keep recursing and will
+delete all the joined documents.   
+To avoid infinite recursion, `deleteAll` will not recurse in a field that contains a document from
+a model that was previously deleted.
+
+The option `modelToDelete` can be an object where each field is a joined document that will also be deleted.
+
+The promise will be resolved with the document.
+
+To delete joined documents that are not directly linked to the document but could
+be in the database, use [purge](#purge).
+
+
+
+_Example_: Delete a single document and its account.
+
+```js
+var User = thinky.createModel("User", {
+    id: String,
+    name: String
+});
+
+var Account = thinky.createModel("Account", {
+    id: String,
+    userId: String,
+    sold: Number
+});
+
+User.hasOne(Account, "account", "id", "userId")
+
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin()
+    .run().then(function(user) {
+
+    /*
+     * user = {
+     *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *     name: "Michel",
+     *     account: {
+     *         id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+     *         userId: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *         sold: 2420
+     *     }
+     * }
+     */
+    user.delete().then(function(result) {
+        // result === user
+        user.isSaved(); // false;
+        account.isSaved(); // false;
+    });
+});
+```
+
+_Example_: Delete a user and all its friends.
+
+```js
+var User = thinky.createModel("Post", {
+    id: String,
+    name: String
+});
+
+User.hasAndBelongsToMany(User, "friends", "id", "id")
+
+var michel = new User({
+    name: "Michel"
+});
+var marc = new User({
+    name: "Marc"
+});
+var sophia = new User({
+    name: "Sophia"
+});
+var ben = new User({
+    name: "Ben"
+});
+
+michel.friends = [marc, sophia, ben]
+```
+
+Because the field `friends` contains instances of `User` and
+that `michel` is also an instance of `User`, we must explicitly
+specify the field `friends` in `modelToDelete`.
+
+```js
+Users.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").run().then(function(michel) {
+    /*
+     * {
+     *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *     name: "Michel",
+     *     email: "michel@example.com",
+     *     friends: [
+     *         {
+     *             id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+     *             name: "Marc",
+     *             email: "marc@example.com"
+     *         }, {
+     *             id: "706f7730-8f28-4e57-8555-255b0746919b",
+     *             name: "Sophia",
+     *             email: "sophia@example.com"
+     *         }, {
+     *             id: "18cadb27-54b6-41ab-b6e2-e1c49603e82f",
+     *             name: "Ben",
+     *             email: "ben@example.com"
+     *         }
+     *     ]
+     * }
+     */
+
+     user.deleteAll({friends: true}).then(function(result) {
+        // michel, marc, sophia and ben are deleted from the database
+     });
+});
+```
+
+
+--------------
+
+<div id="purge"></div>
+### [purge](#purge)
+
+```
+document.purge() -> Promise
+```
+
+Delete a document from the database and all the joined documents.
+
+The promise will be resolved with the document.
+
+To delete joined documents that are not directly linked to the document but could
+be in the database, use [purge](#purge).
