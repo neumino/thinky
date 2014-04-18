@@ -292,7 +292,7 @@ _Example_:
 
 ```js
 var Human = thinky.createModel({id: String, name: String, partnerId: String});
-Human.hasOne(Human, "emergencyContact", "id", "partnerId");
+Human.belongsTo(Human, "emergencyContact", "contactId", "id");
 
 var michel = new Human({
     name: "Michel"
@@ -315,7 +315,80 @@ TODO: Test
 
 ### Retrieve
 
+Use the `getJoin` command to retrieve joined documents.
+
+Like for `saveAll`, `getJoin` will recurse in a field as long as it does not contain 
+an instance of a Model previously fetched.
+
+_Example_: Basic usage.
+
+```js
+var User = thinky.createModel("User", {
+    id: String,
+    name: String
+});
+var Account = thinky.createModel("Account", {
+    id: String,
+    sold: Number,
+    userId: String
+});
+
+User.hasOne(Account, "account", "id", "userId");
+Account.belongs(User, "user", "userId", "id");
+
+
+User.getJoin().run().then(function(result) {
+    /*
+     * All the documents in `result` will be like
+     * var user = {
+     *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *     name: "Michel",
+     *     account: {
+     *         id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+     *         userId: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *         sold: 2420
+     *     }
+     * }
+     */
+}):
+```
+
+
+
+_Example_: Manually set the document to retrieve.
+
+```js
+var Human = thinky.createModel({id: String, name: String, partnerId: String});
+Human.belongsTo(Human, "emergencyContact", "contactId", "id");
+
+var michel = new Human({
+    name: "Michel"
+});
+var sophia = new Human({
+    name: "Sophia"
+});
+
+michel.emergencyContact = sophia;
+
+Human.getJoin({emergencyContact: true}).then(function(result) {
+    /*
+     * All the documents in `result` will be like
+     * var user = {
+     *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *     name: "Michel",
+     *     contactId: "4650ad62-fabb-4cd6-8672-dd68cdda77a1"
+     *     emergencyContact: {
+     *         id: "4650ad62-fabb-4cd6-8672-dd68cdda77a1"
+     *         name: "Sophia"
+     *         
+     *     }
+});
+```
+
+
 ### Delete
+
+The `delete` command will try to keep your data consistent.
 
 ### Internals
 
