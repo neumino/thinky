@@ -629,8 +629,24 @@ michel.saveAll().then(function(michel) {
         // michel.friends === undefined
         michel.purge().then(function(michel) {
             // michel is deleted
-            // marc, sophia and ben relation with michel were deleted 
+            // marc, sophia and ben relations with michel have been deleted 
         }):
     }):
 });
 ```
+
+
+<div id="eventemittersmethods"></div>
+### [EventEmitter's methods](#eventemittersmethods)
+
+All the methods defined on
+[EventEmitter](http://nodejs.org/api/events.html#events_class_events_eventemitter)
+are available on a model.
+
+The events that can be emited are:
+
+- `"saving"`: just before a document is saved
+- `"save"`: once a document is saved
+- `"delete"`: once a document is deleted
+
+__TODO__ Rename save to saved.
