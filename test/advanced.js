@@ -1973,4 +1973,26 @@ describe('Advanced cases', function(){
         });
         }).error(done);
     });
+
+    it('hasAndBelongsToMany -- pairs', function(done) {
+        var Human = thinky.createModel("Human", {id: String, name: String, contactId: String});
+        Human.belongsTo(Human, "emergencyContact", "contactId", "id");
+
+        var michel = new Human({
+            name: "Michel"
+        });
+        var sophia = new Human({
+            name: "Sophia"
+        });
+
+        michel.emergencyContact = sophia;
+        michel.saveAll({emergencyContact: true}).then(function(result) {
+            assert.strictEqual(michel, result);
+            assert.equal(michel.isSaved(), true);
+            assert.equal(sophia.isSaved(), true);
+            assert.equal(sophia.id, michel.contactId);
+            done();
+        }).error(done);
+
+    });
 });
