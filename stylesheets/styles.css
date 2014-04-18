@@ -36,14 +36,20 @@ nav a:hover{
     color: #eee;
     text-decoration: underline;
 }
+
 nav ul{
     display: block;
     margin: 0px auto;
-    width: 800px;
-    text-align: right;
+    width: 1280px;
+    text-align: left;
 }
+
 nav li{
     display: inline-block;
+}
+
+.title {
+    font-size: 18px;
 }
 
 #wrapper{
