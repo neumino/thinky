@@ -1,3 +1,6 @@
+@import url(http://fonts.googleapis.com/css?family=Lato:300,400);
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans+Mono);
+
 html{
     margin: 0px;
     padding: 0px;
@@ -6,6 +9,7 @@ body{
     margin: 0px;
     padding: 0px;
     background: #fafafa;
+    font-family: 'Lato', sans-serif;
 }
 nav{
     display: block;
@@ -109,7 +113,7 @@ footer{
 }
 
 code{
-    font-family: monospace, serif;
+    font-family: 'Droid Sans Mono' !important;
     font-size: 0.9em;
 }
 
