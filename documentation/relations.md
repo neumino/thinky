@@ -234,7 +234,69 @@ A tag with its joined posts will look like:
 
 
 
-### Save
+### Save, retrieve and delete
+
+_Simple save_
+The `save` command saves only the local document to the database and not the joined ones (including
+the links or foreign keys).
+
+_Simple saveAll_
+The `saveAll` command will save the local document to the database and its joined ones too. The
+foreign keys will be copied and saved too.
+
+The joined documents will be saved as long as they are not instances of a Model saved at a previous step.   
+For example, if we do
+
+```js
+var User = thinky.createModel("User", {
+    id: String,
+    name: String
+});
+var Account = thinky.createModel("Account", {
+    id: String,
+    sold: Number,
+    userId: String
+});
+
+User.hasOne(Account, "account", "id", "userId");
+Account.belongs(User, "user", "userId", "id");
+
+var user = new User({...});
+var account = new Account({...});
+
+user.account = account;
+account.user = user;
+
+user.saveAll().then(...);
+```
+
+We will first save `user`, then copy `user`'s id in `account.userId`, then save account.
+We will not try to save the field account.user since we previously already saved an instance of User.
+
+_Advanced saveAll_
+In some cases, you may want to save a document of an instance already saved.
+A common example is when you have pairs of the same Model.
+
+_Example_: Save a pair.
+
+```js
+var Human = thinky.createModel({id: String, name: String, partnerId: String});
+Human.hasOne(Human, "partner", "id", "partnerId");
+Human.belongsTo(Human, "partner", "partnerId", "id");
+
+var michel = new Human({
+    name: "Michel"
+});
+var sophia = new Human({
+    name: "Sophia"
+});
+
+michel.partner = sophia;
+sophia.partner = michel;
+```
+
+TODO: Test
+
 
 
 ### Retrieve
