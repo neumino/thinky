@@ -266,7 +266,7 @@ describe('save', function() {
             Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey")
         });
 
-        it('save shouls save only one doc', function(done) {
+        it('save should save only one doc', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
             var doc = new Model(docValues);
             var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
