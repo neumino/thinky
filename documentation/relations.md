@@ -382,6 +382,7 @@ Human.getJoin({emergencyContact: true}).then(function(result) {
      *         name: "Sophia"
      *         
      *     }
+     */
 });
 ```
 
