@@ -411,9 +411,6 @@ describe('Advanced cases', function(){
 
             Model.hasAndBelongsToMany(OtherModel, "links", "id", "id");
             
-            // TODO: Dirty patch for https://github.com/rethinkdb/rethinkdb/issues/2226
-            setTimeout(function() {
-
             OtherModel.hasAndBelongsToMany(Model, "links2", "id", "id");
 
             var values = {};
@@ -515,8 +512,6 @@ describe('Advanced cases', function(){
                     });
                 });
             }).error(done);
-
-            }, 1000)
         });
     });
     describe('deleteAll', function(){

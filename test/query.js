@@ -477,6 +477,7 @@ describe('getJoin', function(){
                             assert(result.has[i].id < result.has[j].id)
                         }
                     }
+                    done();
                 });
             }).error(done);
         });
