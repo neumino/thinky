@@ -1,13 +1,10 @@
-@import url(http://fonts.googleapis.com/css?family=Lato:300,400);
-@import url(http://fonts.googleapis.com/css?family=Droid+Sans+Mono);
-
 html{
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
 body{
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     background: #fafafa;
     font-family: 'Lato', sans-serif;
 }
@@ -20,9 +17,9 @@ nav{
     background: #2e3138;
     border-top: 2px solid #f3ff71;
 
-    -moz-box-shadow:    0px 0px 5px 0px #000;
-    -webkit-box-shadow: 0px 0px 5px 0px #000;
-    box-shadow:         0px 0px 5px 0px #000;
+    -moz-box-shadow:    0 0 5px 0 #000;
+    -webkit-box-shadow: 0 0 5px 0 #000;
+    box-shadow:         0 0 5px 0 #000;
 }
 nav a{
     line-height: 40px;
@@ -39,7 +36,7 @@ nav a:hover{
 
 nav ul{
     display: block;
-    margin: 0px auto;
+    margin: 0 auto;
     width: 1280px;
     text-align: left;
 }
@@ -55,9 +52,9 @@ nav li{
 #wrapper{
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
-    padding: 20px 60px 0px 60px;
+    padding: 20px 60px 0 60px;
     width: 900px;
-    margin: 2px auto 0px auto;
+    margin: 2px auto 0 auto;
 }
 
 main{
@@ -93,17 +90,17 @@ code{
 }
 pre code{
     background: none;
-    -webkit-border-radius: 0px;
-    -moz-border-radius: 0px;
-    border-radius: 0px;
-    padding: 0px;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    padding: 0;
 }
 
 footer{
     clear: both;
     width: 900px;
-    margin: 40px auto 0px auto;
-    padding: 20px 0px 40px 0px;
+    margin: 40px auto 0 auto;
+    padding: 20px 0 40px 0;
     border-top: 1px dotted #ccc;
 }
 #wrapper a{
@@ -119,29 +116,29 @@ footer{
 }
 
 code{
-    font-family: 'Droid Sans Mono' !important;
+    font-family: 'Droid Sans Mono';
     font-size: 0.9em;
 }
 
 .doc-nav{
     float: left;
-    padding: 20px 0px;
+    padding: 20px 0;
     width: 180px;
     border-right: 1px dotted #ccc;
     margin-right: 20px;
     margin-bottom: 20px;
 }
 ul.doc-nav, ul.doc-nav ul{
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
 li{
-    margin: 5px 0px;
-    padding: 0px;
+    margin: 5px 0;
+    padding: 0;
     list-style: square;
 }
 ul.doc-nav li ul li{
-    margin-left: 0px;
+    margin-left: 0;
     list-style: none;
 }
 
@@ -154,9 +151,9 @@ ul.doc-nav span{
 }
 hr{
     height: 1px;
-    border-top: 0px;
-    border-left: 0px;
-    border-right: 0px;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
     border-bottom: 1px dotted #ccc;
     margin: 40px 40px 20px 40px;
 }
@@ -165,10 +162,10 @@ hr{
     margin-left: 240px;
 }
 #float-content li{
-    margin: 8px 0px;
+    margin: 8px 0;
 }
 ul{
-    margin: 0px;
-    padding: 0px 0px 0px 20px;
+    margin: 0;
+    padding: 0 0 0 20px;
 }
 
