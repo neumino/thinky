@@ -1,47 +1,81 @@
-/**
- * Module dependencies.
- */
+// Import express and co
+var express = require('express');
+var bodyParser = require('body-parser');
+var app = express();
 
-var express = require( 'express' );
+// Load config for RethinkDB and express
+var config = require(__dirname+"/config.js")
 
-var app = module.exports = express.createServer();
+// Import rethinkdbdash
+//var thinky = require('thinky')(config.rethinkdb);
+var thinky = require('../../')(config.rethinkdb);
+var r = thinky.r;
 
-// thinky setup
-require( './db' );
-
-var routes = require( './routes' );
-
-// Configuration
-app.configure( 'development', function (){
-  app.set( 'views', __dirname + '/views' );
-  app.set( 'view engine', 'ejs' );
-  app.use( express.favicon());
-  app.use( express.static( __dirname + '/public' ));
-  app.use( express.logger());
-  app.use( express.cookieParser());
-  app.use( express.bodyParser());
-  app.use( routes.current_user );
-  app.use( app.router );
-  app.use( express.errorHandler({ dumpExceptions : true, showStack : true }));
+// Create the model
+var Todo = thinky.createModel("todos", {
+    id: String,
+    title: String,
+    completed: Boolean,
+    createdAt: {_type: Date, default: r.now()}
 });
 
-app.configure( 'production', function (){
-  app.set( 'views', __dirname + '/views' );
-  app.set( 'view engine', 'ejs' );
-  app.use( express.cookieParser());
-  app.use( express.bodyParser());
-  app.use( routes.current_user );
-  app.use( app.router );
-  app.use( express.errorHandler());
-});
+// Ensure that an index createdAt exists
+Todo.ensureIndex("createdAt");
 
-// Routes
-app.get( '/', routes.index );
-app.post( '/create', routes.create );
-app.get( '/destroy/:id', routes.destroy );
-app.get( '/edit/:id', routes.edit );
-app.post( '/update/:id', routes.update );
 
-app.listen( 3001, '127.0.0.1', function (){
-  console.log( 'Express server listening on port %d in %s mode', app.address().port, app.settings.env );
-});
+app.use(express.static(__dirname + '/public'));
+app.use(bodyParser());
+
+app.route('/todo/get').get(get);
+app.route('/todo/new').put(create);
+app.route('/todo/update').post(update);
+app.route('/todo/delete').post(del);
+
+
+// Retrieve all todos
+function get(req, res, next) {
+    Todo.orderBy({index: "createdAt"}).run().then(function(result) {
+        res.send(JSON.stringify(result));
+    }).error(handleError(res));
+}
+
+// Create a new todo
+function create(req, res, next) {
+    var todo = new Todo(req.body);
+    todo.save().then(function(result) {
+        res.send(JSON.stringify(result));
+    }).error(handleError(res));
+}
+
+// Update a todo
+function update(req, res, next) {
+    var todo = new Todo(req.body);
+    Todo.get(todo.id).run().then(function(todo) {
+    
+        todo.title = req.body.title;
+        todo.completed = req.body.completed;
+
+        todo.save().then(function(result) {
+            res.send(JSON.stringify(result));
+        }).error(handleError(res));
+    }).error(handleError(res));
+}
+
+// Delete a todo
+function del(req, res, next) {
+    Todo.get(req.body.id).run().then(function(todo) {
+        todo.delete().then(function(result) {
+            res.send("");
+        }).error(handleError(res));
+    }).error(handleError(res));
+}
+
+function handleError(res) {
+    return function(error) {
+        return res.send(500, {error: error.message});
+    }
+}
+
+// Start express
+app.listen(config.express.port);
+console.log('listening on port '+config.express.port);

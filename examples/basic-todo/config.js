@@ -1,8 +1,11 @@
-var config = {}
-
-config.host = 'localhost';
-config.port = 28015;
-config.db = 'test';
-
-module.exports = config;
-
+module.exports = {
+    rethinkdb: {
+        host: "localhost",
+        port: 28015,
+        authKey: "",
+        db: "thinkyex"
+    },
+    express: {
+        port: 3000
+    }
+}
