@@ -7,6 +7,10 @@ body{
     padding: 0px;
     background: #fafafa;
 }
+img{
+    display: block;
+    margin: 0px auto;
+}
 nav{
     display: block;
     width: 100%;
