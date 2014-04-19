@@ -3,7 +3,7 @@ layout: default
 ---
 
 
-![](/images/thinky-header.png)
+[![](/images/thinky-header.png)](/)
 
 
 ## Quickstart
