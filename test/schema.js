@@ -1932,4 +1932,28 @@ describe('_validator', function(){
                 && (error.message === "Value for [arr][1] must be a number or null.")
         });
     });
+    it('validate with _type: Object', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            ob: {_type: Object, schema: {foo: String}}
+        }, {init: false})
+
+        var doc = new Model({id: "abc", ob: {foo: "bar"}});
+        doc.validate();
+    });
+    it('validate with _type: Array', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            ob: {_type: Object, schema: {foo: String}}
+        }, {init: false})
+
+        var doc = new Model({id: "abc", ob: {foo: 1}});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error)
+                && (error.message === "Value for [ob][foo] must be a string or null.")
+        });
+    });
+
 });
