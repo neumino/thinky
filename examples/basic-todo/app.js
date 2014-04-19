@@ -8,7 +8,7 @@ var config = require(__dirname+"/config.js")
 
 // Import rethinkdbdash
 //var thinky = require('thinky')(config.rethinkdb);
-var thinky = require('../../')(config.rethinkdb);
+var thinky = require('thinky')(config.rethinkdb);
 var r = thinky.r;
 
 // Create the model
