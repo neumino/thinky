@@ -1999,3 +1999,21 @@ describe('purge', function() {
         }).error(done);
     });
 });
+describe('date', function() {
+    it('should work', function(done) {
+        var name = util.s8();
+        var Model = thinky.createModel(name, {
+            id: String,
+            date: {_type: Date, default: r.now()}
+        });
+        var doc = new Model({});
+        assert.equal(typeof doc.date, 'function')
+        doc.save().then(function(result) {
+            assert(doc.date instanceof Date);
+            Model.get(doc.id).run().then(function(result) {
+                assert.deepEqual(result.date, doc.date);
+                done();
+            });
+        }).error(done);;
+    });
+});
