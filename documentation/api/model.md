@@ -32,6 +32,39 @@ PostModel.getTableName(); // returns "Post"
 
 --------------
 
+<div id="define"></div>
+### [define](#define)
+
+```js
+Model.define(key, fn);
+```
+
+Define a function that documents will ba available for documents of this Model.
+
+
+_Example_: Add a method `isAdult` on `Users`.
+
+```js
+var User = thinky.createModel("User", {
+    id: String,
+    age: Number
+});
+
+User.define("isAdult", function() {
+    return this.age > 18;
+});
+
+var kid = new User({age: 12});
+kid.isAdult(); // false
+
+var grownup = new User({age: 23});
+grownup.isAdult(); // true
+```
+
+--------------
+
+
+
 <div id="hasone"></div>
 ### [hasOne](#hasone)
 ```js

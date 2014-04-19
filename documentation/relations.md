@@ -7,7 +7,7 @@ permalink: relations/
 
 ### Introduction
 
-`thinky` lets you create Models that you can join. Four relations are defined:
+Thinky lets you create Models that you can join. Four relations are defined:
 
 - [hasOne](/documentation/api/model/#hasone)
 - [belongsTo](/documentation/api/model/#belongsto)
@@ -79,6 +79,7 @@ var account = {
 }
 ```
 
+<div class="space"></div>
 
 - __1-n relation__
 
@@ -155,10 +156,11 @@ var post = {
 
 
 
+<div class="space"></div>
 
 - __n-n relation__
 
-A n-n relation means that a each instance of a Model `A` possesses multiple instances of `B`, and that each instance of
+A n-n relation means that each instance of a Model `A` possesses multiple instances of `B`, and that each instance of
 `B` also possesses multiple instances of B.
 
 In terms of actual code, it means that you have:
@@ -229,6 +231,7 @@ A tag with its joined posts will look like:
 
 
 
+------------------------
 
 ### Save documents
 
@@ -317,6 +320,9 @@ Save both documents and the relation.
 michel.saveAll({emergencyContact: true}).then(...);
 ```
 
+
+------------------------
+
 ### Retrieve documents
 
 Use the `getJoin` command to retrieve joined documents.
@@ -395,6 +401,8 @@ Human.getJoin({emergencyContact: true}).then(function(result) {
 });
 ```
 
+
+------------------------
 
 ### Delete documents
 

@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: default
 ---
 
 ## About
@@ -9,8 +9,17 @@ layout: page
 Michel Tu - [orphee@gmail.com](orphee@gmail.com) - [http://justonepixel.com](http://justonepixel.com)
 
 
+### Donations
+
+I built thinky for fun, and I do not need money.
+
+If thinky was useful to you and if you really want to thank me, give a few dollars to a
+charity &mdash; [Watsi](http://watsi.org) is a good one in my opinion.
+
+
 ### Notes
-This is a personal project.
+This is a personal project and is not officially supported by RethinkDB.
+
 
 ### License
 Copyright (c) 2013 Michel Tu [orphee@gmail.com](orphee@gmail.com)

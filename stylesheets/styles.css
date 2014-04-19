@@ -113,6 +113,13 @@ code{
     font-size: 0.9em;
 }
 
+.main-title{
+    list-style: none;
+    margin: 20px 40px 20px 0px;
+    font-weight: bold;
+    text-align: center;
+    width: 150px;
+}
 .doc-nav{
     float: left;
     padding: 20px 0px;
@@ -142,6 +149,10 @@ ul.doc-nav span{
     font-weight: bold;
     color: #000;
 }
+#wrapper li.title{
+    list-style: square;
+}
+
 hr{
     height: 1px;
     border-top: 0px;
@@ -161,4 +172,6 @@ ul{
     margin: 0px;
     padding: 0px 0px 0px 20px;
 }
-
+.space{
+    height: 30px;
+}

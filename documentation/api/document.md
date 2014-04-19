@@ -5,7 +5,7 @@ permalink: document/
 
 ## Document
 
-A document is returned from calling `new` on a [Model](/documentation/api/model/)
+A document is returned from calling `new` on a [Model](/documentation/api/model/).
 
 
 <div id="getmodel"></div>

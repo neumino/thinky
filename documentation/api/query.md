@@ -5,9 +5,13 @@ permalink: query/
 
 ## Query
 
-A query is created when you call a method on a Model.
+A query is created when you call a method on a Model or by calling
 
-A `Query` object is basically a wrapper of an actual ReQL query and a model.  
+```js
+var query = new thinky.Query(Model, rawQuery);
+```
+
+A `Query` object is a wrapper of an actual ReQL query and a model.  
 The model is used only if you call the `run` method. The results returned by the
 database will be converted to instances of the model stored.
 
@@ -164,17 +168,6 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({account: {sold: true}}
 
 --------------
 
-<div id="setmodel"></div>
-### [_setModel](#setmodel)
-
-Set the model.
-
-__TODO__ Implement
-
-
-
---------------
-
 <div id="run"></div>
 ### [run](#run)
 
@@ -198,9 +191,11 @@ a raw cursor can be returned.
 
 _Example_: Return all the ids of the users
 
-```
-User.map(r.row("id"))execute().then(function(result) {
-    // process `result`
+```js
+User.map(r.row("id")).execute().then(function(cursor) {
+    cursor.each(function(userId) {
+        console.log(userId);
+    }
 })
 ```
 

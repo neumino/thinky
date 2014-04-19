@@ -72,6 +72,31 @@ _Example_: You can use `r` to run any query like you would with the driver.
 var p = r.table("posts").count().run()
 ```
 
+--------------
+
+
+<div id="query"></div>
+### [thinky.Query](#query)
+
+```js
+var thinky = require('thinky')();
+var r = thinky.r;
+var Query = thinky.Query;
+```
+
+Let you create a query that does not start with `r.table("...")`.
+
+
+_Example_: Create a query that returns `Users`.
+
+```js
+var query = new Query(User, r);
+query.expr([1,2,3]).map(function(id) {
+    return r.table(User.getTableName()).get(id)
+}).run().then(function(result) {
+    // result is an array of Users
+}).error(console.log);
+```
 
 
 --------------

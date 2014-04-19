@@ -9,7 +9,7 @@ Schemas are structures that describe a Model. They are used to validate the
 data before saving it.   
 It can also specify generate some default values if needed.
 
-A schema in `thinky` is define with an object that is passed to [thinky.createModel](/documentation/api/thinky/#createmodel).   
+A schema in thinky is define with an object that is passed to [thinky.createModel](/documentation/api/thinky/#createmodel).   
 Each field of the object maps to a type. The valid types are:
 
 - `String`
@@ -17,16 +17,16 @@ Each field of the object maps to a type. The valid types are:
 - `Number`
 - `Date`
 - An object with the fields:
-    - `_type` (mandatory): Can be `String`/`Boolean`/`Number`/`Date`/`Object`/`Array`
-    - `schema` (optional): The schema if the field `_type` is `Object` or `Array`
-    - `options` (optional):
+    - `_type` (mandatory): Can be `String`/`Boolean`/`Number`/`Date`/`Object`/`Array`.
+    - `schema` (optional): The schema if the field `_type` is `Object` or `Array`.
+    - `options` (optional), will overwrite the model's options:
         - `enforce_missing`: `Boolean`, `true` to forbid missing fields.
         - `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema.
-        - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`
+        - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`.
     - `default` (optional): can be constant value or a function that will be called with
     the document as context.
-- An object that is a valid schema
-- An array with one of the previous type
+- An object that is a valid schema.
+- An array with one of the previous types.
 
 __Note__: The fields used to store joined documents should not be provided in the schema.
 
@@ -44,7 +44,7 @@ var User = thinky.createModel("User", {
 })
 ```
 
-_Example_: Create a model with nested fields
+_Example_: Create a model with nested fields.
 
 ```js
 var User = thinky.createModel("User", {
@@ -67,7 +67,30 @@ var Game = thinky.createModel("Game", {
 });
 ```
 
-_Example_: Create a model where the field `game` is an array of objects with two fields (`score` and `winner`).
+Another way to do it is with:
+
+```js
+var Game = thinky.createModel("Game", {
+    id: String,
+    name: String,
+    scores: [{_type: Number}]
+});
+```
+
+One more is with:
+
+```js
+var Game = thinky.createModel("Game", {
+    id: String,
+    name: String,
+    scores: {_type: Array, schema: Number}
+});
+```
+
+
+
+
+_Example_: Create a model where the field `game` is an array of objects with two fields &mdash; `score` and `winner`.
 
 ```js
 var Game = thinky.createModel("Game", {
