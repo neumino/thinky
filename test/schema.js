@@ -619,6 +619,26 @@ describe('generateDefault', function(){
         assert.equal(doc.id, str);
         assert.deepEqual(doc, { id: str, nested: {field1: 1, field2: "hello"}});
     });
+    it('Default array', function(){
+        var name = util.s8();
+        var str = util.s8();
+        var defaultValue = {foo: "bar"};
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            ar: {
+                _type: Array,
+                default: function() { return [1,2,3] }
+            }
+        }, {init: false})
+
+        doc = new Model({
+            id: str
+        })
+
+        assert.equal(doc.id, str);
+        assert.deepEqual(doc.ar, [1,2,3]);
+    });
 
 });
 describe('validate', function(){
