@@ -59,6 +59,9 @@ function update(req, res, next) {
             res.send(JSON.stringify(result));
         }).error(handleError(res));
     }).error(handleError(res));
+
+    // Another way to delete a todo is with
+    // Todo.get(req.body.id).update(todo).execute()
 }
 
 // Delete a todo
@@ -68,6 +71,9 @@ function del(req, res, next) {
             res.send("");
         }).error(handleError(res));
     }).error(handleError(res));
+
+    // Another way to delete a todo is with
+    // Todo.get(req.body.id).delete().execute()
 }
 
 function handleError(res) {
