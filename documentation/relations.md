@@ -7,7 +7,7 @@ permalink: relations/
 
 ### Introduction
 
-Thinky lets you create Models that you can later join. Four relations are defined:
+`thinky` lets you create Models that you can join. Four relations are defined:
 
 - [hasOne](/documentation/api/model/#hasone)
 - [belongsTo](/documentation/api/model/#belongsto)
@@ -17,14 +17,9 @@ Thinky lets you create Models that you can later join. Four relations are define
 These four relations are usually used in three different ways.   
 Suppose we have two models `A` and `B`, we can have:
 
-- a 1-1 relation
-- a 1-n relation
-- a n-n relation
+- __1-1 relation__
 
-
-### 1-1 relation
-
-A 1-1 relation means that each instance of a Model `A` has and belongs to one instance of a model `B`.  
+A 1-1 relation means that each instance of a Model `A` has and belongs to __one instance__ of a model `B`.  
 In terms of actual code, it means that you have:
 
 ```
@@ -33,8 +28,9 @@ B.belongsTo(A, ...)
 ```
 
 
-`hasOne` and `belongsTo` are similar relations. The difference is that for `A.hasOne(B, ...)`, the foreign
-key is stored in `B`, while in `A.belongsTo(B, ...)`, the foreign key is stored in `A`.
+The `hasOne` and `belongsTo` relations are similar.    
+The difference is that for `A.hasOne(B, ...)`, the foreign key is stored in `B`, while
+in `A.belongsTo(B, ...)`, the foreign key is stored in `A`.
 
 
 _Example_: Each user has exactly one account, and each account belongs to exactly one user.
@@ -84,7 +80,7 @@ var account = {
 ```
 
 
-### 1-n relation
+- __1-n relation__
 
 A 1-n relation means that a each instance of a Model `A` possesses multiple instance of `B`, but each instance of
 `B` belongs to only one instance of `A`.    
@@ -143,7 +139,7 @@ var author = {
 A post with its author will look like
 
 ```js
-var author = {
+var post = {
     {
         id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
         title: "Hello world",
@@ -160,7 +156,7 @@ var author = {
 
 
 
-### n-n relation
+- __n-n relation__
 
 A n-n relation means that a each instance of a Model `A` possesses multiple instances of `B`, and that each instance of
 `B` also possesses multiple instances of B.
@@ -172,7 +168,7 @@ A.hasAndBelongsToMany(B, ...)
 B.hasAndBelongsToMany(A, ...)
 ```
 
-The relation `hasAndBelongsToMany` is currently symmetric, meaning that if `a` "has" `b`, then `b` also "has" `a`.
+The relation `hasAndBelongsToMany` is symmetric, meaning that if `a` "has" `b`, then `b` also "has" `a`.
 
 ```js
 var Post = thinky.createModel("Post", {
@@ -196,7 +192,7 @@ A post with its joined tags will look like:
     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
     title: "Hello world",
     content: "This is the first post",
-    tag: [
+    tags: [
         {
             id: "3851d8b4-5358-43f2-ba23-f4d481358901",
             tag: "test"
@@ -216,17 +212,17 @@ A tag with its joined posts will look like:
 ```js
 {
     id: "3851d8b4-5358-43f2-ba23-f4d481358901",
-    tag: "test"
+    tag: "test",
     posts: [
-    {
-        id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
-        title: "Hello world",
-        content: "This is the first post.",
-    }, {
-        id: "eaed7d80-5205-488c-aedc-eb91e9f77d6b",
-        title: "Second test",
-        content: "Trying another post.",
-    }, 
+        {
+            id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+            title: "Hello world",
+            content: "This is the first post.",
+        }, {
+            id: "eaed7d80-5205-488c-aedc-eb91e9f77d6b",
+            title: "Second test",
+            content: "Trying another post.",
+        }, 
     ]
 }
 ```
@@ -234,17 +230,23 @@ A tag with its joined posts will look like:
 
 
 
-### Save, retrieve and delete
+### Save documents
 
-_Simple save_  
-The `save` command saves only the local document to the database and not the joined ones (including
-the links or foreign keys).
+#### save
 
-_Simple saveAll_  
-The `saveAll` command will save the local document to the database and its joined ones too. The
-foreign keys will be copied and saved too.
+The `save` command saves the local document to the database but does not the joined documents and does not copy (and save) the
+foreign keys and links.
 
-The joined documents will be saved as long as they are not instances of a Model saved at a previous step.   
+Use `save` only when you want to save local changes of document.
+
+
+#### saveAll
+
+The `saveAll` command will save the local document to the database and will recurse in joined documents to save them.
+The foreign keys and links will be automatically saved by `thinky.
+
+_Note_: To avoid infinite recursion with circular references, `saveAll` will not recurse in a field containing document(s)
+of a previously saved model.
 
 _Example_:
 
@@ -277,21 +279,26 @@ user.saveAll().then(...);
 ```
 
 We will first save `user`, then copy `user`'s id in `account.userId`, then save `account`.
-We will not try to save the field account.user since we previously already saved an instance of User.
+The `saveAll` command will not recurse in the field `account.user` since we previously already saved an instance of `User` (`user`).
 
 
 Executing `account.saveAll()` will save things in the same order since we need to save `user` first
-to fill the foreign key in `account`.
+to fill the foreign key in `account`. Using the appropriate order to save documents will be done by `thinky`.
 
 
 _Advanced saveAll_  
-In some cases, you may want to save a document of an instance already saved.
+You can force `thinky` to save joined documents by explicitly specifying in which fields `saveAll` should
+recurse into.   
 A common example is when a Model is linked with itself.
 
 _Example_:
 
 ```js
-var Human = thinky.createModel({id: String, name: String, partnerId: String});
+var Human = thinky.createModel("Human", {
+    id: String,
+    name: String,
+    contactId: String
+});
 Human.belongsTo(Human, "emergencyContact", "contactId", "id");
 
 var michel = new Human({
@@ -304,21 +311,19 @@ var sophia = new Human({
 michel.emergencyContact = sophia;
 ```
 
-Save both documents and the relation relation.
+Save both documents and the relation.
+
 ```js
 michel.saveAll({emergencyContact: true}).then(...);
 ```
 
-TODO: Test
-
-
-
-### Retrieve
+### Retrieve documents
 
 Use the `getJoin` command to retrieve joined documents.
 
 Like for `saveAll`, `getJoin` will recurse in a field as long as it does not contain 
-an instance of a Model previously fetched.
+a Model previously fetched in another field.
+You can manually force `getJoin` to retrieve a joined document by manually specifying the field.
 
 _Example_: Basic usage.
 
@@ -354,11 +359,14 @@ User.getJoin().run().then(function(result) {
 ```
 
 
-
-_Example_: Manually set the document to retrieve.
+_Example_: You can manually set the joined documents to retrieve.
 
 ```js
-var Human = thinky.createModel({id: String, name: String, partnerId: String});
+var Human = thinky.createModel("Human", {
+    id: String,
+    name: String,
+    partnerId: String
+});
 Human.belongsTo(Human, "emergencyContact", "contactId", "id");
 
 var michel = new Human({
@@ -382,22 +390,143 @@ Human.getJoin({emergencyContact: true}).then(function(result) {
      *         name: "Sophia"
      *         
      *     }
+     * }
      */
 });
 ```
 
 
-### Delete
+### Delete documents
 
-The `delete` command will try to keep your data consistent.
+#### delete
 
-### Internals
+The `delete` command deletes the local document to the database and will keep the data consistent without doing range updates.
 
-__Interals__:
-The third table is named `<Model1.getTableName()>_<Model2.getTableName()>` 
-where the names are alphabetically order.  
+_Example_:
 
-If you do not, while `thinky` will be able to create/save links, it will not be able to
-automatically delete links when documents are deleted.
-The only way now to delete a link in this case is to manually do it.
+```js
+var User = thinky.createModel("User", {
+    id: String,
+    name: String
+});
+var Account = thinky.createModel("Account", {
+    id: String,
+    sold: Number,
+    userId: String
+});
+
+User.hasOne(Account, "account", "id", "userId");
+Account.belongs(User, "user", "userId", "id");
+
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").run().then(function(user) {
+    /*
+     *  var user = {
+     *      id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *      name: "Michel",
+     *      account: {
+     *          id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+     *          userId: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *          sold: 2420
+     *      }
+     *  }
+     */
+    user.delete().then(function(result) {
+        /*
+         * user.isSaved() === false
+         * user.account.isSaved() === false
+         *
+         *  var user = {
+         *      id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+         *      name: "Michel",
+         *      account: {
+         *          id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+         *          sold: 2420
+         *      }
+         *  }
+         */
+    });
+});
+```
+
+#### deleteAll
+
+Like for `saveAll` and `getJoin`, `deleteAll` will recurse in a field as long as it does not contain 
+a Model previously deleted in another field.
+You can manually force `deleteAll` to delete a joined document by manually specifying the field.
+
+
+_Example_: Delete a user and its associated account.
+
+```js
+var User = thinky.createModel("User", {
+    id: String,
+    name: String
+});
+var Account = thinky.createModel("Account", {
+    id: String,
+    sold: Number,
+    userId: String
+});
+
+User.hasOne(Account, "account", "id", "userId");
+Account.belongs(User, "user", "userId", "id");
+
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").run().then(function(user) {
+    /*
+     *  var user = {
+     *      id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *      name: "Michel",
+     *      account: {
+     *          id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+     *          userId: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *          sold: 2420
+     *      }
+     *  }
+     */
+    user.deleteAll().then(function(result) {
+        /*
+         * user.isSaved() === false
+         * user.account.isSaved() === false
+         */
+    });
+});
+```
+
+_Example_: You can manually set the joined documents to delete.
+
+```js
+var Human = thinky.createModel("Human", {
+    id: String,
+    name: String,
+    partnerId: String
+});
+Human.belongsTo(Human, "emergencyContact", "contactId", "id");
+
+Human.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
+    .getJoin({emergencyContact: true}).then(function(human) {
+
+    /*
+     * var human = {
+     *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *     name: "Michel",
+     *     contactId: "4650ad62-fabb-4cd6-8672-dd68cdda77a1"
+     *     emergencyContact: {
+     *         id: "4650ad62-fabb-4cd6-8672-dd68cdda77a1"
+     *         name: "Sophia"
+     *         
+     *     }
+     * }
+     */
+    human.deleteAll({emergenctyContact: true}).then(function(human) {
+        // human.isSaved === false
+        // human.emergencyContact === false
+    });
+});
+```
+
+
+#### purge
+
+The `purge` command works like the `delete` one except that it will run range update/delete in the database to keep data
+consistent.
 

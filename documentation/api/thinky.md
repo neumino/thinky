@@ -102,7 +102,7 @@ Read more about schemas on [this article](/documentation/schemas/)
 
 Read more about `enforce_missing`/`enforce_extra`/`enforce_type` on [the article](/documentation/schemas/) about schemas.
 
-_Example_: Create a basic Model for a `post`.
+_Example_: Create a basic Model for a `user`.
 
 ```js
 var User = thinky.createModel("User", {
