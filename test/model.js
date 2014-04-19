@@ -462,5 +462,16 @@ describe('define', function(){
         var doc = new Model({id: str});
         doc.foo();
     });
-
+});
+describe('ensureIndex', function(){
+    it('should add an index', function(done) {
+        var Model = thinky.createModel(util.s8(), { id: String, num: Number });
+        Model.ensureIndex("num");
+        var doc = new Model({});
+        doc.save().then(function(result) {
+            Model.orderBy({index: "num"}).run().then(function(result) {
+                done();
+            });
+        });
+    });
 });
