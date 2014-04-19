@@ -34,7 +34,7 @@ var Author = thinky.createModel("Author", {
     name: String
 });
 
-// Join the model
+// Join the models
 Post.belongsTo(Author, "author", "idAuthor", "id");
 ```
 
@@ -72,7 +72,7 @@ post.saveAll().then(function(result) {
 });
 ```
 
-Retrieve a post with its author.
+Retrieve the post with its author.
 
 ```js
 Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().then(function(result) {
