@@ -557,3 +557,26 @@ describe('Query.run() should take options', function(){
         }).error(done);
     });
 });
+
+describe('thinky.Query', function() {
+    it('Manual query', function(done) {
+        var name = util.s8();
+
+        var Query = thinky.Query;
+        var r = thinky.r;
+        var User = thinky.createModel(name, {id: String});
+
+        var query = new Query(User, r);
+        query.expr(1).execute().then(function(result) {
+            assert.equal(result, 1);
+            var user = new User({});
+            user.save().then(function(saved) {
+                query = new Query(User, r);
+                query.table(User.getTableName()).nth(0).run().then(function(doc) {
+                    assert.deepEqual(doc, saved);
+                    done();
+                });
+            });
+        });
+    });
+});
