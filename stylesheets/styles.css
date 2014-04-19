@@ -5,7 +5,7 @@ html{
 body{
     margin: 0px;
     padding: 0px;
-    background: #fafafa;
+    background: url(/images/background.png) #fafafa;
 }
 #wrapper img{
     display: block;
@@ -61,6 +61,7 @@ nav li{
     padding: 20px 60px 0px 60px;
     width: 900px;
     margin: 2px auto 0px auto;
+    background: #fafafa;
 }
 
 main{
