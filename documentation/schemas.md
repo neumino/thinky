@@ -5,8 +5,6 @@ permalink: schemas/
 
 ## Schemas
 
-### Introduction
-
 A schema is a structure that describe a Model.
 
 A schema in `thinky` is define with an object where each field maps to a type.  
