@@ -124,6 +124,7 @@ Read more about schemas on [this article](/documentation/schemas/)
     - `enforce_missing`: `Boolean`, `true` to forbid missing fields, default `"false"`.
     - `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema, default `"false"`
     - `enforce_type`: can be `"strict"`, `"loose"` or `"none"`.
+- `validator`: A function that will be used to validate a document before saving it. The context is set to the whole document.
 
 Read more about `enforce_missing`/`enforce_extra`/`enforce_type` on [the article](/documentation/schemas/) about schemas.
 
@@ -200,6 +201,3 @@ var Post = thinky.createModel("Post",{
     createdAt: {_type: String, default: r.now()}
 });
 ```
-
-
-

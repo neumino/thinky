@@ -25,6 +25,7 @@ Each field of the object maps to a type. The valid types are:
         - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`.
     - `default` (optional): can be constant value or a function that will be called with
     the document as context.
+    - `validator`: A function that will be used to validate a field before saving the document. The context is set to the current field.
 - An object that is a valid schema.
 - An array with one of the previous types.
 
