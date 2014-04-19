@@ -11,8 +11,7 @@ Michel Tu - [orphee@gmail.com](orphee@gmail.com) - [http://justonepixel.com](htt
 
 ### Donations
 
-I built thinky for fun, and I do not need money.
-
+I built thinky for fun, and I do not need money.   
 If thinky was useful to you and if you really want to thank me, give a few dollars to a
 charity &mdash; [Watsi](http://watsi.org) is a good one in my opinion.
 
