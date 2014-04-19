@@ -1909,4 +1909,27 @@ describe('_validator', function(){
                 && (error.message === "Expecting `field` value to be 'abc'.")
         });
     });
+    it('validate with _type: Array', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            arr: {_type: Array, schema: Number}
+        }, {init: false})
+
+        var doc = new Model({id: "abc", arr: [2, 3]});
+        doc.validate();
+    });
+    it('validate with _type: Array', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            arr: {_type: Array, schema: Number}
+        }, {init: false})
+
+        var doc = new Model({id: "abc", arr: [2, "ikk", 4]});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error)
+                && (error.message === "Value for [arr][1] must be a number or null.")
+        });
+    });
 });
