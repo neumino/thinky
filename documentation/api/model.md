@@ -61,6 +61,51 @@ var grownup = new User({age: 23});
 grownup.isAdult(); // true
 ```
 
+
+--------------
+
+<div id="ensureindex"></div>
+### [ensureIndex](#ensureindex)
+
+```js
+Model.ensureIndex(name, fn);
+```
+
+Ensure that an index named `"name"` exists.
+If it does not, it will create an index based on the name and the function `fn` provided.
+
+If `fn` is undefined, the index will be built on the field `"name"`.
+
+_Example_: Ensure that an index on the field `"createdAt"` exists.
+
+```js
+var Posts = thinky.createModel("Post", {
+    id: String,
+    title: String,
+    content: String,
+    createdAt: Date
+});
+
+Posts.ensureIndex("createdAt")
+```
+
+_Example_: Ensure that an index on the concatenation of `"firstName"` and `"lastName"` exists.
+
+```js
+var Users = thinky.createModel("User", {
+    id: String,
+    firstName: String,
+    lastName: String
+});
+
+Users.ensureIndex("fullName", function(doc) {
+    return doc("firstName").add(doc("lastName"));
+})
+```
+
+
+
+
 --------------
 
 
