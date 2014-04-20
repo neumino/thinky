@@ -1,24 +1,6 @@
-box: wercker/nodejs
-services:
-    - mies/rethinkdb
-# Build definition
+box: neumino/box-thinky
 build:
   # The steps that will be executed on build
   steps:
-    - apt-get install libprotobuf-dev
-    # A step that executes `npm install` command
     - npm-install
-    - script:
-        name: init
-        code: |
-          node init.js
-    # A step that executes `npm test` command
     - npm-test
-
-    # A custom script step, name value is used in the UI
-    # and the code value contains the command that get executed
-    - script:
-        name: echo nodejs information
-        code: |
-          echo "node version $(node -v) running"
-          echo "npm version $(npm -v) running"
