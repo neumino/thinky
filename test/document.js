@@ -1159,11 +1159,11 @@ describe('delete', function() {
                 assert.equal(doc.isSaved(), true);
 
                 doc.deleteAll().then(function(result) {
-                    assert.equal(doc.isSaved(), false);
-                    assert.equal(doc.otherDoc.isSaved(), false);
+                    assert.strictEqual(doc, result);
 
-                    assert.equal(result.isSaved(), false);
-                    assert.equal(result.otherDoc.isSaved(), false);
+                    assert.equal(doc.isSaved(), false);
+                    assert.equal(doc.otherDoc, undefined);
+                    assert.equal(otherDoc.isSaved(), false);
                     Model.get(doc.id).run().error(function(error) {
                         assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
 
@@ -1187,11 +1187,11 @@ describe('delete', function() {
                 assert.equal(doc.isSaved(), true);
 
                 doc.deleteAll({otherDoc: true}).then(function(result) {
-                    assert.equal(doc.isSaved(), false);
-                    assert.equal(doc.otherDoc.isSaved(), false);
+                    assert.strictEqual(doc, result);
 
-                    assert.equal(result.isSaved(), false);
-                    assert.equal(result.otherDoc.isSaved(), false);
+                    assert.equal(doc.isSaved(), false);
+                    assert.equal(otherDoc.isSaved(), false);
+                    assert.equal(doc.otherDoc, undefined);
                     Model.get(doc.id).run().error(function(error) {
                         assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
 

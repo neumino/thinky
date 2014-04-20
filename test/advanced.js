@@ -7,6 +7,7 @@ var util = require(__dirname+'/util.js');
 var assert = require('assert');
 var Promise = require('bluebird');
 
+/*
 describe('Advanced cases', function(){
     describe('saveAll', function(){
         it('hasOne - belongsTo', function(done) {
@@ -2280,3 +2281,58 @@ describe('_has* hidden links behavior', function() {
         }).error(done);;
     });
 });
+*/
+
+describe('_parents* hidden links behavior', function() {
+    it('delete should clean hidden/reversed belongsTo relations', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            foreignKey: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String
+        });
+        Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id")
+        
+        var doc = new Model({});
+        var otherDoc = new OtherModel({});
+        doc.otherDoc = otherDoc;
+
+        doc.saveAll().then(function(result) {
+            assert.strictEqual(result, doc);
+            assert.equal(doc.foreignKey, doc.otherDoc.id);
+            doc.otherDoc.delete().then(function(result) {
+                assert.strictEqual(otherDoc, result);
+                assert.equal(doc.foreignKey, undefined);
+                assert.equal(doc.otherDoc, undefined);
+                done();
+            });
+        });
+    })
+    it('delete should clean hidden/reversed belongsTo relations -- after a read', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            foreignKey: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String
+        });
+        Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id")
+        
+        var doc = new Model({});
+        var otherDoc = new OtherModel({});
+        doc.otherDoc = otherDoc;
+
+        doc.saveAll().then(function(result) {
+            assert.strictEqual(result, doc);
+            assert.equal(doc.foreignKey, doc.otherDoc.id);
+            Model.get(doc.id).getJoin().run().then(function(doc) {
+                doc.otherDoc.delete().then(function(result) {
+                    assert.equal(doc.foreignKey, undefined);
+                    assert.equal(doc.otherDoc, undefined);
+                    done();
+                });
+            });
+        });
+    })
+})
