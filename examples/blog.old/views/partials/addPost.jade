@@ -1,0 +1,12 @@
+h2 Write a new post
+label(for='title') Title: 
+input.title.form-control(ng-model='form.title', name='title', type='text')
+
+label(for='author') Author:
+select(ng-model="form.authorId", name="authorId", ng-options="c.id as c.name for c in authors", ng-disabled="authors.length == 0")
+
+p Body:
+textarea.content.form-control(ng-model='form.text', cols='50', rows='15')
+
+p
+    button.submit_post.btn(ng-click='submitPost()') Submit Post

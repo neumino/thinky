@@ -1,0 +1,15 @@
+//p There are {{posts.length}} posts
+div.author(ng-repeat='author in authors')
+    div.actions
+        a.edit(href='/editAuthor/{{author.id}}') Edit
+        a.delete(href='/deleteAuthor/{{author.id}}') Delete
+
+    h3 {{author.name}}
+
+    div.data
+        div.field Email:
+        div.value {{author.email}}
+    div.data
+        div.field Website:
+        div.value {{author.website}}
+

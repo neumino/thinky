@@ -1,5 +1,7 @@
 // Import
-var thinky = require('../thinky').thinky;
+var config = require(__dirname+'/../config.js');
+var thinky = require('../../../')(config.rethinkdb);
+var r = thinky.r;
 
 // Create the models
 // Note: if we don't provide the field date, the default function will be called
@@ -8,7 +10,7 @@ var Post = thinky.createModel('Post', {
     title: String,
     text: String,
     authorId: String,
-    date: {_type: Number, default: function() { return Date.now() }}
+    date: {_type: Date, default: r.now()}
 });
 var Author = thinky.createModel('Author', {
     id: String,
@@ -21,211 +23,172 @@ var Comment = thinky.createModel('Comment', {
     name: String,
     comment: String,
     postId: String,
-    date: {_type: Number, default: function() { return Date.now() }}
+    date: {_type: Date, default: r.now()}
 });
 
 
-// Specify the joins
+// Specify the relations
 
 // A post has one author that we will keep in the field `author`.
-// The join is done on post.authorId == author.id
-Post.hasOne(Author, 'author', {leftKey: 'authorId', rightKey: 'id'});
+Post.belongsTo(Author, "author", "authorId", "id");
+Author.hasMany(Post, "posts", "id", "authorId");
 
 // A post has multiple comments that we will keep in the field `comments`.
-// The join is done on post.id == comment.postId.
-Post.hasMany(Comment, 'comments', {leftKey: 'id', rightKey: 'postId'}, {orderBy: 'date'});
+Post.hasMany(Comment, "comments", "id", "postId");
+Comment.belongsTo(Post, "post", "postId", "id");
 
 
-// Things related to post
+// Make sure that an index on date is available
+Post.ensureIndex("date");
+Author.ensureIndex("name");
 
-// Retrieves a liist of posts with its author and its comments
+
+// Retrieve a list of posts ordered by date with its author and comments
 exports.posts = function (req, res) {
-    // We order by date (desc) and joined the author and comments
-    Post.orderBy('-date').getJoin().run(function(error, posts) {
-        // Convert dates to a human readable format
-        if ((posts != null) && (Array.isArray(posts))) {
-            for(var i=0; i< posts.length; i++) {
-                var fullDate = new Date(posts[i].date);
-                posts[i].date = fullDate.getMonth()+'/'+
-                    fullDate.getDate()+'/'+
-                    fullDate.getFullYear();
-            }
-        }
-        // Send back the data
+    Post.orderBy({index: r.desc('date')}).getJoin({author: true, comments: {_order: "date"}}).run().then(function(posts) {
         res.json({
-            error: error,
             posts: posts
         });
-       
-    })
+    }).error(handleError(res));
 };
 
-// Retrieves one post with all its data (author and comments)
+
+// Retrieve one post with its author and comments
 exports.post = function (req, res) {
     var id = req.params.id;
-    // Get one post and its author and comments
-    Post.get(id).getJoin().run(function(error, post) {
-        // Convert dates to a human readable format
-        var fullDate;
-        if ((post != null) && (Array.isArray(post.comments))) {
-            for(var i=0; i< post.comments.length; i++) {
-                fullDate = new Date(post.comments[i].date);
-                post.comments[i].date = fullDate.getMonth()+'/'+
-                    fullDate.getDate()+'/'+
-                    fullDate.getFullYear();
-            }
-        }
-        if (post != null) {
-            fullDate = new Date(post.date);
-            post.date = fullDate.getMonth()+'/'+
-                fullDate.getDate()+'/'+
-                fullDate.getFullYear();
-        }
-
-        // Send back the data 
+    Post.get(id).getJoin({author: true, comments: {_order: "date"}}).run().then(function(post) {
         res.json({
-            error: error,
             post: post
         });
-    })
+    }).error(handleError(res));
 };
 
-// Retrieves a post and all authors available
+
+// Retrieve a post and all the available authors
 exports.postAndAuthors = function (req, res) {
     var id = req.params.id;
-    // Retrieve a post and all the authors that exist
-    // This currently cannot be done in one query with Thinky -- the feature is on the roadmap
-
-    // Get the post
-    Post.get(id).run(function(error_post, post) {
-        // Get all authors
-        Author.run(function(error_author, authors) {
-            // Send back everything
+    Post.get(id).run().then(function(post) {
+        Author.run().then(function(authors) {
             res.json({
-                error_post: error_post,
-                error_author: error_author,
                 post: post,
                 authors: authors
             });
-        })
-    })
+        }).error(handleError(res));
+    }).error(handleError(res));
 };
 
-// Saves a post in the database
+
+// Save a post in the database
 exports.addPost = function (req, res) {
-    // Create a new post
     var newPost = new Post(req.body);
 
-    // Save it
-    newPost.save(function(error, result) {
+    newPost.save().then(function(result) {
         res.json({
-            error: error,
             result: result
         });
-    });
+    }).error(handleError(res));
 };
 
-// Deletes a post from the database
+
+// Delete a post and its comments from the database
 exports.deletePost = function (req, res) {
     var id = req.params.id;
 
-    // Deletes the post
-    Post.get(id).delete( function(error, result) {
-        res.json({
-            error: error,
-            result: result
-        });
-
-    });
+    // Delete a post and all its comments
+    Post.get(id).getJoin({comments: true}).run().then(function(post) {
+        post.deleteAll({comments: true}).then(function(result) {
+            res.json({
+                result: result
+            });
+        }).error(handleError(res));
+    }).error(handleError(res));
 };
 
-// Updates a post in the database
+
+// Update a post in the database
 exports.editPost = function (req, res) {
-    var newPost = new Post(req.body);
-
-    // Updates the post
-    newPost.update( function(error, post) {
-        res.json({
-            error: error,
-            post: post
-        });
-    });
+    Post.get(req.body.id).run().then(function(post) {
+        post.title = req.body.title;
+        post.text = req.body.text;
+        post.authorId = req.body.authorId;
+        post.save().then(function(post) {
+            res.json({
+                post: post
+            });
+        }).error(handleError(res));
+    }).error(handleError(res));
 };
 
 
-// Things related to authors
-
-// Retrieves all authors
+// Retrieve all authors
 exports.authors = function (req, res) {
-    // Get all authors
-    Author.orderBy('name').run(function(error, authors) {
+    Author.orderBy({index: 'name'}).run().then(function(authors) {
         res.json({
-            error: error,
             authors: authors
         });
-    })
+    }).error(handleError(res));
 };
 
-// Retrieves one author
+
+// Retrieve one author
 exports.author = function (req, res) {
     var id = req.params.id;
-    // Get an author
-    // Instead of calling .get() then .run() we can just pass a callback to get.
-    Author.get(id, function(error, author) {
+
+    Author.get(id).run().then(function(author) {
         res.json({
-            error: error,
             author: author
         });
-    })
+    }).error(handleError(res));
 };
 
-// Saves an author in the database
-exports.addAuthor = function (req, res) {
-    // Creates an author based on req.body
-    var newAuthor = new Author(req.body);
 
-    // Saves it
-    newAuthor.save(function(error, result) {
+// Save an author in the database
+exports.addAuthor = function (req, res) {
+    var author = new Author(req.body);
+
+    author.save().then(function(result) {
         res.json({
-            error: error,
             result: result
         });
-    });
+    }).error(handleError(res));
 };
-// Deletes an author
+
+
+// Delete an author
 exports.deleteAuthor = function (req, res) {
     var id = req.params.id;
-    // Deletes an author
-    Author.get(id).delete( function(error, result) {
-        res.json({
-            error: error,
-            result: result
-        })
 
-    });
+    // Delete an author and update all the post referencing the author
+    Author.get(id).getJoin().run().then(function(author) {
+        author.delete().then(function(author) {
+            res.json({
+                result: author
+            })
+        }).error(handleError(res));
+    }).error(handleError(res));
 };
-// Edits an author
+
+
+// Edit an author
 exports.editAuthor = function (req, res) {
-    // Create the author based on req.body
-    var newAuthor = new Author(req.body);
-
     // Update an author
-    newAuthor.update( function(error, author) {
-        res.json({
-            error: error,
-            author: author
-        })
-    });
+    Author.get(req.body.id).run().then(function(author) {
+        author.merge(req.body);
+
+        author.save().then(function(author) {
+            res.json({
+                author: author
+            })
+        });
+    }).error(handleError(res));
 };
 
 
-// Things related to comments
+// Add a comment
 exports.addComment = function (req, res) {
-    // Creates a comment based on req.body
     var newComment = new Comment(req.body);
 
-    // Saves it
-    newComment.save(function(error, result) {
+    newComment.save().then(function(error, result) {
         res.json({
             error: error,
             result: result
@@ -234,14 +197,22 @@ exports.addComment = function (req, res) {
 };
 
 
-// Deletes comment
+// Delete comment
 exports.deleteComment = function (req, res) {
     var id = req.params.id;
-    // Deletes a comment
-    Comment.get(id).delete( function(error, result) {
+
+    // We can directly delete the comment since there is no foreign key to clean
+    Comment.get(id).delete().run().then(function(error, result) {
         res.json({
             error: error,
             result: result
         })
     });
 };
+
+function handleError(res) {
+    return function(error) {
+        console.log(error.message);
+        return res.send(500, {error: error.message});
+    }
+}

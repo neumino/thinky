@@ -1,0 +1,163 @@
+/* app css stylesheet */
+html, body{
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    padding: 0px;
+    margin: 0px;
+    background: #fafafa;
+}
+
+#wrapper{
+    width: 900px;
+    min-height: 100%;
+    margin: 0px auto;
+    padding: 0px;
+    border-left: 1px dotted #aaa;
+    border-right: 1px dotted #aaa;
+    background: #fff;
+}
+header{
+    border-bottom: 2px dotted #eaeaea;
+}
+#wrapper h1{
+    margin: 0px;
+    padding: 50px 0px 0px 50px;
+}
+#wrapper h3{
+    font-size: 1.2em;
+    line-height: 1.2em;
+}
+#wrapper h3.float{
+    float: left;
+    margin-right: 10px;
+}
+div.post{
+    margin-bottom: 50px;
+}
+#wrapper .meta{
+    padding-top: 10px;
+    font-size: 1em;
+    color: #888;
+}
+a.mail{
+    color: #000;
+}
+a.mail:hover{
+    color: #000;
+}
+
+div.text{
+    clear: both;
+}
+
+h4.margin_top{
+    margin-top: 40px;
+}
+
+div.comments_info{
+    text-align: right;
+    margin-left: 20px;
+    padding-top: 10px;
+    font-size: 1em;
+    color: #888;
+}
+p.comments_info{
+    text-align: left;
+    margin-left: 20px;
+    padding-top: 10px;
+    font-size: 1em;
+    color: #888;
+}
+div.comment{
+    margin: 30px 20px;
+    padding: 10px;
+    background: #fafafa;
+}
+
+p.description{
+    color: #888;
+    font-size: 0.9em;
+    padding-left: 100px;
+}
+.navigation li{
+    display: inline-block;
+    padding: 0px 10px;
+}
+#content{
+    padding: 20px 20px 50px 20px;
+    overflow: auto;
+}
+a.title{
+    color: #000;
+    text-decoration: none;
+}
+a.title:hover{
+    color: #000;
+    text-decoration: underline;
+}
+
+input.title{
+    width: 500px;
+}
+select.authors_list{
+    width: 514px;
+}
+textarea.content{
+    height: 300px;
+    width: 848px;
+}
+button.submit_post{
+    float: right;
+}
+
+input.name{
+    width: 300px;
+}
+textarea.comment{
+    width: 500px;
+    height: 200px;
+}
+
+
+
+.author{
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px dotted #eaeaea;
+}
+.author .data{
+    overflow: auto;
+}
+.author .field{
+    float: left;
+    width: 190px;
+}
+.author .value{
+    margin-left: 200px;
+}
+
+/* Actions */
+.actions{
+    float: right;
+}
+.actions .edit{
+    float: left;
+    padding: 2px 4px;
+    font-size: 0.9em;
+}
+.actions .delete{
+    float: left;
+    margin-left: 40px;
+    padding: 2px 4px;
+    font-size: 0.9em;
+}
+.actions .yes{
+    float: left;
+    margin-left: 20px;
+}
+.actions .no{
+    float: left;
+}
+
+
