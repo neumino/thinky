@@ -139,7 +139,7 @@ describe("Joins", function() {
         var anotherModel = thinky.createModel(anotherName, { id: String, otherId: String }, {init: false});
 
 
-        model.hasOne(otherModel, "otherDoc", "otherId", "id");
+        model.hasOne(otherModel, "otherDoc", "otherId", "id", {init: false});
         try{
             model.hasOne(anotherModel, "otherDoc", "otherId", "id");
         }
@@ -159,7 +159,7 @@ describe("Joins", function() {
         var anotherModel = thinky.createModel(anotherName, { id: String, otherId: String }, {init: false});
 
 
-        model.belongsTo(otherModel, "otherDoc", "otherId", "id");
+        model.belongsTo(otherModel, "otherDoc", "otherId", "id", {init: false});
         try{
             model.belongsTo(anotherModel, "otherDoc", "otherId", "id");
         }
@@ -179,7 +179,7 @@ describe("Joins", function() {
         var anotherModel = thinky.createModel(anotherName, { id: String, otherId: String }, {init: false});
 
 
-        model.hasMany(otherModel, "otherDoc", "otherId", "id");
+        model.hasMany(otherModel, "otherDoc", "otherId", "id", {init: false});
         try{
             model.hasMany(anotherModel, "otherDoc", "otherId", "id");
         }
@@ -199,7 +199,7 @@ describe("Joins", function() {
         var anotherModel = thinky.createModel(anotherName, { id: String, otherId: String }, {init: false});
 
 
-        model.hasAndBelongsToMany(otherModel, "otherDoc", "otherId", "id");
+        model.hasAndBelongsToMany(otherModel, "otherDoc", "otherId", "id", {init: false});
         try{
             model.hasAndBelongsToMany(anotherModel, "otherDoc", "otherId", "id");
         }
@@ -426,22 +426,22 @@ describe("Joins", function() {
         var otherModel = thinky.createModel(otherName, { id: String, notid2: String }, {init: false});
 
         assert.throws(function() {
-            model.hasOne(otherModel, "_order", "notid1", "notid2");
+            model.hasOne(otherModel, "_order", "notid1", "notid2", {init: false});
         }, function(error) {
             return (error instanceof Error) && (error.message === "The field `_order` is reserved by thinky. Please use another one.")
         });
         assert.throws(function() {
-            model.hasMany(otherModel, "_order", "notid1", "notid2");
+            model.hasMany(otherModel, "_order", "notid1", "notid2", {init: false});
         }, function(error) {
             return (error instanceof Error) && (error.message === "The field `_order` is reserved by thinky. Please use another one.")
         });
         assert.throws(function() {
-            model.belongsTo(otherModel, "_order", "notid1", "notid2");
+            model.belongsTo(otherModel, "_order", "notid1", "notid2", {init: false});
         }, function(error) {
             return (error instanceof Error) && (error.message === "The field `_order` is reserved by thinky. Please use another one.")
         });
         assert.throws(function() {
-            model.hasAndBelongsToMany(otherModel, "_order", "notid1", "notid2");
+            model.hasAndBelongsToMany(otherModel, "_order", "notid1", "notid2", {init: false});
         }, function(error) {
             return (error instanceof Error) && (error.message === "The field `_order` is reserved by thinky. Please use another one.")
         });

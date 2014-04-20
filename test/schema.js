@@ -933,6 +933,22 @@ describe('validate', function(){
 
         doc.validate();
     });
+    it('Date - string type - type: "strict"', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Date 
+        }, {init: false, enforce_type: 'strict'})
+
+        doc = new Model({
+            id: str,
+            field: (new Date()).toJSON()
+        })
+
+        doc.validate();
+    });
     it('Date - wrong type - type: "strict"', function(){
         var name = util.s8();
         var str = util.s8();
@@ -950,7 +966,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a date.")
+            return (error instanceof Error) && (error.message === "Value for [field] must be a date or a valid string.")
         });
     });
     it('Date - wrong type  - type: "loose"', function(){
@@ -970,9 +986,25 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a date or null.")
+            return (error instanceof Error) && (error.message === "Value for [field] must be a date or a valid string or null.")
         });
     });
+    it('Date - string type - type: "loose"', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Date 
+        }, {init: false, enforce_type: 'loose'})
+
+        doc = new Model({
+            id: str,
+            field: (new Date()).toJSON()
+        })
+        doc.validate();
+    });
+
     it('Date - wrong type  - type: "none"', function(){
         var name = util.s8();
         var str = util.s8();
@@ -1652,7 +1684,7 @@ describe('validate', function(){
             otherId: String
         }, {init: false, enforce_type: 'loose'})
 
-        Model.hasOne(OtherModel, "otherDoc", "otherId", "id");
+        Model.hasOne(OtherModel, "otherDoc", "otherId", "id", {init: false});
 
         doc = new Model({
             id: str1,
@@ -1687,7 +1719,7 @@ describe('validate', function(){
             field: String
         }, {init: false, enforce_type: 'loose'})
 
-        Model.hasOne(OtherModel, "otherDoc", "otherId", "id");
+        Model.hasOne(OtherModel, "otherDoc", "otherId", "id", {init: false});
 
         doc = new Model({
             id: str1,
@@ -1723,7 +1755,7 @@ describe('validate', function(){
             otherId: String
         }, {init: false, enforce_type: 'loose'})
 
-        Model.hasMany(OtherModel, "otherDocs", "id", "otherId");
+        Model.hasMany(OtherModel, "otherDocs", "id", "otherId", {init: false});
 
         doc = new Model({
             id: str1,
@@ -1759,7 +1791,7 @@ describe('validate', function(){
             otherId: String
         }, {init: false, enforce_type: 'loose'})
 
-        Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "otherId");
+        Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "otherId", {init: false});
 
         doc = new Model({
             id: str1,
