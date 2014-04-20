@@ -482,6 +482,116 @@ describe('getJoin', function(){
             }).error(done);
         });
     });
+    describe("should not throw with missing keys", function() {
+        it('hasOne', function(done) {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number
+            })
+
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number,
+                foreignKey: String
+            })
+            Model.hasOne(OtherModel, "otherDoc", "str", "foreignKey")
+
+            var doc = new Model({
+                id: util.s8(),
+                num: 1
+            })
+            doc.save().then(function() {
+                Model.get(doc.id).getJoin().run().then(function(result) {
+                    assert.equal(result.otherDoc, undefined);
+                    done();
+                }).error(done);
+            }).error(done);
+        });
+        it('belongsTo', function(done) {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number,
+                foreignKey: String
+            })
+
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number
+            })
+            Model.belongsTo(OtherModel, "otherDoc", "str", "id")
+
+            var docValues = {num: util.random(), foreignKey: util.s8()}
+            doc = new Model(docValues);
+
+            doc.save().then(function(doc) {
+                Model.get(doc.id).getJoin().run().then(function(result) {
+                    assert.equal(result.otherDoc, undefined);
+                    done();
+                }).error(done);
+            });
+        });
+        it('hasMany', function(done) {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number
+            })
+
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number,
+                foreignKey: String
+            })
+            Model.hasMany(OtherModel, "otherDocs", "str", "foreignKey")
+
+            var docValues = {num: util.random()}
+            doc = new Model(docValues);
+            doc.save().then(function() {
+                Model.get(doc.id).getJoin().run().then(function(result) {
+                    assert.equal(result.otherDocs, undefined);
+                    done();
+                }).error(done);
+            });
+        });
+        it('hasAndBelongsToMany', function(done) {
+            var name = util.s8();
+            Model = thinky.createModel(name, {
+                id: String,
+                str: String,
+                num: Number
+            })
+
+            var otherName = util.s8();
+            OtherModel = thinky.createModel(otherName, {
+                id: String,
+                str: String,
+                num: Number,
+            })
+            Model.hasAndBelongsToMany(OtherModel, "otherDocs", "str", "id")
+
+            var docValues = {num: util.random()}
+            doc = new Model(docValues);
+
+            doc.save().then(function(doc) {
+                Model.get(doc.id).getJoin().run().then(function(result) {
+                    assert.equal(result.otherDocs, undefined);
+                    done();
+                }).error(done);
+            }).error(done);
+
+        });
+    });
 });
 
 describe('Query.run() should take options', function(){
