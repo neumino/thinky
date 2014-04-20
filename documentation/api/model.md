@@ -119,7 +119,8 @@ Model.hasOne(OtherModel, fieldName, leftKey, rightKey[, options]);
 Define a "has one" relation between two models. The foreign key is
 `rightKey` and will be stored in `OtherModel`.  
 
-If you want to store the foreign key on the model creating the relation, use [belongsTo](#belongsto).
+If you want to store the foreign key on the model creating the relation, use [belongsTo](#belongsto).   
+Do not use the primary key of `OtherModel` as the right key.
 
 
 The arguments are:
@@ -131,7 +132,7 @@ The arguments are:
 - `options`: set the field `init` to `false` if the indexes
 were already created and do not want `thinky` to try to create them.
 
-Read more about `hasOne` on [the article](/documentation/relations/) dedicated to relations
+Read more about `hasOne` on [the article](/documentation/relations/) dedicated to relations.
 
 _Example_: 
 
@@ -187,7 +188,9 @@ The arguments are:
 were already created and do not want `thinky` to try to create them.
 
 
-Read more about `belongsTo` on [the article](/documentation/relations/) dedicated to relations
+Read more about `belongsTo` on [the article](/documentation/relations/) dedicated to relations.   
+Do not use the primary key of `Model` as the left key.
+
 
 _Example_: 
 
@@ -235,7 +238,8 @@ Define a "has many" relation between two models where the reciprocal relation
 is a "belongs to".  
 The foreign key is `rightKey` and will be stored in `OtherModel`.  
 
-If you need a "many to many" relation between two models, use [hasAndBelongsToMany](#hasAndBelongsToMany).
+If you need a "many to many" relation between two models, use [hasAndBelongsToMany](#hasAndBelongsToMany).   
+Do not use the primary key of `OtherModel` as the right key.
 
 
 The arguments are:
