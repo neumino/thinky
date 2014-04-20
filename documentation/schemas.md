@@ -29,8 +29,36 @@ Each field of the object maps to a type. The valid types are:
 - An object that is a valid schema.
 - An array with one of the previous types.
 
-__Note__: The fields used to store joined documents should not be provided in the schema.
 
+__Note__: About fields for joined documents:
+
+They should not be declared. The schema of the joined Model will be automatically used.
+
+__Note__: About dates:
+
+There are three valid values for a `Date`:
+
+- A JavaScript Date object - like `new Date()`.
+- A ReQL raw date object like:
+
+```js
+{
+    "$reql_type$": "TIME",
+    "epoch_time": 1397975461.797,
+    "timezone":"+00:00"
+}
+```
+- An ISO 8601 string like `"2014-04-20T06:32:18.616Z"`.   
+This format is the one used when you call `JSON.stringify` on a `Date`, which means you can serialize your data between the client
+and the server without having to worry about parsing the dates.
+
+
+__Note__: About options:
+The options used to enforce the schema will be the most localized one. That is to say, in order:
+
+- The field's options
+- The model's options
+- Thinky's options
 
 
 _Example_: Create a basic Model for a `user`.
@@ -44,6 +72,10 @@ var User = thinky.createModel("User", {
     birthdate: Date
 })
 ```
+
+
+----------------------
+
 
 _Example_: Create a model with nested fields.
 

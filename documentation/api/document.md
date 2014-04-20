@@ -49,6 +49,29 @@ post.getModel().getTableName();
 
 --------------
 
+<div id="merge"></div>
+### [merge](#merge)
+
+```
+document.merge(doc);
+```
+
+Merge `doc` in the `document`.  
+This is especially useful when you need to update a document with partial data before saving it.
+
+_Example_: Update a user.
+
+```js
+var data = req.body; // Data posted by the user
+Post.get(data.id).run().then(function(post) {
+    post.merge(data).save().then(function(result) {
+        // post was updated with `data`
+    });
+});
+```
+
+--------------
+
 <div id="validate"></div>
 ### [validate](#validate)
 
