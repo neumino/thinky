@@ -43,9 +43,9 @@ There are three valid values for a `Date`:
 
 ```js
 {
-    "$reql_type$": "TIME",
-    "epoch_time": 1397975461.797,
-    "timezone":"+00:00"
+    $reql_type$: "TIME",
+    epoch_time: 1397975461.797,
+    timezone:"+00:00"
 }
 ```
 - An ISO 8601 string like `"2014-04-20T06:32:18.616Z"`.   
