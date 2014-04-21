@@ -847,8 +847,9 @@ describe('Advanced cases', function(){
                 assert.equal(typeof result.id, 'string');
                 assert.equal(result.has.length, 3);
                 for(var i=0; i<result.has.length; i++) {
-                    assert.equal(typeof result.has[i].id, 'string')
-                    assert.equal(result.has[i].otherId, result.id)
+                    assert.equal(otherDocs[i].isSaved(), true);
+                    assert.equal(typeof result.has[i].id, 'string');
+                    assert.equal(result.has[i].otherId, result.id);
                 }
 
                 assert.strictEqual(result, doc);
@@ -859,6 +860,12 @@ describe('Advanced cases', function(){
 
                 util.sortById(otherDocs);
                 doc.deleteAll().then(function(result) {
+                    assert.equal(otherDocs[0].isSaved(), false);
+                    assert.equal(otherDocs[1].isSaved(), false);
+                    assert.equal(otherDocs[2].isSaved(), false);
+
+                    assert.equal(doc.isSaved(), false);
+
                     Model.get(doc.id).run().error(function(error) {
                         assert(error.message.match(/^Cannot build a new instance of/))
                         OtherModel.getAll(doc.id, {index: "otherId"}).run().then(function(result) {
@@ -1058,19 +1065,23 @@ describe('Advanced cases', function(){
             var values = {};
             var otherValues = {};
             var doc = new Model(values);
-            var otherDocs = [new OtherModel(otherValues), new OtherModel(otherValues), new OtherModel(otherValues)];
+            var otherDoc1 = new OtherModel(values);
+            var otherDoc2 = new OtherModel(values);
+            var otherDoc3 = new OtherModel(values);
+            var otherDocs = [otherDoc1, otherDoc2, otherDoc3];
 
             doc.has = otherDocs;
-            otherDocs[0].belongsTo = doc;
-            otherDocs[1].belongsTo = doc;
-            otherDocs[2].belongsTo = doc;
+            otherDoc1.belongsTo = doc;
+            otherDoc2.belongsTo = doc;
+            otherDoc3.belongsTo = doc;
 
             doc.saveAll().then(function(result) {
-                otherDocs[0].deleteAll().then(function(result) {
-                    assert.equal(otherDocs[0].isSaved(), false);
+                otherDoc1.deleteAll().then(function(result) {
+                    assert.equal(otherDocs.length, 2);
+                    assert.equal(otherDoc1.isSaved(), false);
                     assert.equal(doc.isSaved(), false);
-                    assert.equal(otherDocs[1].isSaved(), true);
-                    assert.equal(otherDocs[2].isSaved(), true);
+                    assert.equal(otherDoc2.isSaved(), true);
+                    assert.equal(otherDoc3.isSaved(), true);
                     OtherModel.count().execute().then(function(result) {
                         assert.equal(result, 2);
                         done();
@@ -1096,19 +1107,22 @@ describe('Advanced cases', function(){
             var values = {};
             var otherValues = {};
             var doc = new Model(values);
-            var otherDocs = [new OtherModel(otherValues), new OtherModel(otherValues), new OtherModel(otherValues)];
+            var otherDoc0 = new OtherModel(otherValues);
+            var otherDoc1 = new OtherModel(otherValues);
+            var otherDoc2 = new OtherModel(otherValues);
+            var otherDocs = [otherDoc0, otherDoc1, otherDoc2];
 
             doc.has = otherDocs;
-            otherDocs[0].belongsTo = doc;
-            otherDocs[1].belongsTo = doc;
-            otherDocs[2].belongsTo = doc;
+            otherDoc0.belongsTo = doc;
+            otherDoc1.belongsTo = doc;
+            otherDoc2.belongsTo = doc;
 
             doc.saveAll().then(function(result) {
-                otherDocs[0].deleteAll({belongsTo: {has: true}}).then(function(result) {
-                    assert.equal(otherDocs[0].isSaved(), false);
+                otherDoc0.deleteAll({belongsTo: {has: true}}).then(function(result) {
+                    assert.equal(otherDoc0.isSaved(), false);
                     assert.equal(doc.isSaved(), false);
-                    assert.equal(otherDocs[1].isSaved(), false);
-                    assert.equal(otherDocs[2].isSaved(), false);
+                    assert.equal(otherDoc1.isSaved(), false);
+                    assert.equal(otherDoc2.isSaved(), false);
                     OtherModel.count().execute().then(function(result) {
                         assert.equal(result, 0);
                         done();
@@ -2222,6 +2236,154 @@ describe('delete - hidden links behavior', function() {
                         assert.equal(doc.isSaved(), true);
                         assert.equal(doc.otherDoc, undefined);
                         assert.equal(doc.foreignKey, undefined);
+                        done();
+                    });
+                });
+            });
+        });
+    });
+    it('should work for hasMany - 1', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String,
+            foreignKey: String
+        });
+
+        Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
+       
+        var doc = new Model({});
+        var otherDoc1 = new OtherModel({});
+        var otherDoc2 = new OtherModel({});
+        var otherDoc3 = new OtherModel({});
+        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+
+        doc.saveAll().then(function() {
+            doc.delete().then(function() {
+                assert.equal(doc.isSaved(), false);
+                assert.equal(otherDoc1.isSaved(), true);
+                assert.equal(otherDoc2.isSaved(), true);
+                assert.equal(otherDoc3.isSaved(), true);
+                assert.equal(otherDoc1.foreignKey, undefined);
+                assert.equal(otherDoc2.foreignKey, undefined);
+                assert.equal(otherDoc3.foreignKey, undefined);
+                OtherModel.get(otherDoc1.id).run().then(function(otherDoc1) {
+                    assert.equal(otherDoc1.isSaved(), true);
+                    assert.equal(otherDoc1.foreignKey, undefined);
+                    done();
+                });
+            });
+        });
+    });
+    it('should work for hasMany - 2', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String,
+            foreignKey: String
+        });
+
+        Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
+       
+        var doc = new Model({});
+        var otherDoc1 = new OtherModel({});
+        var otherDoc2 = new OtherModel({});
+        var otherDoc3 = new OtherModel({});
+        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+
+        doc.saveAll().then(function() {
+            otherDoc1.delete().then(function() {
+                assert.equal(doc.isSaved(), true);
+                assert.equal(otherDoc1.isSaved(), false);
+                assert.equal(otherDoc2.isSaved(), true);
+                assert.equal(otherDoc3.isSaved(), true);
+                assert.notEqual(otherDoc1.foreignKey, undefined);
+                // We currently don't clean in this case
+                assert.notEqual(otherDoc2.foreignKey, undefined);
+                assert.notEqual(otherDoc3.foreignKey, undefined);
+                assert.equal(doc.otherDocs.length, 2);
+                Model.get(doc.id).getJoin().run().then(function(otherDoc1) {
+                    assert.equal(doc.otherDocs.length, 2);
+                    done();
+                });
+            });
+        });
+    });
+    it('should work for hasMany - 3', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String,
+            foreignKey: String
+        });
+
+        Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
+       
+        var doc = new Model({});
+        var otherDoc1 = new OtherModel({});
+        var otherDoc2 = new OtherModel({});
+        var otherDoc3 = new OtherModel({});
+        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+
+        doc.saveAll().then(function() {
+            Model.get(doc.id).getJoin().run().then(function(doc) {
+                var otherDoc1 = doc.otherDocs[0];
+                var otherDoc2 = doc.otherDocs[1];
+                var otherDoc3 = doc.otherDocs[2];
+                doc.delete().then(function() {
+                    assert.equal(doc.isSaved(), false);
+                    assert.equal(otherDoc1.isSaved(), true);
+                    assert.equal(otherDoc2.isSaved(), true);
+                    assert.equal(otherDoc3.isSaved(), true);
+                    assert.equal(otherDoc1.foreignKey, undefined);
+                    assert.equal(otherDoc2.foreignKey, undefined);
+                    assert.equal(otherDoc3.foreignKey, undefined);
+                    OtherModel.get(otherDoc1.id).run().then(function(otherDoc1) {
+                        assert.equal(otherDoc1.isSaved(), true);
+                        assert.equal(otherDoc1.foreignKey, undefined);
+                        done();
+                    });
+                });
+            });
+        });
+    });
+    it('should work for hasMany - 4', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String,
+            foreignKey: String
+        });
+
+        Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
+       
+        var doc = new Model({});
+        var otherDoc1 = new OtherModel({});
+        var otherDoc2 = new OtherModel({});
+        var otherDoc3 = new OtherModel({});
+        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+
+        doc.saveAll().then(function() {
+            Model.get(doc.id).getJoin().run().then(function(doc) {
+                var otherDoc1 = doc.otherDocs[0];
+                var otherDoc2 = doc.otherDocs[1];
+                var otherDoc3 = doc.otherDocs[2];
+                otherDoc1.delete().then(function() {
+                    assert.equal(doc.isSaved(), true);
+                    assert.equal(otherDoc1.isSaved(), false);
+                    assert.equal(otherDoc2.isSaved(), true);
+                    assert.equal(otherDoc3.isSaved(), true);
+                    assert.notEqual(otherDoc1.foreignKey, undefined);
+                    // We currently don't clean in this case
+                    //assert.equal(otherDoc2.foreignKey, undefined);
+                    assert.notEqual(otherDoc3.foreignKey, undefined);
+                    assert.equal(doc.otherDocs.length, 2);
+                    Model.get(doc.id).getJoin().run().then(function(otherDoc1) {
+                        assert.equal(doc.otherDocs.length, 2);
                         done();
                     });
                 });

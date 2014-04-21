@@ -1120,6 +1120,7 @@ describe('delete', function() {
 
             Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id")
         });
+        /*
         it('delete should delete only the document and not update the other', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
             var otherDocValues = {str: util.s8(), num: util.random()}
@@ -1147,6 +1148,7 @@ describe('delete', function() {
                 });
             });
         });
+        */
         it('deleteAll should delete everything', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
             var otherDocValues = {str: util.s8(), num: util.random()}
