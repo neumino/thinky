@@ -1844,6 +1844,44 @@ describe('_validator', function(){
         var doc = new Model({id: "abc", field: "abc"});
         doc.validate();
     });
+    it('validate on the whole document - bind with the doc - return false - 1 ', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String}
+        }, {init: false, validator: function() {
+                return this.id === this.field;
+            }
+        })
+        var doc = new Model({id: "abc", field: "abc"});
+        doc.validate();
+    });
+    it('validate on the whole document - bind with the doc - return false with arg - 1 ', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String}
+        }, {init: false, validator: function(doc) {
+                return doc.id === this.field;
+            }
+        })
+        var doc = new Model({id: "abc", field: "abc"});
+        doc.validate();
+    });
+    it('validate on the whole document - bind with the doc - return false with arg (error)- 1 ', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String}
+        }, {init: false, validator: function(doc) {
+                return doc.id === this.field;
+            }
+        })
+        var doc = new Model({id: "abc", field: ""});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error)
+                && (error.message === "Document's validator returned `false`.")
+        });
+    });
     it('validate on the whole document - bind with the doc - 2', function(){
         var Model = thinky.createModel(util.s8(), {
             id: String,
@@ -1861,6 +1899,23 @@ describe('_validator', function(){
         }, function(error) {
             return (error instanceof Error)
                 && (error.message === "Expecting `id` value to be `field` value.")
+        });
+    });
+    it('validate on the whole document - bind with the doc - return false - 2', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String}
+        }, {init: false, validator: function() {
+                return this.id === this.field;
+            }
+        })
+
+        var doc = new Model({id: "abc", field: ""});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error)
+                && (error.message === "Document's validator returned `false`.")
         });
     });
     it('validate on the whole document - nested field - 1 ', function(){
@@ -1923,6 +1978,36 @@ describe('_validator', function(){
         }, function(error) {
             return (error instanceof Error)
                 && (error.message === "Expecting `field` value to be 'abc'.")
+        });
+    });
+    it('validate on a field - 3', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String, validator: function(value) {
+                return value === "abc";
+            }}
+        }, {init: false})
+        var doc = new Model({id: "abc", field: ""});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error)
+                && (error.message === "Validator for the field [field] returned `false`.")
+        });
+    });
+    it('validate on a field - 4', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String, validator: function(value) {
+                return this === "abc";
+            }}
+        }, {init: false})
+        var doc = new Model({id: "abc", field: ""});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error)
+                && (error.message === "Validator for the field [field] returned `false`.")
         });
     });
     it('validate on the whole document - nested field - 1 ', function(){
