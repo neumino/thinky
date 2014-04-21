@@ -2280,3 +2280,237 @@ describe('_has* hidden links behavior', function() {
         }).error(done);;
     });
 });
+
+describe('delete - hidden links behavior', function() {
+    it('should work for hasOne - 1', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String,
+            foreignKey: String
+        });
+
+        Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
+       
+        var doc = new Model({});
+        var otherDoc = new OtherModel({});
+        doc.otherDoc = otherDoc;
+
+        doc.saveAll().then(function() {
+            doc.delete().then(function() {
+                assert.equal(doc.isSaved(), false);
+                assert.equal(otherDoc.isSaved(), true);
+                assert.equal(otherDoc.foreignKey, undefined);
+                OtherModel.get(otherDoc.id).run().then(function(otherDoc) {
+                    assert.equal(otherDoc.isSaved(), true);
+                    assert.equal(otherDoc.foreignKey, undefined);
+                    done();
+                });
+            });
+        });
+
+    });
+    it('should work for hasOne - 2', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String,
+            foreignKey: String
+        });
+
+        Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
+       
+        var doc = new Model({});
+        var otherDoc = new OtherModel({});
+        doc.otherDoc = otherDoc;
+
+        doc.saveAll().then(function() {
+            otherDoc.delete().then(function() {
+                assert.equal(doc.isSaved(), true);
+                assert.equal(otherDoc.isSaved(), false);
+                assert.equal(doc.otherDoc, undefined);
+                Model.get(doc.id).getJoin().run().then(function(doc) {
+                    assert.equal(doc.isSaved(), true);
+                    assert.equal(doc.otherDoc, undefined);
+                    done();
+                });
+            });
+        });
+    });
+    it('should work for hasOne - 3', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String,
+            foreignKey: String
+        });
+
+        Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
+       
+        var doc = new Model({});
+        var otherDoc = new OtherModel({});
+        doc.otherDoc = otherDoc;
+
+        doc.saveAll().then(function() {
+            Model.get(doc.id).getJoin().run().then(function(doc) {
+                var otherDoc = doc.otherDoc;
+                doc.delete().then(function() {
+                    assert.equal(doc.isSaved(), false);
+                    assert.equal(otherDoc.isSaved(), true);
+                    assert.equal(otherDoc.foreignKey, undefined);
+                    OtherModel.get(otherDoc.id).run().then(function(otherDoc) {
+                        assert.equal(otherDoc.isSaved(), true);
+                        assert.equal(otherDoc.foreignKey, undefined);
+                        done();
+                    });
+                });
+            });
+        });
+
+    });
+    it('should work for hasOne - 4', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String,
+            foreignKey: String
+        });
+
+        Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
+       
+        var doc = new Model({});
+        var otherDoc = new OtherModel({});
+        doc.otherDoc = otherDoc;
+
+        doc.saveAll().then(function() {
+            Model.get(doc.id).getJoin().run().then(function(doc) {
+                var otherDoc = doc.otherDoc;
+                otherDoc.delete().then(function() {
+                    assert.equal(doc.isSaved(), true);
+                    assert.equal(otherDoc.isSaved(), false);
+                    assert.equal(doc.otherDoc, undefined);
+                    Model.get(doc.id).getJoin().run().then(function(doc) {
+                        assert.equal(doc.isSaved(), true);
+                        assert.equal(doc.otherDoc, undefined);
+                        done();
+                    });
+                });
+            });
+        });
+    });
+    it('should work for belongsTo - 1', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            foreignKey: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String
+        });
+
+        Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id");
+       
+        var doc = new Model({});
+        var otherDoc = new OtherModel({});
+        doc.otherDoc = otherDoc;
+
+        doc.saveAll().then(function() {
+            doc.delete().then(function() {
+                assert.equal(doc.isSaved(), false);
+                assert.equal(otherDoc.isSaved(), true);
+                done();
+            });
+        });
+    });
+    it('should work for belongsTo - 2', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            foreignKey: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String
+        });
+
+        Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id");
+
+        var doc = new Model({});
+        var otherDoc = new OtherModel({});
+        doc.otherDoc = otherDoc;
+
+        doc.saveAll().then(function() {
+            otherDoc.delete().then(function() {
+                assert.equal(doc.isSaved(), true);
+                assert.equal(otherDoc.isSaved(), false);
+                assert.equal(doc.otherDoc, undefined);
+                assert.equal(doc.foreignKey, undefined);
+                Model.get(doc.id).getJoin().run().then(function(doc) {
+                    assert.equal(doc.isSaved(), true);
+                    assert.equal(doc.otherDoc, undefined);
+                    assert.equal(doc.foreignKey, undefined);
+                    done();
+                });
+            });
+        });
+    });
+    it('should work for belongsTo - 3', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            foreignKey: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String
+        });
+
+        Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id");
+       
+        var doc = new Model({});
+        var otherDoc = new OtherModel({});
+        doc.otherDoc = otherDoc;
+
+        doc.saveAll().then(function() {
+            Model.get(doc.id).getJoin().run().then(function(doc) {
+                doc.delete().then(function() {
+                    assert.equal(doc.isSaved(), false);
+                    assert.equal(doc.otherDoc.isSaved(), true);
+                    done();
+                });
+            });
+        });
+    });
+    it('should work for belongsTo - 4', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            foreignKey: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String
+        });
+
+        Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id");
+
+        var doc = new Model({});
+        var otherDoc = new OtherModel({});
+        doc.otherDoc = otherDoc;
+
+        doc.saveAll().then(function() {
+            Model.get(doc.id).getJoin().run().then(function(doc) {
+                var otherDoc = doc.otherDoc;
+                doc.otherDoc.delete().then(function() {
+                    assert.equal(doc.isSaved(), true);
+                    assert.equal(otherDoc.isSaved(), false);
+                    assert.equal(doc.otherDoc, undefined);
+                    assert.equal(doc.foreignKey, undefined);
+                    Model.get(doc.id).getJoin().run().then(function(doc) {
+                        assert.equal(doc.isSaved(), true);
+                        assert.equal(doc.otherDoc, undefined);
+                        assert.equal(doc.foreignKey, undefined);
+                        done();
+                    });
+                });
+            });
+        });
+    });
+});
