@@ -1,53 +1,92 @@
 # Thinky
-<a href="https://app.wercker.com/project/bykey/e5ab679f3412f8f86ef6488b31004fed"><img alt="Wercker status" src="https://app.wercker.com/status/e5ab679f3412f8f86ef6488b31004fed" align="right" /></a>
-
+===============================
+<a href="https://app.wercker.com/project/bykey/e5ab679f3412f8f86ef6488b31004fed"><img alt="Wercker status" src="https://app.wercker.com/status/e5ab679f3412f8f86ef6488b31004fed/m/master" align="right"></a>
 JavaScript ORM for RethinkDB.  
 
 ### Quick start 
 
 Install:
+
 ```
 npm install thinky
 ```
 
 Use:
+
 ```javascript
-var thinky = require('thinky');
-thinky.init({});
+var thinky = require('thinky')();
 
-// Create a model
-var Cat = thinky.createModel('Cat', {name: String, idHuman: String}); 
+// Create a model - the table is automatically created
+var Post = thinky.createModel("Post", {
+    id: String,
+    title: String,
+    content: String,
+    idAuthor: String
+}); 
 
-// Create custom methods
-Cat.define('hello', function() { console.log("Hello, I'm "+this.name) });
+var Author = thinky.createModel("Author", {
+    id: String,
+    name: String
+});
 
-// Join models
-var Human = thinky.createModel('Human', {name: String}); 
-Cat.hasOne(Human, 'owner', {leftKey: 'idHuman', rightKey: 'id'})
+// Join the models
+Post.belongsTo(Author, "author", "idAuthor", "id");
+```
 
-// Create a new object
-kitty = new Cat({name: 'Kitty'});
-michel = new Human({name: Michel});
-kitty.owner = michel;
+Save a new post with its author.
 
-kitty.hello(); // Log "Hello, I'm Kitty
-kitty.save({saveJoin: true}, function(err, result) {
-    if (err) throw err;
-    console.log("Kitty and Michel have been saved in the database");
+```js
+// Create a new post
+var post = new Post({
+    title: "Hello World!",
+    content: "This is an example."
+});
+
+// Create a new author
+var author = new Author({
+    name: "Michel"
+});
+
+// Join the documents
+post.author = author;
+
+
+post.saveAll().then(function(result) {
     /*
-    console.log(kitty);
-    {
+    post = result = {
         id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
-        name: "Catou",
-        idHuman: "3851d8b4-5358-43f2-ba23-f4d481358901",
-        owner: {
+        title: "Hello World!",
+        content: "This is an example.",
+        idAuthor: "3851d8b4-5358-43f2-ba23-f4d481358901",
+        author: {
             id: "3851d8b4-5358-43f2-ba23-f4d481358901",
-            name: Michel
+            name: "Michel"
         }
     }
     */
-})
+});
 ```
+
+Retrieve the post with its author.
+
+```js
+Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().then(function(result) {
+    /*
+    result = {
+        id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+        title: "Hello World!",
+        content: "This is an example.",
+        idAuthor: "3851d8b4-5358-43f2-ba23-f4d481358901",
+        author: {
+            id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+            name: "Michel"
+        }
+    }
+    */
+});
+```
+
+
 
 ### Docs
 
@@ -57,8 +96,7 @@ http://neumino.github.io/thinky/documentation.html
 ### Run the tests
 
 ```
-node init.js
-mocha
+npm test
 ```
 
 ### Contribute
@@ -66,14 +104,8 @@ You are welcome to do a pull request.
 
 
 ### Roadmap
-- Clean/reorganize tests and add more tests.
-- Add examples on how to use Thinky.
-- Let Thinky cache results so objects so there are no copies of the same document.
-- Joins with lambda functions.
-- Decide what to do with null (does it throw when checked against a Number?)
-- Do not drain the pool when poolMin/poolMax are changed
-- Promises?
-- Need something? Just ask :-)
+- Properly describe tests
+- Merge write queries into a unique one
 
 
 ### Author
@@ -83,6 +115,7 @@ You are welcome to do a pull request.
 
 - [nikaspran](https://github.com/nikaspran)
 - [wezs](https://github.com/wezs)
+
 
 ### License
 Copyright (c) 2013-2014 Michel Tu <orphee@gmail.com>
