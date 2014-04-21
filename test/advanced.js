@@ -1520,6 +1520,14 @@ describe('Advanced cases', function(){
                 doc2.saveAll().then(function(result) {
                     util.sortById(doc2.links);
                     otherDoc4.saveAll().then(function(result) {
+                        /*
+                         * otherdoc4 -> doc2 -> otherdoc1 -> doc2 -> otherdoc1
+                         *                                        -> otherdoc3
+                         *                   -> otherdoc3 -> doc1 -> otherdoc2
+                         *                                        -> otherdoc3
+                         *
+                         * NOTE: We explicitly force twice the deletion of doc2...
+                         */
                         otherDoc4.deleteAll({links2: {links: {links2: {links: true}}}}).then(function(result) {
                             assert.equal(doc1.isSaved(), false)
                             assert.equal(doc2.isSaved(), false)
@@ -2381,6 +2389,136 @@ describe('delete - hidden links behavior', function() {
                     // We currently don't clean in this case
                     //assert.equal(otherDoc2.foreignKey, undefined);
                     assert.notEqual(otherDoc3.foreignKey, undefined);
+                    assert.equal(doc.otherDocs.length, 2);
+                    Model.get(doc.id).getJoin().run().then(function(otherDoc1) {
+                        assert.equal(doc.otherDocs.length, 2);
+                        done();
+                    });
+                });
+            });
+        });
+    });
+    it('should work for hasAndBelongsToMany - 1', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String
+        });
+
+        Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
+       
+        var doc = new Model({});
+        var otherDoc1 = new OtherModel({});
+        var otherDoc2 = new OtherModel({});
+        var otherDoc3 = new OtherModel({});
+        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+
+        doc.saveAll().then(function() {
+            doc.delete().then(function() {
+                assert.equal(doc.isSaved(), false);
+                assert.equal(otherDoc1.isSaved(), true);
+                assert.equal(otherDoc2.isSaved(), true);
+                assert.equal(otherDoc3.isSaved(), true);
+                assert.equal(otherDoc3.isSaved(), true);
+                assert.equal(doc.otherDocs.length, 3);
+                r.table(Model._getModel()._joins.otherDocs.link).count().run().then(function(result) {
+                    assert.equal(result, 0);
+                    done();
+                });
+            });
+        });
+    });
+    it('should work for hasAndBelongsToMany - 2', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String
+        });
+
+        Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
+       
+        var doc = new Model({});
+        var otherDoc1 = new OtherModel({});
+        var otherDoc2 = new OtherModel({});
+        var otherDoc3 = new OtherModel({});
+        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+
+        doc.saveAll().then(function() {
+            otherDoc1.delete().then(function() {
+                assert.equal(doc.isSaved(), true);
+                assert.equal(otherDoc1.isSaved(), false);
+                assert.equal(otherDoc2.isSaved(), true);
+                assert.equal(otherDoc3.isSaved(), true);
+                assert.equal(doc.otherDocs.length, 2);
+                Model.get(doc.id).getJoin().run().then(function(otherDoc1) {
+                    assert.equal(doc.otherDocs.length, 2);
+                    done();
+                });
+            });
+        });
+    });
+    it('should work for hasAndBelongsToMany - 3', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String
+        });
+
+        Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
+       
+        var doc = new Model({});
+        var otherDoc1 = new OtherModel({});
+        var otherDoc2 = new OtherModel({});
+        var otherDoc3 = new OtherModel({});
+        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+
+        doc.saveAll().then(function() {
+            Model.get(doc.id).getJoin().run().then(function(doc) {
+                doc.delete().then(function() {
+                    assert.equal(doc.isSaved(), false);
+                    assert.equal(otherDoc1.isSaved(), true);
+                    assert.equal(otherDoc2.isSaved(), true);
+                    assert.equal(otherDoc3.isSaved(), true);
+                    assert.equal(otherDoc3.isSaved(), true);
+                    assert.equal(doc.otherDocs.length, 3);
+                    r.table(Model._getModel()._joins.otherDocs.link).count().run().then(function(result) {
+                        assert.equal(result, 0);
+                        done();
+                    });
+                });
+            });
+        });
+    });
+    it('should work for hasAndBelongsToMany - 4', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String
+        });
+
+        Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
+       
+        var doc = new Model({});
+        var otherDoc1 = new OtherModel({});
+        var otherDoc2 = new OtherModel({});
+        var otherDoc3 = new OtherModel({});
+        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+
+        doc.saveAll().then(function() {
+            Model.get(doc.id).getJoin().run().then(function(doc) {
+                otherDoc1 = doc.otherDocs[0];
+                otherDoc2 = doc.otherDocs[1];
+                otherDoc3 = doc.otherDocs[2];
+                otherDoc1.delete().then(function(result) {
+                    assert.strictEqual(result, otherDoc1);
+                    assert.equal(doc.isSaved(), true);
+                    assert.equal(otherDoc1.isSaved(), false);
+                    assert.equal(otherDoc2.isSaved(), true);
+                    assert.equal(otherDoc3.isSaved(), true);
                     assert.equal(doc.otherDocs.length, 2);
                     Model.get(doc.id).getJoin().run().then(function(otherDoc1) {
                         assert.equal(doc.otherDocs.length, 2);

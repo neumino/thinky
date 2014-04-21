@@ -1092,10 +1092,8 @@ describe('delete', function() {
                             assert.deepEqual(result, otherDoc);
                             done();
                         }).error(done);
-
                     });
                 }).error(done);
-
             })
         });
 
@@ -1120,7 +1118,7 @@ describe('delete', function() {
 
             Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id")
         });
-        /*
+        //Why this test was commented?
         it('delete should delete only the document and not update the other', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
             var otherDocValues = {str: util.s8(), num: util.random()}
@@ -1148,7 +1146,6 @@ describe('delete', function() {
                 });
             });
         });
-        */
         it('deleteAll should delete everything', function(done) {
             var docValues = {str: util.s8(), num: util.random()}
             var otherDocValues = {str: util.s8(), num: util.random()}
@@ -1455,7 +1452,7 @@ describe('delete', function() {
                 doc.deleteAll().then(function() {
                     assert.equal(doc.isSaved(), false);
                     for(var i=0; i<otherDocs.length; i++) {
-                        assert.equal(doc.otherDocs[i].isSaved(), false)
+                        assert.equal(otherDocs[i].isSaved(), false)
                     }
                     Model.get(doc.id).run().error(function(error) {
                         assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
@@ -1486,7 +1483,7 @@ describe('delete', function() {
                 doc.deleteAll({otherDocs: true}).then(function() {
                     assert.equal(doc.isSaved(), false);
                     for(var i=0; i<otherDocs.length; i++) {
-                        assert.equal(doc.otherDocs[i].isSaved(), false)
+                        assert.equal(otherDocs[i].isSaved(), false)
                     }
                     Model.get(doc.id).run().error(function(error) {
                         assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
