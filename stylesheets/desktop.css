@@ -9,20 +9,36 @@ body{
 }
 #wrapper img{
     display: block;
-    margin: 0px auto;
+    float: left;
+}
+header{
+    padding: 20px 0px 30px 20px;
+    margin-left: 400px;
+}
+.description{
+    text-align: center;
+}
+.description h2{
+    line-height: 1em;
+}
+header hr{
+    margin: 20px 40px 20px 40px;
+
 }
 nav{
     display: block;
     width: 100%;
-    min-width: 100%;
+    min-width: 938px;
     height: 45px;
 
     background: #2e3138;
     border-top: 2px solid #f3ff71;
+    border-left: 0px;
 
     -moz-box-shadow:    0px 0px 5px 0px #000;
     -webkit-box-shadow: 0px 0px 5px 0px #000;
     box-shadow:         0px 0px 5px 0px #000;
+    padding-bottom: 0px;
 }
 nav li.t{
     float: left;
@@ -54,12 +70,33 @@ nav ul{
 nav li{
     display: inline-block;
 }
+.hl{
+    position: absolute;
+    left: 50%;
+    width: 1px;
+    height: 1px;
+    border-bottom: 0px;
+    border-top: 6px solid #f3ff71;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    margin-top: 0px;
+    margin-left: 0px;
+}
+.index{
+    margin-left: 57px;
+}
+.doc{
+    margin-left: 184px;
+}
+.about{
+    margin-left: 311px;
+}
 
 #wrapper{
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
     padding: 20px 60px 0px 60px;
-    width: 900px;
+    width: 818px;
     margin: 2px auto 0px auto;
     background: #fafafa;
 }
@@ -72,16 +109,19 @@ h2{
     font-size: 18px;
     line-height: 18px;
     font-weight: bold;
+    padding-top: 0px;
 }
 h3{
     font-size: 16px;
     line-height: 16px;
     font-weight: bold;
+    padding-top: 0px;
 }
 h4{
     font-size: 14px;
     line-height: 14px;
     font-weight: bold;
+    padding-top: 0px;
 }
 pre{
     padding: 9px;
@@ -94,6 +134,9 @@ code{
     -moz-border-radius: 3px;
     border-radius: 3px;
     padding: 2px 6px;
+    font-family: monospace, serif;
+    font-size: 0.9em;
+    font-size: 0,9em;
 }
 pre code{
     background: none;
@@ -101,11 +144,12 @@ pre code{
     -moz-border-radius: 0px;
     border-radius: 0px;
     padding: 0px;
+    font-size: 0.9em;
 }
 
 footer{
     clear: both;
-    width: 900px;
+    width: 700px;
     margin: 40px auto 0px auto;
     padding: 20px 0px 40px 0px;
     border-top: 1px dotted #ccc;
@@ -122,11 +166,6 @@ footer{
     text-decoration: underline;
 }
 
-code{
-    font-family: monospace, serif;
-    font-size: 0.9em;
-}
-
 .main-title{
     list-style: none;
     margin: 20px 40px 20px 0px;
@@ -137,7 +176,7 @@ code{
 .doc-nav{
     float: left;
     padding: 20px 0px;
-    width: 180px;
+    width: 200px;
     border-right: 1px dotted #ccc;
     margin-right: 20px;
     margin-bottom: 20px;
@@ -189,3 +228,4 @@ ul{
 .space{
     height: 30px;
 }
+

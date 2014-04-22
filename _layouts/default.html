@@ -7,19 +7,25 @@
         <meta name="description" content=""/>
         <meta name="author" content="Michel Tu"/>
         <title>Node.js -- JavaScript ORM for RethinkDB</title>
-        <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-        <!--[if ie 9]><style type="text/css" media="screen">.filter{behavior: url(ie9-gradient-fix.htc);}</style><![endif]-->
-        
-        <link rel="stylesheet" href="/stylesheets/styles.css">
+        <link rel="stylesheet" href="">
+        <link href="/stylesheets/mobile.css" media="screen" rel="stylesheet">
+        <link href="/stylesheets/desktop.css" media="screen and (min-device-width: 768px)" rel="stylesheet">
         <link rel="stylesheet" href="/stylesheets/pygment_trac.css ">
     </head>
     <body>
     <nav>
+        {% if page.hl == "index" %}
+        <div class="hl index"></div>
+        {% elsif page.hl == "about" %}
+        <div class="hl about"></div>
+        {% else %}
+        <div class="hl doc"></div>
+        {% endif %}
         <ul>
             <li><a href="/">Home</a></li>
-            <li><a href="https://github.com/neumino/thinky">Source</a></li>
             <li><a href="/documentation/">Documentation</a></li>
             <li><a href="/about.html">About</a></li>
+            <li><a href="https://github.com/neumino/thinky">GitHub</a></li>
         </ul>
     </nav>
     <div id="wrapper">
@@ -30,7 +36,7 @@
 
         <footer>
             <p><small>
-                Author: Michel Tu &mdash; <a href="mailto:orphee@gmail.com">orphee@gmail.com</a> &mdash; <a href="http://www.justonepixel.com">www.justonepixel.com</a><br/>
+                Michel Tu &mdash; <a href="mailto:orphee@gmail.com">orphee@gmail.com</a> &mdash; <a href="http://www.justonepixel.com">www.justonepixel.com</a><br/>
                 Hosted on <a href="https://pages.github.com">GitHub Pages</a>
             </small></p>
         </footer>

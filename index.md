@@ -1,22 +1,30 @@
 ---
 layout: default
+hl: index
 ---
 
 
 [![](/images/thinky-header.png)](/)
 
+<header>
+<div class="description">
+    <h2>Thinky</h2>
+    A light Node.js ORM for RethinkDB
+</div>
 
-## Quickstart
+<hr/>
 
-### Install
+<h3>Install</h3>
 
-Install via `npm`.
+<p>Install via <code>npm</code>.</p>
 
-```bash
-npm install thinky
-```
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash">npm install thinky
+</code></pre></div>
+</header>
 
-### Example
+<div class="clear"></div>
+
+### Quickstart
 
 Create models with schemas.
 
@@ -74,30 +82,15 @@ post.saveAll().then(function(result) {
 });
 ```
 
-Retrieve the post with its author.
-
-```js
-Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().then(function(result) {
-    /*
-    result = {
-        id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
-        title: "Hello World!",
-        content: "This is an example.",
-        idAuthor: "3851d8b4-5358-43f2-ba23-f4d481358901",
-        author: {
-            id: "3851d8b4-5358-43f2-ba23-f4d481358901",
-            name: "Michel"
-        }
-    }
-    */
-});
-```
-
-And there is more! Here is a non exhaustive list:
+And there is lot more! Here is a non exhaustive list:
 
 - Enforce schemas.
 - Multiple relations: `hasOne`, `belongsTo`, `hasMany` and `hasAndBelongsToMany`.
-- Automatically create table and indexes.
+- Automatically create tables and indexes.
 - Automatically remove relations when a document is deleted.
 
-Take a look at the <a href="/documentation/thinky">documentation</a> to read more!
+Take a look at:
+
+- The [quickstart](/documentation/)
+- The [examples](https://github.com/neumino/thinky/tree/master/examples)
+- The [API documentation](/documentation/api/thinky/)
