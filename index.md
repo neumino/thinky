@@ -14,17 +14,25 @@ hl: index
 
 <hr/>
 
-<h3>Install</h3>
+<h3>Batteries included:</h3>
+<ul>
+<li>Schemas</li>
+<li>All standard relations</li>
+<li>Automatic creation of tables/indexes</li>
+<li>And more!</li>
+</ul>
+
+
+
+</header>
+
+### Quickstart
 
 <p>Install via <code>npm</code>.</p>
 
 <div class="highlight"><pre><code class="bash language-bash" data-lang="bash">npm install thinky
 </code></pre></div>
-</header>
 
-<div class="clear"></div>
-
-### Quickstart
 
 Create models with schemas.
 
@@ -89,7 +97,7 @@ And there is lot more! Here is a non exhaustive list:
 - Automatically create tables and indexes.
 - Automatically remove relations when a document is deleted.
 
-Take a look at:
+You can learn more about thinky with these links:
 
 - The [quickstart](/documentation/)
 - The [examples](https://github.com/neumino/thinky/tree/master/examples)

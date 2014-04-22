@@ -228,4 +228,6 @@ ul{
 .space{
     height: 30px;
 }
-
+.clear{
+    clear: both;
+}
