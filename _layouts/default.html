@@ -13,14 +13,14 @@
     </head>
     <body>
     <nav>
-        {% if page.hl == "index" %}
-        <div class="hl index"></div>
-        {% elsif page.hl == "about" %}
-        <div class="hl about"></div>
-        {% else %}
-        <div class="hl doc"></div>
-        {% endif %}
         <ul>
+            {% if page.hl == "index" %}
+            <li class="hl index"></li>
+            {% elsif page.hl == "about" %}
+            <li class="hl about"></li>
+            {% else %}
+            <li class="hl doc"></li>
+            {% endif %}
             <li><a href="/">Home</a></li>
             <li><a href="/documentation/">Documentation</a></li>
             <li><a href="/about.html">About</a></li>
@@ -34,6 +34,7 @@
         </main>
 
         <footer>
+            <hr/>
             <p><small>
                 Michel Tu &mdash; <a href="mailto:orphee@gmail.com">orphee@gmail.com</a> &mdash; <a href="http://www.justonepixel.com">www.justonepixel.com</a><br/>
                 Hosted on <a href="https://pages.github.com">GitHub Pages</a>

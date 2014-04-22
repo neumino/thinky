@@ -6,7 +6,8 @@ permalink: thinky/
 ## Thinky
 
 ### Import
-```
+
+```js
 var thinky = require('thinky')([options]);
 var r = thinky.r;
 ```
