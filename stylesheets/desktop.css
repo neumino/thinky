@@ -10,10 +10,11 @@ body{
 #wrapper img{
     display: block;
     float: left;
+    margin-left: 20px;
 }
 header{
     padding: 20px 0px 30px 20px;
-    margin-left: 400px;
+    margin-left: 440px;
 }
 .description{
     text-align: center;
