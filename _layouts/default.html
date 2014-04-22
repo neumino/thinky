@@ -8,25 +8,26 @@
         <meta name="author" content="Michel Tu"/>
         <title>Node.js -- JavaScript ORM for RethinkDB</title>
         <link rel="stylesheet" href="">
-        <link rel="stylesheet" href="/stylesheets/desktop.css">
-        <link rel="stylesheet" href="/stylesheets/pygment_trac.css ">
+        <link rel="stylesheet" type="text/css" href="/stylesheets/desktop.css">
+        <link rel="stylesheet" type="text/css" href="/stylesheets/pygment_trac.css ">
+        <link rel="stylesheet" type="text/css" href="/stylesheets/mobile.css" media="only screen and (max-device-width: 480px)" />
     </head>
     <body>
-    <nav>
-        <ul>
+    <div class="navigation">
+        <div class="ul">
             {% if page.hl == "index" %}
-            <li class="hl index"></li>
+            <div class="hl index"></div>
             {% elsif page.hl == "about" %}
-            <li class="hl about"></li>
+            <div class="hl about"></div>
             {% else %}
-            <li class="hl doc"></li>
+            <div class="hl doc"></div>
             {% endif %}
-            <li><a href="/">Home</a></li>
-            <li><a href="/documentation/">Documentation</a></li>
-            <li><a href="/about.html">About</a></li>
-            <li><a href="https://github.com/neumino/thinky">GitHub</a></li>
-        </ul>
-    </nav>
+            <div class="li"><a href="/">Home</a></div>
+            <div class="li"><a href="/documentation/">Documentation</a></div>
+            <div class="li"><a href="/about.html">About</a></div>
+            <div class="li"><a href="https://github.com/neumino/thinky">GitHub</a></div>
+        </div>
+    </div>
     <div id="wrapper">
 
         <main>
@@ -35,10 +36,14 @@
 
         <footer>
             <hr/>
-            <p><small>
-                Michel Tu &mdash; <a href="mailto:orphee@gmail.com">orphee@gmail.com</a> &mdash; <a href="http://www.justonepixel.com">www.justonepixel.com</a><br/>
-                Hosted on <a href="https://pages.github.com">GitHub Pages</a>
-            </small></p>
+            <ul>
+                <lv[M 8i>Michel Tu</li>
+                <li>&mdash; <a href="mailto:orphee@gmail.com">orphee@gmail.com</a></li>
+                <li>&mdash; <a href="http://www.justonepixel.com">www.justonepixel.com</a><br/></li>
+            </ul>
+            <ul>
+                <li>Hosted on <a href="https://pages.github.com">GitHub Pages</a></li>
+            </ul>
         </footer>
     </div>
 </body>
