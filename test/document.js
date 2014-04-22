@@ -621,7 +621,12 @@ describe('save', function() {
                         assert.equal(result.length, 2);
                         OtherModel.run().then(function(result) {
                             assert.equal(result.length, 3);
-                            done();
+                            Model.get(doc.id).getJoin().run().then(function(result) {
+                                util.sortById(doc.otherDocs);
+                                util.sortById(result.otherDocs);
+                                assert.deepEqual(doc, result);
+                                done();
+                            });
                         });
 
                     });
@@ -661,10 +666,14 @@ describe('save', function() {
                 assert.equal(typeof doc.foreignKey, 'string')
                 doc.otherDoc = null;
                 doc.saveAll().then(function() {
-                    assert(doc.foreignKey, undefined);
+                    assert.equal(doc.foreignKey, undefined);
                     OtherModel.run().then(function(result) {
                         assert.equal(result.length, 1);
-                        done();
+                        Model.get(doc.id).getJoin().run().then(function(result) {
+                            delete doc.otherDoc;
+                            assert.deepEqual(result, doc);
+                            done();
+                        })
                     });
                 });
             }).error(done);
