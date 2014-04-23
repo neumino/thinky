@@ -690,3 +690,36 @@ describe('thinky.Query', function() {
         });
     });
 });
+describe('then', function() {
+    it('should throw an error', function() {
+        var name = util.s8();
+
+        var Query = thinky.Query;
+        var r = thinky.r;
+        var User = thinky.createModel(name, {id: String}, {init: false});
+
+
+        assert.throws(function() {
+            User.then(function() {});
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "The method `then` is not defined on Query. Did you forgot `.run()` or `.execute()`?")
+        });
+
+    });
+    it('should throw an error', function() {
+        var name = util.s8();
+
+        var Query = thinky.Query;
+        var r = thinky.r;
+        var User = thinky.createModel(name, {id: String}, {init: false});
+
+
+        assert.throws(function() {
+            User.filter({}).then(function() {});
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "The method `then` is not defined on Query. Did you forgot `.run()` or `.execute()`?")
+        });
+
+    });
+
+});
