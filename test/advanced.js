@@ -32,6 +32,7 @@ describe('Advanced cases', function(){
             doc.has = otherDoc;
 
             doc.saveAll().then(function(result) {
+                assert.strictEqual(doc, result);
                 assert.equal(typeof result.id, 'string')
                 assert.equal(typeof result.has.id, 'string')
                 assert.equal(result.id, result.has.otherId)
@@ -1520,14 +1521,14 @@ describe('Advanced cases', function(){
                 doc2.saveAll().then(function(result) {
                     util.sortById(doc2.links);
                     otherDoc4.saveAll().then(function(result) {
-                        /*
-                         * otherdoc4 -> doc2 -> otherdoc1 -> doc2 -> otherdoc1
-                         *                                        -> otherdoc3
-                         *                   -> otherdoc3 -> doc1 -> otherdoc2
-                         *                                        -> otherdoc3
-                         *
-                         * NOTE: We explicitly force twice the deletion of doc2...
-                         */
+                        //
+                        // otherdoc4 -> doc2 -> otherdoc1 -> doc2 -> otherdoc1
+                        //                                        -> otherdoc3
+                        //                   -> otherdoc3 -> doc1 -> otherdoc2
+                        //                                        -> otherdoc3
+                        //
+                        // NOTE: We explicitly force twice the deletion of doc2...
+                        //
                         otherDoc4.deleteAll({links2: {links: {links2: {links: true}}}}).then(function(result) {
                             assert.equal(doc1.isSaved(), false)
                             assert.equal(doc2.isSaved(), false)
