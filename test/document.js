@@ -662,10 +662,10 @@ describe('save', function() {
             doc.otherDoc = otherDoc;
 
             doc.saveAll().then(function() {
-                assert(doc.isSaved())
-                assert.equal(typeof doc.foreignKey, 'string')
+                assert(doc.isSaved());
+                assert.equal(typeof doc.foreignKey, 'string');
                 doc.otherDoc = null;
-                doc.saveAll().then(function() {
+                doc.saveAll().then(function(result) {
                     assert.equal(doc.foreignKey, undefined);
                     OtherModel.run().then(function(result) {
                         assert.equal(result.length, 1);
@@ -680,8 +680,6 @@ describe('save', function() {
 
         })
     });
-    
-    
     describe('saveAll with missing docs for hasAndBelongsToMany', function() {
         var Model, OtherModel;
         before(function() {
