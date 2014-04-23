@@ -6,6 +6,7 @@ body{
     margin: 0px;
     padding: 0px;
     background: url(/images/background.png) #fafafa;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif";
 }
 #wrapper img{
     display: block;
@@ -53,16 +54,28 @@ header hr{
     color: #eee;
     text-decoration: underline;
 }
-.navigation .ul{
+.navigation ul{
     position: relative;
     display: block;
     margin: 0px auto;
     width: 900px;
     text-align: right;
 }
-.navigation .li{
+.navigation li{
     display: inline-block;
     margin-top: 3px;
+}
+.navigation .home_link{
+    width: 85px;
+}
+.navigation .documentation_link{
+    width: 159px;
+}
+.navigation .about_link{
+    width: 87px;
+}
+.navigation .github_link{
+    width: 93px;
 }
 .hl{
     position: absolute;
@@ -78,13 +91,13 @@ header hr{
     margin-left: 0px;
 }
 .index{
-    margin-right: 347px;
+    margin-right: 391px;
 }
 .doc{
-    margin-right: 237px;
+    margin-right: 268px;
 }
 .about{
-    margin-right: 122px;
+    margin-right: 136px;
 }
 
 #wrapper{
@@ -206,6 +219,9 @@ ul.doc-nav li ul li{
 
 ul.doc-nav span{
     padding-left: 30px;
+}
+.line-container{
+    display: none;
 }
 #wrapper li.title a{
     font-weight: bold;

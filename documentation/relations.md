@@ -320,6 +320,65 @@ Save both documents and the relation.
 michel.saveAll({emergencyContact: true}).then(...);
 ```
 
+#### Update
+If you call `save` on a document that you previously saved or that you retrieved from
+the database, the `save` command will update the document.
+
+Calling `saveAll` on a saved document will also update the relations (foreign keys, links etc.).
+
+
+_Example_: Update a hasOne relation.
+
+```js
+var User = thinky.createModel("User", {
+    id: String,
+    name: String
+});
+var Account = thinky.createModel("Account", {
+    id: String,
+    sold: Number,
+    userId: String
+});
+
+User.hasOne(Account, "account", "id", "userId");
+
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
+    .getJoin().run().then(function(user) {
+    /*
+     * var user = {
+     *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *     name: "Michel",
+     *     account: {
+     *         id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+     *         userId: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *         sold: 2420
+     *     }
+     * }
+     */
+     user.account = null;
+     user.saveAll().then(function(user) {
+        /*
+         * var user = {
+         *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+         *     name: "Michel",
+         * }
+         */
+        Account.get("3851d8b4-5358-43f2-ba23-f4d481358901").run()
+            .then(function(account) {
+
+            /*
+             *  // The foreign key in account was deleted.
+             *  var account: {
+             *      id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+             *      sold: 2420
+             *  }
+             */
+        });
+
+     });
+}):
+```
+
 
 ------------------------
 
@@ -455,6 +514,55 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").run().then(function(user) {
     });
 });
 ```
+
+_Example_: Update a `belongsTo` relation.
+
+```js
+var Post = thinky.createModel("Post", {
+    id: String,
+    title: String,
+    content: String,
+    authorId: String
+});
+
+var Author = thinky.createModel("Author", {
+    id: String,
+    name: String
+});
+
+Post.belongsTo(Author, "author", "authorId", "id")
+
+Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
+    .getJoin().run().then(function(post) {
+
+    /*
+     * post = {
+     *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *     title: "Hello world",
+     *     content: "This is the first post",
+     *     authorId: "3851d8b4-5358-43f2-ba23-f4d481358901",
+     *     author: {
+     *         id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+     *         name: "Michel"
+     *     }
+     * }
+     */
+    post.author.delete().then(function() {
+        Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
+            .getJoin().run().then(function(post) {
+
+            /*
+             * post = {
+             *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+             *     title: "Hello world",
+             *     content: "This is the first post"
+             * }
+             */
+        });
+    });
+});
+```
+
 
 #### deleteAll
 

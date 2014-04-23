@@ -45,5 +45,5 @@ Nothing that I can think of.
 Take a look at:
 
 - The [quickstart](/documentation/)
-- The [examples](https://github.com/neumino/thinky/tree/master/examples)
+- The [examples on GitHub](https://github.com/neumino/thinky/tree/master/examples)
 - The [API documentation](/documentation/api/thinky/)

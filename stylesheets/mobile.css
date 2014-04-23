@@ -11,9 +11,7 @@ header{
 .navigation{
     height: auto;
 }
-.navigation .ul{
-}
-.navigation .li{
+.navigation li{
     display: block;
     list-style: none;
     text-align: center;
@@ -31,4 +29,37 @@ ul.doc-nav{
 }
 #float-content{
     margin: 4px 0px 0px 0px;
+}
+.navigation .home_link{
+    width: auto;
+}
+.navigation .documentation_link{
+    width: auto;
+}
+.navigation .about_link{
+    width: auto;
+}
+.navigation .github_link{
+    width: auto;
+}
+.line-container{
+    display: list-item;
+}
+
+
+
+ul.doc-nav {
+    float: none;
+    padding: 20px 0px;
+    width: auto;
+    margin: 0px auto 20px auto;;
+    padding: 0px 0px 20px 40px;
+    border-bottom: 1px solid #000;
+
+}
+li{
+    list-style: none;
+}
+main{
+    text-align: initial;
 }

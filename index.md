@@ -100,5 +100,5 @@ And there is lot more! Here is a non exhaustive list:
 You can learn more about thinky with these links:
 
 - The [quickstart](/documentation/)
-- The [examples](https://github.com/neumino/thinky/tree/master/examples)
+- The [examples on GitHub](https://github.com/neumino/thinky/tree/master/examples)
 - The [API documentation](/documentation/api/thinky/)
