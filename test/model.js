@@ -125,7 +125,7 @@ describe("Joins", function() {
         var otherName = util.s8();
         var otherModel = thinky.createModel(otherName, { id: String, otherId: String });
 
-        model.hasOne(otherModel, "otherDoc", "otherId", "id");
+        model.hasOne(otherModel, "otherDoc", "id", "otherId");
         assert(model._getModel()._joins["otherDoc"])
     });
     it('hasOne should throw if it uses a field already used by another relation', function(done) {
@@ -139,9 +139,9 @@ describe("Joins", function() {
         var anotherModel = thinky.createModel(anotherName, { id: String, otherId: String }, {init: false});
 
 
-        model.hasOne(otherModel, "otherDoc", "otherId", "id", {init: false});
+        model.hasOne(otherModel, "otherDoc", "id", "otherId", {init: false});
         try{
-            model.hasOne(anotherModel, "otherDoc", "otherId", "id");
+            model.hasOne(anotherModel, "otherDoc", "id", "otherId");
         }
         catch(err) {
             assert.equal(err.message, "The field `otherDoc` is already used by another relation.")
@@ -159,9 +159,9 @@ describe("Joins", function() {
         var anotherModel = thinky.createModel(anotherName, { id: String, otherId: String }, {init: false});
 
 
-        model.belongsTo(otherModel, "otherDoc", "otherId", "id", {init: false});
+        model.belongsTo(otherModel, "otherDoc", "id", "otherId", {init: false});
         try{
-            model.belongsTo(anotherModel, "otherDoc", "otherId", "id");
+            model.belongsTo(anotherModel, "otherDoc", "id", "otherId");
         }
         catch(err) {
             assert.equal(err.message, "The field `otherDoc` is already used by another relation.")
@@ -179,9 +179,9 @@ describe("Joins", function() {
         var anotherModel = thinky.createModel(anotherName, { id: String, otherId: String }, {init: false});
 
 
-        model.hasMany(otherModel, "otherDoc", "otherId", "id", {init: false});
+        model.hasMany(otherModel, "otherDoc", "id", "otherId", {init: false});
         try{
-            model.hasMany(anotherModel, "otherDoc", "otherId", "id");
+            model.hasMany(anotherModel, "otherDoc", "id", "otherId");
         }
         catch(err) {
             assert.equal(err.message, "The field `otherDoc` is already used by another relation.")
@@ -199,9 +199,9 @@ describe("Joins", function() {
         var anotherModel = thinky.createModel(anotherName, { id: String, otherId: String }, {init: false});
 
 
-        model.hasAndBelongsToMany(otherModel, "otherDoc", "otherId", "id", {init: false});
+        model.hasAndBelongsToMany(otherModel, "otherDoc", "id", "otherId", {init: false});
         try{
-            model.hasAndBelongsToMany(anotherModel, "otherDoc", "otherId", "id");
+            model.hasAndBelongsToMany(anotherModel, "otherDoc", "id", "otherId");
         }
         catch(err) {
             assert.equal(err.message, "The field `otherDoc` is already used by another relation.")

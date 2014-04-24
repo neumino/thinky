@@ -1664,8 +1664,29 @@ describe('validate', function(){
             return error.message === "Extra field `buzz` in [foo] not allowed.";
         });
     });
+    it('Test option validate="oncreate"', function(){
+        var name = util.s8();
+        var str = util.s8();
 
-    it('it should check joined Document too -- hasOne', function() {
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String
+        }, {init: false, enforce_type: 'strict', enforce_missing: true, enforce_extra: true, validate: 'oncreate'})
+
+
+        assert.throws(function() {
+            doc = new Model({
+                id: str,
+                field: 1
+            })
+
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be a string.")
+        });
+    });
+});
+describe('validateAll', function() {
+    it('it should check joined Document too -- hasOne - 1', function() {
         var name = util.s8();
         var otherName = util.s8();
 
@@ -1695,12 +1716,47 @@ describe('validate', function(){
             }
         })
         assert.throws(function() {
-            doc.validate();
+            doc.validateAll();
         }, function(error) {
             return error.message === "Value for [otherDoc][field] must be a string or null.";
         });
     });
-    it('it should check joined Document too -- belongsTo', function() {
+    it('it should check joined Document too -- hasOne - 2', function() {
+        var name = util.s8();
+        var otherName = util.s8();
+
+        var str1 = util.s8();
+        var str2 = util.s8();
+        var str3 = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String
+        }, {init: false, enforce_type: 'strict'})
+
+        var OtherModel = thinky.createModel(otherName, {
+            id: String,
+            field: String,
+            otherId: String
+        }, {init: false, enforce_type: 'loose'})
+
+        Model.hasOne(OtherModel, "otherDoc", "otherId", "id", {init: false});
+
+        doc = new Model({
+            id: str1,
+            field: str2,
+            otherDoc: {
+                id: str3,
+                field: 1
+            }
+        })
+        assert.throws(function() {
+            doc.validateAll({otherDoc: true});
+        }, function(error) {
+            return error.message === "Value for [otherDoc][field] must be a string or null.";
+        });
+    });
+    it('it should check joined Document too -- belongsTo - 1', function() {
         var name = util.s8();
         var otherName = util.s8();
 
@@ -1731,12 +1787,48 @@ describe('validate', function(){
         })
 
         assert.throws(function() {
-            doc.validate();
+            doc.validateAll();
         }, function(error) {
             return error.message === "Value for [otherDoc][field] must be a string or null.";
         });
     });
-    it('it should check joined Document too -- hasMany', function() {
+    it('it should check joined Document too -- belongsTo - 2', function() {
+        var name = util.s8();
+        var otherName = util.s8();
+
+        var str1 = util.s8();
+        var str2 = util.s8();
+        var str3 = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String,
+            otherId: String
+        }, {init: false, enforce_type: 'strict'})
+
+        var OtherModel = thinky.createModel(otherName, {
+            id: String,
+            field: String
+        }, {init: false, enforce_type: 'loose'})
+
+        Model.hasOne(OtherModel, "otherDoc", "otherId", "id", {init: false});
+
+        doc = new Model({
+            id: str1,
+            field: str2,
+            otherDoc: {
+                id: str3,
+                field: 1
+            }
+        })
+
+        assert.throws(function() {
+            doc.validateAll({otherDoc: true});
+        }, function(error) {
+            return error.message === "Value for [otherDoc][field] must be a string or null.";
+        });
+    });
+    it('it should check joined Document too -- hasMany - 1', function() {
         var name = util.s8();
         var otherName = util.s8();
 
@@ -1767,12 +1859,48 @@ describe('validate', function(){
         })
 
         assert.throws(function() {
-            doc.validate();
+            doc.validateAll();
         }, function(error) {
             return error.message === "Value for [otherDocs][0][field] must be a string or null.";
         });
     });
-    it('it should check joined Document too -- hasAndBelongsToMany', function() {
+    it('it should check joined Document too -- hasMany - 2', function() {
+        var name = util.s8();
+        var otherName = util.s8();
+
+        var str1 = util.s8();
+        var str2 = util.s8();
+        var str3 = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: String,
+        }, {init: false, enforce_type: 'strict'})
+
+        var OtherModel = thinky.createModel(otherName, {
+            id: String,
+            field: String,
+            otherId: String
+        }, {init: false, enforce_type: 'loose'})
+
+        Model.hasMany(OtherModel, "otherDocs", "id", "otherId", {init: false});
+
+        doc = new Model({
+            id: str1,
+            field: str2,
+            otherDocs: [{
+                id: str3,
+                field: 1
+            }]
+        })
+
+        assert.throws(function() {
+            doc.validateAll({otherDocs: true});
+        }, function(error) {
+            return error.message === "Value for [otherDocs][0][field] must be a string or null.";
+        });
+    });
+    it('it should check joined Document too -- hasAndBelongsToMany - 1', function() {
         var name = util.s8();
         var otherName = util.s8();
 
@@ -1803,32 +1931,93 @@ describe('validate', function(){
         })
 
         assert.throws(function() {
-            doc.validate();
+            doc.validateAll();
         }, function(error) {
             return error.message === "Value for [otherDocs][0][field] must be a string or null.";
         });
     });
-    it('Test option validate="oncreate"', function(){
+    it('it should check joined Document too -- hasAndBelongsToMany - 2', function() {
         var name = util.s8();
-        var str = util.s8();
+        var otherName = util.s8();
+
+        var str1 = util.s8();
+        var str2 = util.s8();
+        var str3 = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: String
-        }, {init: false, enforce_type: 'strict', enforce_missing: true, enforce_extra: true, validate: 'oncreate'})
+            field: String,
+        }, {init: false, enforce_type: 'strict'})
 
+        var OtherModel = thinky.createModel(otherName, {
+            id: String,
+            field: String,
+            otherId: String
+        }, {init: false, enforce_type: 'loose'})
+
+        Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "otherId", {init: false});
+
+        doc = new Model({
+            id: str1,
+            field: str2,
+            otherDocs: [{
+                id: str3,
+                field: 1
+            }]
+        })
 
         assert.throws(function() {
-            doc = new Model({
-                id: str,
-                field: 1
-            })
-
+            doc.validateAll({otherDocs: true});
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a string.")
+            return error.message === "Value for [otherDocs][0][field] must be a string or null.";
         });
     });
+    it('hasOne with a circular reference', function() {
+        var Model = thinky.createModel(util.s8(), { id: String});
+        var OtherModel = thinky.createModel(util.s8(), { id: String, otherId: String });
 
+        Model.hasOne(OtherModel, "has", "id", "otherId");
+        OtherModel.belongsTo(Model, "belongsTo", "otherId", "id");
+
+        var doc = new Model({});
+        var otherDoc = new Model({});
+        doc.has = otherDoc;
+        otherDoc.belongsTo = doc;
+        doc.validate();
+        otherDoc.validate();
+    });
+    it('hasOne with a circular reference - second reference should not be checked', function() {
+        var Model = thinky.createModel(util.s8(), { id: String});
+        var OtherModel = thinky.createModel(util.s8(), { id: String, otherId: String });
+
+        Model.hasOne(OtherModel, "has", "id", "otherId");
+        OtherModel.belongsTo(Model, "belongsTo", "otherId", "id");
+
+        var doc = new Model({});
+        var otherDoc = new Model({});
+        var wrongDoc = new Model({id: 1});
+        doc.has = otherDoc;
+        otherDoc.belongsTo = wrongDoc;
+        doc.validateAll();
+    });
+    it('hasOne with a circular reference - second reference should be checked if manually asked', function() {
+        var Model = thinky.createModel(util.s8(), { id: String});
+        var OtherModel = thinky.createModel(util.s8(), { id: String, otherId: String });
+
+        Model.hasOne(OtherModel, "has", "id", "otherId");
+        OtherModel.belongsTo(Model, "belongsTo", "otherId", "id");
+
+        var doc = new Model({});
+        var otherDoc = new OtherModel({});
+        var wrongDoc = new Model({id: 1});
+        doc.has = otherDoc;
+        otherDoc.belongsTo = wrongDoc;
+        assert.throws(function() {
+            doc.validateAll({}, {has: {belongsTo: true}});
+        }, function(error) {
+            return error.message === "Value for [has][belongsTo][id] must be a string or null.";
+        });
+    });
 });
 describe('_validator', function(){
     it('validate on the whole document - bind with the doc - 1 ', function(){
@@ -2092,5 +2281,4 @@ describe('_validator', function(){
                 && (error.message === "Value for [ob][foo] must be a string or null.")
         });
     });
-
 });
