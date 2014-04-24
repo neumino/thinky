@@ -69,14 +69,14 @@ post.saveAll().then(function(result) {
 });
 ```
 
-Retrieve the post with its author.
+Retrieve the post with its author, and delete its author.
 
 ```js
 Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
-    .getJoin().then(function(result) {
+    .getJoin().then(function(post) {
 
     /*
-    result = {
+    post = {
         id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
         title: "Hello World!",
         content: "This is an example.",
@@ -87,6 +87,17 @@ Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
         }
     }
     */
+    post.author.delete().then(function() {
+        /*
+        The author Michel was deleted from the database.
+        The field `idAuthor` was removed from the post (in the database).
+        post = {
+            id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+            title: "Hello World!",
+            content: "This is an example.",
+        }
+        */
+    });
 });
 ```
 
