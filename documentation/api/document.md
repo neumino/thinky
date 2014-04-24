@@ -76,21 +76,59 @@ Post.get(data.id).run().then(function(post) {
 ### [validate](#validate)
 
 ```
-document.validate([modelToValidate, options]);
+document.validate([options]);
 ```
 
+Validate a document.  
 The method `validate` is called before saving a document.
-Return the constructor of this document.
 
-The arguments are all optionals:
+The `option` argument is optional. It can be an object with the fields:
 
-- `modelToValidate`: the joined documents that should be validated.
-- `options` can be an object with the fields:
-    - `enforce_missing`: `Boolean`, `true` to forbid missing fields.
-    - `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema.
-    - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`  
-    It will overwrite the options set on the document, but not the one set on the
-    schema.
+- `enforce_missing`: `Boolean`, `true` to forbid missing fields.
+- `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema.
+- `enforce_type`: can be `"strict"`, `"loose"`, `"none"`  
+It will overwrite the options set on the document, but not the one set on the
+schema.
+
+
+If the model's option `validate` is set to `"oncreate"`, the method `validate` will
+also be executed every time a new document is created.
+
+_Example_: Validate a new user.
+
+```js
+try{
+    user.validate()
+}
+catch(err) {
+    console.log("The user is not valid."); 
+}
+```
+
+--------------
+<div id="validate"></div>
+### [validate](#validate)
+
+```
+document.validateAll([options, modelToValidate]);
+```
+
+Validate a document.  
+
+By default, if `modelToValidate` is not provided, `modelToValidate` will keep recursing and will
+validate all the joined documents.    
+To avoid infinite recursion, `validateAll` will not recurse in a field that contains a document from
+a model that was previously validated.
+
+The option `modelToValidate` can be an object where each field is a joined document that will also be deleted.
+
+The `option` argument is optional. It can be an object with the fields:
+
+- `enforce_missing`: `Boolean`, `true` to forbid missing fields.
+- `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema.
+- `enforce_type`: can be `"strict"`, `"loose"`, `"none"`  
+It will overwrite the options set on the document, but not the one set on the
+schema.
 
 
 If the model's option `validate` is set to `"oncreate"`, the method `validate` will
