@@ -1685,6 +1685,7 @@ describe('validate', function(){
         });
     });
 });
+
 describe('validateAll', function() {
     it('it should check joined Document too -- hasOne - 1', function() {
         var name = util.s8();
@@ -2235,7 +2236,7 @@ describe('_validator', function(){
                 && (error.message === "Expecting `field` value to be 'abc'.")
         });
     });
-    it('validate with _type: Array', function(){
+    it('validate with _type: Array - 1', function(){
         var Model = thinky.createModel(util.s8(), {
             id: String,
             arr: {_type: Array, schema: Number}
@@ -2244,7 +2245,7 @@ describe('_validator', function(){
         var doc = new Model({id: "abc", arr: [2, 3]});
         doc.validate();
     });
-    it('validate with _type: Array', function(){
+    it('validate with _type: Array - 2', function(){
         var Model = thinky.createModel(util.s8(), {
             id: String,
             arr: {_type: Array, schema: Number}
@@ -2258,7 +2259,7 @@ describe('_validator', function(){
                 && (error.message === "Value for [arr][1] must be a number or null.")
         });
     });
-    it('validate with _type: Object', function(){
+    it('validate with _type: Object - 1', function(){
         var Model = thinky.createModel(util.s8(), {
             id: String,
             ob: {_type: Object, schema: {foo: String}}
@@ -2267,7 +2268,7 @@ describe('_validator', function(){
         var doc = new Model({id: "abc", ob: {foo: "bar"}});
         doc.validate();
     });
-    it('validate with _type: Array', function(){
+    it('validate with _type: Object - 2', function(){
         var Model = thinky.createModel(util.s8(), {
             id: String,
             ob: {_type: Object, schema: {foo: String}}
