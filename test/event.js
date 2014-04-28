@@ -29,7 +29,7 @@ describe('Events', function(){
         var count = 0;
         var Model = thinky.createModel(util.s8(), {id: String})
         var doc = new Model({});
-        doc.once("save", function() {
+        doc.once("saved", function() {
             done();
         });
         doc.save();
@@ -38,7 +38,7 @@ describe('Events', function(){
         var count = 0;
         var Model = thinky.createModel(util.s8(), {id: String})
         var doc = new Model({});
-        doc.once("delete", function() {
+        doc.once("deleted", function() {
             done();
         });
         doc.save().then(function() {
@@ -54,7 +54,7 @@ describe('Events', function(){
         var doc2 = new Model({});
         doc1.links = [doc2];
 
-        doc2.once("delete", function() {
+        doc2.once("deleted", function() {
             done();
         });
         doc1.saveAll({links: true}).then(function() {
@@ -73,7 +73,7 @@ describe('Events', function(){
         var doc2 = new Model({});
         doc1.links = [doc2];
 
-        doc2.once("delete", function() {
+        doc2.once("deleted", function() {
             done();
         });
         doc1.saveAll({links: true}).then(function() {
