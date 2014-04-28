@@ -578,7 +578,6 @@ michel.saveAll({friends: true}).then(function(result) {
     }
 });
 ```
-
 --------------
 
 <div id="issaved"></div>
@@ -601,6 +600,37 @@ post.isSaved(); // false
 
 post.save().then(function() {
     post.isSaved(); // true
+});
+```
+
+
+
+--------------
+
+<div id="setsaved"></div>
+### [setSaved](#setsaved)
+```
+document.setSaved()
+```
+
+Set the document as a saved one. Calling `save` or `saveAll` will then perform a `replace` in the database.
+
+__Note__: The `save` command performs a replace in the database, so use `setSaved` with `save` only if you
+are sure that the document you are saving is not missing fields.
+
+_Example_: Get the constructor of a post document and create a new one.
+
+```js
+var post = new Post({
+    title: "Hello",
+    content: "First post."
+});
+
+post.setSaved();
+post.isSaved(); // true
+
+post.save().then(function() {
+    // Performed a replace in the database
 });
 ```
 
