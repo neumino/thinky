@@ -30,6 +30,19 @@ describe('save', function() {
                 done();
             }).error(done);
         });
+        it('setSaved should do the same', function(){
+            var str = util.s8();
+            var num = util.random();
+
+            doc = new Model({
+                str: str,
+                num: num
+            })
+            assert.equal(doc.isSaved(), false);
+            assert.equal(doc.setSaved());
+            assert.equal(doc.isSaved(), true);
+        });
+
         it('Save when the table is not yet ready', function(done){
             var str = util.s8();
             var num = util.random();
