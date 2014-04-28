@@ -1,38 +1,18 @@
 ---
-layout: default
-hl: index
+layout: documentation
 ---
 
+## Quickstart
 
-[![](/images/thinky-header.png)](/)
+### Install
 
-<header>
-<div class="description">
-    <h2>Thinky</h2>
-    A light Node.js ORM for RethinkDB
-</div>
+Install via `npm`.
 
-<hr/>
+```bash
+npm install thinky
+```
 
-<h3>Batteries included:</h3>
-<ul>
-<li>Schemas</li>
-<li>All standard relations</li>
-<li>Automatic creation of tables/indexes</li>
-<li>And more!</li>
-</ul>
-
-
-
-</header>
-
-### Quickstart
-
-<p>Install via <code>npm</code>.</p>
-
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash">npm install thinky
-</code></pre></div>
-
+### Example
 
 Create models with schemas.
 
@@ -73,7 +53,6 @@ var author = new Author({
 // Join the documents
 post.author = author;
 
-
 post.saveAll().then(function(result) {
     /*
     post = result = {
@@ -90,15 +69,43 @@ post.saveAll().then(function(result) {
 });
 ```
 
-And there is lot more! Here is a non exhaustive list:
+Retrieve the post with its author, and delete its author.
+
+```js
+Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
+    .getJoin().then(function(post) {
+
+    /*
+    post = {
+        id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+        title: "Hello World!",
+        content: "This is an example.",
+        idAuthor: "3851d8b4-5358-43f2-ba23-f4d481358901",
+        author: {
+            id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+            name: "Michel"
+        }
+    }
+    */
+    post.author.delete().then(function() {
+        /*
+        The author Michel was deleted from the database.
+        The field `idAuthor` was removed from the post (in the database).
+        post = {
+            id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+            title: "Hello World!",
+            content: "This is an example.",
+        }
+        */
+    });
+});
+```
+
+And there is more! Here is a non exhaustive list:
 
 - Enforce schemas.
 - Multiple relations: `hasOne`, `belongsTo`, `hasMany` and `hasAndBelongsToMany`.
-- Automatically create tables and indexes.
+- Automatically create table and indexes.
 - Automatically remove relations when a document is deleted.
 
-You can learn more about thinky with these links:
-
-- The [quickstart](/documentation/)
-- The [examples on GitHub](https://github.com/neumino/thinky/tree/master/examples)
-- The [API documentation](/documentation/api/thinky/)
+Take a look at the <a href="/documentation/api/thinky">documentation</a> or at the [examples](https://github.com/neumino/thinky/tree/master/examples) to read more!

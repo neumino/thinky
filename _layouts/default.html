@@ -1,48 +1,50 @@
 <!DOCTYPE html>
-<!--[if lt IE 7 ]> <html class="ie ltie7 ltie8 ltie9" lang="en"> <![endif]-->
-<!--[if IE 7 ]>    <html class="ie ie7 ltie8 ltie9" lang="en"> <![endif]-->
-<!--[if IE 8 ]>    <html class="ie ie8 ltie9" lang="en"> <![endif]-->
-<!--[if IE 9 ]>    <html class="ie ie9 ltie10" lang="en"> <![endif]-->
-<!--[if gt IE 9]><!--> <html lang="en" class=""> <!--<![endif]-->
+<html lang="en" class="">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="keywords" content=""/>
         <meta name="description" content=""/>
-        <meta name="viewport" content="width=device-width">
         <meta name="author" content="Michel Tu"/>
-        <title>Thinky -- JavaScript ORM for RethinkDB</title>
-        <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-        <!--[if ie 9]><style type="text/css" media="screen">.filter{behavior: url(ie9-gradient-fix.htc);}</style><![endif]-->
-        <link rel="stylesheet" href="stylesheets/styles.css">
-        <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
-        <link rel="stylesheet" href="stylesheets/bootstrap-responsive.min.css">
-        <link rel="stylesheet" href="stylesheets/pygment_trac.css ">
+        <title>Node.js -- JavaScript ORM for RethinkDB</title>
+        <link rel="stylesheet" href="">
+        <link rel="stylesheet" type="text/css" href="/stylesheets/desktop.css">
+        <link rel="stylesheet" type="text/css" href="/stylesheets/pygment_trac.css ">
+        <link rel="stylesheet" type="text/css" href="/stylesheets/mobile.css" media="only screen and (max-device-width: 480px)" />
     </head>
     <body>
-    <div class="wrapper">
-    <navigation>
+    <div class="navigation">
         <ul>
-            <li><a href="http://neumino.github.io/thinky/">Home</a></li>
-            <li><a href="https://github.com/neumino/thinky/zipball/master">Download</a></li>
-            <li><a href="http://neumino.github.io/thinky/#quickstart">Quickstart</a></li>
-            <li><a href="documentation.html">Documentation</a></li>
-            <li><a href="example.html">Examples</a></li>
-            <li><a href="https://github.com/neumino/thinky/">Github project</a></li>
-            <li><a href="about.html">About</a></li>
+            {% if page.hl == "index" %}
+            <div class="hl index"></div>
+            {% elsif page.hl == "about" %}
+            <div class="hl about"></div>
+            {% else %}
+            <div class="hl doc"></div>
+            {% endif %}
+            <li class="home_link"><a href="/">Home</a></li>
+            <li class="documentation_link"><a href="/documentation/">Documentation</a></li>
+            <li class="about_link"><a href="/about.html">About</a></li>
+            <li class="github_link"><a href="https://github.com/neumino/thinky">GitHub</a></li>
         </ul>
-    </navigation>
+    </div>
+    <div id="wrapper">
 
-    {{ content }} 
+        <main>
+            {{ content }} 
+        </main>
 
-    <footer>
-        <p><small>
-            Author: Michel Tu -- <a href="mailto:orphee@gmail.com">orphee@gmail.com</a> -- <a href="http://www.justonepixel.com">www.justonepixel.com</a><br/>
-            Hosted on <a href="https://pages.github.com">GitHub Pages</a>
-        </small></p>
-    </footer>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-
+        <footer>
+            <hr/>
+            <ul>
+                <lv[M 8i>Michel Tu</li>
+                <li>&mdash; <a href="mailto:orphee@gmail.com">orphee@gmail.com</a></li>
+                <li>&mdash; <a href="http://www.justonepixel.com">www.justonepixel.com</a><br/></li>
+            </ul>
+            <ul>
+                <li>Hosted on <a href="https://pages.github.com">GitHub Pages</a></li>
+            </ul>
+        </footer>
     </div>
 </body>
 </html>
