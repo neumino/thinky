@@ -26,7 +26,7 @@ easy as possible.
     - Tables are automatically created.
     - Indexes for joins are automatically created.
 - __Less headaches__
-    - It validates documents before saving them, which saves you from saving incoherent data.
+    - It validates documents before saving them, which prevents you from saving incoherent data.
     - You do not have to remember the name of all your foreign keys.
     - Cursors are by default automatically coerced to arrays.
 - __Easy to learn__
@@ -36,7 +36,7 @@ easy as possible.
 
 #### What are the disadvantages of using thinky?
 
-Nothing that I can think of.
+Nothing that I can think of. It is basically sugar on top of the driver.
 
 
 #### Awesome, where should I start?
