@@ -90,7 +90,7 @@ Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().then(function(result)
 
 ### Docs
 
-http://neumino.github.io/thinky/documentation.html
+http://thinky.io
 
 
 ### Run the tests
