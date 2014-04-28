@@ -915,7 +915,5 @@ are available on a model.
 The events that can be emited are:
 
 - `"saving"`: just before a document is saved
-- `"save"`: once a document is saved
-- `"delete"`: once a document is deleted
-
-__TODO__ Rename save to saved.
+- `"saved"`: once a document is saved
+- `"deleted"`: once a document is deleted
