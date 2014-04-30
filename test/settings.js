@@ -61,6 +61,18 @@ describe('Options', function(){
         });
 
     });
+    it('pk option on a model', function(done){
+        var name = util.s8();
+        var Model = thinky.createModel(name, {id: String, name: String}, {
+            pk: 'path'
+        });
+        Model.on('ready', function() {
+            r.table(Model.getTableName()).info().run().then(function(result) {
+                assert.equal(result.primary_key, 'path');
+                done();
+            });
+        });
+    });
     it('Options on a document', function(){
         var name = util.s8();
         var Model = thinky.createModel(name, {id: String, name: String});
