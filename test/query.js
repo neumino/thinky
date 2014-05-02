@@ -632,7 +632,6 @@ describe('Query.run() should take options', function(){
             }).error(done);
         }).error(done);
     });
-
     it('Query.run() should parse objects in each group', function(done){
         Model.group('num').run().then(function(result) {
             assert.equal(result.length, 2);
@@ -664,6 +663,27 @@ describe('Query.run() should take options', function(){
                 assert.equal(result.data[i].length, 2)
             }
             done();
+        }).error(done);
+    });
+    it('Query.group("num").count().run() should not work', function(done){
+        Model.group('num').count().run().then(function(result) {
+            done(new Error("Should have thrown an error"))
+        }).error(function(err) {
+            done()
+        });
+    });
+    it('Query.group("num").max("id").run() should not work', function(done){
+        Model.group('num').max('id').run().then(function(result) {
+            assert.equal(result.length, 2);
+            assert(result[0].reduction instanceof Document);
+            done();
+        }).error(done);
+    });
+    it('Query.group("num").count().execute() should work', function(done){
+        Model.group('num').count().execute().then(function(result) {
+            assert.equal(result.length, 2);
+            assert((result[0].reduction === 2 && result[0].group === 1) ||(result[0].reduction === 1 && result[0].group === 2))
+            done()
         }).error(done);
     });
 });
