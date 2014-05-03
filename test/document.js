@@ -522,6 +522,7 @@ describe('save', function() {
             }).error(done);
         })
         it('saveAll should delete links if they are missing', function(done) {
+            var linkName;
             var docValues = {str: util.s8(), num: util.random()}
             var doc = new Model(docValues);
             var otherDocs = [
@@ -749,7 +750,7 @@ describe('save', function() {
         })
     });
     describe('modelToSave', function() {
-        var Model1, Model2, Model3, Model4, Model5;
+        var Model1, Model2, Model3, Model4, Model5, Model6;
         before(function() {
             Model1 = thinky.createModel(util.s8(), {
                 id: String,
@@ -1000,7 +1001,7 @@ describe('delete', function() {
         });
     });
     describe('hasOne', function() {
-        var Model, doc;
+        var Model, doc, OtherModel;
         before(function() {
             var name = util.s8();
             Model = thinky.createModel(name, {
@@ -1119,7 +1120,7 @@ describe('delete', function() {
 
     });
     describe('belongsTo', function() {
-        var Model, doc;
+        var Model, doc, OtherModel;
         before(function() {
             var name = util.s8();
             Model = thinky.createModel(name, {
@@ -1150,7 +1151,7 @@ describe('delete', function() {
             doc.saveAll().then(function(doc) {
                 assert.equal(doc.isSaved(), true);
 
-                otherDocCopy = util.deepCopy(doc.otherDoc);
+                var otherDocCopy = util.deepCopy(doc.otherDoc);
 
                 doc.delete().then(function() {
                     Model.get(doc.id).run().error(function(error) {
@@ -1231,7 +1232,7 @@ describe('delete', function() {
             doc.saveAll().then(function(doc) {
                 assert.equal(doc.isSaved(), true);
 
-                otherDocCopy = util.deepCopy(doc.otherDoc);
+                var otherDocCopy = util.deepCopy(doc.otherDoc);
 
                 doc.deleteAll({foo: true}).then(function() {
                     Model.get(doc.id).run().error(function(error) {
@@ -1249,7 +1250,7 @@ describe('delete', function() {
         });
     });
     describe('hasMany', function() {
-        var Model, doc;
+        var Model, doc, OtherModel;
         before(function() {
             var name = util.s8();
             Model = thinky.createModel(name, {
@@ -1383,7 +1384,7 @@ describe('delete', function() {
         });
     });
     describe('hasAndBelongsToMany', function() {
-        var Model, doc;
+        var Model, doc, OtherModel;
         before(function() {
             var name = util.s8();
             Model = thinky.createModel(name, {
@@ -1527,7 +1528,7 @@ describe('delete', function() {
 
     });
     describe('modelToDelete', function() {
-        var Model1, Model2, Model3, Model4, Model5;
+        var Model1, Model2, Model3, Model4, Model5, Model6;
         before(function() {
             Model1 = thinky.createModel(util.s8(), {
                 id: String,
@@ -1727,7 +1728,7 @@ describe('purge', function() {
         })
 
         var otherName = util.s8();
-        OtherModel = thinky.createModel(otherName, {
+        var OtherModel = thinky.createModel(otherName, {
             id: String,
             foreignKey: String
         })
@@ -1767,7 +1768,7 @@ describe('purge', function() {
         })
 
         var otherName = util.s8();
-        OtherModel = thinky.createModel(otherName, {
+        var OtherModel = thinky.createModel(otherName, {
             id: String
         })
 

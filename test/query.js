@@ -483,6 +483,7 @@ describe('getJoin', function(){
         });
     });
     describe("should not throw with missing keys", function() {
+        var Model, OtherModel;
         it('hasOne', function(done) {
             var name = util.s8();
             Model = thinky.createModel(name, {
@@ -741,5 +742,23 @@ describe('then', function() {
         });
 
     });
-
+});
+describe('clone', function() {
+    it('people should be able to fork queries', function(done) {
+        var name = util.s8();
+        var Model = thinky.createModel(name, {id: String});
+        var query = Model.filter(true);
+        
+        var result = 0;
+        query.count().execute().then(function(result) {
+            assert.equal(result, 0);
+            result++;
+            if (result === 2) { done() };
+        });
+        query.count().add(1).execute().then(function(result) {
+            assert.equal(result, 1);
+            result++;
+            if (result === 2) { done() };
+        });
+    });
 });

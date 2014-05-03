@@ -6,7 +6,7 @@ var util = require(__dirname+'/util.js');
 var assert = require('assert');
 
 describe('createModel', function(){
-    var name = util.s8();
+    var name = util.s8(), model;
     it('Create a new model', function(){
         model = thinky.createModel(name, {id: String, name: String})
         assert(model);
@@ -32,7 +32,6 @@ describe('createModel', function(){
     });
 });
 describe('[_]getModel', function(){
-
     it('_getModel', function(){
         var name = util.s8();
         var model = thinky.createModel(name, {id: String, name: String}, {init: false})
@@ -49,7 +48,7 @@ describe('[_]getModel', function(){
 describe('Model', function() {
     var name = util.s8();
 
-    var Model =
+    var Model;
     before(function() {
         Model = thinky.createModel(name, { str: String });
     });
