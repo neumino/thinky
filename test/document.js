@@ -30,6 +30,24 @@ describe('save', function() {
                 done();
             }).error(done);
         });
+        it('Save should fail if the primary key already exists', function(done){
+            var str = util.s8();
+            var num = util.random();
+
+            doc = new Model({
+                id: str
+            })
+            doc.save().then(function(result) {
+                doc2 = new Model({
+                    id: str
+                })
+                doc2.save().error(function(error) {
+                    assert(error.message.match(/^Duplicate primary key/));
+                    done();
+                });
+            }).error(done);
+        });
+
         it('setSaved should do the same', function(){
             var str = util.s8();
             var num = util.random();

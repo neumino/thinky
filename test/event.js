@@ -67,7 +67,7 @@ describe('Events', function(){
     it('Doc should emit save when deleted -- hasMany', function(done){
         var count = 0;
         var Model = thinky.createModel(util.s8(), {id: String, foreignKey: String})
-        Model.hasMany(Model, 'links', 'id', 'id');
+        Model.hasMany(Model, 'links', 'id', 'foreignKey');
 
         var doc1 = new Model({});
         var doc2 = new Model({});
