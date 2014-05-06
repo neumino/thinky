@@ -329,6 +329,15 @@ describe('save', function() {
                 done();
             }).error(done);
         })
+        it('saveAll should not throw if the joined documents are missing', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var doc = new Model(docValues);
+
+            doc.saveAll().then(function(doc) {
+                done();
+            }).error(done);
+        })
+
     });
     describe("Joins - hasAndBelongsToMany", function() {
         var Model, OtherModel;
@@ -2036,3 +2045,33 @@ describe('date', function() {
     });
 });
 
+describe('merge', function() {
+    it('should work', function() {
+        var name = util.s8();
+        var Model = thinky.createModel(name, {
+            id: String,
+            foo: {
+                buzz: Number,
+                bar: String
+            }
+        });
+        var doc = new Model({id: "str", foo: {bar: "hello"}});
+        doc.merge({foo: {buzz: 2}});
+        assert.deepEqual(doc, {id: "str", foo: {buzz: 2}});
+        doc.merge({foo: {bar: "bar", buzz: 2}});
+        assert.deepEqual(doc, {id: "str", foo: {bar: "bar", buzz: 2}});
+    });
+    it('should return the object', function() {
+        var name = util.s8();
+        var Model = thinky.createModel(name, {
+            id: String,
+            foo: {
+                buzz: Number,
+                bar: String
+            }
+        });
+        var doc = new Model({id: "str", foo: {bar: "hello"}});
+        var doc2 = doc.merge({foo: {buzz: 2}});
+        assert.strictEqual(doc2, doc);
+    });
+});
