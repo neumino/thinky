@@ -1090,6 +1090,39 @@ describe('validate', function(){
         })
         doc.validate();
     });
+    it('Date - undefined - enforce_missing: true', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Date 
+        }, {init: false, enforce_missing: true})
+
+        doc = new Model({
+            id: str
+        })
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
+        });
+    });
+    it('Date - undefined - enforce_missing: false', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Date 
+        }, {init: false, enforce_missing: false})
+
+        doc = new Model({
+            id: str
+        })
+        doc.validate();
+    });
+
     it('Array - missing - enforce_missing: true', function(){
         var name = util.s8();
         var str = util.s8();
@@ -1109,14 +1142,14 @@ describe('validate', function(){
             return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
         });
     });
-    it('Array - undefined - enforce_type: "strict"', function(){
+    it('Array - undefined - enforce_missing: true', function(){
         var name = util.s8();
         var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
             field: [Number] 
-        }, {init: false, enforce_type: 'strict'})
+        }, {init: false, enforce_missing: true})
 
         doc = new Model({
             id: str
@@ -1125,27 +1158,23 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a array.")
+            return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
         });
     });
-    it('Array - undefined - enforce_type: "loose"', function(){
+    it('Array - undefined - enforce_missing: false', function(){
         var name = util.s8();
         var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
             field: [Number] 
-        }, {init: false, enforce_type: 'loose'})
+        }, {init: false, enforce_missing: false})
 
         doc = new Model({
             id: str
         })
 
-        assert.throws(function() {
-            doc.validate();
-        }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a array or null.")
-        });
+        doc.validate();
     });
     it('Array - wrong type - enforce_type: "loose"', function(){
         var name = util.s8();
@@ -1356,24 +1385,20 @@ describe('validate', function(){
             return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
         });
     });
-    it('Object - undefined - enforce_type: "strict"', function(){
+    it('Object - undefined - enforce_missing: false', function(){
         var name = util.s8();
         var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
             field: {}
-        }, {init: false, enforce_type: 'strict'})
+        }, {init: false, enforce_missing: false})
 
         doc = new Model({
             id: str
         })
 
-        assert.throws(function() {
-            doc.validate();
-        }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a object.")
-        });
+        doc.validate();
     });
     it('Object - undefined - enforce_type: "loose"', function(){
         var name = util.s8();
@@ -1385,7 +1410,8 @@ describe('validate', function(){
         }, {init: false, enforce_type: "loose"})
 
         doc = new Model({
-            id: str
+            id: str,
+            field: "foo"
         })
 
         assert.throws(function() {
@@ -1436,7 +1462,8 @@ describe('validate', function(){
         }, {init: false, enforce_type: "strict"})
 
         doc = new Model({
-            id: str
+            id: str,
+            field: "bar"
         })
 
         assert.throws(function() {
