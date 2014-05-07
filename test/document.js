@@ -118,6 +118,51 @@ describe('save', function() {
                 done();
             }).error(done);
         });
+        it('Save should be able to update a doc', function(done){
+            var str = util.s8();
+            var num = util.random();
+
+            doc = new Model({
+                str: str,
+                num: num
+            })
+            doc.save().then(function(result) {
+                assert.strictEqual(doc, result);
+                var newStr = util.s8();
+                doc.str = newStr;
+                doc.save().then(function(result) {
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.equal(doc.str, newStr);
+                        done();
+                    });
+                });
+            }).error(done);
+        });
+        it('Updating a document should keep a reference to the old value ', function(done){
+            var str = util.s8();
+            var num = util.random();
+
+            doc = new Model({
+                str: str,
+                num: num
+            })
+            doc.save().then(function(result) {
+                assert.strictEqual(doc, result);
+                var newStr = util.s8();
+                doc.str = newStr;
+                doc.save().then(function(result) {
+                    Model.get(doc.id).run().then(function(result) {
+                        assert.deepEqual(doc.getOldValue(), {
+                            id: doc.id,
+                            str: str,
+                            num: num
+                        });
+                        done();
+                    });
+                });
+            }).error(done);
+        });
+
     });
     describe("Joins - hasOne", function() {
         var Model, OtherModel;
