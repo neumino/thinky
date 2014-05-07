@@ -29,6 +29,23 @@ describe('save', function() {
                 done();
             }).error(done);
         });
+        it('Save should work with a callback', function(done){
+            var str = util.s8();
+            var num = util.random();
+
+            doc = new Model({
+                str: str,
+                num: num
+            })
+            assert.equal(doc.isSaved(), false);
+            doc.save(function(err, result) {
+                if (!err) {
+                    assert.equal(doc.isSaved(), true);
+                    done();
+                }
+            });
+        });
+
         it('Save should fail if the primary key already exists', function(done){
             var str = util.s8();
             var num = util.random();
@@ -1013,6 +1030,14 @@ describe('delete', function() {
                 });
             }).error(done);
         });
+        it('should work with a callback', function(done) {
+            doc.delete().then(function() {
+                Model.run(function(err, result) {
+                    assert.equal(result.length, 0);
+                    done();
+                });
+            });
+        });
         it('should set the doc unsaved', function(done) {
             doc.save().then(function(result) {
                 assert.equal(typeof doc.id, 'string');
@@ -1772,6 +1797,45 @@ describe('purge', function() {
             otherDoc2.foreignKey = otherDoc1.foreignKey;
             otherDoc2.save().then(function(doc) {
                 doc1.purge().then(function() {
+                    Model.run().then(function(result) {
+                        assert.equal(result.length, 0);
+
+                        OtherModel.run().then(function(result) {
+                            assert.equal(result.length, 2);
+                            assert.equal(result[0].foreignKey, undefined);
+                            assert.equal(result[1].foreignKey, undefined);
+                            done();
+                        });
+                    });
+                });
+            });
+        }).error(done);
+    });
+    it('should work with a callback', function(done) {
+        var name = util.s8();
+        var Model = thinky.createModel(name, {
+            id: String
+        })
+
+        var otherName = util.s8();
+        var OtherModel = thinky.createModel(otherName, {
+            id: String,
+            foreignKey: String
+        })
+
+        Model.hasOne(OtherModel, "has", "id", "foreignKey")
+        var doc1 = new Model({});
+
+        var otherDoc1 = new OtherModel({});
+        var otherDoc2 = new OtherModel({});
+
+        doc1.has = otherDoc1;
+
+        doc1.saveAll().then(function(doc) {
+            // Create an extra hasOne link -- which is invalid
+            otherDoc2.foreignKey = otherDoc1.foreignKey;
+            otherDoc2.save().then(function(doc) {
+                doc1.purge(function() {
                     Model.run().then(function(result) {
                         assert.equal(result.length, 0);
 

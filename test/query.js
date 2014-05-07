@@ -57,6 +57,11 @@ describe('Model queries', function(){
             done();
         }).error(done);
     });
+    it('Model.run() should take a callback', function(done){
+        Model.run(function(err, result) {
+            done();
+        })
+    });
     it('Model.run() should return the data', function(done){
         Model.run().then(function(result) {
             assert.equal(result.length, 3);
@@ -202,6 +207,16 @@ describe('Model queries', function(){
             });
         }).error(done);
     });
+    it('Model.execute should work with a callback', function(done){
+        Model.execute(function(err, cursor) {
+            cursor.toArray().then(function(result) {
+                assert(!(result[0] instanceof Document));
+                assert.equal(result.length, 3);
+                done();
+            });
+        }).error(done);
+    });
+
     it('Model.map(1).execute should work', function(done){
         Model.map(function() { return 1 }).execute().then(function(cursor) {
             cursor.toArray().then(function(result) {
