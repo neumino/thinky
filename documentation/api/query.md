@@ -171,8 +171,15 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({account: {sold: true}}
 <div id="run"></div>
 ### [run](#run)
 
+```
+query.run([callback]) -> Promise
+```
+
+
 Execute the query and convert the results as instances of the model.
 A cursor will automatically be replaced by the array of all the results.
+
+If you do not want to use a promise, you can directly pass a callback to `run`.
 
 _Example_: Retrieve all the users
 ```
@@ -186,8 +193,14 @@ User.run().then(function(result) {
 <div id="execute"></div>
 ### [execute](#execute)
 
+```
+query.execute([callback]) -> Promise
+```
+
 Execute the query but do not parse the response from the server, for example
 a raw cursor can be returned.
+
+If you do not want to use a promise, you can directly pass a callback to `execute`.
 
 _Example_: Return all the ids of the users
 

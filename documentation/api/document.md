@@ -151,7 +151,7 @@ catch(err) {
 ### [save](#save)
 
 ```
-document.save() -> Promise
+document.save([callback]) -> Promise
 ```
 
 Save the document but not the joined ones.
@@ -159,7 +159,8 @@ Save the document but not the joined ones.
 If you want to also save the joined documents, use [saveAll](#saveAll).
 
 The promise will be resolved with the document and the document will
-be updated in place.
+be updated in place. If you do not want to use a promise, you can directly
+pass a callback to `save`.
 
 
 _Example_: Save a new user.
@@ -185,13 +186,26 @@ user.save().then(function(doc) {
 });
 ```
 
+With a callback:
+
+```js
+user.save(function(error, doc) {
+    if (err) {
+        // handle error
+    }
+    else {
+        // user is saved
+    }
+});
+```
+
 --------------
 
 <div id="saveall"></div>
 ### [saveAll](#saveall)
 
 ```
-document.saveAll([modelToSave]) -> Promise
+document.saveAll([modelToSave], [callback]) -> Promise
 ```
 
 Save the document and the joined document.
@@ -256,48 +270,17 @@ user.saveAll().then(function(result) {
 });
 ```
 
-_Example_: Save a user and its account.
 
-Suppose the models `User` and `Account` are linked with a
-"hasOne" relation.
-
-```
-var User = thinky.createModel("User", {
-    id: String,
-    name: String
-});
-
-var Account = thinky.createModel("Account", {
-    id: String,
-    userId: String,
-    sold: Number
-});
-
-User.hasOne(Account, "account", "id", "userId")
-```
-
-Save the two documents. The `user` is saved first.
+With a callback:
 
 ```js
-var user = new User({
-    name: "Michel",
-    account: {
-        sold: 2420
+user.saveAll(function(error, result) {
+    if (error) {
+        // handle error
     }
-})
-
-user.saveAll().then(function(result) {
-    /* result === user
-     * user = {
-     *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
-     *     name: "Michel",
-     *     account: {
-     *         id: "3851d8b4-5358-43f2-ba23-f4d481358901",
-     *         userId: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
-     *         sold: 2420
-     *     }
-     * }
-     */
+    else {
+        // user and account are saved
+    }
 });
 ```
 
@@ -578,6 +561,23 @@ michel.saveAll({friends: true}).then(function(result) {
     }
 });
 ```
+
+Or with a callback:
+
+```js
+michel.saveAll({friends: true}, function(error, result) {
+    if (error) {
+        // handle error
+    }
+    else {
+        // michel and friends were saved
+    }
+});
+```
+
+
+
+
 --------------
 
 <div id="issaved"></div>
@@ -603,6 +603,39 @@ post.save().then(function() {
 });
 ```
 
+
+--------------
+
+<div id="getoldvalue"></div>
+### [getOldValue](#getoldvalue)
+```
+document.getOldValue()
+```
+
+Return the previous value of the document saved in the database.
+
+_Example_: Return the old value of the document after saving it.
+
+```js
+var post = new Post({
+    title: "Hello",
+    content: "First post."
+});
+
+post.save().then(function() {
+    post.title = "Bonjour";
+    post.save().then(function() {
+        post.getOldValue();
+        /* Return 
+           {
+              id: ...,
+              title: "Hello",
+              content: "First post."
+           }
+        */
+    });
+});
+```
 
 
 --------------
@@ -640,7 +673,7 @@ post.save().then(function() {
 <div id="delete"></div>
 ### [delete](#delete)
 ```
-document.delete() -> Promise
+document.delete([callback]) -> Promise
 ```
 
 Delete a document from the database.
@@ -651,6 +684,9 @@ The `delete` method does not delete the joined documents, but __may update__ the
 - they contain a foreign key that links to the document being deleted.
 
 If you want to delete the joined documents too, use [deleteAll](#deleteall).
+
+If you do not want to use a promise, you can directly pass a callback to `delete`.
+
 
 
 _Example_: Delete a single document.
@@ -729,7 +765,7 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().run()
 <div id="deleteall"></div>
 ### [deleteAll](#deleteall)
 ```
-document.deleteAll([modelToDelete]) -> Promise
+document.deleteAll([modelToDelete], [callback]) -> Promise
 ```
 
 Delete a document from the database and all the joined documents it has that are
@@ -747,6 +783,7 @@ The promise will be resolved with the document.
 To delete joined documents that are not directly linked to the document but could
 be in the database, use [purge](#purge).
 
+If you do not want to use a promise, you can directly pass a callback to `deleteAll`.
 
 
 _Example_: Delete a single document and its account.
@@ -855,7 +892,7 @@ Users.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").run().then(function(michel) {
 ### [purge](#purge)
 
 ```
-document.purge() -> Promise
+document.purge([callback]) -> Promise
 ```
 
 Delete a document and will run a range update on the database to remove all
@@ -864,7 +901,9 @@ Joined documents that were not retrieved will also be updated.
 
 The point of this method is to keep your data consitent.
 
-The promise will be resolved with the document.
+The promise will be resolved with the document. If you do not want to use a promise,
+you can directly pass a callback to `purge`.
+
 
 _Example_: Delete a user and make sure that no reference to it still exists in
 the database.
