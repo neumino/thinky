@@ -2051,7 +2051,8 @@ describe('_validator', function(){
     it('validate on the whole document - bind with the doc - 1 ', function(){
         var Model = thinky.createModel(util.s8(), {
             id: String,
-            field: {_type: String}
+            field: {_type: String},
+            foreignKey: String
         }, {init: false, validator: function() {
                 if (this.id !== this.field) {
                     throw new Error("Expecting `id` value to be `field` value.")
@@ -2060,6 +2061,56 @@ describe('_validator', function(){
         })
         var doc = new Model({id: "abc", field: "abc"});
         doc.validate();
+    });
+
+    it('validate on the whole document - bind with the doc - 1 ', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String},
+            foreignKey: String
+        }, {init: false, validator: function() {
+                if (this.id !== this.field) {
+                    throw new Error("Expecting `id` value to be `field` value.")
+                }
+            }
+        })
+        var doc = new Model({id: "", field: "abc"});
+
+        assert.throws(function() {
+            doc.validate()
+        }, function(error) {
+            return error.message === "Expecting `id` value to be `field` value.";
+        });
+    });
+
+    it('validate on the whole document - make sure a relation is defined ', function(done){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: String
+        }, {validator: function() {
+            if (this.otherDoc == null) {
+                throw new Error("Relation must be defined.")
+            }
+        }})
+        var doc = new Model({id: "abc", field: "abc"});
+
+        Model.once('ready', function() {
+            assert.throws(function() {
+                doc.validate();
+            }, function(error) {
+                return (error instanceof Error) && (error.message === "Relation must be defined.")
+            });
+
+            Model.hasOne(Model, 'otherDoc', 'id', 'foreignKey');
+            var otherDoc = new Model({});
+
+            doc.otherDoc = otherDoc;
+
+            doc.validate();
+            doc.saveAll().then(function() {
+                done();
+            });
+        });
     });
     it('validate on the whole document - bind with the doc - return false - 1 ', function(){
         var Model = thinky.createModel(util.s8(), {
