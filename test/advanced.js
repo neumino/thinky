@@ -1998,6 +1998,29 @@ describe('Advanced cases', function(){
     });
 
     it('hasAndBelongsToMany -- pairs', function(done) {
+        var name = util.s8();
+        var Model = thinky.createModel(name, {
+            id: String
+        });
+
+        Model.hasAndBelongsToMany(Model, "links", "id", "id");
+
+        var values = {};
+        var otherValues = {};
+        var doc1 = new Model({});
+        var doc2 = new Model({});
+
+        doc1.links = [doc2];
+
+        doc1.saveAll({links: true}).then(function(result) {
+            return Model.get(doc1.id).getJoin({links: true}).run()
+        }).then(function(result) {
+            assert.deepEqual(result.links[0], doc2);
+            done();
+        }).error(done);
+    });
+
+    it('hasOne/belongsTo -- pairs', function(done) {
         var Human = thinky.createModel("Human", {id: String, name: String, contactId: String});
         Human.belongsTo(Human, "emergencyContact", "contactId", "id");
 
@@ -2016,7 +2039,6 @@ describe('Advanced cases', function(){
             assert.equal(sophia.id, michel.contactId);
             done();
         }).error(done);
-
     });
 });
 describe('delete - hidden links behavior', function() {
