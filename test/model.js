@@ -475,7 +475,6 @@ describe('ensureIndex', function(){
     });
     it('should add an index with multi', function(done) {
         var Model = thinky.createModel(util.s8(), { id: String, nums: [Number] });
-        console.log(Model.getTableName());
         Model.ensureIndex("nums", function(doc) { return doc("nums") }, {multi: true});
         var doc = new Model({nums: [1,2,3]});
         doc.save().then(function(result) {

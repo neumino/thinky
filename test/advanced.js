@@ -2552,3 +2552,32 @@ describe('delete - hidden links behavior', function() {
         });
     });
 });
+
+describe('manual joins', function() {
+    it('innerJoin', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: String
+        });
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String
+        });
+
+
+        var doc = new Model({});
+        var otherDocs = [new OtherModel({}), new OtherModel({}), new OtherModel({})];
+        var promises = [doc.save(), otherDocs[0].save(), otherDocs[1].save(), otherDocs[2].save()];
+
+        Promise.all(promises).then(function() {
+            return Model.innerJoin(OtherModel.between(null, null)._query, function() { return true}).execute()
+        }).then(function(cursor) {
+            return cursor.toArray();
+        }).then(function(result) {
+            assert.equal(result.length, 3);
+            assert.deepEqual(result[0].left, doc);
+            assert.deepEqual(result[1].left, doc);
+            assert.deepEqual(result[2].left, doc);
+            done();
+        });
+
+    });
+});
