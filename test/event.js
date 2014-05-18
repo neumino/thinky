@@ -97,6 +97,30 @@ describe('Events', function(){
             });
         });
     });
+    it('Test saving event to validate a relation', function(done){
+        var Model = thinky.createModel(util.s8(), {id: String})
+        var OtherModel = thinky.createModel(util.s8(), {id: String, foreignKey: String})
+
+        Model.hasOne(OtherModel, 'joinedDoc', 'id', 'foreignKey');
+        var doc = new Model({});
+        doc.addListener("saving", function(doc) {
+            if (doc.joinedDoc == null) {
+                throw new Error("Relation must be defined.")
+            }
+        });
+
+        assert.throws(function() {
+            doc.save();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Relation must be defined.")
+        });
+
+        var otherDoc = new OtherModel({});
+        doc.joinedDoc = otherDoc;
+        doc.saveAll(function() {
+            done();
+        });
+    });
     it('Test retrieved event', function(done){
         var Model = thinky.createModel(util.s8(), {id: Number})
         var doc = new Model({id: 1});
