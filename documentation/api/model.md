@@ -468,7 +468,7 @@ A user with its friends will look like:
 <div id="querysmethods"></div>
 ### [Query's methods](#querysmethods)
 
-All the methods defined on a [Query](/documentation/query/) object are also available on a Model.
+All the methods defined on a [Query](/documentation/api/query/) object are also available on a Model.
 
 In terms of `Query`, a model is equivalent to 
 
@@ -476,7 +476,7 @@ In terms of `Query`, a model is equivalent to
 r.table(model.getTableName())
 ```
 
-_Example_: Returns all the posts using [run](/documentation/query/#run).
+_Example_: Returns all the posts using [run](/documentation/api/query/#run).
 
 Suppose the model `Post` is defined with:
 
