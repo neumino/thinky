@@ -2360,4 +2360,21 @@ describe('_validator', function(){
                 && (error.message === "Value for [ob][foo] must be a string or null.")
         });
     });
+    it('Check extra fields only if the schema is an object without the _type field', function(){
+        var User = thinky.createModel('users', {
+            email: {
+                _type: String,
+                validator: function() { return true }
+            }
+        }, {
+            enforce_extra: true,
+            enforce_type: 'strict',
+            init: false
+        });
+
+        var user = new User({});
+        user.email = 'hello@world.com';
+        user.validate();
+    });
 });
+
