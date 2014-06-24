@@ -68,13 +68,15 @@ grownup.isAdult(); // true
 ### [ensureIndex](#ensureindex)
 
 ```js
-Model.ensureIndex(name, fn);
+Model.ensureIndex(name, fn, options);
 ```
 
 Ensure that an index named `"name"` exists.
 If it does not, it will create an index based on the name and the function `fn` provided.
 
 If `fn` is undefined, the index will be built on the field `"name"`.
+
+The argument `options` can be `{multi: true}`.
 
 _Example_: Ensure that an index on the field `"createdAt"` exists.
 
