@@ -486,12 +486,15 @@ describe('getJoin', function(){
             doc.has = otherDocs;
 
             doc.saveAll().then(function(result) {
-                Model.get(doc.id).getJoin({has: { _order: "id"}}).run().then(function(result) {
+                Model.get(doc.id).getJoin({has: { _apply: function(seq) {
+                    return seq.orderBy('id').limit(5);
+                }}}).run().then(function(result) {
                     for(var i=0; i<result.has.length; i++) {
                         for(var j=i+1; j<result.has.length; j++) {
                             assert(result.has[i].id < result.has[j].id)
                         }
                     }
+                    assert.equal(result.has.length, 5);
                     done();
                 });
             }).error(done);

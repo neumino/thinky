@@ -221,7 +221,13 @@ describe('Advanced cases', function(){
                 assert.strictEqual(doc.has, otherDocs);
 
                 util.sortById(otherDocs);
-                Model.get(doc.id).getJoin({has: { _order: "id"}}).run().then(function(result) {
+                Model.get(doc.id).getJoin({
+                    has: {
+                        _apply: function(sequence) {
+                            return sequence.orderBy('id');
+                        }
+                    }}).run().then(function(result) {
+
                     assert.equal(result.id, doc.id);
                     assert.equal(result.has[0].id, doc.has[0].id);
                     assert.equal(result.has[1].id, doc.has[1].id);
@@ -278,7 +284,9 @@ describe('Advanced cases', function(){
                 assert.strictEqual(doc.has, otherDocs);
 
                 util.sortById(otherDocs);
-                Model.get(doc.id).getJoin({has: { _order: "id"}}).run().then(function(result) {
+                Model.get(doc.id).getJoin({has: { _apply: function(seq) {
+                    return seq.orderBy('id');
+                }}}).run().then(function(result) {
                     assert.equal(result.id, doc.id);
                     assert.equal(result.has[0].id, doc.has[0].id);
                     assert.equal(result.has[1].id, doc.has[1].id);
@@ -333,7 +341,9 @@ describe('Advanced cases', function(){
                         assert.equal(otherDocs[2].belongsTo.id, doc.id);
 
                         util.sortById(otherDocs);
-                        Model.get(doc.id).getJoin({has: { _order: "id"}}).run().then(function(result) {
+                        Model.get(doc.id).getJoin({has: { _apply: function(seq) {
+                            return seq.orderBy('id')
+                        }}}).run().then(function(result) {
                             assert.equal(result.id, doc.id);
                             assert.equal(result.has[0].id, doc.has[0].id);
                             assert.equal(result.has[1].id, doc.has[1].id);
@@ -382,12 +392,17 @@ describe('Advanced cases', function(){
                 util.sortById(doc1.links);
                 doc2.saveAll().then(function(result) {
                     util.sortById(doc2.links);
-                    Model.get(doc1.id).getJoin({links: { _order: "id"}}).run().then(function(result) {
+                    Model.get(doc1.id).getJoin({links: { _apply: function(seq) {
+                        return seq.orderBy('id')
+                    }}}).run().then(function(result) {
+
                         assert.equal(result.id, doc1.id);
                         assert.equal(result.links[0].id, doc1.links[0].id);
                         assert.equal(result.links[1].id, doc1.links[1].id);
                         assert.equal(result.links[2].id, doc1.links[2].id);
-                        Model.get(doc2.id).getJoin({links: { _order: "id"}}).run().then(function(result) {
+                        Model.get(doc2.id).getJoin({links: { _apply: function(seq) {
+                            return seq.orderBy('id');
+                        }}}).run().then(function(result) {
                             assert.equal(result.id, doc2.id);
                             assert.equal(result.links[0].id, doc2.links[0].id);
                             assert.equal(result.links[1].id, doc2.links[1].id);
@@ -480,12 +495,21 @@ describe('Advanced cases', function(){
                     util.sortById(otherDoc3.links2);
                     util.sortById(otherDoc4.links2);
 
-                    Model.get(doc1.id).getJoin({links: { _order: "id"}}).run().then(function(result) {
+                    Model.get(doc1.id).getJoin({links: { 
+                        _apply: function(seq) {
+                            return seq.orderBy('id');
+                        }
+                    }}).run().then(function(result) {
                         assert.equal(result.id, doc1.id);
                         assert.equal(result.links[0].id, doc1.links[0].id);
                         assert.equal(result.links[1].id, doc1.links[1].id);
                         assert.equal(result.links[2].id, doc1.links[2].id);
-                        Model.get(doc2.id).getJoin({links: { _order: "id"}}).run().then(function(result) {
+                        Model.get(doc2.id).getJoin({links: { 
+                            _apply: function(seq) {
+                                return seq.orderBy('id');
+                            }
+                        }}).run().then(function(result) {
+
                             assert.equal(result.id, doc2.id);
                             assert.equal(result.links[0].id, doc2.links[0].id);
                             assert.equal(result.links[1].id, doc2.links[1].id);
@@ -493,14 +517,27 @@ describe('Advanced cases', function(){
                             OtherModel.get(otherDoc1.id).getJoin().run().then(function(result) {
                                 assert.equal(result.id, otherDoc1.id);
                                 assert.equal(result.links2[0].id, otherDoc1.links2[0].id)
-                                OtherModel.get(otherDoc2.id).getJoin({links2: { _order: "id"}}).run().then(function(result) {
+                                OtherModel.get(otherDoc2.id).getJoin({links2: {
+                                    _apply: function(seq) {
+                                        return seq.orderBy('id');
+                                    }
+                                }}).run().then(function(result) {
+
                                     assert.equal(result.id, otherDoc2.id);
                                     assert.equal(result.links2[0].id, otherDoc2.links2[0].id)
                                     assert.equal(result.links2[1].id, otherDoc2.links2[1].id)
-                                    OtherModel.get(otherDoc3.id).getJoin({links2: { _order: "id"}}).run().then(function(result) {
+                                    OtherModel.get(otherDoc3.id).getJoin({links2: {
+                                        _apply: function(seq) {
+                                            return seq.orderBy('id');
+                                        }
+                                    }}).run().then(function(result) {
                                         assert.equal(result.id, otherDoc3.id);
                                         assert.equal(result.links2[0].id, otherDoc3.links2[0].id)
-                                        OtherModel.get(otherDoc4.id).getJoin({links2: { _order: "id"}}).run().then(function(result) {
+                                        OtherModel.get(otherDoc4.id).getJoin({links2: {
+                                            _apply: function(seq) {
+                                                return seq.orderBy('id');
+                                            }
+                                        }}).run().then(function(result) {
                                             assert.equal(result.id, otherDoc4.id);
                                             assert.equal(result.links2[0].id, otherDoc4.links2[0].id)
                                             assert.equal(result.links2[1].id, otherDoc4.links2[1].id)
@@ -1936,12 +1973,20 @@ describe('Advanced cases', function(){
                 util.sortById(doc1.links);
                 doc2.saveAll().then(function(result) {
                     util.sortById(doc2.links);
-                    Model.get(doc1.id).getJoin({links: {_order: "id"}}).run().then(function(result) {
+                    Model.get(doc1.id).getJoin({links: {
+                        _apply: function(seq) {
+                            return seq.orderBy('id');
+                        }
+                    }}).run().then(function(result) {
                         assert.equal(result.id, doc1.id);
                         assert.equal(result.links[0].id, doc1.links[0].id);
                         assert.equal(result.links[1].id, doc1.links[1].id);
                         assert.equal(result.links[2].id, doc1.links[2].id);
-                        Model.get(doc2.id).getJoin({links: {_order: "id"}}).run().then(function(result) {
+                        Model.get(doc2.id).getJoin({links: {
+                            _apply: function(seq) {
+                                return seq.orderBy('id');
+                            }
+                        }}).run().then(function(result) {
                             assert.equal(result.id, doc2.id);
                             assert.equal(result.links[0].id, doc2.links[0].id);
                             assert.equal(result.links[1].id, doc2.links[1].id);

@@ -417,7 +417,7 @@ describe("Joins", function() {
             }).error(done);
         });
     });
-    it('_order is reserved ', function() {
+    it('_apply is reserved ', function() {
         var name = util.s8();
         var model = thinky.createModel(name, { id: String, notid1: String }, {init: false});
 
@@ -425,24 +425,24 @@ describe("Joins", function() {
         var otherModel = thinky.createModel(otherName, { id: String, notid2: String }, {init: false});
 
         assert.throws(function() {
-            model.hasOne(otherModel, "_order", "notid1", "notid2", {init: false});
+            model.hasOne(otherModel, "_apply", "notid1", "notid2", {init: false});
         }, function(error) {
-            return (error instanceof Error) && (error.message === "The field `_order` is reserved by thinky. Please use another one.")
+            return (error instanceof Error) && (error.message === "The field `_apply` is reserved by thinky. Please use another one.")
         });
         assert.throws(function() {
-            model.hasMany(otherModel, "_order", "notid1", "notid2", {init: false});
+            model.hasMany(otherModel, "_apply", "notid1", "notid2", {init: false});
         }, function(error) {
-            return (error instanceof Error) && (error.message === "The field `_order` is reserved by thinky. Please use another one.")
+            return (error instanceof Error) && (error.message === "The field `_apply` is reserved by thinky. Please use another one.")
         });
         assert.throws(function() {
-            model.belongsTo(otherModel, "_order", "notid1", "notid2", {init: false});
+            model.belongsTo(otherModel, "_apply", "notid1", "notid2", {init: false});
         }, function(error) {
-            return (error instanceof Error) && (error.message === "The field `_order` is reserved by thinky. Please use another one.")
+            return (error instanceof Error) && (error.message === "The field `_apply` is reserved by thinky. Please use another one.")
         });
         assert.throws(function() {
-            model.hasAndBelongsToMany(otherModel, "_order", "notid1", "notid2", {init: false});
+            model.hasAndBelongsToMany(otherModel, "_apply", "notid1", "notid2", {init: false});
         }, function(error) {
-            return (error instanceof Error) && (error.message === "The field `_order` is reserved by thinky. Please use another one.")
+            return (error instanceof Error) && (error.message === "The field `_apply` is reserved by thinky. Please use another one.")
         });
     });
 });
