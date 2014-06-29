@@ -350,7 +350,7 @@ A post with its joined tags will look like:
     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
     title: "Hello world",
     content: "This is the first post",
-    tag: [
+    tags: [
         {
             id: "3851d8b4-5358-43f2-ba23-f4d481358901",
             tag: "test"
@@ -391,7 +391,7 @@ A post with its joined tags will look like:
     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
     title: "Hello world",
     content: "This is the first post.",
-    tag: [
+    tags: [
         {
             id: "3851d8b4-5358-43f2-ba23-f4d481358901",
             tag: "test"
