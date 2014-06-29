@@ -76,6 +76,35 @@ var p = r.table("posts").count().run()
 --------------
 
 
+<div id="errors"></div>
+### [thinky.Errors](#errors)
+
+```js
+var thinky = require('thinky')();
+var Errors = thinky.Errors;
+```
+
+Custom errors created by `thinky`. For now the only error that thinky will
+create is a `DocumentNotFound`, and is triggered when a query returns `null`
+while it expects to get back a full document.
+
+
+_Example_: Retrieve a document with its primary key and print a message
+if the document was not found.
+
+```js
+Post.get(1).run().then(function(post) {
+    // Do something with the post
+}).catch(Errors.DocumentNotFound, function(err) {
+    console.log("Document not found");
+}).error(function(error) {
+    // Unexpected error
+});
+```
+
+--------------
+
+
 <div id="query"></div>
 ### [thinky.Query](#query)
 
