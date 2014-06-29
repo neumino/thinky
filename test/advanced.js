@@ -6,6 +6,7 @@ var r = thinky.r;
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
 var Promise = require('bluebird');
+var Errors = thinky.Errors;
 
 describe('Advanced cases', function(){
     describe('saveAll', function(){
@@ -588,9 +589,9 @@ describe('Advanced cases', function(){
                 doc.deleteAll().then(function(result) {
 
                     Model.get(doc.id).run().error(function(error) {
-                        assert(error.message.match(/^Cannot build a new instance of/))
+                        assert(error instanceof Errors.DocumentNotFound);
                         OtherModel.get(otherDoc.id).run().error(function(error) {
-                            assert(error.message.match(/^Cannot build a new instance of/))
+                            assert(error instanceof Errors.DocumentNotFound);
                             done()
                         });
                     });
@@ -631,9 +632,9 @@ describe('Advanced cases', function(){
 
                 doc.deleteAll({has: true}).then(function(result) {
                     Model.get(doc.id).run().error(function(error) {
-                        assert(error.message.match(/^Cannot build a new instance of/))
+                        assert(error instanceof Errors.DocumentNotFound);
                         OtherModel.get(otherDoc.id).run().error(function(error) {
-                            assert(error.message.match(/^Cannot build a new instance of/))
+                            assert(error instanceof Errors.DocumentNotFound);
                             done()
                         });
                     });
@@ -674,7 +675,7 @@ describe('Advanced cases', function(){
 
                 doc.deleteAll({}).then(function(result) {
                     Model.get(doc.id).run().error(function(error) {
-                        assert(error.message.match(/^Cannot build a new instance of/))
+                        assert(error instanceof Errors.DocumentNotFound);
                         OtherModel.get(otherDoc.id).run().then(function(result) {
                             assert.equal(result.id, otherDoc.id);
                             done()
@@ -717,7 +718,7 @@ describe('Advanced cases', function(){
 
                 doc.deleteAll({foo: {bar: true}}).then(function(result) {
                     Model.get(doc.id).run().error(function(error) {
-                        assert(error.message.match(/^Cannot build a new instance of/))
+                        assert(error instanceof Errors.DocumentNotFound);
                         OtherModel.get(otherDoc.id).run().then(function(result) {
                             assert.equal(result.id, otherDoc.id);
                             done()
@@ -760,9 +761,9 @@ describe('Advanced cases', function(){
 
                 otherDoc.deleteAll().then(function(result) {
                     Model.get(doc.id).run().error(function(error) {
-                        assert(error.message.match(/^Cannot build a new instance of/))
+                        assert(error instanceof Errors.DocumentNotFound);
                         OtherModel.get(otherDoc.id).run().error(function(error) {
-                            assert(error.message.match(/^Cannot build a new instance of/))
+                            assert(error instanceof Errors.DocumentNotFound);
                             done()
                         });
                     });
@@ -803,9 +804,9 @@ describe('Advanced cases', function(){
 
                 otherDoc.deleteAll({belongsTo: true}).then(function(result) {
                     Model.get(doc.id).run().error(function(error) {
-                        assert(error.message.match(/^Cannot build a new instance of/))
+                        assert(error instanceof Errors.DocumentNotFound);
                         OtherModel.get(otherDoc.id).run().error(function(error) {
-                            assert(error.message.match(/^Cannot build a new instance of/))
+                            assert(error instanceof Errors.DocumentNotFound);
                             done()
                         });
                     });
@@ -848,7 +849,7 @@ describe('Advanced cases', function(){
                     Model.get(doc.id).run().then(function(result) {
                         assert.equal(result.id, doc.id);
                         OtherModel.get(otherDoc.id).run().error(function(error) {
-                            assert(error.message.match(/^Cannot build a new instance of/))
+                            assert(error instanceof Errors.DocumentNotFound);
                             done()
                         });
                     });
@@ -905,7 +906,7 @@ describe('Advanced cases', function(){
                     assert.equal(doc.isSaved(), false);
 
                     Model.get(doc.id).run().error(function(error) {
-                        assert(error.message.match(/^Cannot build a new instance of/))
+                        assert(error instanceof Errors.DocumentNotFound);
                         OtherModel.getAll(doc.id, {index: "otherId"}).run().then(function(result) {
                             assert.equal(result.length, 0);
                             done()
@@ -957,7 +958,7 @@ describe('Advanced cases', function(){
 
                 doc.deleteAll({}).then(function(result) {
                     Model.get(doc.id).run().error(function(error) {
-                        assert(error.message.match(/^Cannot build a new instance of/))
+                        assert(error instanceof Errors.DocumentNotFound);
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id, {index: "id"}).run().then(function(result) {
                             assert.equal(result.length, 3);
                             OtherModel.getAll(doc.id, {index: "otherId"}).run().then(function(result) {
@@ -1013,7 +1014,7 @@ describe('Advanced cases', function(){
 
                 doc.deleteAll({has: true}).then(function(result) {
                     Model.get(doc.id).run().error(function(error) {
-                        assert(error.message.match(/^Cannot build a new instance of/))
+                        assert(error instanceof Errors.DocumentNotFound);
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id, {index: "id"}).run().then(function(result) {
                             assert.equal(result.length, 0);
                             OtherModel.getAll(doc.id, {index: "otherId"}).run().then(function(result) {
@@ -1071,7 +1072,7 @@ describe('Advanced cases', function(){
 
                 doc.deleteAll({foo: true}).then(function(result) {
                     Model.get(doc.id).run().error(function(error) {
-                        assert(error.message.match(/^Cannot build a new instance of/))
+                        assert(error instanceof Errors.DocumentNotFound);
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id, {index: "id"}).run().then(function(result) {
                             assert.equal(result.length, 3);
                             OtherModel.getAll(doc.id, {index: "otherId"}).run().then(function(result) {

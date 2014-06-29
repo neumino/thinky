@@ -1,6 +1,7 @@
 var config = require(__dirname+'/../config.js');
 var thinky = require(__dirname+'/../lib/thinky.js')(config);
 var r = thinky.r;
+var Errors = thinky.Errors;
 
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
@@ -1156,9 +1157,9 @@ describe('delete', function() {
                     assert.equal(doc.isSaved(), false);
                     assert.equal(otherDoc.isSaved(), false);
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
+                        assert(error instanceof Errors.DocumentNotFound);
                         OtherModel.get(otherDoc.id).run().error(function(error) {
-                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getTableName()+"` with `null`.");
+                            assert(error instanceof Errors.DocumentNotFound);
                             done();
                         });
                     });
@@ -1180,9 +1181,9 @@ describe('delete', function() {
                     assert.equal(doc.isSaved(), false);
                     assert.equal(otherDoc.isSaved(), false);
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
+                        assert(error instanceof Errors.DocumentNotFound);
                         OtherModel.get(otherDoc.id).run().error(function(error) {
-                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getTableName()+"` with `null`.");
+                            assert(error instanceof Errors.DocumentNotFound);
                             done();
                         });
                     });
@@ -1251,7 +1252,7 @@ describe('delete', function() {
 
                 doc.delete().then(function() {
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
+                        assert(error instanceof Errors.DocumentNotFound);
 
                         OtherModel.get(otherDoc.id).run().then(function(result) {
                             assert.deepEqual(result, otherDoc);
@@ -1281,10 +1282,10 @@ describe('delete', function() {
                     assert.equal(doc.otherDoc, undefined);
                     assert.equal(otherDoc.isSaved(), false);
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
+                        assert(error instanceof Errors.DocumentNotFound);
 
                         OtherModel.get(otherDoc.id).run().error(function(error) {
-                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getTableName()+"` with `null`.");
+                            assert(error instanceof Errors.DocumentNotFound);
                             done();
                         });
                     });
@@ -1307,10 +1308,10 @@ describe('delete', function() {
                     assert.equal(otherDoc.isSaved(), false);
                     assert.strictEqual(doc, result);
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
+                        assert(error instanceof Errors.DocumentNotFound);
 
                         OtherModel.get(otherDoc.id).run().error(function(error) {
-                            assert.equal(error.message, "Cannot build a new instance of `"+OtherModel.getTableName()+"` with `null`.");
+                            assert(error instanceof Errors.DocumentNotFound);
                             done();
                         });
                     });
@@ -1332,7 +1333,7 @@ describe('delete', function() {
 
                 doc.deleteAll({foo: true}).then(function() {
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
+                        assert(error instanceof Errors.DocumentNotFound);
 
                         OtherModel.get(otherDoc.id).run().then(function(result) {
                             assert.deepEqual(result, otherDoc);
@@ -1376,7 +1377,7 @@ describe('delete', function() {
 
                 doc.delete().then(function() {
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
+                        assert(error instanceof Errors.DocumentNotFound);
                         assert.equal(doc.isSaved(), false);
                         for(var i=0; i<otherDocs.length; i++) {
                             assert.equal(otherDocs[i].foreignKey, undefined);
@@ -1403,7 +1404,7 @@ describe('delete', function() {
 
                 doc.deleteAll({foo: true}).then(function() {
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
+                        assert(error instanceof Errors.DocumentNotFound);
                         assert.equal(doc.isSaved(), false);
                         assert.equal(doc.isSaved(), false);
                         for(var i=0; i<otherDocs.length; i++) {
@@ -1434,7 +1435,7 @@ describe('delete', function() {
                 doc.deleteAll().then(function(result) {
                     assert.strictEqual(result, doc);
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
+                        assert(error instanceof Errors.DocumentNotFound);
                         assert.equal(doc.isSaved(), false);
                         for(var i=0; i<otherDocs.length; i++) {
                             assert.equal(otherDocs[i].isSaved(), false);
@@ -1462,7 +1463,7 @@ describe('delete', function() {
                 doc.deleteAll({otherDocs: true}).then(function(result) {
                     assert.strictEqual(result, doc);
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
+                        assert(error instanceof Errors.DocumentNotFound);
                         assert.equal(doc.isSaved(), false);
                         for(var i=0; i<otherDocs.length; i++) {
                             assert.equal(otherDocs[i].isSaved(), false);
@@ -1512,7 +1513,7 @@ describe('delete', function() {
                         assert.equal(doc.otherDocs[i].isSaved(), true)
                     }
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
+                        assert(error instanceof Errors.DocumentNotFound);
 
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 3);
@@ -1541,7 +1542,7 @@ describe('delete', function() {
                         assert.equal(doc.otherDocs[i].isSaved(), true)
                     }
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
+                        assert(error instanceof Errors.DocumentNotFound);
 
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 3);
@@ -1572,7 +1573,7 @@ describe('delete', function() {
                         assert.equal(otherDocs[i].isSaved(), false)
                     }
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
+                        assert(error instanceof Errors.DocumentNotFound);
 
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 0);
@@ -1603,7 +1604,7 @@ describe('delete', function() {
                         assert.equal(otherDocs[i].isSaved(), false)
                     }
                     Model.get(doc.id).run().error(function(error) {
-                        assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
+                        assert(error instanceof Errors.DocumentNotFound);
 
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 0);

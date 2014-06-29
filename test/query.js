@@ -122,13 +122,6 @@ describe('Model queries', function(){
             done();
         }).error(done);
     });
-    it('Model.get() should return null if nothing is found', function(done){
-        Model.get("nonExistingId").run().error(function(error) {
-            assert.equal(error.message, "Cannot build a new instance of `"+Model.getTableName()+"` with `null`.");
-            done();
-        });
-    });
-    
     it('Model.group("foo").run should work -- without extra argument', function(done){
         Model.group("foo").run().then(function(result) {
             for(var i=0; i<result.length; i++) {
@@ -650,6 +643,27 @@ describe('Query.run() should take options', function(){
                 }).error(done);
             }).error(done);
         }).error(done);
+    });
+    it('Query.run() should return a DocumentNotFound error if no document is found - 1', function(done){
+        var Errors = thinky.Errors;
+        Model.get(0).run().then(function() {
+            done(new Error("Was expecting an error"))
+        }).catch(Errors.DocumentNotFound, function(err) {
+            assert.equal(err.message, "The query did not find a document and returned null.");
+            done();
+        }).error(function() {
+            done(new Error("Not the expected error"))
+        });
+    });
+    it('Query.run() should return a DocumentNotFound error if no document is found - 2', function(done){
+        var Errors = thinky.Errors;
+        Model.get(0).run().then(function() {
+            done(new Error("Was expecting an error"))
+        }).error(function(err) {
+            assert(err instanceof Errors.DocumentNotFound);
+            assert.equal(err.message, "The query did not find a document and returned null.");
+            done();
+        });
     });
     it('Query.run() should parse objects in each group', function(done){
         Model.group('num').run().then(function(result) {
