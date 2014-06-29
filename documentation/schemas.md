@@ -25,7 +25,9 @@ Each field of the object maps to a type. The valid types are:
         - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`.
     - `default` (optional): can be constant value or a function that will be called with
     the document as context.
-    - `validator`: A function that will be used to validate a field before saving the document. The context is set to the current field.
+    - `validator`: A function that will be used to validate a field before saving the document.
+    The context is set to the current field. The function should return `true` if the field is valid,
+    `false` otherwise.
 - An object that is a valid schema.
 - An array with one of the previous types.
 
@@ -72,6 +74,11 @@ var User = thinky.createModel("User", {
     birthdate: Date
 })
 ```
+
+__Note__: About validator:
+
+The reason behind the validator field is that you can import modules that are good at validating data like
+[validator](https://github.com/chriso/validator.js).
 
 
 ----------------------
@@ -173,6 +180,22 @@ var Post = thinky.createModel("Post",{
     title: {_type: String, enforce_type: "strict"},
     content: String,
     createdAt: {_type: String, default: r.now()}
+});
+```
+
+_Example_: Create a model User and make sure that the field email is a valid email
+using [validator](https://github.com/chriso/validator.js)
+
+```js
+var validator = require('validator');
+
+var User = thinky.createModel("Users",{
+    id: String,
+    email: {
+        _type: String,
+        validator: validator.isEmail
+    },
+    age: Number
 });
 ```
 
