@@ -47,7 +47,7 @@ var Account = thinky.createModel("Account", {
 });
 
 User.hasOne(Account, "account", "id", "userId");
-Account.belongs(User, "user", "userId", "id");
+Account.belongsTo(User, "user", "userId", "id");
 ```
 
 A user with its joined account will be:
@@ -267,7 +267,7 @@ var Account = thinky.createModel("Account", {
 });
 
 User.hasOne(Account, "account", "id", "userId");
-Account.belongs(User, "user", "userId", "id");
+Account.belongsTo(User, "user", "userId", "id");
 
 var user = new User({...});
 var account = new Account({...});
@@ -404,7 +404,7 @@ var Account = thinky.createModel("Account", {
 });
 
 User.hasOne(Account, "account", "id", "userId");
-Account.belongs(User, "user", "userId", "id");
+Account.belongsTo(User, "user", "userId", "id");
 
 
 User.getJoin().run().then(function(result) {
@@ -483,7 +483,7 @@ var Account = thinky.createModel("Account", {
 });
 
 User.hasOne(Account, "account", "id", "userId");
-Account.belongs(User, "user", "userId", "id");
+Account.belongsTo(User, "user", "userId", "id");
 
 User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").run().then(function(user) {
     /*
@@ -585,7 +585,7 @@ var Account = thinky.createModel("Account", {
 });
 
 User.hasOne(Account, "account", "id", "userId");
-Account.belongs(User, "user", "userId", "id");
+Account.belongsTo(User, "user", "userId", "id");
 
 User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").run().then(function(user) {
     /*
