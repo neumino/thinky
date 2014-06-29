@@ -31,7 +31,25 @@ retrieve all the joined documents.
 To avoid infinite recursion, `getJoin` will not recurse in a field that contains a document from
 a model that was previously fetched.
 
-The option `modelToGet` can be an object where each field is a joined document that will also be saved.
+The option `modelToGet` can be an object where each field is a joined document that will also be retrieved.
+For example you can have
+```js
+Users.getJoin({
+    account: true // retrieve the joined document that will be stored in account
+})
+```
+
+```js
+Users.getJoin({
+    accounts: {
+        _apply: function(sequence) {
+            return sequence.orderBy("sold") // Retrieve all the accounts ordered by sold
+        }
+    },
+    company: true // Retrieve the company of the user
+})
+
+```
 
 
 _Example_: Retrieve a user and all its joined documents.
@@ -107,7 +125,50 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({account: true})
 });
 ```
 
-_Example_: Retrieve a user, its account and its 
+_Example_ Retrieve a user and all two accounts with the smallest sold.
+
+```js
+var User = thinky.createModel("User", {
+    id: String,
+    name: String
+});
+
+var Account = thinky.createModel("Account", {
+    id: String,
+    userId: String,
+    sold: Number
+});
+
+User.hasMany(Account, "accounts", "id", "userId")
+
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({
+    accounts: {
+        _apply: function(sequence) {
+            return sequence.orderBy('sold').limit(2)
+        }
+    }
+}).run().then(function(user) {
+    /*
+     * user = {
+     *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *     name: "Michel",
+     *     accounts: [{
+     *         id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+     *         userId: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *         sold: 2420
+     *     }, {
+     *         id: "db7ac1e8-0160-4e57-bf98-144ad5f93feb",
+     *         userId: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *         sold: 5832
+     *     }]
+     * }
+     */
+});
+```
+
+
+
+_Example_: Retrieve a user, its account and its solds.
 
 ```js
 var User = thinky.createModel("User", {
