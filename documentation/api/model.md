@@ -467,12 +467,12 @@ A user with its friends will look like:
 
 --------------
 
-<div id="insert"></div>
-### [insert](#insert)
+<div id="save"></div>
+### [save](#save)
 
 ```js
-Model.insert(object) -> Promise
-Model.insert(array) -> Promise
+Model.save(object) -> Promise
+Model.save(array) -> Promise
 ```
 
 
@@ -482,7 +482,9 @@ one `insert` command.
 
 If one error is produced by the server, the promise will be rejected.
 
-_Note_: This method does not save joined documents.
+_Note_: This method does not save joined documents and does not perform an update
+like `document.save()` can.
+
 
 _Example_: Insert 3 new users at the same time.
 
@@ -492,7 +494,7 @@ var User = thinky.createModel("User", {
     name: String
 });
 
-User.insert([
+User.save([
     {name: "Michel"},
     {name: "John"},
     {name: "Jessie"}
