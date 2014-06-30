@@ -116,6 +116,56 @@ describe('Model', function() {
     });
 });
 
+describe("Batch insert", function() {
+    var Model;
+    before(function() {
+        Model = thinky.createModel(util.s8(), {
+            id: String,
+            num: Number
+        });
+    });
+    it('insert should work with a single doc', function(done) {
+        Model.insert({id: "foo"}).then(function(result) {
+            assert.equal(result.length, 1);
+            assert.equal(result[0].id, "foo");
+            done();
+        }).error(function(e) {
+            done(e);
+        });
+    });
+    it('Batch insert should work', function(done) {
+        var docs = [];
+        for(var i=0; i<10; i++) {
+            docs.push({num: i})
+        }
+        Model.insert(docs).then(function(result) {
+            assert.strictEqual(result, docs);
+            for(i=0; i<10; i++) {
+                assert(typeof docs[i].id, 'string');
+            }
+            done();
+        }).error(function(e) {
+            done(e);
+        });
+    });
+    it('Batch insert should properly error is __one__ insert fails', function(done) {
+        Model.insert([{id: 4}]).then(function(result) {
+            assert.equal(result[0].id, 4);
+            var docs = [];
+            for(var i=0; i<10; i++) {
+                docs.push({num: i, id: i})
+            }
+            Model.insert(docs).then(function() {
+                done(new Error("Was expecting an error"));
+            }).error(function(e) {
+                assert.equal(e.message, "An error occurred during the batch insert.")
+                done();
+            });
+        });
+    });
+
+});
+
 describe("Joins", function() {
     it('hasOne should save the join', function() {
         var name = util.s8();
