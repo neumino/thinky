@@ -467,6 +467,43 @@ A user with its friends will look like:
 
 --------------
 
+<div id="insert"></div>
+### [insert](#insert)
+
+```js
+Model.insert(object) -> Promise
+Model.insert(array) -> Promise
+```
+
+
+Insert documents in the database. 
+If an array of documents is provided, `thinky` will execute a batch insert with only
+one `insert` command.
+
+If one error is produced by the server, the promise will be rejected.
+
+_Note_: This method does not save joined documents.
+
+_Example_: Insert 3 new users at the same time.
+
+```js
+var User = thinky.createModel("User", {
+    id: String,
+    name: String
+});
+
+User.insert([{name: "Michel"}, {name: "John"}, {name: "Jessie"}]).then(function(result) {
+    // Michel, John and Jessie are saved
+}).error(function(error) {
+    // Handle error
+});
+
+```
+
+
+
+--------------
+
 <div id="querysmethods"></div>
 ### [Query's methods](#querysmethods)
 
