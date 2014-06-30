@@ -492,7 +492,11 @@ var User = thinky.createModel("User", {
     name: String
 });
 
-User.insert([{name: "Michel"}, {name: "John"}, {name: "Jessie"}]).then(function(result) {
+User.insert([
+    {name: "Michel"},
+    {name: "John"},
+    {name: "Jessie"}
+]).then(function(result) {
     // Michel, John and Jessie are saved
 }).error(function(error) {
     // Handle error
