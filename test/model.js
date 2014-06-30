@@ -125,7 +125,7 @@ describe("Batch insert", function() {
         });
     });
     it('insert should work with a single doc', function(done) {
-        Model.insert({id: "foo"}).then(function(result) {
+        Model.save({id: "foo"}).then(function(result) {
             assert.equal(result.length, 1);
             assert.equal(result[0].id, "foo");
             done();
@@ -138,7 +138,7 @@ describe("Batch insert", function() {
         for(var i=0; i<10; i++) {
             docs.push({num: i})
         }
-        Model.insert(docs).then(function(result) {
+        Model.save(docs).then(function(result) {
             assert.strictEqual(result, docs);
             for(i=0; i<10; i++) {
                 assert.equal(typeof docs[i].id, 'string');
@@ -150,20 +150,20 @@ describe("Batch insert", function() {
         });
     });
     it('Batch insert should validate fields before saving', function(done) {
-        Model.insert([{id: 4}]).error(function(err) {
+        Model.save([{id: 4}]).error(function(err) {
             assert.equal(err.message, "Value for [id] must be a string or null.")
             done();
         });
     });
 
     it('Batch insert should properly error is __one__ insert fails', function(done) {
-        Model.insert([{id: '4'}]).then(function(result) {
+        Model.save([{id: '4'}]).then(function(result) {
             assert.equal(result[0].id, 4);
             var docs = [];
             for(var i=0; i<10; i++) {
                 docs.push({num: i, id: ""+i})
             }
-            Model.insert(docs).then(function() {
+            Model.save(docs).then(function() {
                 done(new Error("Was expecting an error"));
             }).error(function(e) {
                 assert.equal(e.message, "An error occurred during the batch insert.")
