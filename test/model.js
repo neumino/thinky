@@ -141,7 +141,8 @@ describe("Batch insert", function() {
         Model.insert(docs).then(function(result) {
             assert.strictEqual(result, docs);
             for(i=0; i<10; i++) {
-                assert(typeof docs[i].id, 'string');
+                assert.equal(typeof docs[i].id, 'string');
+                assert(docs[i].isSaved());
             }
             done();
         }).error(function(e) {
