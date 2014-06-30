@@ -148,12 +148,19 @@ describe("Batch insert", function() {
             done(e);
         });
     });
+    it('Batch insert should validate fields before saving', function(done) {
+        Model.insert([{id: 4}]).error(function(err) {
+            assert.equal(err.message, "Value for [id] must be a string or null.")
+            done();
+        });
+    });
+
     it('Batch insert should properly error is __one__ insert fails', function(done) {
-        Model.insert([{id: 4}]).then(function(result) {
+        Model.insert([{id: '4'}]).then(function(result) {
             assert.equal(result[0].id, 4);
             var docs = [];
             for(var i=0; i<10; i++) {
-                docs.push({num: i, id: i})
+                docs.push({num: i, id: ""+i})
             }
             Model.insert(docs).then(function() {
                 done(new Error("Was expecting an error"));
