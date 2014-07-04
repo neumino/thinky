@@ -1,3 +1,7 @@
+// This file is just to insert some fake data.
+// You do not need to run this file before starting app.js
+// Since 1.0, thinky will create the tables itself.
+
 var r = require('rethinkdb');
 var config = require('./config.js');
 var util = require('util');

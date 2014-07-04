@@ -13,7 +13,10 @@ Install the dependencies
 npm install
 ```
 
-Init the database. Change the content of `config.js` if you want.
+Init the database. Change the content of `config.js` if you want.  
+This is an optional step. You do not need to create the table with `init.js`. Thinky will
+automatically create table if they do not exist.
+
 ```
 node init.js
 ```
