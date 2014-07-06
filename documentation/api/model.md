@@ -464,6 +464,111 @@ A user with its friends will look like:
 }
 ```
 
+--------------
+
+<div id="pre"></div>
+### [pre](#pre)
+
+```js
+Model.pre(event[, isAsync], hook)
+```
+
+Add a hook that will be execcuted just before an event. The available pre-hooks are
+`save`, `delete`, `validate`.
+
+The argument `hook` is a function with the signature `function(next) { ... }`, where `next` should
+be called once the hook is done. The context of the hook will be set to the document triggering the event.   
+Call `next` with an error if you want the current event to be aborted.
+
+If the hook is asynchronous, make sure to pass `isAsync` set to true.
+
+__Note 1__: The method `Document.validate` is by default synchronous but will become asynchronous
+if an asynchonous hook is set on `validate` (and therefore will return a promise).
+
+__Note 2__: If you set the option `validate` to `oncreate` for a Model, `new Model(...)` will
+return a promise. This behavior is probably not something you want.
+
+
+_Example_: Make sure that the age of a user is greater than 18 before saving a document.
+
+```js
+var User = thinky.createModel("User", {
+    id: String,
+    age: Number
+});
+User.pre('save', function(next) {
+    if (age < 18) {
+        next(new Error("A user must be at least 18 years old."));
+    }
+    else {
+        next();
+    }
+});
+```
+
+_Example_: Make sure that the website of of a user works.
+
+```js
+var User = thinky.createModel("User", {
+    id: String,
+    website: String
+});
+User.pre('save', true, function(next) {
+    var self = this;
+    r.http(self.website).run().then(function() {
+        next();
+    }).error(next);
+});
+```
+
+--------------
+
+<div id="post"></div>
+### [post](#post)
+
+```js
+Model.post(event[, isAsync], hook)
+```
+
+Add a hook that will be execcuted just after an event. The available post-hooks are
+`save`, `delete`, `validate`, `init`, `retrieve`.
+
+The argument `hook` is a function with the signature `function(next) { ... }`, where `next` should
+be called once the hook is done. The context of the hook will be set to the document triggering the event.   
+Call `next` with an error if you want the current event to be aborted.
+
+If the hook is asynchronous, make sure to pass `isAsync` set to true.
+
+__Note 1__: The method `Document.validate` is by default synchronous but will become asynchronous
+if an asynchonous hook is set on `validate` (and therefore will return a promise).
+
+__Note 2__: If you set an asynchronous hook for `init`, `new Model(...)` will return a
+promise. This behavior is probably not something you want.   
+If you want to set a hook only when a document is retrieved from the database, use the
+event `retrieve`.
+
+
+_Example_: Add an extra field `isAdult` but do not save it in the database.
+
+```js
+var User = thinky.createModel("User", {
+    id: String,
+    age: Number
+});
+User.pre('save', function(next) {
+    delete this.isAdult;
+    next();
+});
+User.post('save', function(next) {
+    this.isAdult = this.age >= 18;
+    next();
+});
+User.post('init', function(next) {
+    this.isAdult = this.age >= 18;
+    next();
+});
+```
+
 
 --------------
 

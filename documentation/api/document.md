@@ -76,7 +76,8 @@ Post.get(data.id).run().then(function(post) {
 ### [validate](#validate)
 
 ```
-document.validate([options]);
+document.validate([options])
+document.validate([options]) -> Promise
 ```
 
 Validate a document.  
@@ -93,6 +94,8 @@ schema.
 
 If the model's option `validate` is set to `"oncreate"`, the method `validate` will
 also be executed every time a new document is created.
+
+The `validate` method will return a promise if an asynchronous hook is set on `validate`.
 
 _Example_: Validate a new user.
 
