@@ -2624,6 +2624,5 @@ describe('manual joins', function() {
             assert.deepEqual(result[2].left, doc);
             done();
         });
-
     });
 });

@@ -5,6 +5,7 @@ var Errors = thinky.Errors;
 
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
+
 describe('save', function() {
     describe('Basic', function() {
         var Model;
@@ -46,7 +47,6 @@ describe('save', function() {
                 }
             });
         });
-
         it('Save should fail if the primary key already exists', function(done){
             var str = util.s8();
             var num = util.random();
@@ -58,7 +58,9 @@ describe('save', function() {
                 doc2 = new Model({
                     id: str
                 })
-                doc2.save().error(function(error) {
+                doc2.save().then(function(r) {
+                    console.log(r)
+                }).error(function(error) {
                     assert(error.message.match(/^Duplicate primary key/));
                     done();
                 });
@@ -2228,5 +2230,426 @@ describe('merge', function() {
         var doc = new Model({id: "str", foo: {bar: "hello"}});
         var doc2 = doc.merge({foo: {buzz: 2}});
         assert.strictEqual(doc2, doc);
+    });
+});
+describe('hooks', function() {
+    it('init pre', function() {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        assert.throws(function() { Model.pre('init', function() {
+            this.title = this.id;
+        })
+        }, function(error) {
+            return ((error instanceof Error) && (error.message === 'No pre-hook available for the event `init`.'))
+        });
+    });
+    it('init post sync', function() {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        Model.post('init', function() {
+            this.title = this.id;
+        })
+
+        var doc = new Model({id: "foobar"});
+        assert.equal(doc.id, doc.title)
+    });
+    it('init post sync - error', function() {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        Model.post('init', function() {
+            throw new Error("Error thrown by a hook")
+        })
+        Model.post('init', function() {
+            this.title = this.id;
+        })
+
+        try {
+            var doc = new Model({id: "foobar"});
+        }
+        catch(err) {
+            assert.equal(err.message, "Error thrown by a hook");
+        }
+    });
+
+    it('init post async', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        Model.post('init', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next();
+            }, 100);
+        })
+
+        var doc = new Model({id: "foobar"}).then(function() {
+            assert.equal(doc.id, doc.title)
+            done();
+        }).error(done);
+    });
+    it('init post async - error', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        Model.post('init', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next(new Error("Async error thrown by a hook"));
+            }, 100);
+        })
+
+        var doc = new Model({id: "foobar"}).then(function() {
+            done(new Error("Expecting error"));
+        }).error(function(err) {
+            assert.equal(err.message, "Async error thrown by a hook");
+            done();
+        });
+    });
+
+    it('validate oncreate sync', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String}, {validate: 'oncreate'});
+        Model.post('validate', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next();
+            }, 100);
+        })
+
+        var doc = new Model({id: "foobar"}).then(function() {
+            assert.equal(doc.id, doc.title)
+            done();
+        }).error(done);
+    });
+    it('validate oncreate + init async', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String}, {validate: 'oncreate'});
+        Model.post('init', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title2 = self.id;
+                next();
+            }, 100);
+        })
+        Model.post('validate', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next();
+            }, 100);
+        })
+
+        var doc = new Model({id: "foobar"}).then(function() {
+            assert.equal(doc.id, doc.title)
+            assert.equal(doc.id, doc.title2)
+            done();
+        }).error(done);
+    });
+
+    it('validate post sync', function() {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        Model.post('validate', function() {
+            this.title = this.id;
+        })
+
+        var doc = new Model({id: "foobar"});
+        doc.validate();
+        assert.equal(doc.id, doc.title)
+    });
+    it('validate post sync - error', function() {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        Model.post('validate', function() {
+            throw new Error("Error thrown by a hook")
+        })
+
+        var doc = new Model({id: "foobar"});
+        try {
+            doc.validate();
+        }
+        catch(err) {
+            assert.equal(err.message, "Error thrown by a hook");
+        }
+    });
+
+    it('init validate async', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        Model.post('validate', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next();
+            }, 100);
+        })
+
+        var doc = new Model({id: "foobar"});
+        doc.validate().then(function() {
+            assert.equal(doc.id, doc.title)
+            done();
+        }).error(done);
+    });
+    it('init post async - error', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        Model.post('validate', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next(new Error("Async error thrown by a hook"));
+            }, 100);
+        })
+
+        var doc = new Model({id: "foobar"});
+        doc.validate().then(function() {
+            done(new Error("Expecting error"));
+        }).error(function(err) {
+            assert.equal(err.message, "Async error thrown by a hook");
+            done();
+        });
+    });
+    it('init validateAll async', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        Model.post('validate', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next();
+            }, 100);
+        })
+
+        var doc = new Model({id: "foobar"});
+        doc.validateAll().then(function() {
+            assert.equal(doc.id, doc.title)
+            done();
+        }).error(done);
+    });
+    it('init validateAll async joins', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var OtherModel = thinky.createModel(util.s8(), {id: String, foreignKey: String});
+        Model.hasOne(OtherModel, 'other', 'id', 'foreignKey');
+
+        OtherModel.post('validate', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next();
+            }, 100);
+        })
+
+        var doc = new Model({id: "foo"});
+        var otherDoc = new OtherModel({id: "bar"});
+        doc.other = otherDoc;
+
+        doc.validateAll().then(function() {
+            assert.equal(otherDoc.id, otherDoc.title)
+            done();
+        }).error(done);
+    });
+    it('validate on save', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+
+        Model.post('validate', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next();
+            }, 100);
+        })
+
+        var doc = new Model({id: "foo"});
+        doc.save().then(function(result) {
+            assert.strictEqual(result, doc)
+            Model.get("foo").run().then(function(result) {
+                assert.equal(result.id, result.title)
+                done();
+            })
+        }).error(done);
+    });
+    it('validate on retrieve - error on validate', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+
+        Model.pre('validate', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next();
+            }, 100);
+        })
+
+        Model.once('ready', function() {
+            r.table(Model.getTableName()).insert({id: 1}).run().then(function(result) {
+                Model.get(1).run().then(function(result) {
+                    done(new Error("Was expecting an error"))
+                }).error(function(err) {
+                    assert.equal(err.message, "Value for [id] must be a string or null.");
+                    done();
+                });
+            }).error(done);
+        });
+    });
+    it('validate on retrieve - error on hook', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+
+        Model.pre('validate', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next(new Error("I'm Hook, and I'm a vilain"));
+            }, 100);
+        })
+
+        Model.once('ready', function() {
+            r.table(Model.getTableName()).insert({id: 1}).run().then(function(result) {
+                Model.get(1).run().then(function(result) {
+                    done(new Error("Was expecting an error"))
+                }).error(function(err) {
+                    assert.equal(err.message, "I'm Hook, and I'm a vilain");
+                    done();
+                });
+            }).error(done);
+        });
+    });
+    it('save pre', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+
+        Model.pre('save', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next();
+            }, 100);
+        })
+
+        var doc = new Model({id: "foo"});
+        doc.save().then(function(result) {
+            assert.strictEqual(result, doc)
+            assert.equal(doc.id, doc.title);
+            r.table(Model.getTableName()).get(doc.id).run().then(function(result) {
+                assert.equal(result.id, result.title);
+                done();
+            });
+        }).error(done);
+    });
+    it('save post', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+
+        Model.post('save', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next();
+            }, 100);
+        })
+
+        var doc = new Model({id: "foo"});
+        doc.save().then(function(result) {
+            assert.strictEqual(result, doc)
+            assert.equal(doc.id, doc.title);
+            r.table(Model.getTableName()).get(doc.id).run().then(function(result) {
+                assert.equal(result.title, undefined);
+                done();
+            });
+        }).error(done);
+    });
+    it('save pre join', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var OtherModel = thinky.createModel(util.s8(), {id: String, foreignKey: String});
+        Model.hasOne(OtherModel, 'other', 'id', 'foreignKey');
+
+        OtherModel.pre('save', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next();
+            }, 100);
+        })
+
+        var doc = new Model({id: "foo"});
+        var otherDoc = new OtherModel({id: "bar"});
+        doc.other = otherDoc;
+
+        doc.saveAll().then(function(result) {
+            assert.equal(otherDoc.id, otherDoc.title)
+            done();
+        }).error(done);
+    });
+    it('save pre join', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var OtherModel = thinky.createModel(util.s8(), {id: String, foreignKey: String});
+        Model.hasOne(OtherModel, 'other', 'id', 'foreignKey');
+
+        OtherModel.pre('save', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next();
+            }, 100);
+        })
+
+        var doc = new Model({id: "foo"});
+        var otherDoc = new OtherModel({id: "bar"});
+        doc.other = otherDoc;
+
+        doc.saveAll().then(function(result) {
+            assert.equal(otherDoc.id, otherDoc.title)
+            done();
+        }).error(done);
+    });
+    it('delete pre', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+
+        Model.pre('delete', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next();
+            }, 100);
+        })
+
+        var doc = new Model({id: "foo"});
+        doc.save().then(function(result) {
+            assert.strictEqual(result, doc)
+
+            doc.delete().then(function(result) {
+                assert.strictEqual(result, doc)
+                assert.equal(doc.id, doc.title);
+                done();
+            }).error(done);
+        }).error(done);
+    });
+    it('delete post', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+
+        Model.post('delete', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next();
+            }, 100);
+        })
+
+        var doc = new Model({id: "foo"});
+        doc.save().then(function(result) {
+            assert.strictEqual(result, doc)
+
+            doc.delete().then(function(result) {
+                assert.strictEqual(result, doc)
+                assert.equal(doc.id, doc.title);
+                done();
+            }).error(done);
+        }).error(done);
+    });
+    it('hook for retrieve', function(done) {
+        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+
+        Model.post('retrieve', true, function(next) {
+            var self = this;
+            setTimeout(function() {
+                self.title = self.id;
+                next();
+            }, 100);
+        })
+
+        Model.once('ready', function() {
+            var id = util.s8();
+            r.table(Model.getTableName()).insert({id: id}).run().then(function(result) {
+                Model.get(id).run().then(function(result) {
+                    assert.equal(result.title, result.id);
+                    done();
+                }).error(done);
+            }).error(done);
+        });
     });
 });
