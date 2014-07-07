@@ -109,8 +109,8 @@ catch(err) {
 ```
 
 --------------
-<div id="validate"></div>
-### [validate](#validate)
+<div id="validateall"></div>
+### [validateAll](#validateall)
 
 ```
 document.validateAll([options, modelToValidate]);
