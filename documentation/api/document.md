@@ -215,7 +215,8 @@ Save the document and the joined document.
 The joined documents will be saved in the appropriate order and the foreign key values
 will be set.
 If some references to joined documents have been removed, the documents will be
-properly updated to reflect the current relations. 
+properly updated to reflect the current relations (meaning that if the joined document
+is not there but the foreign key is, the foreign key will be deleted).
 
 By default, if `modelToSave` is not provided, `saveAll` will keep recursing and will
 save all the joined documents.   
@@ -226,6 +227,10 @@ The option `modelToSave` can be an object where each field is a joined document 
 
 The promise will be resolved with the document and the document will
 be updated in place.
+
+__Rule__: If you want to make sure not to destroy relations when calling `saveAll`, the "rule" is to
+call `saveAll()` on a document only if you retrieved it with `getJoin()`. If you retrieved the document
+with `getJoin(modelToGet)`, then you should call `saveAll(modelToSave)` with `modelToSave == modelToGet`.
 
 
 _Example_: Save a user and its account.

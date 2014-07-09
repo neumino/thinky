@@ -251,6 +251,13 @@ The foreign keys and links will be automatically saved by `thinky.
 _Note_: To avoid infinite recursion with circular references, `saveAll` will not recurse in a field containing document(s)
 of a previously saved model.
 
+__Note__: `saveAll` can delete foreign keys if the joined document is not present. The "rule"
+to make sure that such thing does not happen is to call `saveAll()` on a document only if
+you retrieved it with `getJoin()`. If you retrieved the document with
+`getJoin(modelToGet)`, then you should call `saveAll(modelToSave)` with
+`modelToSave == modelToGet`.
+
+
 _Example_:
 
 Suppose we have the following code:
