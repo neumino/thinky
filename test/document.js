@@ -59,7 +59,7 @@ describe('save', function() {
                     id: str
                 })
                 doc2.save().then(function(r) {
-                    console.log(r)
+                    done(new Error("Expecting error"))
                 }).error(function(error) {
                     assert(error.message.match(/^Duplicate primary key/));
                     done();
@@ -339,6 +339,32 @@ describe('save', function() {
                 })
             }).error(done);
         })
+        it('saveAll should delete a reference of belongsTo only if the document was first retrieved', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+            doc.saveAll().then(function(doc2) {
+                assert.equal(doc.isSaved(), true);
+                assert.equal(doc.otherDoc.isSaved(), true);
+
+                Model.get(doc.id).run().then(function(result1) {
+                    result1.saveAll().then(function(result2) {
+                        assert.strictEqual(result1, result2)
+                        assert.equal(result2.foreignKey, doc.foreignKey);
+                        assert.notEqual(result2.foreignKey, undefined);
+                        assert.notEqual(result2.foreignKey, null);
+                        Model.get(doc.id).getJoin().run().then(function(result) {
+                            assert.equal(result.isSaved(), true);
+                            assert.equal(result.otherDoc.isSaved(), true);
+                            done();
+                        });
+                    });
+                });
+            }).error(done);
+        });
     });
 
     describe("Joins - hasMany", function() {
