@@ -30,6 +30,14 @@ describe('createModel', function(){
 
         assert(model1 !== model2);
     });
+    it('Check if the table was created', function(done){
+        model = thinky.createModel(util.s8(), {id: String, name: String}, {init: false})
+        model.get(1).run().then(function() { done(new Error("Expecting error")) }).error(function(e) {
+            assert(e.message.match(/^Table `.*` does not exist in/));
+            done();
+        });
+    });
+
 });
 describe('[_]getModel', function(){
     it('_getModel', function(){
