@@ -293,6 +293,9 @@ query. If you use `r.table(Model.getTableName())` instead of `Model` in a nested
 query, you may have unexpected/broken optimizations. Use an anonymous function if you
 need to prevent thinky from optimizing your query.
 
+_Note_: If you created your table with `{init: false}` indexes will not be fetched, and
+the optimizer will not be as efficient as it could without the `init` option.
+
 _Example_: Return the number of users
 
 ```js
