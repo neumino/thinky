@@ -794,3 +794,68 @@ describe('clone', function() {
         });
     });
 });
+
+describe('optimizer', function() {
+    // Test that the queries built under the hood are optimized by having the server throw an error
+    var Model;
+    before(function(done) {
+        var name = util.s8();
+        r.tableCreate(name).run().then(function(result) {
+            
+            r.table(name).indexCreate('name2').run().then(function() {
+
+                Model = thinky.createModel(name, {
+                    id: String,
+                    name1: String,
+                    name2: String,
+                    hasOneKey: String,
+                    belongsToKey: String,
+                    hasMany: String,
+                    hasAndBelongsToMany1: String,
+                    hasAndBelongsToMany2: String
+                })
+                Model.hasOne(Model, 'other', 'id', 'hasOneKey')
+                Model.hasMany(Model, 'others', 'id', 'hasManyKey')
+                Model.belongsTo(Model, 'belongsTo', 'belongsToKey', 'id')
+                Model.hasAndBelongsToMany(Model, 'manyToMany', 'hasAndBelongsToMany1', 'hasAndBelongsToMany2')
+
+                Model.ensureIndex('name1');
+                Model.once('ready', function() {
+                    done();
+                })
+            }).error(done);
+        }).error(done);
+    });
+    it('orderBy should be able to use an index - thanks to ensureIndex', function() {
+        var query = Model.orderBy('name1').toString();
+        assert(query.match(/index: "name1"/));
+    })
+    it('orderBy should be able to use an index - thanks to hasOne', function() {
+        var query = Model.orderBy('hasOneKey').toString();
+        assert(query.match(/index: "hasOneKey"/));
+    })
+    it('orderBy should be able to use an index - thanks to hasMany', function() {
+        var query = Model.orderBy('hasManyKey').toString();
+        assert(query.match(/index: "hasManyKey"/));
+    })
+    it('orderBy should be able to use an index - thanks to belongsTo', function() {
+        var query = Model.orderBy('belongsToKey').toString()
+        assert(query.match(/index: "belongsToKey"/));
+    })
+    it('orderBy should be able to use an index - thanks to hasAndBelongsToMany - 1', function() {
+        var query = Model.orderBy('hasAndBelongsToMany1').toString();
+        assert(query.match(/index: "hasAndBelongsToMany1"/));
+    })
+    it('orderBy should be able to use an index - thanks to hasAndBelongsToMany - 2', function() {
+        var query = Model.orderBy('hasAndBelongsToMany2').toString();
+        assert(query.match(/index: "hasAndBelongsToMany2"/));
+    })
+    it('orderBy should be able to use an index - thanks to indexList', function() {
+        var query = Model.orderBy('name2').toString();
+        assert(query.match(/index: "name2"/));
+    })
+    it('filter should be able to use an index', function() {
+        var query = Model.filter({name2: "Michel"}).toString();
+        assert(query.match(/index: "name2"/));
+    })
+});
