@@ -281,8 +281,17 @@ cannot be converted to an instance of `User`.
 <div id="reql"></div>
 ### [ReQL methods](#reql)
 
-All the methods defined in ReQL can be called  on a Query object.
+All the methods defined in ReQL can be called on a Query object.
 
+The methods `filter` and `orderBy` can be automatically optimized. A model will
+automatically fetch the indexes of its table, and at the time you call `filter`
+or `orderBy` (and not when you call `run`), if an index is available, `thinky` will
+automatically use an index.
+
+_Note_: The current behavior is to look at the indexes of the model stored in the
+query. If you use `r.table(Model.getTableName())` instead of `Model` in a nested
+query, you may have unexpected/broken optimizations. Use an anonymous function if you
+need to prevent thinky from optimizing your query.
 
 _Example_: Return the number of users
 
