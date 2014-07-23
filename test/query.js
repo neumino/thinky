@@ -858,4 +858,9 @@ describe('optimizer', function() {
         var query = Model.filter({name2: "Michel"}).toString();
         assert(query.match(/index: "name2"/));
     })
+    it('filter should use an index only on a table', function() {
+        var query = Model.filter({foo: "bar"}).filter({name2: "Michel"}).toString();
+        assert(query.match(/index: "name2"/) === null);
+    })
+
 });
