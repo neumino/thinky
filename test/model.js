@@ -532,6 +532,33 @@ describe('static', function(){
         Model.static('bar', function() { done() });
         Model.foo();
     });
+    it('Should be added on the model\'s queries', function(done) {
+        var Model = thinky.createModel(util.s8(), { id: String });
+        var Other = thinky.createModel(util.s8(), { id: String });
+
+        Model.hasOne(Other, 'other', 'id', 'modelId');
+        Other.belongsTo(Model, 'model', 'modelId', 'id');
+
+        Other.static('foo', function() {
+            return this.merge({bar: true})
+        });
+
+        var doc1 = new Model({});
+        var doc2 = new Other({model: doc1});
+
+        doc2.saveAll().then(function() {
+            return Model.getJoin({
+                other: {
+                    _apply: function(query) {
+                        return query.foo()
+                    }
+                }
+            }).run()
+        }).then(function(docs) {
+            assert.equal(docs[0].other.bar, true);
+            done()
+        });
+    });
 });
 describe('ensureIndex', function(){
     it('should add an index', function(done) {
