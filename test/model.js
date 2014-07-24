@@ -520,6 +520,19 @@ describe('define', function(){
         doc.foo();
     });
 });
+describe('static', function(){
+    it('Should be added on the model', function(done) {
+        var Model = thinky.createModel(util.s8(), { id: String, num: Number }, {init: false});
+        Model.static('foo', function() { done() });
+        Model.foo();
+    });
+    it('this should refer to the model', function(done) {
+        var Model = thinky.createModel(util.s8(), { id: String, num: Number }, {init: false});
+        Model.static('foo', function() { this.bar() });
+        Model.static('bar', function() { done() });
+        Model.foo();
+    });
+});
 describe('ensureIndex', function(){
     it('should add an index', function(done) {
         var Model = thinky.createModel(util.s8(), { id: String, num: Number });
