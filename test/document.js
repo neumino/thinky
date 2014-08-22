@@ -1538,7 +1538,7 @@ describe('delete', function() {
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 3);
                             assert.deepEqual(util.sortById(result), util.sortById(otherDocs));
-                            r.table(Model._joins.otherDocs.link).run().then(function(cursor) {
+                            r.table(Model._joins.otherDocs.link).run().then(function(result) {
                                 assert.equal(result.length, 0);
                                 done();
                             });
