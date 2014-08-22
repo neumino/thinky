@@ -52,7 +52,7 @@ describe('schema', function(){
             thinky.createModel(name, {id: 1}, {init: false})
         }
         catch(err) {
-            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Object`/`Array` for [id]");
+            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array` for [id]");
             done();
         }
     });
@@ -62,7 +62,7 @@ describe('schema', function(){
             thinky.createModel(name, {id: undefined}, {init: false})
         }
         catch(err) {
-            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Object`/`Array` for [id]");
+            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array` for [id]");
             done();
         }
     });
@@ -76,7 +76,7 @@ describe('schema', function(){
             thinky.createModel(name, {id: {bar: 2}}, {init: false})
         }
         catch(err) {
-            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Object`/`Array` for [id][bar]");
+            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array` for [id][bar]");
             done();
         }
     });
@@ -128,7 +128,7 @@ describe('schema', function(){
             thinky.createModel(name, {id: {foo: {bar: 1}}}, {init: false})
         }
         catch(err) {
-            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Object`/`Array` for [id][foo][bar]")
+            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array` for [id][foo][bar]")
             done();
         }
     });
@@ -138,7 +138,7 @@ describe('schema', function(){
             thinky.createModel(name, {id: {foo: {bar: {_type: 1}}}}, {init: false})
         }
         catch(err) {
-            assert.equal(err.message, "The field `_type` must be `String`/`Number`/`Boolean`/`Date`/`Object`/`Array` for [id][foo][bar]")
+            assert.equal(err.message, "The field `_type` must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array` for [id][foo][bar]")
             done();
         }
     });
@@ -1122,6 +1122,169 @@ describe('validate', function(){
         })
         doc.validate();
     });
+
+
+
+
+    it('Buffer - type: "strict"', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Buffer
+        }, {init: false, enforce_type: 'strict'})
+
+        doc = new Model({
+            id: str,
+            field: new Buffer([1,2,3])
+        })
+
+        doc.validate();
+    });
+    it('Buffer - wrong type - type: "strict"', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Buffer
+        }, {init: false, enforce_type: 'strict'})
+
+        doc = new Model({
+            id: str,
+            field: "hello"
+        })
+
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be a buffer.")
+        });
+    });
+    it('Buffer - wrong type  - type: "loose"', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Buffer
+        }, {init: false, enforce_type: 'loose'})
+
+        doc = new Model({
+            id: str,
+            field: "hello"
+        })
+
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be a buffer or null.")
+        });
+    });
+
+    it('Buffer - wrong type  - type: "none"', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Buffer
+        }, {init: false, enforce_type: 'none'})
+
+        doc = new Model({
+            id: str,
+            field: "hello"
+        })
+
+        doc.validate();
+    });
+    it('Buffer - raw type - type: "strict"', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Buffer
+        }, {init: false, enforce_type: 'strict'})
+
+        doc = new Model({
+            id: str,
+            field: {$reql_type$: "BINARY", data: (new Buffer("hello")).toString("base64") }
+        })
+
+        doc.validate();
+    });
+    it('Buffer - raw type - missing data - type: "strict"', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Buffer
+        }, {init: false, enforce_type: 'strict'})
+
+        doc = new Model({
+            id: str,
+            field: { $reql_type$: "BINARY" }
+        })
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "The raw binary object for [field] is missing the required field data.")
+        });
+    });
+    it('Buffer - r.http', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Buffer
+        }, {init: false})
+
+        doc = new Model({
+            id: str,
+            field: r.http('http://some/domain/com/some/binary/file')
+        })
+        doc.validate();
+    });
+    it('Buffer - undefined - enforce_missing: true', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Buffer
+        }, {init: false, enforce_missing: true})
+
+        doc = new Model({
+            id: str
+        })
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
+        });
+    });
+    it('Buffer - undefined - enforce_missing: false', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            field: Buffer
+        }, {init: false, enforce_missing: false})
+
+        doc = new Model({
+            id: str
+        })
+        doc.validate();
+    });
+
+
+
+
 
     it('Array - missing - enforce_missing: true', function(){
         var name = util.s8();
