@@ -521,18 +521,16 @@ describe('save', function() {
                     linkName = OtherModel.getTableName()+"_"+Model.getTableName();
                 }
 
-                r.table(linkName).run().then(function(cursor) {
-                    cursor.toArray().then(function(result) {
-                        assert.equal(result.length, 3)
+                r.table(linkName).run().then(function(result) {
+                    assert.equal(result.length, 3)
 
-                        assert.equal(doc.isSaved(), true);
-                        assert.equal(typeof doc.id, 'string')
-                        assert.equal(doc.str, docValues.str);
-                        assert.equal(doc.num, docValues.num);
+                    assert.equal(doc.isSaved(), true);
+                    assert.equal(typeof doc.id, 'string')
+                    assert.equal(doc.str, docValues.str);
+                    assert.equal(doc.num, docValues.num);
 
-                        assert.strictEqual(doc.otherDocs, otherDocs)
-                        done();
-                    })
+                    assert.strictEqual(doc.otherDocs, otherDocs)
+                    done();
                 })
 
             }).error(done);
@@ -556,36 +554,32 @@ describe('save', function() {
                 else {
                     linkName = OtherModel.getTableName()+"_"+Model.getTableName();
                 }
-                r.table(linkName).run().then(function(cursor) {
-                    cursor.toArray().then(function(result) {
-                        var total = 0;
-                        // Check id
-                        for(var i=0; i<result.length; i++) {
-                            found = false
-                            for(var j=0; j<otherDocs.length; j++) {
-                                if (Model.getTableName() < OtherModel.getTableName()) {
-                                    if (result[i].id === doc.id+"_"+otherDocs[j].id) {
-                                        total++;
-                                        found = true;
-                                        break;
-                                    }
+                r.table(linkName).run().then(function(result) {
+                    var total = 0;
+                    // Check id
+                    for(var i=0; i<result.length; i++) {
+                        found = false
+                        for(var j=0; j<otherDocs.length; j++) {
+                            if (Model.getTableName() < OtherModel.getTableName()) {
+                                if (result[i].id === doc.id+"_"+otherDocs[j].id) {
+                                    total++;
+                                    found = true;
+                                    break;
                                 }
-                                else {
-                                    if (result[i].id === otherDocs[j].id+"_"+doc.id) {
-                                        total++;
-                                        found = true;
-                                        break;
-                                    }
+                            }
+                            else {
+                                if (result[i].id === otherDocs[j].id+"_"+doc.id) {
+                                    total++;
+                                    found = true;
+                                    break;
                                 }
                             }
                         }
-                        assert.equal(total, 3);
+                    }
+                    assert.equal(total, 3);
 
-                        done();
-                    })
+                    done();
                 }).error(done);
-
-                
             }).error(done);
         })
         it('saveAll should create new links with the secondary value', function(done) {
@@ -612,27 +606,25 @@ describe('save', function() {
                 else {
                     linkName = OtherModel.getTableName()+"_"+Model.getTableName();
                 }
-                r.table(linkName).run().then(function(cursor) {
-                    cursor.toArray().then(function(result) {
-                        var total = 0;
-                        // Testing the values of the primary key
-                        for(var i=0; i<result.length; i++) {
-                            if (result[i][Model.getTableName()+"_id"] ===  doc.id) {
-                                found = false;
-                                for(var j=0; j<otherDocs.length; j++) {
-                                    if (result[i][OtherModel.getTableName()+"_id"] === otherDocs[j].id) {
-                                        total++;
-                                        found = true;
-                                        break;
-                                    }
+                r.table(linkName).run().then(function(result) {
+                    var total = 0;
+                    // Testing the values of the primary key
+                    for(var i=0; i<result.length; i++) {
+                        if (result[i][Model.getTableName()+"_id"] ===  doc.id) {
+                            found = false;
+                            for(var j=0; j<otherDocs.length; j++) {
+                                if (result[i][OtherModel.getTableName()+"_id"] === otherDocs[j].id) {
+                                    total++;
+                                    found = true;
+                                    break;
                                 }
-                                assert(found);
                             }
+                            assert(found);
                         }
+                    }
 
-                        assert.equal(total, 3);
-                        done();
-                    })
+                    assert.equal(total, 3);
+                    done();
                 }).error(done);
 
                 
@@ -1547,10 +1539,8 @@ describe('delete', function() {
                             assert.equal(result.length, 3);
                             assert.deepEqual(util.sortById(result), util.sortById(otherDocs));
                             r.table(Model._joins.otherDocs.link).run().then(function(cursor) {
-                                cursor.toArray().then(function(result) {
-                                    assert.equal(result.length, 0);
-                                    done();
-                                });
+                                assert.equal(result.length, 0);
+                                done();
                             });
                         });
                     });
@@ -1575,11 +1565,9 @@ describe('delete', function() {
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 3);
                             assert.deepEqual(util.sortById(result), util.sortById(otherDocs));
-                            r.table(Model._joins.otherDocs.link).run().then(function(cursor) {
-                                cursor.toArray().then(function(result) {
-                                    assert.equal(result.length, 0);
-                                    done();
-                                }).error(done);
+                            r.table(Model._joins.otherDocs.link).run().then(function(result) {
+                                assert.equal(result.length, 0);
+                                done();
                             }).error(done);
                         }).error(done);
 
@@ -1606,11 +1594,9 @@ describe('delete', function() {
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 0);
 
-                            r.table(Model._joins.otherDocs.link).run().then(function(cursor) {
-                                cursor.toArray().then(function(result) {
-                                    assert.equal(result.length, 0);
-                                    done();
-                                }).error(done);
+                            r.table(Model._joins.otherDocs.link).run().then(function(result) {
+                                assert.equal(result.length, 0);
+                                done();
                             }).error(done);
                         }).error(done);
 
@@ -1637,11 +1623,9 @@ describe('delete', function() {
                         OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
                             assert.equal(result.length, 0);
 
-                            r.table(Model._joins.otherDocs.link).run().then(function(cursor) {
-                                cursor.toArray().then(function(result) {
-                                    assert.equal(result.length, 0);
-                                    done();
-                                }).error(done);
+                            r.table(Model._joins.otherDocs.link).run().then(function(result) {
+                                assert.equal(result.length, 0);
+                                done();
                             }).error(done);
                         }).error(done);
 
@@ -2053,11 +2037,9 @@ describe('purge', function() {
                         OtherModel.run().then(function(result) {
                             assert(result.length, 3);
                             var link = Model._getModel()._joins.otherDocs.link;
-                            r.table(link).run().then(function(cursor) {
-                                cursor.toArray().then(function(result) {
-                                    assert.equal(result.length, 0);
-                                    done();
-                                });
+                            r.table(link).run().then(function(result) {
+                                assert.equal(result.length, 0);
+                                done();
                             });
                         });
                     });
@@ -2090,11 +2072,9 @@ describe('purge', function() {
                         OtherModel.run().then(function(result) {
                             assert(result.length, 2);
                             var link = Model._getModel()._joins.otherDocs.link;
-                            r.table(link).run().then(function(cursor) {
-                                cursor.toArray().then(function(result) {
-                                    assert.equal(result.length, 2);
-                                    done();
-                                });
+                            r.table(link).run().then(function(result) {
+                                assert.equal(result.length, 2);
+                                done();
                             });
                         });
                     });
@@ -2129,11 +2109,9 @@ describe('purge', function() {
                         OtherModel.run().then(function(result) {
                             assert(result.length, 3);
                             var link = Model._getModel()._joins.otherDocs.link;
-                            r.table(link).run().then(function(cursor) {
-                                cursor.toArray().then(function(result) {
-                                    assert.equal(result.length, 2);
-                                    done();
-                                });
+                            r.table(link).run().then(function(result) {
+                                assert.equal(result.length, 2);
+                                done();
                             });
                         });
                     });
@@ -2168,11 +2146,9 @@ describe('purge', function() {
                         OtherModel.run().then(function(result) {
                             assert(result.length, 2);
                             var link = Model._getModel()._joins.otherDocs.link;
-                            r.table(link).run().then(function(cursor) {
-                                cursor.toArray().then(function(result) {
-                                    assert.equal(result.length, 1);
-                                    done();
-                                });
+                            r.table(link).run().then(function(result) {
+                                assert.equal(result.length, 1);
+                                done();
                             });
                         });
                     });

@@ -13,11 +13,9 @@ describe('createModel', function(){
     });
     it('Check if the table was created', function(done){
         model.on("ready", function() {
-            r.tableList().run().then(function(cursor) {
-                cursor.toArray().then(function(result) {
-                    assert.notEqual(result.indexOf(name), -1)
-                    done();
-                }).error(done);
+            r.tableList().run().then(function(result) {
+                assert.notEqual(result.indexOf(name), -1)
+                done();
             }).error(done)
         });
     });
@@ -335,13 +333,10 @@ describe("Joins", function() {
         model.hasOne(otherModel, "otherDoc", "modelId", foreignKey);
 
         otherModel.on("ready", function() {
-            r.table(otherModel.getTableName()).indexList().run().then(function(cursor) {
-                cursor.toArray().then(function(result) {
-                    r.table(otherModel.getTableName()).indexWait(foreignKey).run().then(function() {
-                        done();
-                    }).error(done);
-                });
-
+            r.table(otherModel.getTableName()).indexList().run().then(function(result) {
+                r.table(otherModel.getTableName()).indexWait(foreignKey).run().then(function() {
+                    done();
+                }).error(done);
             }).error(done);
 
         })
@@ -361,14 +356,10 @@ describe("Joins", function() {
 
         model.on("ready", function() {
             r.table(model.getTableName()).indexList().run().then(function(cursor) {
-                cursor.toArray().then(function(result) {
-                    r.table(model.getTableName()).indexWait(foreignKey).run().then(function() {
-                        done();
-                    }).error(done);
-                });
-
+                r.table(model.getTableName()).indexWait(foreignKey).run().then(function() {
+                    done();
+                }).error(done);
             }).error(done);
-
         })
     });
     it('hasMany should create an index on the other model', function(done) {
@@ -385,12 +376,10 @@ describe("Joins", function() {
         model.hasMany(otherModel, "otherDocs", "modelId", foreignKey);
 
         otherModel.on("ready", function() {
-            r.table(otherModel.getTableName()).indexList().run().then(function(cursor) {
-                cursor.toArray().then(function(result) {
-                    r.table(otherModel.getTableName()).indexWait(foreignKey).run().then(function() {
-                        done();
-                    }).error(done);
-                });
+            r.table(otherModel.getTableName()).indexList().run().then(function(result) {
+                r.table(otherModel.getTableName()).indexWait(foreignKey).run().then(function() {
+                    done();
+                }).error(done);
 
             }).error(done);
         })
@@ -414,12 +403,10 @@ describe("Joins", function() {
         }
 
         model.on("ready", function() {
-            r.table(model.getTableName()).indexList().run().then(function(cursor) {
-                cursor.toArray().then(function(result) {
-                    r.table(model.getTableName()).indexWait("notid1").run().then(function() {
-                        done();
-                    }).error(done);
-                });
+            r.table(model.getTableName()).indexList().run().then(function(result) {
+                r.table(model.getTableName()).indexWait("notid1").run().then(function() {
+                    done();
+                }).error(done);
 
             }).error(done);
         })
@@ -443,13 +430,10 @@ describe("Joins", function() {
         }
 
         otherModel.on("ready", function() {
-            r.table(otherModel.getTableName()).indexList().run().then(function(cursor) {
-                cursor.toArray().then(function(result) {
-                    r.table(otherModel.getTableName()).indexWait("notid2").run().then(function() {
-                        done();
-                    }).error(done);
-                });
-
+            r.table(otherModel.getTableName()).indexList().run().then(function(result) {
+                r.table(otherModel.getTableName()).indexWait("notid2").run().then(function() {
+                    done();
+                }).error(done);
             }).error(done);
         })
     });
@@ -474,12 +458,10 @@ describe("Joins", function() {
         var numReady = 0;
 
         model.on('ready', function() {
-            r.table(linkName).indexList().run().then(function(cursor) {
-                cursor.toArray().then(function(result) {
-                    r.table(otherModel.getTableName()).indexWait("notid2").run().then(function() {
-                        done();
-                    }).error(done);
-                });
+            r.table(linkName).indexList().run().then(function(result) {
+                r.table(otherModel.getTableName()).indexWait("notid2").run().then(function() {
+                    done();
+                }).error(done);
             }).error(done);
         });
     });
