@@ -12,7 +12,7 @@ describe('createModel', function(){
         assert(model);
     });
     it('Check if the table was created', function(done){
-        model.on("ready", function() {
+        model.once("ready", function() {
             r.tableList().run().then(function(result) {
                 assert.notEqual(result.indexOf(name), -1)
                 done();
@@ -332,7 +332,7 @@ describe("Joins", function() {
 
         model.hasOne(otherModel, "otherDoc", "modelId", foreignKey);
 
-        otherModel.on("ready", function() {
+        otherModel.once("ready", function() {
             r.table(otherModel.getTableName()).indexList().run().then(function(result) {
                 r.table(otherModel.getTableName()).indexWait(foreignKey).run().then(function() {
                     done();
@@ -354,7 +354,7 @@ describe("Joins", function() {
 
         model.belongsTo(otherModel, "otherDoc", foreignKey, "otherId");
 
-        model.on("ready", function() {
+        model.once("ready", function() {
             r.table(model.getTableName()).indexList().run().then(function(cursor) {
                 r.table(model.getTableName()).indexWait(foreignKey).run().then(function() {
                     done();
@@ -375,7 +375,7 @@ describe("Joins", function() {
 
         model.hasMany(otherModel, "otherDocs", "modelId", foreignKey);
 
-        otherModel.on("ready", function() {
+        otherModel.once("ready", function() {
             r.table(otherModel.getTableName()).indexList().run().then(function(result) {
                 r.table(otherModel.getTableName()).indexWait(foreignKey).run().then(function() {
                     done();
@@ -402,7 +402,7 @@ describe("Joins", function() {
             linkName = otherModel.getTableName()+"_"+model.getTableName();
         }
 
-        model.on("ready", function() {
+        model.once("ready", function() {
             r.table(model.getTableName()).indexList().run().then(function(result) {
                 r.table(model.getTableName()).indexWait("notid1").run().then(function() {
                     done();
@@ -429,7 +429,7 @@ describe("Joins", function() {
             linkName = otherModel.getTableName()+"_"+model.getTableName();
         }
 
-        otherModel.on("ready", function() {
+        otherModel.once("ready", function() {
             r.table(otherModel.getTableName()).indexList().run().then(function(result) {
                 r.table(otherModel.getTableName()).indexWait("notid2").run().then(function() {
                     done();
@@ -457,7 +457,7 @@ describe("Joins", function() {
 
         var numReady = 0;
 
-        model.on('ready', function() {
+        model.once('ready', function() {
             r.table(linkName).indexList().run().then(function(result) {
                 r.table(otherModel.getTableName()).indexWait("notid2").run().then(function() {
                     done();

@@ -66,7 +66,7 @@ describe('Options', function(){
         var Model = thinky.createModel(name, {id: String, name: String}, {
             pk: 'path'
         });
-        Model.on('ready', function() {
+        Model.once('ready', function() {
             r.table(Model.getTableName()).info().run().then(function(result) {
                 assert.equal(result.primary_key, 'path');
                 done();
