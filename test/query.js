@@ -115,6 +115,15 @@ describe('Model queries', function(){
             done();
         }).error(done);
     });
+    it('Model.get().merge(..) should throw before calling merge', function(done){
+        Model.get("NonExistingKey").merge({foo: "bar"}).run().then(function(result) {
+            done(new Error("Was expecting an error"));
+        }).error(function(error) {
+            assert(error.message.match(/^The query did not find a document and returned null./));
+            done();
+        });
+    });
+
     it('Model.get() should return an instance of the model', function(done){
         Model.get(data[0].id).run().then(function(result) {
             assert.deepEqual(result.__proto__.constructor, Model);
@@ -649,7 +658,7 @@ describe('Query.run() should take options', function(){
         Model.get(0).run().then(function() {
             done(new Error("Was expecting an error"))
         }).catch(Errors.DocumentNotFound, function(err) {
-            assert.equal(err.message, "The query did not find a document and returned null.");
+            assert(err.message.match(/^The query did not find a document and returned null./));
             done();
         }).error(function() {
             done(new Error("Not the expected error"))
@@ -661,7 +670,7 @@ describe('Query.run() should take options', function(){
             done(new Error("Was expecting an error"))
         }).error(function(err) {
             assert(err instanceof Errors.DocumentNotFound);
-            assert.equal(err.message, "The query did not find a document and returned null.");
+            assert(err.message.match(/^The query did not find a document and returned null./));
             done();
         });
     });
