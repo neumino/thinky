@@ -513,13 +513,13 @@ describe('define', function(){
 describe('static', function(){
     it('Should be added on the model', function(done) {
         var Model = thinky.createModel(util.s8(), { id: String, num: Number }, {init: false});
-        Model.static('foo', function() { done() });
+        Model.defineStatic('foo', function() { done() });
         Model.foo();
     });
     it('this should refer to the model', function(done) {
         var Model = thinky.createModel(util.s8(), { id: String, num: Number }, {init: false});
-        Model.static('foo', function() { this.bar() });
-        Model.static('bar', function() { done() });
+        Model.defineStatic('foo', function() { this.bar() });
+        Model.defineStatic('bar', function() { done() });
         Model.foo();
     });
     it('Should be added on the model\'s queries', function(done) {
@@ -529,7 +529,7 @@ describe('static', function(){
         Model.hasOne(Other, 'other', 'id', 'modelId');
         Other.belongsTo(Model, 'model', 'modelId', 'id');
 
-        Other.static('foo', function() {
+        Other.defineStatic('foo', function() {
             return this.merge({bar: true})
         });
 
