@@ -6,6 +6,7 @@ var util = require(__dirname+'/util.js');
 var assert = require('assert');
 
 describe('schema', function(){
+    /*
     it('String', function(){
         var name = util.s8();
         thinky.createModel(name, {id: String}, {init: false})
@@ -2539,5 +2540,56 @@ describe('_validator', function(){
         user.email = 'hello@world.com';
         user.validate();
     });
+    */
+    it('Enum - success ', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String, enum: ["foo", "bar", "buzz"]},
+        }, {init: false})
+        var doc = new Model({id: "abc", field: "bar"});
+        doc.validate();
+    });
+    it('Enum - throw - 1 ', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String, enum: ["foo", "bar", "buzz"]},
+        }, {init: false})
+        var doc = new Model({id: "abc", field: "notavalidvalue"});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error)
+                && (error.message === "The field [field] must be one of these values: foo, bar, buzz.")
+        });
+    });
+    it('Enum - throw - 2', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String, enum: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]},
+        }, {init: false})
+        var doc = new Model({id: "abc", field: "notavalidvalue"});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error)
+                && (error.message === "The field [field] must be one of these values: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10.")
+        });
+    });
+    it('Enum - throw - 3', function(){
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            field: {_type: String, enum: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]},
+        }, {init: false})
+        var doc = new Model({id: "abc", field: "notavalidvalue"});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error)
+                && (error.message === "The field [field] must be one of these values: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10...")
+        });
+
+    });
+
+
 });
 
