@@ -6,7 +6,6 @@ var util = require(__dirname+'/util.js');
 var assert = require('assert');
 
 describe('schema', function(){
-    /*
     it('String', function(){
         var name = util.s8();
         thinky.createModel(name, {id: String}, {init: false})
@@ -2540,7 +2539,6 @@ describe('_validator', function(){
         user.email = 'hello@world.com';
         user.validate();
     });
-    */
     it('Enum - success ', function(){
         var Model = thinky.createModel(util.s8(), {
             id: String,
