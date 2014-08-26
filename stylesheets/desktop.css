@@ -61,6 +61,9 @@ header hr{
     box-shadow:         0px 0px 5px 0px #000;
     padding-bottom: 0px;
 }
+.navigation .onlymobile{
+    display: none;
+}
 .navigation a{
     line-height: 40px;
     padding: 5px 20px;
@@ -91,7 +94,7 @@ header hr{
     width: 159px;
 }
 .navigation .about_link{
-    width: 87px;
+    width: 86px;
 }
 .navigation .github_link{
     width: 93px;
