@@ -16,14 +16,16 @@ Each field of the object maps to a type. The valid types are:
 - `Boolean`
 - `Number`
 - `Date`
+- `Buffer`
 - An object with the fields:
-    - `_type` (mandatory): Can be `String`/`Boolean`/`Number`/`Date`/`Object`/`Array`.
+    - `_type` (mandatory): Can be `String`/`Boolean`/`Number`/`Date`/`Object`/`Array`/`Buffer`.
     - `schema` (optional): The schema if the field `_type` is `Object` or `Array`.
     - `options` (optional), will overwrite the model's options:
         - `enforce_missing`: `Boolean`, `true` to forbid missing fields.
         - `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema.
         - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`.
     - `default` (optional): can be constant value or a function that will be called with
+    - `enum` (optional): An array of _strings_ that represent all the possible values for this fields.
     the document as context.
     - `validator`: A function that will be used to validate a field before saving the document.
     The context is set to the current field. The function should return `true` if the field is valid,

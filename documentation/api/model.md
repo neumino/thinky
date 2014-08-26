@@ -61,6 +61,39 @@ var grownup = new User({age: 23});
 grownup.isAdult(); // true
 ```
 
+--------------
+
+<div id="defineStatic"></div>
+### [defineStatic](#defineStatic)
+
+```js
+Model.defineStatic(key, fn);
+```
+
+Define a function that will ba available for this Model and on its query.
+
+
+_Example_: Add a method `getView` on `Users` to never return the password.
+
+```js
+var User = thinky.createModel("User", {
+    id: String,
+    age: Number,
+    password: String
+});
+
+User.define("getView", function() {
+    return this.without('password');
+});
+
+User.get(1).getView().run().then(user) {
+    /// user.password === undefined
+}).error(function(err) {
+    // Handle error
+});
+```
+
+
 
 --------------
 
