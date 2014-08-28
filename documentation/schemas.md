@@ -1,6 +1,6 @@
 ---
 layout: documentation
-permalink: schemas/
+permalink: /documentation/schemas/
 ---
 
 ## Schemas

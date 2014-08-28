@@ -1,6 +1,6 @@
 ---
 layout: documentation
-permalink: faq/
+permalink: /documentation/faq/
 ---
 
 ## FAQ

@@ -1,6 +1,6 @@
 ---
 layout: documentation
-permalink: document/
+permalink: /documentation/api/document/
 ---
 
 ## Document

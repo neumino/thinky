@@ -1,6 +1,6 @@
 ---
 layout: documentation
-permalink: thinky/
+permalink: /documentation/api/thinky/
 ---
 
 ## Thinky

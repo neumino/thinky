@@ -1,6 +1,6 @@
 ---
 layout: documentation
-permalink: introduction/
+permalink: /documentation/introduction/
 ---
 
 ## Introduction

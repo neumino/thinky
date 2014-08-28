@@ -1,6 +1,6 @@
 ---
 layout: documentation
-permalink: query/
+permalink: /documentation/api/query/
 ---
 
 ## Query

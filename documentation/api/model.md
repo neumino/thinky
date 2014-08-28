@@ -1,6 +1,6 @@
 ---
 layout: documentation
-permalink: model/
+permalink: /documentation/api/model/
 ---
 
 ## Model

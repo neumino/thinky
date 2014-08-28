@@ -1,6 +1,6 @@
 ---
 layout: documentation
-permalink: relations/
+permalink: /documentation/relations/
 ---
 
 ## Relations

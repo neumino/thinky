@@ -1,5 +1,6 @@
 ---
 layout: documentation
+permanlink: documentation
 ---
 
 ## Quickstart
