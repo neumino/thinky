@@ -154,14 +154,12 @@ describe('save', function() {
                 var newStr = util.s8();
                 doc.str = newStr;
                 doc.save().then(function(result) {
-                    Model.get(doc.id).run().then(function(result) {
-                        assert.deepEqual(doc.getOldValue(), {
-                            id: doc.id,
-                            str: str,
-                            num: num
-                        });
-                        done();
+                    assert.deepEqual(doc.getOldValue(), {
+                        id: doc.id,
+                        str: str,
+                        num: num
                     });
+                    done();
                 });
             }).error(done);
         });
