@@ -603,6 +603,26 @@ describe('virtual', function(){
         })
         assert.equal(doc.numVirtual, 3);
     });
+    it('Generate fields -- manually', function() {
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            num: Number,
+            numVirtual: {
+                _type: 'virtual',
+                default: function() {
+                    return this.num+2
+                }
+            }
+        });
+        var doc = new Model({
+            num: 1
+        })
+        assert.equal(doc.numVirtual, 3);
+        doc.num = 2
+        assert.equal(doc.numVirtual, 3);
+        doc.generateVirtualValues();
+        assert.equal(doc.numVirtual, 4);
+    });
     it('Validate fields', function() {
         var Model = thinky.createModel(util.s8(), {
             id: String,
