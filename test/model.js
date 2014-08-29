@@ -576,3 +576,142 @@ describe('ensureIndex', function(){
         });
     });
 });
+
+describe('virtual', function(){
+    it('pass schema validation', function() {
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            num: Number,
+            numVirtual: {
+                _type: 'virtual'
+            }
+        });
+    });
+    it('Generate fields', function() {
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            num: Number,
+            numVirtual: {
+                _type: 'virtual',
+                default: function() {
+                    return this.num+2
+                }
+            }
+        });
+        var doc = new Model({
+            num: 1
+        })
+        assert.equal(doc.numVirtual, 3);
+    });
+    it('Validate fields', function() {
+        var Model = thinky.createModel(util.s8(), {
+            id: String,
+            num: Number,
+            numVirtual: {
+                _type: 'virtual'
+            }
+        });
+        var doc = new Model({
+            num: 1
+        })
+        doc.validate();
+    });
+    it('Virtual fields should not be saved', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: Number,
+            num: Number,
+            numVirtual: {
+                _type: 'virtual'
+            }
+        });
+        var doc = new Model({
+            id: 1,
+            num: 1,
+            numVirtual: 3
+        })
+        doc.save().then(function(result) {
+            return Model.get(1).run()
+        }).then(function(result) {
+            assert.equal(result.numVirtual, undefined);
+            done();
+        }).error(done);
+    });
+    it('Virtual fields should not be saved but still regenerated once retrieved', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: Number,
+            num: Number,
+            numVirtual: {
+                _type: 'virtual',
+                default: function() {
+                    return this.num+2
+                }
+            }
+        });
+        var doc = new Model({
+            id: 1,
+            num: 1
+        })
+        assert.equal(doc.numVirtual, 3);
+        doc.save().then(function(result) {
+            assert.equal(result.numVirtual, 3);
+            return Model.get(1).execute()
+        }).then(function(result) {
+            assert.equal(result.numVirtual, undefined);
+            return Model.get(1).run()
+        }).then(function(result) {
+            assert.equal(result.numVirtual, 3);
+
+            done();
+        }).error(done);
+    });
+    it('Virtual fields should not be saved but should be put back later (if no default)', function(done) {
+        var Model = thinky.createModel(util.s8(), {
+            id: Number,
+            num: Number,
+            numVirtual: {
+                _type: 'virtual'
+            }
+        });
+        var doc = new Model({
+            id: 1,
+            num: 1,
+            numVirtual: 10
+        })
+        doc.save().then(function(result) {
+            assert.equal(result.numVirtual, 10);
+            return Model.get(1).run()
+        }).then(function(result) {
+            assert.equal(result.numVirtual, undefined);
+
+            done();
+        }).error(done);
+    });
+    it('Virtual fields should be genrated after other default values', function() {
+        var Model = thinky.createModel(util.s8(), {
+            id: Number,
+            anumVirtual: {
+                _type: 'virtual',
+                default: function() {
+                    return this.num+1;
+                }
+            },
+            num: {
+                _type: Number,
+                default: function() {
+                    return 2;
+                }
+            },
+            numVirtual: {
+                _type: 'virtual',
+                default: function() {
+                    return this.num+1;
+                }
+            }
+        });
+        var doc = new Model({
+            id: 1
+        })
+        assert.equal(doc.numVirtual, 3);
+        assert.equal(doc.anumVirtual, 3);
+    });
+});

@@ -2186,9 +2186,9 @@ describe('_merge', function() {
         });
         var doc = new Model({id: "str", foo: {bar: "hello"}});
         doc._merge({foo: {buzz: 2}});
-        assert.deepEqual(doc, {id: "str", foo: {buzz: 2}});
+        assert.deepEqual(doc, {foo: {buzz: 2}});
         doc._merge({foo: {bar: "bar", buzz: 2}});
-        assert.deepEqual(doc, {id: "str", foo: {bar: "bar", buzz: 2}});
+        assert.deepEqual(doc, {foo: {bar: "bar", buzz: 2}});
     });
     it('should return the object', function() {
         var name = util.s8();
