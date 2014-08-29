@@ -7,7 +7,8 @@ permalink: /documentation/faq/
 
 #### What version of RethinkDB supports?
 
-Thinky currently requires RethinkDB 1.12 to works.
+Thinky currently requires RethinkDB >=1.12 to work. A `1.x` version relies on
+[rethinkdbdash](https://github.com/neumino/rethinkdbdash) `1.x` and RethinkDB `1.x`.
 
 Thinky uses `merge` with an anonymous function under the hood to perform joins and this feature was shipped only in 1.12.    
 [https://github.com/rethinkdb/rethinkdb/issues/1345](https://github.com/rethinkdb/rethinkdb/issues/1345). 

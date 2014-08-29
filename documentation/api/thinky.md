@@ -3,7 +3,7 @@ layout: documentation
 permalink: /documentation/api/thinky/
 ---
 
-## Thinky
+## thinky
 
 ### Import
 

@@ -18,7 +18,7 @@ Each field of the object maps to a type. The valid types are:
 - `Date`
 - `Buffer`
 - An object with the fields:
-    - `_type` (mandatory): Can be `String`/`Boolean`/`Number`/`Date`/`Object`/`Array`/`Buffer`.
+    - `_type` (mandatory): Can be `String`/`Boolean`/`Number`/`Date`/`Object`/`Array`/`Buffer`/`'virtual'`.
     - `schema` (optional): The schema if the field `_type` is `Object` or `Array`.
     - `options` (optional), will overwrite the model's options:
         - `enforce_missing`: `Boolean`, `true` to forbid missing fields.
@@ -57,12 +57,24 @@ This format is the one used when you call `JSON.stringify` on a `Date`, which me
 and the server without having to worry about parsing the dates.
 
 
+__Note__: About virtual fields:  
+
+Virtual fields are not saved in the database and thinky will therefore not enforce any type on such fields.
+
+
+__Note__: About default values:
+
+The default value for a virtual field will be generated once all the other non-virtual values will have been generated.
+This is the only guarantee. A default value should not rely on another default value.
+
+
 __Note__: About options:
+
 The options used to enforce the schema will be the most localized one. That is to say, in order:
 
 - The field's options
 - The model's options
-- Thinky's options
+- thinky's options
 
 
 _Example_: Create a basic Model for a `user`.
