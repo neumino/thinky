@@ -4,13 +4,19 @@ var routes = require('./routes');
 var api = require('./routes/api');
 var config = require('./config.js');
 var bodyParser = require('body-parser');
-
+var serveStatic = require('serve-static')
 
 var app = express();
 
 
-app.use(express.static(__dirname + '/public'));
-app.use(bodyParser());
+app.use(serveStatic('public', {'index': ['index.html', 'index.htm']}))
+//app.use(express.static(__dirname + '/public'));
+//app.use(bodyParser());
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+// // parse application/json
+app.use(bodyParser.json())
 
 app.set('views', __dirname + '/views');
 app.set('view options', { layout: false });

@@ -1,6 +1,6 @@
 // Import
 var config = require(__dirname+'/../config.js');
-var thinky = require('thinky')(config.rethinkdb);
+var thinky = require('thinky')(config);
 var r = thinky.r;
 
 // Create the models
