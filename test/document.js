@@ -163,6 +163,28 @@ describe('save', function() {
                 });
             }).error(done);
         });
+        it('Updating a document should validate it first (and in case of failure, it should not be persisted in the db)', function(done){
+            var str = util.s8();
+            var num = util.random();
+
+            doc = new Model({
+                str: str,
+                num: num
+            })
+            doc.save().then(function(result) {
+                assert.strictEqual(doc, result);
+                doc.str = 2
+                doc.save().then(function(result) {
+                    done(new Error("Expecting an error"))
+                }).error(function() {
+                    Model.get(doc.id).run().then(function(result) {
+                        // Make sure that the document was not updated
+                        assert.equal(result.str, str);
+                        done();
+                    }).error(done);
+                });
+            }).error(done);
+        });
 
     });
     describe("Joins - hasOne", function() {
