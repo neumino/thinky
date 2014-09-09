@@ -185,6 +185,16 @@ describe('save', function() {
                 });
             }).error(done);
         });
+        it('Regression #117 - #118', function(done){
+            var t = new Model({
+                id: util.s8(),
+                extra: {nested: 1}
+            });
+            t.save().then(function(result) {
+                assert.equal(result.extra.nested, 1)
+                done()
+            }).error(done)
+        });
 
     });
     describe("Joins - hasOne", function() {
