@@ -27,9 +27,9 @@ The `options` argument is optional and can have the fields:
     - `db`: the default database, default `"test"`
     - `authKey`: the authentification key to the RethinkDB server, default `""`
 - Options for the schemas
-    - `enforce_missing`: `Boolean`, `true` to forbid missing fields.
-    - `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema.
-    - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`
+    - `enforce_missing`: `Boolean`, `true` to forbid missing fields, default: `false`.
+    - `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema, default: `false.
+    - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`, default `"loose"`
     - `validate`: can be `"onsave"` or `"oncreate"`. The default value is `"onsave"`
     - `timeFormat`: can be `"native"` or `"raw"`. The default value is `"native"`
 
