@@ -28,8 +28,8 @@ Each field of the object maps to a type. The valid types are:
     - `enum` (optional): An array of _strings_ that represent all the possible values for this fields.
     the document as context.
     - `validator`: A function that will be used to validate a field before saving the document.
-    The context is set to the current field. The function should return `true` if the field is valid,
-    `false` otherwise.
+    The function should return `true` if the field is valid, `false` otherwise. The function can also
+    throw an error.
 - An object that is a valid schema.
 - An array with one of the previous types.
 
