@@ -114,6 +114,10 @@ You are welcome to do a pull request.
 
 ### Contributors
 
+- [colprog](https://github.com/colprog)
+- [flienteen](https://github.com/flienteen)
+- [marshall007](https://github.com/marshall007)
+- [Morhaus](https://github.com/Morhaus)
 - [nikaspran](https://github.com/nikaspran)
 - [wezs](https://github.com/wezs)
 
