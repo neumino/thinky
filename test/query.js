@@ -811,7 +811,7 @@ describe('optimizer', function() {
         var name = util.s8();
         r.tableCreate(name).run().then(function(result) {
             
-            r.table(name).indexCreate('name2').run().then(function() {
+            r.table(name).indexCreate('name1').run().then(function() {
 
                 Model = thinky.createModel(name, {
                     id: String,
@@ -860,16 +860,24 @@ describe('optimizer', function() {
         assert(query.match(/index: "hasAndBelongsToMany2"/));
     })
     it('orderBy should be able to use an index - thanks to indexList', function() {
-        var query = Model.orderBy('name2').toString();
-        assert(query.match(/index: "name2"/));
+        var query = Model.orderBy('name1').toString();
+        assert(query.match(/index: "name1"/));
     })
-    it('filter should be able to use an index', function() {
+    it('filter should be able to use an index - single field', function() {
+        var query = Model.filter({name1: "Michel"}).toString();
+        assert(query.match(/index: "name1"/));
+    })
+    it('filter should be able to use an index - multiple fields', function() {
+        var query = Model.filter({name1: "Michel", foo: "bar"}).toString();
+        assert.equal(query.replace(/\s/g, ''), 'r.table("'+Model.getTableName()+'").getAll("Michel",{index:"name1"}).filter({foo:"bar"})')
+    })
+    it('filter should not optimize a field without index', function() {
         var query = Model.filter({name2: "Michel"}).toString();
-        assert(query.match(/index: "name2"/));
-    })
-    it('filter should use an index only on a table', function() {
-        var query = Model.filter({foo: "bar"}).filter({name2: "Michel"}).toString();
-        assert(query.match(/index: "name2"/) === null);
+        assert.equal(query.match(/index: "name2"/), null);
     })
 
+    it('filter should use an index only on a table', function() {
+        var query = Model.filter({foo: "bar"}).filter({name1: "Michel"}).toString();
+        assert(query.match(/index: "name1"/) === null);
+    })
 });
