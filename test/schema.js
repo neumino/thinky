@@ -1854,14 +1854,14 @@ describe('validate', function(){
             return error.message === "Extra field `buzz` in [foo] not allowed.";
         });
     });
-    it('Extra field - omit', function(){
+    it('Extra field - enforce_extra:"remove"', function(){
         var name = util.s8();
         var str = util.s8();
 
         var Model = thinky.createModel(name, {
             id: String,
             foo: {fizz: String},
-        }, {init: false, enforce_extra: 'omit'})
+        }, {init: false, enforce_extra: 'remove'})
 
         doc = new Model({
             id: str,
