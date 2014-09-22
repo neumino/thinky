@@ -288,6 +288,12 @@ automatically fetch the indexes of its table, and at the time you call `filter`
 or `orderBy` (and not when you call `run`), if an index is available, `thinky` will
 automatically use an index.
 
+The command `filter` is optimized only in case an object is passed as the first argument.
+The first field in lexicographic order that match an index will be replaced with `getAll`.
+
+The command `orderBy` is optimized only when a string is passed as the first argument.
+
+
 _Note_: The current behavior is to look at the indexes of the model stored in the
 query. If you use `r.table(Model.getTableName())` instead of `Model` in a nested
 query, you may have unexpected/broken optimizations. Use an anonymous function if you
