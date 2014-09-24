@@ -33,6 +33,8 @@ Each field of the object maps to a type. The valid types are:
     throw an error.
 - An object that is a valid schema.
 - An array with one of the previous types.
+- `'Point'`: A ReQL object for point
+- `'virtual`: the field will never be saved
 
 
 __Note__: About fields for joined documents:
@@ -54,8 +56,16 @@ There are three valid values for a `Date`:
 }
 ```
 - An ISO 8601 string like `"2014-04-20T06:32:18.616Z"`.   
-This format is the one used when you call `JSON.stringify` on a `Date`, which means you can serialize your data between the client
+This format is the one used when you call `JSON.stringify` on a `Date` (or `toISOString`), which means you can serialize your data between the client
 and the server without having to worry about parsing the dates.
+
+__Note__: About points:
+
+You can pass a point as an array `[longitude, latitude]`, an object `{longitude: <number>, latitude: <number>}`, a ReQL object
+`r.point(longitude, latitude)`, a GeoJson point `{type: "Point", coordinates: [longitude, latitude]}`
+
+For the moment, `thinky` supports only the geometry point. This is mostly because the most common case from far is to store
+locations are points, not polygons/lines.
 
 
 __Note__: About virtual fields:  
