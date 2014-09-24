@@ -28,7 +28,7 @@ The `options` argument is optional and can have the fields:
     - `authKey`: the authentification key to the RethinkDB server, default `""`
 - Options for the schemas
     - `enforce_missing`: `Boolean`, `true` to forbid missing fields, default: `false`.
-    - `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema, default: `false.
+    - `enforce_extra`: can be `"strict"`, `"remove"` (delete the extra fields on validation), `"none"`, default `"none"`
     - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`, default `"loose"`
     - `validate`: can be `"onsave"` or `"oncreate"`. The default value is `"onsave"`
     - `timeFormat`: can be `"native"` or `"raw"`. The default value is `"native"`
@@ -152,7 +152,7 @@ Read more about schemas on [this article](/documentation/schemas/)
     - `pk`: the primary key of the table.   
     If the primary key is not `"id"`, the `pk` field is __mandatory__.
     - `enforce_missing`: `Boolean`, `true` to forbid missing fields, default `"false"`.
-    - `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema, default `"false"`
+    - `enforce_extra`: can be `"strict"`, `"remove"` (delete the extra fields on validation), `"none"`, default `"none"`
     - `enforce_type`: can be `"strict"`, `"loose"` or `"none"`.
     - `validator`: A function that will be used to validate a document before saving it. The context is set to the whole document.
 

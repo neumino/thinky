@@ -22,7 +22,8 @@ Each field of the object maps to a type. The valid types are:
     - `schema` (optional): The schema if the field `_type` is `Object` or `Array`.
     - `options` (optional), will overwrite the model's options:
         - `enforce_missing`: `Boolean`, `true` to forbid missing fields.
-        - `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema.
+        - `enforce_extra`: can be `"strict"` to forbid fields not defined in the schema, `"remove"` to remove fields
+        not declared in the schema, or `"none"`
         - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`.
     - `default` (optional): can be constant value or a function that will be called with the document as the context.
     - `enum` (optional): An array of _strings_ that represent all the possible values for this fields.

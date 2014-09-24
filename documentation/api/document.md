@@ -86,7 +86,7 @@ The method `validate` is called before saving a document.
 The `option` argument is optional. It can be an object with the fields:
 
 - `enforce_missing`: `Boolean`, `true` to forbid missing fields.
-- `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema.
+- `enforce_extra`: can be `"strict"`, `"remove"` (delete the extra fields on validation), `"none"`, default `"none"`
 - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`  
 It will overwrite the options set on the document, but not the one set on the
 schema.
@@ -128,7 +128,7 @@ The option `modelToValidate` can be an object where each field is a joined docum
 The `option` argument is optional. It can be an object with the fields:
 
 - `enforce_missing`: `Boolean`, `true` to forbid missing fields.
-- `enforce_extra`: `Boolean`, `true` to forbid fields not defined in the schema.
+- `enforce_extra`: can be `"strict"`, `"remove"` (delete the extra fields on validation), `"none"`, default `"none"`
 - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`  
 It will overwrite the options set on the document, but not the one set on the
 schema.
