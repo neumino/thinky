@@ -195,6 +195,78 @@ describe('save', function() {
                 done()
             }).error(done)
         });
+    });
+    describe("Replacement", function() {
+        it('Date as string should be coerced to ReQL dates', function(done){
+            var Model = thinky.createModel(util.s8(), {
+                id: String,
+                date: Date
+            })
+            var t = new Model({
+                id: util.s8(),
+                date: (new Date()).toISOString()
+            });
+
+            t.save().then(function(result) {
+                assert(t.date instanceof Date)
+                done()
+            }).error(done)
+        });
+        it('Points as array should be coerced to ReQL points', function(done){
+            var Model = thinky.createModel(util.s8(), {
+                id: String,
+                loc: "Point"
+            })
+            var t = new Model({
+                id: util.s8(),
+                loc: [1,1]
+            });
+
+            t.save().then(function(result) {
+                Model.get(t.id).execute().then(function(result) {
+                    assert.equal(t.loc.$reql_type$, "GEOMETRY")
+                    assert.equal(t.loc.type, "Point")
+                    assert(Array.isArray(t.loc.coordinates))
+                    done()
+                }).error(done);
+            }).error(done)
+        });
+        it('Points as objects should be coerced to ReQL points', function(done){
+            var Model = thinky.createModel(util.s8(), {
+                id: String,
+                loc: "Point"
+            })
+            var t = new Model({
+                id: util.s8(),
+                loc: {latitude: 1, longitude: 2}
+            });
+
+            t.save().then(function(result) {
+                return Model.get(t.id).execute()
+            }).then(function(result) {
+                assert.equal(t.loc.$reql_type$, "GEOMETRY")
+                assert(Array.isArray(t.loc.coordinates))
+                done()
+            }).error(done)
+        });
+        it('Points as geojson should be coerced to ReQL points', function(done){
+            var Model = thinky.createModel(util.s8(), {
+                id: String,
+                loc: "Point"
+            })
+            var t = new Model({
+                id: util.s8(),
+                loc: {type: "Point", coordinates: [1, 2]}
+            });
+
+            t.save().then(function(result) {
+                return Model.get(t.id).execute()
+            }).then(function(result) {
+                assert.equal(t.loc.$reql_type$, "GEOMETRY")
+                assert(Array.isArray(t.loc.coordinates))
+                done()
+            }).error(done)
+        });
 
     });
     describe("Joins - hasOne", function() {

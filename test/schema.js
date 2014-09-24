@@ -52,7 +52,7 @@ describe('schema', function(){
             thinky.createModel(name, {id: 1}, {init: false})
         }
         catch(err) {
-            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array`/`'virtual'` for [id]");
+            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array`/`'virtual'`/`'Point'` for [id]");
             done();
         }
     });
@@ -62,7 +62,7 @@ describe('schema', function(){
             thinky.createModel(name, {id: undefined}, {init: false})
         }
         catch(err) {
-            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array`/`'virtual'` for [id]");
+            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array`/`'virtual'`/`'Point'` for [id]");
             done();
         }
     });
@@ -76,7 +76,7 @@ describe('schema', function(){
             thinky.createModel(name, {id: {bar: 2}}, {init: false})
         }
         catch(err) {
-            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array`/`'virtual'` for [id][bar]");
+            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array`/`'virtual'`/`'Point'` for [id][bar]");
             done();
         }
     });
@@ -128,7 +128,7 @@ describe('schema', function(){
             thinky.createModel(name, {id: {foo: {bar: 1}}}, {init: false})
         }
         catch(err) {
-            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array`/`'virtual'` for [id][foo][bar]")
+            assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array`/`'virtual'`/`'Point'` for [id][foo][bar]")
             done();
         }
     });
@@ -138,7 +138,7 @@ describe('schema', function(){
             thinky.createModel(name, {id: {foo: {bar: {_type: 1}}}}, {init: false})
         }
         catch(err) {
-            assert.equal(err.message, "The field `_type` must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array`/`'virtual'` for [id][foo][bar]")
+            assert.equal(err.message, "The field `_type` must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array`/`'virtual'`/`'Point'` for [id][foo][bar]")
             done();
         }
     });
