@@ -1854,7 +1854,7 @@ describe('validate', function(){
             return error.message === "Extra field `buzz` in [foo] not allowed.";
         });
     });
-    it('Extra field - enforce_extra:"remove"', function(){
+    it('Extra field - enforce_extra:"remove" - global option', function(){
         var name = util.s8();
         var str = util.s8();
 
@@ -1874,6 +1874,35 @@ describe('validate', function(){
         assert.deepEqual(doc, {
             id: str,
             foo: { fizz: 'Hello' }
+        });
+    });
+    it('Extra field - enforce_extra:"remove" - local option', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+            foo: {
+                _type: Object,
+                schema: {
+                    fizz: String
+                },
+                options: {enforce_extra: 'remove'}
+            }
+        }, {init: false})
+
+        doc = new Model({
+            id: str,
+            foo: {fizz: "Hello", buzz: "OMIT"},
+            bar: "keep"
+        })
+        doc.validate();
+
+        assert.equal(false, doc.foo.hasOwnProperty('buzz'));
+        assert.deepEqual(doc, {
+            id: str,
+            foo: { fizz: 'Hello' },
+            bar: "keep"
         });
     });
     it('Test option validate="oncreate"', function(){
@@ -2609,6 +2638,4 @@ describe('_validator', function(){
         });
 
     });
-
-
 });
