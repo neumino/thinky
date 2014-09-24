@@ -1804,7 +1804,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String
-        }, {init: false, enforce_extra: true})
+        }, {init: false, enforce_extra: 'strict'})
 
         doc = new Model({
             id: str,
@@ -1823,7 +1823,7 @@ describe('validate', function(){
         var Model = thinky.createModel(name, {
             id: String,
             foo: [{bar: String}]
-        }, {init: false, enforce_extra: true})
+        }, {init: false, enforce_extra: 'strict'})
 
         doc = new Model({
             id: str,
@@ -1842,7 +1842,7 @@ describe('validate', function(){
         var Model = thinky.createModel(name, {
             id: String,
             foo: {bar: String}
-        }, {init: false, enforce_extra: true})
+        }, {init: false, enforce_extra: 'strict'})
 
         doc = new Model({
             id: str,
@@ -1912,7 +1912,7 @@ describe('validate', function(){
         var Model = thinky.createModel(name, {
             id: String,
             field: String
-        }, {init: false, enforce_type: 'strict', enforce_missing: true, enforce_extra: true, validate: 'oncreate'})
+        }, {init: false, enforce_type: 'strict', enforce_missing: true, enforce_extra: 'strict', validate: 'oncreate'})
 
 
         assert.throws(function() {
@@ -2581,7 +2581,7 @@ describe('_validator', function(){
                 validator: function() { return true }
             }
         }, {
-            enforce_extra: true,
+            enforce_extra: 'strict',
             enforce_type: 'strict',
             init: false
         });

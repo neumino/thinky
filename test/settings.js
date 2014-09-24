@@ -10,7 +10,7 @@ var config = require(__dirname+'/../config.js');
  *  }
  */
 config['timeFormat'] = 'raw';
-config['enforce_extra'] =  true;
+config['enforce_extra'] =  'strict';
 config['enforce_missing'] =  true;
 config['enforce_type'] =  'strict';
 config['validate'] = 'oncreate';
@@ -26,7 +26,7 @@ describe('Options', function(){
     it('Options on the top level namespace', function(){
         assert.deepEqual(thinky.getOptions(), {
             timeFormat: 'raw',
-            enforce_extra: true,
+            enforce_extra: 'strict',
             enforce_missing: true,
             enforce_type: 'strict',
             validate: 'oncreate'
@@ -37,7 +37,7 @@ describe('Options', function(){
         var name = util.s8();
         var Model = thinky.createModel(name, {id: String, name: String}, {
             timeFormat: 'native',
-            enforce_extra: false,
+            enforce_extra: 'none',
             enforce_missing: false,
             enforce_type: 'loose',
             validate: 'onsave'
@@ -45,7 +45,7 @@ describe('Options', function(){
 
         assert.deepEqual(Model.getOptions(), {
             timeFormat: 'native',
-            enforce_extra: false,
+            enforce_extra: 'none',
             enforce_missing: false,
             enforce_type: 'loose',
             validate: 'onsave'
@@ -54,7 +54,7 @@ describe('Options', function(){
         // Make sure we didn't messed up the global options
         assert.deepEqual(thinky.getOptions(), {
             timeFormat: 'raw',
-            enforce_extra: true,
+            enforce_extra: 'strict',
             enforce_missing: true,
             enforce_type: 'strict',
             validate: 'oncreate'
@@ -79,7 +79,7 @@ describe('Options', function(){
 
         var doc = new Model({}, {
             timeFormat: 'raw',
-            enforce_extra: false,
+            enforce_extra: 'none',
             enforce_missing: false,
             enforce_type: 'none',
             validate: 'onsave'
@@ -87,7 +87,7 @@ describe('Options', function(){
 
         assert.deepEqual(doc._getOptions(), {
             timeFormat: 'raw',
-            enforce_extra: false,
+            enforce_extra: 'none',
             enforce_missing: false,
             enforce_type: 'none',
             validate: 'onsave'
@@ -96,7 +96,7 @@ describe('Options', function(){
         // Make sure we didn't messed up the global options
         assert.deepEqual(thinky.getOptions(), {
             timeFormat: 'raw',
-            enforce_extra: true,
+            enforce_extra: 'strict',
             enforce_missing: true,
             enforce_type: 'strict',
             validate: 'oncreate'
@@ -109,7 +109,7 @@ describe('Priorities for options', function() {
         /*
         Thinky options:
             config['timeFormat'] = 'raw';
-            config['enforce_extra'] =  true;
+            config['enforce_extra'] =  'strict';
             config['enforce_missing'] =  true;
             config['enforce_type'] =  'strict';
             config['validate'] = 'oncreate';
@@ -126,7 +126,7 @@ describe('Priorities for options', function() {
         /*
         Thinky options:
             config['timeFormat'] = 'raw';
-            config['enforce_extra'] =  true;
+            config['enforce_extra'] =  'strict';
             config['enforce_missing'] =  true;
             config['enforce_type'] =  'strict';
             config['validate'] = 'oncreate';
@@ -140,7 +140,7 @@ describe('Priorities for options', function() {
         /*
         Thinky options:
             config['timeFormat'] = 'raw';
-            config['enforce_extra'] =  true;
+            config['enforce_extra'] =  'strict';
             config['enforce_missing'] =  true;
             config['enforce_type'] =  'strict';
             config['validate'] = 'oncreate';
@@ -154,7 +154,7 @@ describe('Priorities for options', function() {
         /*
         Thinky options:
             config['timeFormat'] = 'raw';
-            config['enforce_extra'] =  true;
+            config['enforce_extra'] =  'strict';
             config['enforce_missing'] =  true;
             config['enforce_type'] =  'strict';
             config['validate'] = 'oncreate';
@@ -168,7 +168,7 @@ describe('Priorities for options', function() {
         /*
         Thinky options:
             config['timeFormat'] = 'raw';
-            config['enforce_extra'] =  true;
+            config['enforce_extra'] = 'strict';
             config['enforce_missing'] =  true;
             config['enforce_type'] =  'strict';
             config['validate'] = 'oncreate';
