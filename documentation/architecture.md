@@ -58,10 +58,11 @@ var Account = thinky.createModel("Account", {
     userId: String
 });
 
+module.exports = Account;
+
 var User = require(__dirname+'/models/user.js');
 Account.belongsTo(User, "user", "userId", "id");
 
-module.exports = Account;
 ```
 
 ```js
@@ -74,10 +75,10 @@ var User = thinky.createModel("User", {
     age: Number
 });
 
+module.exports = User;
+
 var Account = require(__dirname+'/models/account.js');
 User.hasOne(Account, "user", "id", "userId");
-
-module.exports = User;
 ```
 
 
