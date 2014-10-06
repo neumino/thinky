@@ -33,6 +33,7 @@ a model that was previously fetched.
 
 The option `modelToGet` can be an object where each field is a joined document that will also be retrieved.
 For example you can have
+
 ```js
 Users.getJoin({
     account: true // retrieve the joined document that will be stored in account
