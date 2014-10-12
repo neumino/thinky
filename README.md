@@ -70,7 +70,7 @@ post.saveAll().then(function(result) {
 Retrieve the post with its author.
 
 ```js
-Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().then(function(result) {
+Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().run().then(function(result) {
     /*
     result = {
         id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
