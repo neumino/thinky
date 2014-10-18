@@ -209,6 +209,11 @@ describe('save', function() {
 
             t.save().then(function(result) {
                 assert(t.date instanceof Date)
+
+                return Model.get(t.id).execute({timeFormat: "raw"})
+            }).then(function(result) {
+                assert.equal(Object.prototype.toString.call(result.date), "[object Object]");
+                assert.equal(result.date.$reql_type$, "TIME");
                 done()
             }).error(done)
         });
@@ -267,7 +272,6 @@ describe('save', function() {
                 done()
             }).error(done)
         });
-
     });
     describe("Joins - hasOne", function() {
         var Model, OtherModel;
