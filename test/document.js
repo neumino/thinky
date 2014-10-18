@@ -346,6 +346,23 @@ describe('save', function() {
                 done();
             }).error(done);
         })
+        it('save should not remove the foreign key', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+            doc.saveAll().then(function(doc) {
+                return OtherModel.get(otherDoc.id).run()
+            }).then(function(result) {
+                assert.equal(result.foreignKey, doc.id);
+                return result.save();
+            }).then(function(result) {
+                assert.equal(result.foreignKey, doc.id);
+                done();
+            }).error(done);
+        })
     });
     describe("Joins - belongsTo", function() {
         var Model, OtherModel;
@@ -471,6 +488,24 @@ describe('save', function() {
                 });
             }).error(done);
         });
+        it('save should not remove the foreign key', function(done) {
+            var docValues = {str: util.s8(), num: util.random()}
+            var otherDocValues = {str: util.s8(), num: util.random()}
+
+            var doc = new Model(docValues);
+            var otherDoc = new OtherModel(otherDocValues);
+            doc.otherDoc = otherDoc;
+            doc.saveAll().then(function(doc) {
+                return Model.get(doc.id).run()
+            }).then(function(result) {
+                assert.equal(result.foreignKey, otherDoc.id);
+                return result.save();
+            }).then(function(result) {
+                assert.equal(result.foreignKey, otherDoc.id);
+                done();
+            }).error(done);
+        })
+
     });
 
     describe("Joins - hasMany", function() {
@@ -2548,7 +2583,7 @@ describe('hooks', function() {
     it('validate on save', function(done) {
         var Model = thinky.createModel(util.s8(), {id: String, title: String});
 
-        Model.post('validate', true, function(next) {
+        Model.post('save', true, function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2559,10 +2594,8 @@ describe('hooks', function() {
         var doc = new Model({id: "foo"});
         doc.save().then(function(result) {
             assert.strictEqual(result, doc)
-            Model.get("foo").run().then(function(result) {
-                assert.equal(result.id, result.title)
-                done();
-            })
+            assert.equal(result.id, result.title)
+            done();
         }).error(done);
     });
     it('validate on retrieve - error on validate', function(done) {
