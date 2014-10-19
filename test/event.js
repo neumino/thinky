@@ -4,17 +4,41 @@ var r = thinky.r;
 
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
+var Promise = require('bluebird');
+
+var modelNameSet = {};
+modelNameSet[util.s8()] = true;
+var modelNames = Object.keys(modelNameSet);
+
+var cleanTables = function(done) {
+    var promises = [];
+    var name;
+    for(var name in modelNameSet) {
+        promises.push(r.table(name).delete().run());
+    }
+    Promise.settle(promises).finally(function() {
+        // Add the links table
+        for(var model in thinky.models) {
+            modelNameSet[model] = true;
+        }
+        modelNames = Object.keys(modelNameSet);
+        thinky._clean();
+        done();
+    });
+}
 
 describe('Events', function(){
+    afterEach(cleanTables);
+
     it('Add events on doc', function(done){
-        var Model = thinky.createModel(util.s8(), {id: String}, {init: false})
+        var Model = thinky.createModel(modelNames[0], {id: String}, {init: false})
         var doc = new Model({});
         doc.addListener("foo", done);
         doc.emit("foo");
     });
     it('Events on model should be forward to documents', function(done){
         var count = 0;
-        var Model = thinky.createModel(util.s8(), {id: String}, {init: false})
+        var Model = thinky.createModel(modelNames[0], {id: String}, {init: false})
         Model.docOn("foo", function() {
             count++;
             if (count === 2) {
@@ -27,7 +51,7 @@ describe('Events', function(){
     });
     it('Doc should emit save when saved', function(done){
         var count = 0;
-        var Model = thinky.createModel(util.s8(), {id: String})
+        var Model = thinky.createModel(modelNames[0], {id: String})
         var doc = new Model({});
         doc.once("saved", function() {
             done();
@@ -36,7 +60,7 @@ describe('Events', function(){
     });
     it('Doc should emit save when saved', function(done){
         var count = 0;
-        var Model = thinky.createModel(util.s8(), {id: String})
+        var Model = thinky.createModel(modelNames[0], {id: String})
         var doc = new Model({});
         doc.once("deleted", function() {
             done();
@@ -47,7 +71,7 @@ describe('Events', function(){
     });
     it('Doc should emit save when deleted -- hasAndBelongsToMany', function(done){
         var count = 0;
-        var Model = thinky.createModel(util.s8(), {id: String})
+        var Model = thinky.createModel(modelNames[0], {id: String})
         Model.hasAndBelongsToMany(Model, 'links', 'id', 'id');
 
         var doc1 = new Model({});
@@ -66,7 +90,7 @@ describe('Events', function(){
     });
     it('Doc should emit save when deleted -- hasMany', function(done){
         var count = 0;
-        var Model = thinky.createModel(util.s8(), {id: String, foreignKey: String})
+        var Model = thinky.createModel(modelNames[0], {id: String, foreignKey: String})
         Model.hasMany(Model, 'links', 'id', 'foreignKey');
 
         var doc1 = new Model({});
@@ -84,7 +108,7 @@ describe('Events', function(){
         });
     });
     it('Test saving event', function(done){
-        var Model = thinky.createModel(util.s8(), {id: Number})
+        var Model = thinky.createModel(modelNames[0], {id: Number})
         var doc = new Model({});
         doc.addListener("saving", function(doc) {
             doc.id = 1;
@@ -98,7 +122,7 @@ describe('Events', function(){
         });
     });
     it('Test saving event to validate a relation', function(done){
-        var Model = thinky.createModel(util.s8(), {id: String})
+        var Model = thinky.createModel(modelNames[0], {id: String})
         var OtherModel = thinky.createModel(util.s8(), {id: String, foreignKey: String})
 
         Model.hasOne(OtherModel, 'joinedDoc', 'id', 'foreignKey');
@@ -122,7 +146,7 @@ describe('Events', function(){
         });
     });
     it('Test retrieved event', function(done){
-        var Model = thinky.createModel(util.s8(), {id: Number})
+        var Model = thinky.createModel(modelNames[0], {id: Number})
         var doc = new Model({id: 1});
 
         Model.addListener("retrieved", function(doc) {

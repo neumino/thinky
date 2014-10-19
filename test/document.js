@@ -5,13 +5,41 @@ var Errors = thinky.Errors;
 
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
+var Promise = require('bluebird');
+
+var modelNameSet = {};
+modelNameSet[util.s8()] = true;
+modelNameSet[util.s8()] = true;
+modelNameSet[util.s8()] = true;
+modelNameSet[util.s8()] = true;
+modelNameSet[util.s8()] = true;
+modelNameSet[util.s8()] = true;
+var modelNames = Object.keys(modelNameSet);
+
+var cleanTables = function(done) {
+    var promises = [];
+    var name;
+    for(var name in modelNameSet) {
+        promises.push(r.table(name).delete().run());
+    }
+    Promise.settle(promises).finally(function() {
+        // Add the links table
+        for(var model in thinky.models) {
+            modelNameSet[model] = true;
+        }
+        modelNames = Object.keys(modelNameSet);
+        thinky._clean();
+        done();
+    });
+}
 
 describe('save', function() {
     describe('Basic', function() {
+        afterEach(cleanTables);
+
         var Model;
         before(function() {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
@@ -197,8 +225,10 @@ describe('save', function() {
         });
     });
     describe("Replacement", function() {
+        afterEach(cleanTables);
+
         it('Date as string should be coerced to ReQL dates', function(done){
-            var Model = thinky.createModel(util.s8(), {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String,
                 date: Date
             })
@@ -218,7 +248,7 @@ describe('save', function() {
             }).error(done)
         });
         it('Points as array should be coerced to ReQL points', function(done){
-            var Model = thinky.createModel(util.s8(), {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String,
                 loc: "Point"
             })
@@ -237,7 +267,7 @@ describe('save', function() {
             }).error(done)
         });
         it('Points as objects should be coerced to ReQL points', function(done){
-            var Model = thinky.createModel(util.s8(), {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String,
                 loc: "Point"
             })
@@ -255,7 +285,7 @@ describe('save', function() {
             }).error(done)
         });
         it('Points as geojson should be coerced to ReQL points', function(done){
-            var Model = thinky.createModel(util.s8(), {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String,
                 loc: "Point"
             })
@@ -274,17 +304,18 @@ describe('save', function() {
         });
     });
     describe("Joins - hasOne", function() {
+        afterEach(cleanTables);
+
         var Model, OtherModel;
         before(function() {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
             })
 
             var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number,
@@ -365,18 +396,18 @@ describe('save', function() {
         })
     });
     describe("Joins - belongsTo", function() {
+        afterEach(cleanTables);
+
         var Model, OtherModel;
         before(function() {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number,
                 foreignKey: String
             })
 
-            var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number
@@ -509,17 +540,19 @@ describe('save', function() {
     });
 
     describe("Joins - hasMany", function() {
+        afterEach(cleanTables);
+
         var Model, OtherModel;
         before(function() {
             var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
             })
 
             var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number,
@@ -589,17 +622,19 @@ describe('save', function() {
 
     });
     describe("Joins - hasAndBelongsToMany", function() {
+        afterEach(cleanTables);
+
         var Model, OtherModel;
         before(function() {
             var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
             })
 
             var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number
@@ -803,17 +838,17 @@ describe('save', function() {
     });
     
     describe('saveAll with missing docs for hasOne', function() {
+        afterEach(cleanTables);
+
         var Model, OtherModel;
         before(function() {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
             })
 
-            var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number,
@@ -849,17 +884,17 @@ describe('save', function() {
         })
     });
     describe('saveAll with missing docs for hasMany', function() {
+        afterEach(cleanTables);
+
         var Model, OtherModel;
         before(function() {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
             })
 
-            var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number,
@@ -900,18 +935,18 @@ describe('save', function() {
         })
     });
     describe('saveAll with missing docs for belongsTo', function() {
+        afterEach(cleanTables);
+
         var Model, OtherModel;
         before(function() {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number,
                 foreignKey: String
             })
 
-            var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number
@@ -945,18 +980,18 @@ describe('save', function() {
         })
     });
     describe('saveAll with missing docs for hasAndBelongsToMany', function() {
+        afterEach(cleanTables);
+
         var Model, OtherModel;
         before(function() {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number,
                 foreignKey: String
             })
 
-            var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number
@@ -1000,32 +1035,34 @@ describe('save', function() {
         })
     });
     describe('modelToSave', function() {
+        afterEach(cleanTables);
+
         var Model1, Model2, Model3, Model4, Model5, Model6;
         before(function() {
-            Model1 = thinky.createModel(util.s8(), {
+            Model1 = thinky.createModel(modelNames[0], {
                 id: String,
                 foreignkey31: String
             })
 
-            Model2 = thinky.createModel(util.s8(), {
+            Model2 = thinky.createModel(modelNames[1], {
                 id: String,
                 foreignkey12: String
             })
 
-            Model3 = thinky.createModel(util.s8(), {
+            Model3 = thinky.createModel(modelNames[2], {
                 id: String
             })
 
-            Model4 = thinky.createModel(util.s8(), {
+            Model4 = thinky.createModel(modelNames[3], {
                 id: String,
                 foreignkey14: String
             })
 
-            Model5 = thinky.createModel(util.s8(), {
+            Model5 = thinky.createModel(modelNames[4], {
                 id: String
             })
 
-            Model6 = thinky.createModel(util.s8(), {
+            Model6 = thinky.createModel(modelNames[5], {
                 id: String,
                 foreignkey26: String
             })
@@ -1206,10 +1243,11 @@ describe('save', function() {
 
 describe('delete', function() {
     describe('Basic', function() {
+        afterEach(cleanTables);
+
         var Model, doc;
         before(function(done) {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
@@ -1259,17 +1297,17 @@ describe('delete', function() {
         });
     });
     describe('hasOne', function() {
+        afterEach(cleanTables);
+
         var Model, doc, OtherModel;
         before(function() {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
             })
 
-            var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number,
@@ -1378,18 +1416,18 @@ describe('delete', function() {
 
     });
     describe('belongsTo', function() {
+        afterEach(cleanTables);
+
         var Model, doc, OtherModel;
         before(function() {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number,
                 foreignKey: String
             })
 
-            var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number
@@ -1508,17 +1546,17 @@ describe('delete', function() {
         });
     });
     describe('hasMany', function() {
+        afterEach(cleanTables);
+
         var Model, doc, OtherModel;
         before(function() {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
             })
 
-            var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number,
@@ -1642,17 +1680,17 @@ describe('delete', function() {
         });
     });
     describe('hasAndBelongsToMany', function() {
+        afterEach(cleanTables);
+
         var Model, doc, OtherModel;
         before(function() {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
             })
 
-            var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number
@@ -1778,32 +1816,34 @@ describe('delete', function() {
 
     });
     describe('modelToDelete', function() {
+        afterEach(cleanTables);
+
         var Model1, Model2, Model3, Model4, Model5, Model6;
         before(function() {
-            Model1 = thinky.createModel(util.s8(), {
+            Model1 = thinky.createModel(modelNames[0], {
                 id: String,
                 foreignkey31: String
             })
 
-            Model2 = thinky.createModel(util.s8(), {
+            Model2 = thinky.createModel(modelNames[1], {
                 id: String,
                 foreignkey12: String
             })
 
-            Model3 = thinky.createModel(util.s8(), {
+            Model3 = thinky.createModel(modelNames[2], {
                 id: String
             })
 
-            Model4 = thinky.createModel(util.s8(), {
+            Model4 = thinky.createModel(modelNames[3], {
                 id: String,
                 foreignkey14: String
             })
 
-            Model5 = thinky.createModel(util.s8(), {
+            Model5 = thinky.createModel(modelNames[4], {
                 id: String
             })
 
-            Model6 = thinky.createModel(util.s8(), {
+            Model6 = thinky.createModel(modelNames[5], {
                 id: String,
                 foreignkey26: String
             })
@@ -1971,14 +2011,14 @@ describe('delete', function() {
     });
 });
 describe('purge', function() {
+    afterEach(cleanTables);
+
     it('hasOne -- purge should remove itself + clean the other docs', function(done) {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
+        var Model = thinky.createModel(modelNames[0], {
             id: String
         })
 
-        var otherName = util.s8();
-        var OtherModel = thinky.createModel(otherName, {
+        var OtherModel = thinky.createModel(modelNames[1], {
             id: String,
             foreignKey: String
         })
@@ -2011,13 +2051,11 @@ describe('purge', function() {
         }).error(done);
     });
     it('should work with a callback', function(done) {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
+        var Model = thinky.createModel(modelNames[0], {
             id: String
         })
 
-        var otherName = util.s8();
-        var OtherModel = thinky.createModel(otherName, {
+        var OtherModel = thinky.createModel(modelNames[1], {
             id: String,
             foreignKey: String
         })
@@ -2050,14 +2088,12 @@ describe('purge', function() {
         }).error(done);
     });
     it('belongsTo -- purge should remove itself', function(done) {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
+        var Model = thinky.createModel(modelNames[0], {
             id: String,
             foreignKey: String
         })
 
-        var otherName = util.s8();
-        var OtherModel = thinky.createModel(otherName, {
+        var OtherModel = thinky.createModel(modelNames[1], {
             id: String
         })
 
@@ -2082,13 +2118,11 @@ describe('purge', function() {
         }).error(done);
     });
     it('belongsTo not called on its own model -- purge should remove itself + clean the other docs', function(done) {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
+        var Model = thinky.createModel(modelNames[0], {
             id: String
         })
 
-        var otherName = util.s8();
-        var OtherModel = thinky.createModel(otherName, {
+        var OtherModel = thinky.createModel(modelNames[1], {
             id: String,
             foreignKey: String
         })
@@ -2118,13 +2152,11 @@ describe('purge', function() {
     });
 
     it('hasMany -- purge should remove itself', function(done) {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
+        var Model = thinky.createModel(modelNames[0], {
             id: String
         })
 
-        var otherName = util.s8();
-        var OtherModel = thinky.createModel(otherName, {
+        var OtherModel = thinky.createModel(modelNames[1], {
             id: String,
             foreignKey: String
         })
@@ -2154,13 +2186,11 @@ describe('purge', function() {
         }).error(done);
     });
     it('hasAndBelongsToMany -- pk -- purge should clean the database', function(done) {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
+        var Model = thinky.createModel(modelNames[0], {
             id: String
         })
 
-        var otherName = util.s8();
-        var OtherModel = thinky.createModel(otherName, {
+        var OtherModel = thinky.createModel(modelNames[1], {
             id: String
         })
 
@@ -2189,13 +2219,12 @@ describe('purge', function() {
         }).error(done);;
     });
     it('hasAndBelongsToMany not called on this model -- pk -- purge should clean the database', function(done) {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
+        var Model = thinky.createModel(modelNames[0], {
             id: String
         })
 
         var otherName = util.s8();
-        var OtherModel = thinky.createModel(otherName, {
+        var OtherModel = thinky.createModel(modelNames[1], {
             id: String
         })
 
@@ -2224,14 +2253,13 @@ describe('purge', function() {
         }).error(done);
     });
     it('hasAndBelongsToMany -- not pk -- purge should clean the database', function(done) {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
+        var Model = thinky.createModel(modelNames[0], {
             id: String,
             foo: Number
         })
 
         var otherName = util.s8();
-        var OtherModel = thinky.createModel(otherName, {
+        var OtherModel = thinky.createModel(modelNames[1], {
             id: String,
             foo: Number
         })
@@ -2261,14 +2289,12 @@ describe('purge', function() {
         }).error(done);
     });
     it('hasAndBelongsToMany not called on this model -- not pk -- purge should clean the database', function(done) {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
+        var Model = thinky.createModel(modelNames[0], {
             id: String,
             foo: Number
         })
 
-        var otherName = util.s8();
-        var OtherModel = thinky.createModel(otherName, {
+        var OtherModel = thinky.createModel(modelNames[1], {
             id: String,
             foo: Number
         })
@@ -2299,9 +2325,10 @@ describe('purge', function() {
     });
 });
 describe('date', function() {
+    afterEach(cleanTables);
+
     it('should work', function(done) {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
+        var Model = thinky.createModel(modelNames[0], {
             id: String,
             date: {_type: Date, default: r.now()}
         });
@@ -2318,9 +2345,10 @@ describe('date', function() {
 });
 
 describe('_merge', function() {
+    afterEach(cleanTables);
+
     it('should work', function() {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
+        var Model = thinky.createModel(modelNames[0], {
             id: String,
             foo: {
                 buzz: Number,
@@ -2334,8 +2362,7 @@ describe('_merge', function() {
         assert.deepEqual(doc, {foo: {bar: "bar", buzz: 2}});
     });
     it('should return the object', function() {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
+        var Model = thinky.createModel(modelNames[0], {
             id: String,
             foo: {
                 buzz: Number,
@@ -2348,9 +2375,10 @@ describe('_merge', function() {
     });
 });
 describe('merge', function() {
+    afterEach(cleanTables);
+
     it('should work', function() {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
+        var Model = thinky.createModel(modelNames[0], {
             id: String,
             foo: {
                 buzz: Number,
@@ -2362,8 +2390,7 @@ describe('merge', function() {
         assert.deepEqual(doc, {id: "world", foo: {bar: "hello", buzz: 2}});
     });
     it('should return the object', function() {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
+        var Model = thinky.createModel(modelNames[0], {
             id: String,
             foo: {
                 buzz: Number,
@@ -2376,8 +2403,10 @@ describe('merge', function() {
     });
 });
 describe('hooks', function() {
+    afterEach(cleanTables);
+
     it('init pre', function() {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
         assert.throws(function() { Model.pre('init', function() {
             this.title = this.id;
         })
@@ -2386,7 +2415,7 @@ describe('hooks', function() {
         });
     });
     it('init post sync', function() {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
         Model.post('init', function() {
             this.title = this.id;
         })
@@ -2395,7 +2424,7 @@ describe('hooks', function() {
         assert.equal(doc.id, doc.title)
     });
     it('init post sync - error', function() {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
         Model.post('init', function() {
             throw new Error("Error thrown by a hook")
         })
@@ -2412,7 +2441,7 @@ describe('hooks', function() {
     });
 
     it('init post async', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
         Model.post('init', true, function(next) {
             var self = this;
             setTimeout(function() {
@@ -2427,7 +2456,7 @@ describe('hooks', function() {
         }).error(done);
     });
     it('init post async - error', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
         Model.post('init', true, function(next) {
             var self = this;
             setTimeout(function() {
@@ -2445,7 +2474,7 @@ describe('hooks', function() {
     });
 
     it('validate oncreate sync', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String}, {validate: 'oncreate'});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String}, {validate: 'oncreate'});
         Model.post('validate', true, function(next) {
             var self = this;
             setTimeout(function() {
@@ -2460,7 +2489,7 @@ describe('hooks', function() {
         }).error(done);
     });
     it('validate oncreate + init async', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String}, {validate: 'oncreate'});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String}, {validate: 'oncreate'});
         Model.post('init', true, function(next) {
             var self = this;
             setTimeout(function() {
@@ -2484,7 +2513,7 @@ describe('hooks', function() {
     });
 
     it('validate post sync', function() {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
         Model.post('validate', function() {
             this.title = this.id;
         })
@@ -2494,7 +2523,7 @@ describe('hooks', function() {
         assert.equal(doc.id, doc.title)
     });
     it('validate post sync - error', function() {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
         Model.post('validate', function() {
             throw new Error("Error thrown by a hook")
         })
@@ -2509,7 +2538,7 @@ describe('hooks', function() {
     });
 
     it('init validate async', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
         Model.post('validate', true, function(next) {
             var self = this;
             setTimeout(function() {
@@ -2525,7 +2554,7 @@ describe('hooks', function() {
         }).error(done);
     });
     it('init post async - error', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
         Model.post('validate', true, function(next) {
             var self = this;
             setTimeout(function() {
@@ -2543,7 +2572,7 @@ describe('hooks', function() {
         });
     });
     it('init validateAll async', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
         Model.post('validate', true, function(next) {
             var self = this;
             setTimeout(function() {
@@ -2559,8 +2588,8 @@ describe('hooks', function() {
         }).error(done);
     });
     it('init validateAll async joins', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
-        var OtherModel = thinky.createModel(util.s8(), {id: String, foreignKey: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
+        var OtherModel = thinky.createModel(modelNames[1], {id: String, foreignKey: String});
         Model.hasOne(OtherModel, 'other', 'id', 'foreignKey');
 
         OtherModel.post('validate', true, function(next) {
@@ -2581,7 +2610,7 @@ describe('hooks', function() {
         }).error(done);
     });
     it('validate on save', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
         Model.post('save', true, function(next) {
             var self = this;
@@ -2599,7 +2628,7 @@ describe('hooks', function() {
         }).error(done);
     });
     it('validate on retrieve - error on validate', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
         Model.pre('validate', true, function(next) {
             var self = this;
@@ -2621,7 +2650,7 @@ describe('hooks', function() {
         });
     });
     it('validate on retrieve - error on hook', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
         Model.pre('validate', true, function(next) {
             var self = this;
@@ -2643,7 +2672,7 @@ describe('hooks', function() {
         });
     });
     it('save pre', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
         Model.pre('save', true, function(next) {
             var self = this;
@@ -2664,7 +2693,7 @@ describe('hooks', function() {
         }).error(done);
     });
     it('save post', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
         Model.post('save', true, function(next) {
             var self = this;
@@ -2685,8 +2714,8 @@ describe('hooks', function() {
         }).error(done);
     });
     it('save pre join', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
-        var OtherModel = thinky.createModel(util.s8(), {id: String, foreignKey: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
+        var OtherModel = thinky.createModel(modelNames[1], {id: String, foreignKey: String});
         Model.hasOne(OtherModel, 'other', 'id', 'foreignKey');
 
         OtherModel.pre('save', true, function(next) {
@@ -2707,8 +2736,8 @@ describe('hooks', function() {
         }).error(done);
     });
     it('save pre join', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
-        var OtherModel = thinky.createModel(util.s8(), {id: String, foreignKey: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
+        var OtherModel = thinky.createModel(modelNames[1], {id: String, foreignKey: String});
         Model.hasOne(OtherModel, 'other', 'id', 'foreignKey');
 
         OtherModel.pre('save', true, function(next) {
@@ -2729,7 +2758,7 @@ describe('hooks', function() {
         }).error(done);
     });
     it('delete pre', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
         Model.pre('delete', true, function(next) {
             var self = this;
@@ -2751,7 +2780,7 @@ describe('hooks', function() {
         }).error(done);
     });
     it('delete post', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
         Model.post('delete', true, function(next) {
             var self = this;
@@ -2773,7 +2802,7 @@ describe('hooks', function() {
         }).error(done);
     });
     it('hook for retrieve', function(done) {
-        var Model = thinky.createModel(util.s8(), {id: String, title: String});
+        var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
         Model.post('retrieve', true, function(next) {
             var self = this;

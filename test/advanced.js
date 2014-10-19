@@ -8,16 +8,39 @@ var assert = require('assert');
 var Promise = require('bluebird');
 var Errors = thinky.Errors;
 
+
+var modelNameSet = {};
+modelNameSet[util.s8()] = true;
+modelNameSet[util.s8()] = true;
+var modelNames = Object.keys(modelNameSet);
+
+var cleanTables = function(done) {
+    var promises = [];
+    var name;
+    for(var name in modelNameSet) {
+        promises.push(r.table(name).delete().run());
+    }
+    Promise.settle(promises).error(function () {/*ignore*/}).finally(function() {
+        // Add the links table
+        for(var model in thinky.models) {
+            modelNameSet[model] = true;
+        }
+        modelNames = Object.keys(modelNameSet);
+        thinky._clean();
+        done();
+    });
+}
+
 describe('Advanced cases', function(){
     describe('saveAll', function(){
+        afterEach(cleanTables);
+
         it('hasOne - belongsTo', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -55,13 +78,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasOne - belongsTo', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -99,13 +120,12 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('belongsTo - hasOne', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
             var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -142,13 +162,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('belongsTo - hasOne -- circular references', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -186,13 +204,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasMany - belongsTo', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -246,13 +262,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasMany - belongsTo', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -305,13 +319,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('belongsTo - hasMany -- circular references', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -364,13 +376,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasAndBelongsToMany -- primary keys', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String
             });
 
@@ -416,13 +426,11 @@ describe('Advanced cases', function(){
         });
 
         it('hasAndBelongsToMany -- primary keys -- circular references', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String
             });
 
@@ -554,14 +562,15 @@ describe('Advanced cases', function(){
         });
     });
     describe('deleteAll', function(){
+        afterEach(cleanTables);
+
         it('hasOne - belongsTo -- no arg', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
             var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -599,13 +608,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasOne - belongsTo -- with modelToDelete', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -642,13 +649,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasOne - belongsTo -- with empty modelToDelete', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -685,13 +690,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasOne - belongsTo -- with non matching modelToDelete', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -728,13 +731,12 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('belongsTo - hasOne -- with no arg', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
             var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -771,13 +773,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('belongsTo - hasOne -- with modelToDelete', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -814,13 +814,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('belongsTo - hasOne -- with empty modelToDelete', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -858,13 +856,11 @@ describe('Advanced cases', function(){
         });
 
         it('hasMany - belongsTo', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -916,13 +912,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasMany - belongsTo -- empty modelToDelete', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -972,13 +966,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasMany - belongsTo -- good modelToDelete', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -1030,13 +1022,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasMany - belongsTo -- non matching modelToDelete', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -1087,13 +1077,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('belongsTo - hasMany -- circular references', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -1129,13 +1117,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('belongsTo - hasMany -- must manually overwrite', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -1170,13 +1156,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasAndBelongsToMany -- primary keys -- does not delete back the same type', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String
             });
 
@@ -1212,13 +1196,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasAndBelongsToMany -- primary keys -- breaking through deletedModel - 1', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String
             });
 
@@ -1261,13 +1243,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasAndBelongsToMany -- primary keys -- breaking through deletedModel - 2', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String
             });
 
@@ -1313,14 +1293,12 @@ describe('Advanced cases', function(){
         });
 
         it('hasAndBelongsToMany -- not primary keys', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String,
                 field1: Number
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 field2: Number
             });
@@ -1364,14 +1342,12 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasAndBelongsToMany -- not primary keys -- doing what should never be done - 1', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String,
                 field1: Number
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 field2: Number
             });
@@ -1417,14 +1393,12 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasAndBelongsToMany -- not primary keys -- doing what should never be done - 2', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String,
                 field1: Number
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 field2: Number
             });
@@ -1471,14 +1445,12 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasAndBelongsToMany -- not primary keys -- doing what should never be done - 3', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String,
                 field1: Number
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 field2: Number
             });
@@ -1524,14 +1496,12 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasAndBelongsToMany -- not primary keys -- doing what should never be done - 4', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String,
                 field1: Number
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 field2: Number
             });
@@ -1585,14 +1555,14 @@ describe('Advanced cases', function(){
         });
     });
     describe('getJoin', function(){
+        afterEach(cleanTables);
+
         it('hasOne - belongsTo', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -1624,13 +1594,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasOne - belongsTo - non matching modelToGet', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -1661,13 +1629,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasOne - belongsTo - matching modelToGet', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -1698,13 +1664,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasMany - belongsTo -- matching modelToGet', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -1738,13 +1702,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasMany - belongsTo -- non matching modelToGet', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -1778,13 +1740,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasMany - belongsTo -- default, fetch everything', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -1819,13 +1779,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasAndBelongsToMany -- primary keys -- fetch everything by default', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String
             });
 
@@ -1861,13 +1819,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasAndBelongsToMany -- primary keys -- matching modelToGet', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String
             });
 
@@ -1903,13 +1859,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasAndBelongsToMany -- primary keys -- non matching modelToGet', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String
             });
 
@@ -1945,13 +1899,11 @@ describe('Advanced cases', function(){
             }).error(done);
         });
         it('hasAndBelongsToMany -- primary keys -- matching modelToGet with options', function(done) {
-            var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
-            var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String
             });
 
@@ -2000,169 +1952,110 @@ describe('Advanced cases', function(){
             }).error(done);
         });
     });
-});
-describe('Advanced cases', function(){
-    it('hasAndBelongsToMany -- pairs', function(done) {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
-            id: String
-        });
+    describe('pair', function(){
+        afterEach(cleanTables);
 
-        var otherName = util.s8();
-        var OtherModel = thinky.createModel(otherName, {
-            id: String
-        });
+        it('hasAndBelongsToMany -- pairs', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
+            });
 
-        Model.hasAndBelongsToMany(Model, "links", "id", "id");
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String
+            });
 
-        var values = {};
-        var otherValues = {};
-        var doc1 = new Model({});
-        var doc2 = new Model({});
-        var doc3 = new Model({});
-        var doc4 = new Model({});
-        var doc5 = new Model({});
-        var doc6 = new Model({});
+            Model.hasAndBelongsToMany(Model, "links", "id", "id");
 
-        doc1.links = [doc2, doc3];
-        doc2.links = [doc1];
-        doc3.links = [doc1, doc2];
+            var values = {};
+            var otherValues = {};
+            var doc1 = new Model({});
+            var doc2 = new Model({});
+            var doc3 = new Model({});
+            var doc4 = new Model({});
+            var doc5 = new Model({});
+            var doc6 = new Model({});
 
-        doc1.saveAll({links: true}).then(function(result) {
-        doc2.saveAll({links: true}).then(function(result) {
-        doc3.saveAll({links: true}).then(function(result) {
-            Model.get(doc1.id).getJoin().run().then(function(result) {
-                assert.equal(result.links, undefined);
-                Model.get(doc1.id).getJoin({links: true}).run().then(function(result) {
-                    assert.equal(result.links.length, 2);
-                    done();
+            doc1.links = [doc2, doc3];
+            doc2.links = [doc1];
+            doc3.links = [doc1, doc2];
+
+            doc1.saveAll({links: true}).then(function(result) {
+            doc2.saveAll({links: true}).then(function(result) {
+            doc3.saveAll({links: true}).then(function(result) {
+                Model.get(doc1.id).getJoin().run().then(function(result) {
+                    assert.equal(result.links, undefined);
+                    Model.get(doc1.id).getJoin({links: true}).run().then(function(result) {
+                        assert.equal(result.links.length, 2);
+                        done();
+                    });
                 });
             });
-        });
-        });
-        }).error(done);
-    });
-
-    it('hasAndBelongsToMany -- pairs', function(done) {
-        var name = util.s8();
-        var Model = thinky.createModel(name, {
-            id: String
-        });
-
-        Model.hasAndBelongsToMany(Model, "links", "id", "id");
-
-        var values = {};
-        var otherValues = {};
-        var doc1 = new Model({});
-        var doc2 = new Model({});
-
-        doc1.links = [doc2];
-
-        doc1.saveAll({links: true}).then(function(result) {
-            return Model.get(doc1.id).getJoin({links: true}).run()
-        }).then(function(result) {
-            assert.deepEqual(result.links[0], doc2);
-            done();
-        }).error(done);
-    });
-
-    it('hasOne/belongsTo -- pairs', function(done) {
-        var Human = thinky.createModel("Human", {id: String, name: String, contactId: String});
-        Human.belongsTo(Human, "emergencyContact", "contactId", "id");
-
-        var michel = new Human({
-            name: "Michel"
-        });
-        var sophia = new Human({
-            name: "Sophia"
-        });
-
-        michel.emergencyContact = sophia;
-        michel.saveAll({emergencyContact: true}).then(function(result) {
-            assert.strictEqual(michel, result);
-            assert.equal(michel.isSaved(), true);
-            assert.equal(sophia.isSaved(), true);
-            assert.equal(sophia.id, michel.contactId);
-            done();
-        }).error(done);
-    });
-});
-describe('delete - hidden links behavior', function() {
-    it('should work for hasOne - 1', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String,
-            foreignKey: String
-        });
-
-        Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
-       
-        var doc = new Model({});
-        var otherDoc = new OtherModel({});
-        doc.otherDoc = otherDoc;
-
-        doc.saveAll().then(function() {
-            doc.delete().then(function() {
-                assert.equal(doc.isSaved(), false);
-                assert.equal(otherDoc.isSaved(), true);
-                assert.equal(otherDoc.foreignKey, undefined);
-                OtherModel.get(otherDoc.id).run().then(function(otherDoc) {
-                    assert.equal(otherDoc.isSaved(), true);
-                    assert.equal(otherDoc.foreignKey, undefined);
-                    done();
-                });
             });
+            }).error(done);
         });
 
-    });
-    it('should work for hasOne - 2', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String,
-            foreignKey: String
-        });
-
-        Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
-       
-        var doc = new Model({});
-        var otherDoc = new OtherModel({});
-        doc.otherDoc = otherDoc;
-
-        doc.saveAll().then(function() {
-            otherDoc.delete().then(function() {
-                assert.equal(doc.isSaved(), true);
-                assert.equal(otherDoc.isSaved(), false);
-                assert.equal(doc.otherDoc, undefined);
-                Model.get(doc.id).getJoin().run().then(function(doc) {
-                    assert.equal(doc.isSaved(), true);
-                    assert.equal(doc.otherDoc, undefined);
-                    done();
-                });
+        it('hasAndBelongsToMany -- pairs', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
             });
+
+            Model.hasAndBelongsToMany(Model, "links", "id", "id");
+
+            var values = {};
+            var otherValues = {};
+            var doc1 = new Model({});
+            var doc2 = new Model({});
+
+            doc1.links = [doc2];
+
+            doc1.saveAll({links: true}).then(function(result) {
+                return Model.get(doc1.id).getJoin({links: true}).run()
+            }).then(function(result) {
+                assert.deepEqual(result.links[0], doc2);
+                done();
+            }).error(done);
+        });
+
+        it('hasOne/belongsTo -- pairs', function(done) {
+            var Human = thinky.createModel(modelNames[0], {id: String, name: String, contactId: String});
+            Human.belongsTo(Human, "emergencyContact", "contactId", "id");
+
+            var michel = new Human({
+                name: "Michel"
+            });
+            var sophia = new Human({
+                name: "Sophia"
+            });
+
+            michel.emergencyContact = sophia;
+            michel.saveAll({emergencyContact: true}).then(function(result) {
+                assert.strictEqual(michel, result);
+                assert.equal(michel.isSaved(), true);
+                assert.equal(sophia.isSaved(), true);
+                assert.equal(sophia.id, michel.contactId);
+                done();
+            }).error(done);
         });
     });
-    it('should work for hasOne - 3', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String,
-            foreignKey: String
-        });
+    describe('delete - hidden links behavior', function() {
+        afterEach(cleanTables);
 
-        Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
-       
-        var doc = new Model({});
-        var otherDoc = new OtherModel({});
-        doc.otherDoc = otherDoc;
+        it('should work for hasOne - 1', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
+            });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String,
+                foreignKey: String
+            });
 
-        doc.saveAll().then(function() {
-            Model.get(doc.id).getJoin().run().then(function(doc) {
-                var otherDoc = doc.otherDoc;
+            Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
+           
+            var doc = new Model({});
+            var otherDoc = new OtherModel({});
+            doc.otherDoc = otherDoc;
+
+            doc.saveAll().then(function() {
                 doc.delete().then(function() {
                     assert.equal(doc.isSaved(), false);
                     assert.equal(otherDoc.isSaved(), true);
@@ -2174,27 +2067,24 @@ describe('delete - hidden links behavior', function() {
                     });
                 });
             });
-        });
 
-    });
-    it('should work for hasOne - 4', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String
         });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String,
-            foreignKey: String
-        });
+        it('should work for hasOne - 2', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
+            });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String,
+                foreignKey: String
+            });
 
-        Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
-       
-        var doc = new Model({});
-        var otherDoc = new OtherModel({});
-        doc.otherDoc = otherDoc;
+            Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
+           
+            var doc = new Model({});
+            var otherDoc = new OtherModel({});
+            doc.otherDoc = otherDoc;
 
-        doc.saveAll().then(function() {
-            Model.get(doc.id).getJoin().run().then(function(doc) {
-                var otherDoc = doc.otherDoc;
+            doc.saveAll().then(function() {
                 otherDoc.delete().then(function() {
                     assert.equal(doc.isSaved(), true);
                     assert.equal(otherDoc.isSaved(), false);
@@ -2207,104 +2097,109 @@ describe('delete - hidden links behavior', function() {
                 });
             });
         });
-    });
-    it('should work for belongsTo - 1', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String,
-            foreignKey: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String
-        });
-
-        Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id");
-       
-        var doc = new Model({});
-        var otherDoc = new OtherModel({});
-        doc.otherDoc = otherDoc;
-
-        doc.saveAll().then(function() {
-            doc.delete().then(function() {
-                assert.equal(doc.isSaved(), false);
-                assert.equal(otherDoc.isSaved(), true);
-                done();
+        it('should work for hasOne - 3', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
             });
-        });
-    });
-    it('should work for belongsTo - 2', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String,
-            foreignKey: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String
-        });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String,
+                foreignKey: String
+            });
 
-        Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id");
+            Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
+           
+            var doc = new Model({});
+            var otherDoc = new OtherModel({});
+            doc.otherDoc = otherDoc;
 
-        var doc = new Model({});
-        var otherDoc = new OtherModel({});
-        doc.otherDoc = otherDoc;
-
-        doc.saveAll().then(function() {
-            otherDoc.delete().then(function() {
-                assert.equal(doc.isSaved(), true);
-                assert.equal(otherDoc.isSaved(), false);
-                assert.equal(doc.otherDoc, undefined);
-                assert.equal(doc.foreignKey, undefined);
+            doc.saveAll().then(function() {
                 Model.get(doc.id).getJoin().run().then(function(doc) {
-                    assert.equal(doc.isSaved(), true);
-                    assert.equal(doc.otherDoc, undefined);
-                    assert.equal(doc.foreignKey, undefined);
-                    done();
+                    var otherDoc = doc.otherDoc;
+                    doc.delete().then(function() {
+                        assert.equal(doc.isSaved(), false);
+                        assert.equal(otherDoc.isSaved(), true);
+                        assert.equal(otherDoc.foreignKey, undefined);
+                        OtherModel.get(otherDoc.id).run().then(function(otherDoc) {
+                            assert.equal(otherDoc.isSaved(), true);
+                            assert.equal(otherDoc.foreignKey, undefined);
+                            done();
+                        });
+                    });
+                });
+            });
+
+        });
+        it('should work for hasOne - 4', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
+            });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String,
+                foreignKey: String
+            });
+
+            Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
+           
+            var doc = new Model({});
+            var otherDoc = new OtherModel({});
+            doc.otherDoc = otherDoc;
+
+            doc.saveAll().then(function() {
+                Model.get(doc.id).getJoin().run().then(function(doc) {
+                    var otherDoc = doc.otherDoc;
+                    otherDoc.delete().then(function() {
+                        assert.equal(doc.isSaved(), true);
+                        assert.equal(otherDoc.isSaved(), false);
+                        assert.equal(doc.otherDoc, undefined);
+                        Model.get(doc.id).getJoin().run().then(function(doc) {
+                            assert.equal(doc.isSaved(), true);
+                            assert.equal(doc.otherDoc, undefined);
+                            done();
+                        });
+                    });
                 });
             });
         });
-    });
-    it('should work for belongsTo - 3', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String,
-            foreignKey: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String
-        });
+        it('should work for belongsTo - 1', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String,
+                foreignKey: String
+            });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String
+            });
 
-        Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id");
-       
-        var doc = new Model({});
-        var otherDoc = new OtherModel({});
-        doc.otherDoc = otherDoc;
+            Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id");
+           
+            var doc = new Model({});
+            var otherDoc = new OtherModel({});
+            doc.otherDoc = otherDoc;
 
-        doc.saveAll().then(function() {
-            Model.get(doc.id).getJoin().run().then(function(doc) {
+            doc.saveAll().then(function() {
                 doc.delete().then(function() {
                     assert.equal(doc.isSaved(), false);
-                    assert.equal(doc.otherDoc.isSaved(), true);
+                    assert.equal(otherDoc.isSaved(), true);
                     done();
                 });
             });
         });
-    });
-    it('should work for belongsTo - 4', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String,
-            foreignKey: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String
-        });
+        it('should work for belongsTo - 2', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String,
+                foreignKey: String
+            });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String
+            });
 
-        Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id");
-        
-        var doc = new Model({});
-        var otherDoc = new OtherModel({});
-        doc.otherDoc = otherDoc;
+            Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id");
 
-        doc.saveAll().then(function() {
-            Model.get(doc.id).getJoin().run().then(function(doc) {
-                var otherDoc = doc.otherDoc;
-                doc.otherDoc.delete().then(function() {
+            var doc = new Model({});
+            var otherDoc = new OtherModel({});
+            doc.otherDoc = otherDoc;
+
+            doc.saveAll().then(function() {
+                otherDoc.delete().then(function() {
                     assert.equal(doc.isSaved(), true);
                     assert.equal(otherDoc.isSaved(), false);
                     assert.equal(doc.otherDoc, undefined);
@@ -2318,98 +2213,82 @@ describe('delete - hidden links behavior', function() {
                 });
             });
         });
-    });
-    it('should work for hasMany - 1', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String,
-            foreignKey: String
-        });
+        it('should work for belongsTo - 3', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String,
+                foreignKey: String
+            });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String
+            });
 
-        Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
-       
-        var doc = new Model({});
-        var otherDoc1 = new OtherModel({});
-        var otherDoc2 = new OtherModel({});
-        var otherDoc3 = new OtherModel({});
-        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+            Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id");
+           
+            var doc = new Model({});
+            var otherDoc = new OtherModel({});
+            doc.otherDoc = otherDoc;
 
-        doc.saveAll().then(function() {
-            doc.delete().then(function() {
-                assert.equal(doc.isSaved(), false);
-                assert.equal(otherDoc1.isSaved(), true);
-                assert.equal(otherDoc2.isSaved(), true);
-                assert.equal(otherDoc3.isSaved(), true);
-                assert.equal(otherDoc1.foreignKey, undefined);
-                assert.equal(otherDoc2.foreignKey, undefined);
-                assert.equal(otherDoc3.foreignKey, undefined);
-                OtherModel.get(otherDoc1.id).run().then(function(otherDoc1) {
-                    assert.equal(otherDoc1.isSaved(), true);
-                    assert.equal(otherDoc1.foreignKey, undefined);
-                    done();
+            doc.saveAll().then(function() {
+                Model.get(doc.id).getJoin().run().then(function(doc) {
+                    doc.delete().then(function() {
+                        assert.equal(doc.isSaved(), false);
+                        assert.equal(doc.otherDoc.isSaved(), true);
+                        done();
+                    });
                 });
             });
         });
-    });
-    it('should work for hasMany - 2', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String,
-            foreignKey: String
-        });
+        it('should work for belongsTo - 4', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String,
+                foreignKey: String
+            });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String
+            });
 
-        Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
-       
-        var doc = new Model({});
-        var otherDoc1 = new OtherModel({});
-        var otherDoc2 = new OtherModel({});
-        var otherDoc3 = new OtherModel({});
-        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+            Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id");
+            
+            var doc = new Model({});
+            var otherDoc = new OtherModel({});
+            doc.otherDoc = otherDoc;
 
-        doc.saveAll().then(function() {
-            otherDoc1.delete().then(function() {
-                assert.equal(doc.isSaved(), true);
-                assert.equal(otherDoc1.isSaved(), false);
-                assert.equal(otherDoc2.isSaved(), true);
-                assert.equal(otherDoc3.isSaved(), true);
-                assert.notEqual(otherDoc1.foreignKey, undefined);
-                // We currently don't clean in this case
-                assert.notEqual(otherDoc2.foreignKey, undefined);
-                assert.notEqual(otherDoc3.foreignKey, undefined);
-                assert.equal(doc.otherDocs.length, 2);
-                Model.get(doc.id).getJoin().run().then(function(otherDoc1) {
-                    assert.equal(doc.otherDocs.length, 2);
-                    done();
+            doc.saveAll().then(function() {
+                Model.get(doc.id).getJoin().run().then(function(doc) {
+                    var otherDoc = doc.otherDoc;
+                    doc.otherDoc.delete().then(function() {
+                        assert.equal(doc.isSaved(), true);
+                        assert.equal(otherDoc.isSaved(), false);
+                        assert.equal(doc.otherDoc, undefined);
+                        assert.equal(doc.foreignKey, undefined);
+                        Model.get(doc.id).getJoin().run().then(function(doc) {
+                            assert.equal(doc.isSaved(), true);
+                            assert.equal(doc.otherDoc, undefined);
+                            assert.equal(doc.foreignKey, undefined);
+                            done();
+                        });
+                    });
                 });
             });
         });
-    });
-    it('should work for hasMany - 3', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String,
-            foreignKey: String
-        });
+        it('should work for hasMany - 1', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
+            });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String,
+                foreignKey: String
+            });
 
-        Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
-       
-        var doc = new Model({});
-        var otherDoc1 = new OtherModel({});
-        var otherDoc2 = new OtherModel({});
-        var otherDoc3 = new OtherModel({});
-        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+            Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
+           
+            var doc = new Model({});
+            var otherDoc1 = new OtherModel({});
+            var otherDoc2 = new OtherModel({});
+            var otherDoc3 = new OtherModel({});
+            doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
 
-        doc.saveAll().then(function() {
-            Model.get(doc.id).getJoin().run().then(function(doc) {
-                var otherDoc1 = doc.otherDocs[0];
-                var otherDoc2 = doc.otherDocs[1];
-                var otherDoc3 = doc.otherDocs[2];
+            doc.saveAll().then(function() {
                 doc.delete().then(function() {
                     assert.equal(doc.isSaved(), false);
                     assert.equal(otherDoc1.isSaved(), true);
@@ -2426,29 +2305,24 @@ describe('delete - hidden links behavior', function() {
                 });
             });
         });
-    });
-    it('should work for hasMany - 4', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String,
-            foreignKey: String
-        });
+        it('should work for hasMany - 2', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
+            });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String,
+                foreignKey: String
+            });
 
-        Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
-       
-        var doc = new Model({});
-        var otherDoc1 = new OtherModel({});
-        var otherDoc2 = new OtherModel({});
-        var otherDoc3 = new OtherModel({});
-        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+            Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
+           
+            var doc = new Model({});
+            var otherDoc1 = new OtherModel({});
+            var otherDoc2 = new OtherModel({});
+            var otherDoc3 = new OtherModel({});
+            doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
 
-        doc.saveAll().then(function() {
-            Model.get(doc.id).getJoin().run().then(function(doc) {
-                var otherDoc1 = doc.otherDocs[0];
-                var otherDoc2 = doc.otherDocs[1];
-                var otherDoc3 = doc.otherDocs[2];
+            doc.saveAll().then(function() {
                 otherDoc1.delete().then(function() {
                     assert.equal(doc.isSaved(), true);
                     assert.equal(otherDoc1.isSaved(), false);
@@ -2456,7 +2330,7 @@ describe('delete - hidden links behavior', function() {
                     assert.equal(otherDoc3.isSaved(), true);
                     assert.notEqual(otherDoc1.foreignKey, undefined);
                     // We currently don't clean in this case
-                    //assert.equal(otherDoc2.foreignKey, undefined);
+                    assert.notEqual(otherDoc2.foreignKey, undefined);
                     assert.notEqual(otherDoc3.foreignKey, undefined);
                     assert.equal(doc.otherDocs.length, 2);
                     Model.get(doc.id).getJoin().run().then(function(otherDoc1) {
@@ -2466,124 +2340,134 @@ describe('delete - hidden links behavior', function() {
                 });
             });
         });
-    });
-    it('should work for hasAndBelongsToMany - 1', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String
-        });
+        it('should work for hasMany - 3', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
+            });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String,
+                foreignKey: String
+            });
 
-        Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
-       
-        var doc = new Model({});
-        var otherDoc1 = new OtherModel({});
-        var otherDoc2 = new OtherModel({});
-        var otherDoc3 = new OtherModel({});
-        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+            Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
+           
+            var doc = new Model({});
+            var otherDoc1 = new OtherModel({});
+            var otherDoc2 = new OtherModel({});
+            var otherDoc3 = new OtherModel({});
+            doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
 
-        doc.saveAll().then(function() {
-            doc.delete().then(function() {
+            doc.saveAll().then(function() {
+                Model.get(doc.id).getJoin().run().then(function(doc) {
+                    var otherDoc1 = doc.otherDocs[0];
+                    var otherDoc2 = doc.otherDocs[1];
+                    var otherDoc3 = doc.otherDocs[2];
+                    doc.delete().then(function() {
+                        assert.equal(doc.isSaved(), false);
+                        assert.equal(otherDoc1.isSaved(), true);
+                        assert.equal(otherDoc2.isSaved(), true);
+                        assert.equal(otherDoc3.isSaved(), true);
+                        assert.equal(otherDoc1.foreignKey, undefined);
+                        assert.equal(otherDoc2.foreignKey, undefined);
+                        assert.equal(otherDoc3.foreignKey, undefined);
+                        OtherModel.get(otherDoc1.id).run().then(function(otherDoc1) {
+                            assert.equal(otherDoc1.isSaved(), true);
+                            assert.equal(otherDoc1.foreignKey, undefined);
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+        it('should work for hasMany - 4', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
+            });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String,
+                foreignKey: String
+            });
+
+            Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
+           
+            var doc = new Model({});
+            var otherDoc1 = new OtherModel({});
+            var otherDoc2 = new OtherModel({});
+            var otherDoc3 = new OtherModel({});
+            doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+
+            doc.saveAll().then(function() {
+                Model.get(doc.id).getJoin().run().then(function(doc) {
+                    var otherDoc1 = doc.otherDocs[0];
+                    var otherDoc2 = doc.otherDocs[1];
+                    var otherDoc3 = doc.otherDocs[2];
+                    otherDoc1.delete().then(function() {
+                        assert.equal(doc.isSaved(), true);
+                        assert.equal(otherDoc1.isSaved(), false);
+                        assert.equal(otherDoc2.isSaved(), true);
+                        assert.equal(otherDoc3.isSaved(), true);
+                        assert.notEqual(otherDoc1.foreignKey, undefined);
+                        // We currently don't clean in this case
+                        //assert.equal(otherDoc2.foreignKey, undefined);
+                        assert.notEqual(otherDoc3.foreignKey, undefined);
+                        assert.equal(doc.otherDocs.length, 2);
+                        Model.get(doc.id).getJoin().run().then(function(otherDoc1) {
+                            assert.equal(doc.otherDocs.length, 2);
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+        it('should work for hasAndBelongsToMany - 1', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
+            });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String
+            });
+
+            Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
+           
+            var doc = new Model({});
+            var otherDoc1 = new OtherModel({});
+            var otherDoc2 = new OtherModel({});
+            var otherDoc3 = new OtherModel({});
+            doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+
+            doc.saveAll().then(function() {
+                return doc.delete()
+            }).then(function() {
                 assert.equal(doc.isSaved(), false);
                 assert.equal(otherDoc1.isSaved(), true);
                 assert.equal(otherDoc2.isSaved(), true);
                 assert.equal(otherDoc3.isSaved(), true);
                 assert.equal(otherDoc3.isSaved(), true);
                 assert.equal(doc.otherDocs.length, 3);
-                r.table(Model._getModel()._joins.otherDocs.link).count().run().then(function(result) {
-                    assert.equal(result, 0);
-                    done();
-                });
+                return r.table(Model._getModel()._joins.otherDocs.link).count().run()
+            }).then(function(result) {
+                assert.equal(result, 0);
+                done();
             });
         });
-    });
-    it('should work for hasAndBelongsToMany - 2', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String
-        });
-
-        Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
-       
-        var doc = new Model({});
-        var otherDoc1 = new OtherModel({});
-        var otherDoc2 = new OtherModel({});
-        var otherDoc3 = new OtherModel({});
-        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
-
-        doc.saveAll().then(function() {
-            otherDoc1.delete().then(function() {
-                assert.equal(doc.isSaved(), true);
-                assert.equal(otherDoc1.isSaved(), false);
-                assert.equal(otherDoc2.isSaved(), true);
-                assert.equal(otherDoc3.isSaved(), true);
-                assert.equal(doc.otherDocs.length, 2);
-                Model.get(doc.id).getJoin().run().then(function(otherDoc1) {
-                    assert.equal(doc.otherDocs.length, 2);
-                    done();
-                });
+        it('should work for hasAndBelongsToMany - 2', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
             });
-        });
-    });
-    it('should work for hasAndBelongsToMany - 3', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String
-        });
-
-        Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
-       
-        var doc = new Model({});
-        var otherDoc1 = new OtherModel({});
-        var otherDoc2 = new OtherModel({});
-        var otherDoc3 = new OtherModel({});
-        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
-
-        doc.saveAll().then(function() {
-            Model.get(doc.id).getJoin().run().then(function(doc) {
-                doc.delete().then(function() {
-                    assert.equal(doc.isSaved(), false);
-                    assert.equal(otherDoc1.isSaved(), true);
-                    assert.equal(otherDoc2.isSaved(), true);
-                    assert.equal(otherDoc3.isSaved(), true);
-                    assert.equal(otherDoc3.isSaved(), true);
-                    assert.equal(doc.otherDocs.length, 3);
-                    r.table(Model._getModel()._joins.otherDocs.link).count().run().then(function(result) {
-                        assert.equal(result, 0);
-                        done();
-                    });
-                });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String
             });
-        });
-    });
-    it('should work for hasAndBelongsToMany - 4', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String
-        });
 
-        Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
-       
-        var doc = new Model({});
-        var otherDoc1 = new OtherModel({});
-        var otherDoc2 = new OtherModel({});
-        var otherDoc3 = new OtherModel({});
-        doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+            Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
+           
+            var doc = new Model({});
+            var otherDoc1 = new OtherModel({});
+            var otherDoc2 = new OtherModel({});
+            var otherDoc3 = new OtherModel({});
+            doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
 
-        doc.saveAll().then(function() {
-            Model.get(doc.id).getJoin().run().then(function(doc) {
-                otherDoc1 = doc.otherDocs[0];
-                otherDoc2 = doc.otherDocs[1];
-                otherDoc3 = doc.otherDocs[2];
-                otherDoc1.delete().then(function(result) {
-                    assert.strictEqual(result, otherDoc1);
+            doc.saveAll().then(function() {
+                otherDoc1.delete().then(function() {
                     assert.equal(doc.isSaved(), true);
                     assert.equal(otherDoc1.isSaved(), false);
                     assert.equal(otherDoc2.isSaved(), true);
@@ -2596,33 +2480,103 @@ describe('delete - hidden links behavior', function() {
                 });
             });
         });
+        it('should work for hasAndBelongsToMany - 3', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
+            });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String
+            });
+
+            Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
+           
+            var doc = new Model({});
+            var otherDoc1 = new OtherModel({});
+            var otherDoc2 = new OtherModel({});
+            var otherDoc3 = new OtherModel({});
+            doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+
+            doc.saveAll().then(function() {
+                Model.get(doc.id).getJoin().run().then(function(doc) {
+                    doc.delete().then(function() {
+                        assert.equal(doc.isSaved(), false);
+                        assert.equal(otherDoc1.isSaved(), true);
+                        assert.equal(otherDoc2.isSaved(), true);
+                        assert.equal(otherDoc3.isSaved(), true);
+                        assert.equal(otherDoc3.isSaved(), true);
+                        assert.equal(doc.otherDocs.length, 3);
+                        r.table(Model._getModel()._joins.otherDocs.link).count().run().then(function(result) {
+                            assert.equal(result, 0);
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+        it('should work for hasAndBelongsToMany - 4', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
+            });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String
+            });
+
+            Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
+           
+            var doc = new Model({});
+            var otherDoc1 = new OtherModel({});
+            var otherDoc2 = new OtherModel({});
+            var otherDoc3 = new OtherModel({});
+            doc.otherDocs = [otherDoc1, otherDoc2, otherDoc3];
+
+            doc.saveAll().then(function() {
+                Model.get(doc.id).getJoin().run().then(function(doc) {
+                    otherDoc1 = doc.otherDocs[0];
+                    otherDoc2 = doc.otherDocs[1];
+                    otherDoc3 = doc.otherDocs[2];
+                    otherDoc1.delete().then(function(result) {
+                        assert.strictEqual(result, otherDoc1);
+                        assert.equal(doc.isSaved(), true);
+                        assert.equal(otherDoc1.isSaved(), false);
+                        assert.equal(otherDoc2.isSaved(), true);
+                        assert.equal(otherDoc3.isSaved(), true);
+                        assert.equal(doc.otherDocs.length, 2);
+                        Model.get(doc.id).getJoin().run().then(function(otherDoc1) {
+                            assert.equal(doc.otherDocs.length, 2);
+                            done();
+                        });
+                    });
+                });
+            });
+        });
     });
-});
+    describe('manual joins', function() {
+        afterEach(cleanTables);
 
-describe('manual joins', function() {
-    it('innerJoin', function(done) {
-        var Model = thinky.createModel(util.s8(), {
-            id: String
-        });
-        var OtherModel = thinky.createModel(util.s8(), {
-            id: String
-        });
+        it('innerJoin', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
+            });
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String
+            });
 
 
-        var doc = new Model({});
-        var otherDocs = [new OtherModel({}), new OtherModel({}), new OtherModel({})];
-        var promises = [doc.save(), otherDocs[0].save(), otherDocs[1].save(), otherDocs[2].save()];
+            var doc = new Model({});
+            var otherDocs = [new OtherModel({}), new OtherModel({}), new OtherModel({})];
+            var promises = [doc.save(), otherDocs[0].save(), otherDocs[1].save(), otherDocs[2].save()];
 
-        Promise.all(promises).then(function() {
-            return Model.innerJoin(OtherModel.between(null, null)._query, function() { return true}).execute()
-        }).then(function(cursor) {
-            return cursor.toArray();
-        }).then(function(result) {
-            assert.equal(result.length, 3);
-            assert.deepEqual(result[0].left, doc);
-            assert.deepEqual(result[1].left, doc);
-            assert.deepEqual(result[2].left, doc);
-            done();
+            Promise.all(promises).then(function() {
+                return Model.innerJoin(OtherModel.between(null, null)._query, function() { return true}).execute()
+            }).then(function(cursor) {
+                return cursor.toArray();
+            }).then(function(result) {
+                assert.equal(result.length, 3);
+                assert.deepEqual(result[0].left, doc);
+                assert.deepEqual(result[1].left, doc);
+                assert.deepEqual(result[2].left, doc);
+                done();
+            });
         });
     });
 });

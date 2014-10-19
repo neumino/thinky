@@ -5,14 +5,36 @@ var Document = require(__dirname+'/../lib/document.js');
 
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
+var Promise = require('bluebird');
 
-describe('Model queries', function(){
+var modelNameSet = {};
+modelNameSet[util.s8()] = true;
+modelNameSet[util.s8()] = true;
+var modelNames = Object.keys(modelNameSet);
+
+var cleanTables = function(done) {
+    var promises = [];
+    var name;
+    for(var name in modelNameSet) {
+        promises.push(r.table(name).delete().run());
+    }
+    Promise.settle(promises).finally(function() {
+        // Add the links table
+        for(var model in thinky.models) {
+            modelNameSet[model] = true;
+        }
+        modelNames = Object.keys(modelNameSet);
+        thinky._clean();
+        done();
+    });
+}
+
+describe('Model queries', function() {
     var Model;
     var data = [];
     var bag = {};
     before(function(done) {
-        var name = util.s8();
-        Model = thinky.createModel(name, {
+        Model = thinky.createModel(modelNames[0], {
             id: String,
             str: String,
             num: Number
@@ -32,26 +54,31 @@ describe('Model queries', function(){
             doc = new Model({
                 str: str,
                 num: num
-            }).save().then(function(result) {
-                data.push(result);
+            });
+            return doc.save();
+        }).then(function(result) {
+            data.push(result);
 
-                str = util.s8();
-                num = util.random();
-                doc = new Model({
-                    str: str,
-                    num: num
-                }).save().then(function(result) {
-                    data.push(result);
+            str = util.s8();
+            num = util.random();
+            doc = new Model({
+                str: str,
+                num: num
+            });
+            return doc.save();
+        }).then(function(result) {
+            data.push(result);
 
-                    for(var i=0; i<data.length; i++) {
-                        bag[data[i].id] = data[i]
-                    }
+            for(var i=0; i<data.length; i++) {
+                bag[data[i].id] = data[i]
+            }
 
-                    done()
-                }).error(done);
-            }).error(done);
+            done()
         }).error(done);
     });
+
+    after(cleanTables);
+
     it('Model.run() should return', function(done){
         Model.run().then(function(result) {
             done();
@@ -243,7 +270,7 @@ describe('getJoin', function(){
         var Model, OtherModel, doc
         before(function(done) {
             var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
@@ -251,7 +278,7 @@ describe('getJoin', function(){
 
 
             var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number,
@@ -270,6 +297,9 @@ describe('getJoin', function(){
                 done();
             });
         });
+
+        after(cleanTables);
+
         it('should retrieve joined documents with object', function(done) {
             Model.get(doc.id).getJoin().run().then(function(result) {
                 assert.deepEqual(doc, result);
@@ -291,7 +321,7 @@ describe('getJoin', function(){
         var Model, OtherModel, doc
         before(function(done) {
             var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number,
@@ -299,7 +329,7 @@ describe('getJoin', function(){
             })
 
             var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number
@@ -317,6 +347,9 @@ describe('getJoin', function(){
                 done();
             });
         });
+
+        after(cleanTables);
+
         it('should retrieve joined documents with object', function(done) {
             Model.get(doc.id).getJoin().run().then(function(result) {
                 assert.deepEqual(doc, result);
@@ -338,14 +371,14 @@ describe('getJoin', function(){
         var Model, OtherModel, doc;
         before(function(done) {
             var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
             })
 
             var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number,
@@ -364,6 +397,9 @@ describe('getJoin', function(){
             }).error(done);
 
         });
+
+        after(cleanTables);
+
         it('should retrieve joined documents with object', function(done) {
             Model.get(doc.id).getJoin().run().then(function(result) {
                 util.sortById(result.otherDocs);
@@ -394,14 +430,14 @@ describe('getJoin', function(){
         var Model, OtherModel, doc;
         before(function(done) {
             var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
             })
 
             var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number,
@@ -419,6 +455,9 @@ describe('getJoin', function(){
             }).error(done);
 
         });
+
+        after(cleanTables);
+
         it('should retrieve joined documents with object', function(done) {
             Model.get(doc.id).getJoin().run().then(function(result) {
                 util.sortById(result.otherDocs);
@@ -446,14 +485,16 @@ describe('getJoin', function(){
         })
     })
     describe('options', function() {
+        afterEach(cleanTables);
+
         it('hasMany - belongsTo', function(done) {
             var name = util.s8();
-            var Model = thinky.createModel(name, {
+            var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
 
             var otherName = util.s8();
-            var OtherModel = thinky.createModel(otherName, {
+            var OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 otherId: String
             });
@@ -503,17 +544,17 @@ describe('getJoin', function(){
         });
     });
     describe("should not throw with missing keys", function() {
+        afterEach(cleanTables);
+
         var Model, OtherModel;
         it('hasOne', function(done) {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
             })
 
-            var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number,
@@ -533,16 +574,14 @@ describe('getJoin', function(){
             }).error(done);
         });
         it('belongsTo', function(done) {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number,
                 foreignKey: String
             })
 
-            var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number
@@ -560,15 +599,13 @@ describe('getJoin', function(){
             });
         });
         it('hasMany', function(done) {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
             })
 
-            var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number,
@@ -586,15 +623,13 @@ describe('getJoin', function(){
             });
         });
         it('hasAndBelongsToMany', function(done) {
-            var name = util.s8();
-            Model = thinky.createModel(name, {
+            Model = thinky.createModel(modelNames[0], {
                 id: String,
                 str: String,
                 num: Number
             })
 
-            var otherName = util.s8();
-            OtherModel = thinky.createModel(otherName, {
+            OtherModel = thinky.createModel(modelNames[1], {
                 id: String,
                 str: String,
                 num: Number,
@@ -620,7 +655,7 @@ describe('Query.run() should take options', function(){
     var data = [];
     before(function(done) {
         var name = util.s8();
-        Model = thinky.createModel(name, {
+        Model = thinky.createModel(modelNames[0], {
             id: String,
             str: String,
             num: Number
@@ -653,6 +688,9 @@ describe('Query.run() should take options', function(){
             }).error(done);
         }).error(done);
     });
+
+    after(cleanTables);
+
     it('Query.run() should return a DocumentNotFound error if no document is found - 1', function(done){
         var Errors = thinky.Errors;
         Model.get(0).run().then(function() {
@@ -731,12 +769,13 @@ describe('Query.run() should take options', function(){
 });
 
 describe('thinky.Query', function() {
+    afterEach(cleanTables);
     it('Manual query', function(done) {
         var name = util.s8();
 
         var Query = thinky.Query;
         var r = thinky.r;
-        var User = thinky.createModel(name, {id: String});
+        var User = thinky.createModel(modelNames[0], {id: String});
 
         var query = new Query(User, r);
         query.expr(1).execute().then(function(result) {
@@ -753,12 +792,14 @@ describe('thinky.Query', function() {
     });
 });
 describe('then', function() {
+    afterEach(cleanTables);
+
     it('should throw an error', function() {
         var name = util.s8();
 
         var Query = thinky.Query;
         var r = thinky.r;
-        var User = thinky.createModel(name, {id: String}, {init: false});
+        var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
 
 
         assert.throws(function() {
@@ -773,7 +814,7 @@ describe('then', function() {
 
         var Query = thinky.Query;
         var r = thinky.r;
-        var User = thinky.createModel(name, {id: String}, {init: false});
+        var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
 
 
         assert.throws(function() {
@@ -785,9 +826,11 @@ describe('then', function() {
     });
 });
 describe('clone', function() {
+    afterEach(cleanTables);
+
     it('people should be able to fork queries', function(done) {
         var name = util.s8();
-        var Model = thinky.createModel(name, {id: String});
+        var Model = thinky.createModel(modelNames[0], {id: String});
         var query = Model.filter(true);
         
         var result = 0;
@@ -805,6 +848,8 @@ describe('clone', function() {
 });
 
 describe('optimizer', function() {
+    afterEach(cleanTables);
+
     // Test that the queries built under the hood are optimized by having the server throw an error
     var Model;
     before(function(done) {
@@ -813,7 +858,7 @@ describe('optimizer', function() {
             
             r.table(name).indexCreate('name1').run().then(function() {
 
-                Model = thinky.createModel(name, {
+                Model = thinky.createModel(modelNames[0], {
                     id: String,
                     name1: String,
                     name2: String,
