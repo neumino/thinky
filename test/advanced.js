@@ -31,6 +31,7 @@ var cleanTables = function(done) {
     });
 }
 
+
 describe('Advanced cases', function(){
     describe('saveAll', function(){
         afterEach(cleanTables);
@@ -761,14 +762,16 @@ describe('Advanced cases', function(){
                 assert.strictEqual(result.belongsTo, otherDoc.belongsTo);
                 assert.strictEqual(otherDoc.belongsTo, doc);
 
-                otherDoc.deleteAll().then(function(result) {
-                    Model.get(doc.id).run().error(function(error) {
-                        assert(error instanceof Errors.DocumentNotFound);
-                        OtherModel.get(otherDoc.id).run().error(function(error) {
-                            assert(error instanceof Errors.DocumentNotFound);
-                            done()
-                        });
-                    });
+                return otherDoc.deleteAll();
+            }).error(done).then(function(result) {
+                return Model.get(doc.id).run()
+            }).error(function(error) {
+                assert(error instanceof Errors.DocumentNotFound);
+                OtherModel.get(otherDoc.id).run().then(function(result) {
+                    done(new Error("Was expecting the document to be deleted"));   
+                }).error(function(error) {
+                    assert(error instanceof Errors.DocumentNotFound);
+                    done()
                 });
             }).error(done);
         });
@@ -1103,18 +1106,18 @@ describe('Advanced cases', function(){
             otherDoc3.belongsTo = doc;
 
             doc.saveAll().then(function(result) {
-                otherDoc1.deleteAll().then(function(result) {
-                    assert.equal(otherDocs.length, 2);
-                    assert.equal(otherDoc1.isSaved(), false);
-                    assert.equal(doc.isSaved(), false);
-                    assert.equal(otherDoc2.isSaved(), true);
-                    assert.equal(otherDoc3.isSaved(), true);
-                    OtherModel.count().execute().then(function(result) {
-                        assert.equal(result, 2);
-                        done();
-                    });
-                });
-            }).error(done);
+                return otherDoc1.deleteAll()
+            }).then(function(result) {
+                assert.equal(otherDocs.length, 2);
+                assert.equal(otherDoc1.isSaved(), false);
+                assert.equal(doc.isSaved(), false);
+                assert.equal(otherDoc2.isSaved(), false);
+                assert.equal(otherDoc3.isSaved(), false);
+                return OtherModel.count().execute()
+            }).then(function(result) {
+                assert.equal(result, 0);
+                done();
+            }).catch(done).error(done);
         });
         it('belongsTo - hasMany -- must manually overwrite', function(done) {
             var Model = thinky.createModel(modelNames[0], {
@@ -1155,7 +1158,7 @@ describe('Advanced cases', function(){
                 });
             }).error(done);
         });
-        it('hasAndBelongsToMany -- primary keys -- does not delete back the same type', function(done) {
+        it('hasAndBelongsToMany -- primary keys', function(done) {
             var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
@@ -1181,21 +1184,21 @@ describe('Advanced cases', function(){
 
             doc1.saveAll().then(function(result) {
                 util.sortById(doc1.links);
-                doc2.saveAll().then(function(result) {
-                    util.sortById(doc2.links);
-                    doc1.deleteAll().then(function(result) {
-                        assert.equal(doc1.isSaved(), false)
-                        assert.equal(doc2.isSaved(), true)
-                        assert.equal(otherDoc1.isSaved(), false);
-                        assert.equal(otherDoc2.isSaved(), false);
-                        assert.equal(otherDoc4.isSaved(), false);
-                        assert.equal(otherDoc3.isSaved(), true);
-                        done();
-                    });
-                });
+                return doc2.saveAll();
+            }).then(function(result) {
+                util.sortById(doc2.links);
+                return doc1.deleteAll();
+            }).then(function(result) {
+                assert.equal(doc1.isSaved(), false)
+                assert.equal(doc2.isSaved(), true)
+                assert.equal(otherDoc1.isSaved(), false);
+                assert.equal(otherDoc2.isSaved(), false);
+                assert.equal(otherDoc4.isSaved(), false);
+                assert.equal(otherDoc3.isSaved(), true);
+                done();
             }).error(done);
         });
-        it('hasAndBelongsToMany -- primary keys -- breaking through deletedModel - 1', function(done) {
+        it('hasAndBelongsToMany -- primary keys -- bidirectional - 1', function(done) {
             var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
@@ -1226,23 +1229,23 @@ describe('Advanced cases', function(){
 
             doc1.saveAll().then(function(result) {
                 util.sortById(doc1.links);
-                doc2.saveAll().then(function(result) {
-                    util.sortById(doc2.links);
+                return doc2.saveAll();
+            }).then(function(result) {
+                util.sortById(doc2.links);
 
-                    doc1.deleteAll({links: {links2: true}}).then(function(result) {
-                        assert.equal(doc1.isSaved(), false)
-                        assert.equal(otherDoc1.isSaved(), false);
-                        assert.equal(otherDoc2.isSaved(), false);
-                        assert.equal(otherDoc4.isSaved(), false);
-                        assert.equal(otherDoc3.isSaved(), true);
+                return doc1.deleteAll({links: {links2: true}});
+            }).then(function(result) {
+                assert.equal(doc1.isSaved(), false)
+                assert.equal(otherDoc1.isSaved(), false);
+                assert.equal(otherDoc2.isSaved(), false);
+                assert.equal(otherDoc4.isSaved(), false);
+                assert.equal(otherDoc3.isSaved(), true);
 
-                        assert.equal(doc2.isSaved(), false)
-                        done();
-                    });
-                });
+                assert.equal(doc2.isSaved(), false)
+                done();
             }).error(done);
         });
-        it('hasAndBelongsToMany -- primary keys -- breaking through deletedModel - 2', function(done) {
+        it('hasAndBelongsToMany -- primary keys -- bidirectional - 2', function(done) {
             var Model = thinky.createModel(modelNames[0], {
                 id: String
             });
@@ -1273,26 +1276,70 @@ describe('Advanced cases', function(){
 
             doc1.saveAll().then(function(result) {
                 util.sortById(doc1.links);
-                doc2.saveAll().then(function(result) {
-                    util.sortById(doc2.links);
+                return doc2.saveAll();
+            }).then(function(result) {
+                util.sortById(doc2.links);
 
-                    otherDoc4.deleteAll({links2: {links: true}}).then(function(result) {
-                        assert.equal(doc1.isSaved(), false)
-                        assert.equal(doc2.isSaved(), false)
-                        assert.deepEqual([
-                            otherDoc1.isSaved(),
-                            otherDoc2.isSaved(),
-                            otherDoc3.isSaved(),
-                            otherDoc4.isSaved()
-                        ], [false, false, false, false])
+                return otherDoc4.deleteAll({links2: {links: true}});
+            }).then(function(result) {
+                assert.equal(doc1.isSaved(), false)
+                assert.equal(doc2.isSaved(), false)
+                assert.equal(otherDoc1.isSaved(), false);
+                assert.equal(otherDoc2.isSaved(), false);
+                assert.equal(otherDoc3.isSaved(), false);
+                assert.equal(otherDoc4.isSaved(), false);
 
-                        done();
-                    });
-                });
+                done();
             }).error(done);
         });
+        it('hasAndBelongsToMany -- primary keys -- bidirectional - 3', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String
+            });
 
-        it('hasAndBelongsToMany -- not primary keys', function(done) {
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String
+            });
+
+            Model.hasAndBelongsToMany(OtherModel, "links", "id", "id");
+            OtherModel.hasAndBelongsToMany(Model, "links2", "id", "id");
+
+            var values = {};
+            var otherValues = {};
+            var doc1 = new Model({});
+            var doc2 = new Model({});
+            var otherDoc1 = new OtherModel({});
+            var otherDoc2 = new OtherModel({});
+            var otherDoc3 = new OtherModel({});
+            var otherDoc4 = new OtherModel({});
+
+            doc1.links = [otherDoc1, otherDoc2, otherDoc4]
+            doc2.links = [otherDoc2, otherDoc3, otherDoc4]
+
+            otherDoc1.links2 = [doc1];
+            otherDoc2.links2 = [doc1, doc2];
+            otherDoc3.links2 = [doc2];
+            otherDoc4.links2 = [doc1, doc2];
+
+            doc1.saveAll().then(function(result) {
+                util.sortById(doc1.links);
+                return doc2.saveAll();
+            }).then(function(result) {
+                util.sortById(doc2.links);
+
+                return otherDoc4.deleteAll();
+            }).then(function(result) {
+                assert.equal(doc1.isSaved(), false)
+                assert.equal(doc2.isSaved(), false)
+                assert.equal(otherDoc1.isSaved(), false);
+                assert.equal(otherDoc2.isSaved(), false);
+                assert.equal(otherDoc3.isSaved(), false);
+                assert.equal(otherDoc4.isSaved(), false);
+
+                done();
+            }).error(done);
+        });
+        it('hasAndBelongsToMany -- not primary keys - 1', function(done) {
             var Model = thinky.createModel(modelNames[0], {
                 id: String,
                 field1: Number
@@ -1323,24 +1370,68 @@ describe('Advanced cases', function(){
 
             doc1.saveAll().then(function(result) {
                 util.sortById(doc1.links);
-                doc2.saveAll().then(function(result) {
-                    util.sortById(doc2.links);
+                return doc2.saveAll()
+            }).then(function(result) {
+                util.sortById(doc2.links);
 
-                    otherDoc4.deleteAll({links2: {links: true}}).then(function(result) {
-                        assert.equal(doc1.isSaved(), true)
-                        assert.equal(doc2.isSaved(), false)
-                        assert.deepEqual([
-                            otherDoc1.isSaved(),
-                            otherDoc2.isSaved(),
-                            otherDoc3.isSaved(),
-                            otherDoc4.isSaved()
-                        ], [false, true, true, false])
-
-                        done();
-                    });
-                });
+                return otherDoc4.deleteAll({links2: {links: true}})
+            }).then(function(result) {
+                assert.equal(doc1.isSaved(), true)
+                assert.equal(doc2.isSaved(), false)
+                assert.equal(otherDoc1.isSaved(), false);
+                assert.equal(otherDoc2.isSaved(), true);
+                assert.equal(otherDoc3.isSaved(), true);
+                assert.equal(otherDoc4.isSaved(), false);
+                done();
             }).error(done);
         });
+        it('hasAndBelongsToMany -- not primary keys - 2', function(done) {
+            var Model = thinky.createModel(modelNames[0], {
+                id: String,
+                field1: Number
+            });
+
+            var OtherModel = thinky.createModel(modelNames[1], {
+                id: String,
+                field2: Number
+            });
+
+            Model.hasAndBelongsToMany(OtherModel, "links", "field1", "field2");
+            OtherModel.hasAndBelongsToMany(Model, "links2", "field2", "field1");
+
+            var doc1 = new Model({field1: 1});
+            var doc2 = new Model({field1: 2});
+            var otherDoc1 = new OtherModel({field2: 2});
+            var otherDoc2 = new OtherModel({field2: 1});
+            var otherDoc3 = new OtherModel({field2: 1});
+            var otherDoc4 = new OtherModel({field2: 2});
+
+            doc1.links = [otherDoc2, otherDoc3]
+            doc2.links = [otherDoc1, otherDoc4]
+
+            otherDoc1.links2 = [doc2];
+            otherDoc2.links2 = [doc1];
+            otherDoc3.links2 = [doc1];
+            otherDoc4.links2 = [doc2];
+
+            doc1.saveAll().then(function(result) {
+                util.sortById(doc1.links);
+                return doc2.saveAll()
+            }).then(function(result) {
+                util.sortById(doc2.links);
+
+                return otherDoc4.deleteAll()
+            }).then(function(result) {
+                assert.equal(doc1.isSaved(), true)
+                assert.equal(doc2.isSaved(), false)
+                assert.equal(otherDoc1.isSaved(), false);
+                assert.equal(otherDoc2.isSaved(), true);
+                assert.equal(otherDoc3.isSaved(), true);
+                assert.equal(otherDoc4.isSaved(), false);
+                done();
+            }).error(done);
+        });
+
         it('hasAndBelongsToMany -- not primary keys -- doing what should never be done - 1', function(done) {
             var Model = thinky.createModel(modelNames[0], {
                 id: String,
@@ -1353,7 +1444,7 @@ describe('Advanced cases', function(){
             });
 
             Model.hasAndBelongsToMany(OtherModel, "links", "field1", "field2");
-            OtherModel.hasAndBelongsToMany(Model, "links2", "field2", "field1:");
+            OtherModel.hasAndBelongsToMany(Model, "links2", "field2", "field1");
 
             var doc1 = new Model({field1: 1});
             var doc2 = new Model({field1: 2});
@@ -1404,7 +1495,7 @@ describe('Advanced cases', function(){
             });
 
             Model.hasAndBelongsToMany(OtherModel, "links", "field1", "field2");
-            OtherModel.hasAndBelongsToMany(Model, "links2", "field2", "field1:");
+            OtherModel.hasAndBelongsToMany(Model, "links2", "field2", "field1");
 
             var doc1 = new Model({field1: 1});
             var doc2 = new Model({field1: 2});
@@ -1456,7 +1547,7 @@ describe('Advanced cases', function(){
             });
 
             Model.hasAndBelongsToMany(OtherModel, "links", "field1", "field2");
-            OtherModel.hasAndBelongsToMany(Model, "links2", "field2", "field1:");
+            OtherModel.hasAndBelongsToMany(Model, "links2", "field2", "field1");
 
             var doc1 = new Model({field1: 1});
             var doc2 = new Model({field1: 2});
