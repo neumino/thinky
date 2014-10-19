@@ -105,8 +105,9 @@ You are welcome to do a pull request.
 
 
 ### Roadmap
-- Make the tests faster (by using less tables)
-- Merge write queries into a unique one?
+
+The roadmap is defined with the issues/feedback on GitHub. Checkout:  
+[https://github.com/neumino/thinky/issues](https://github.com/neumino/thinky/issues)
 
 
 ### Author
@@ -115,6 +116,7 @@ You are welcome to do a pull request.
 ### Contributors
 
 - [colprog](https://github.com/colprog)
+- [dulichan](https://github.com/dulichan)
 - [flienteen](https://github.com/flienteen)
 - [marshall007](https://github.com/marshall007)
 - [Morhaus](https://github.com/Morhaus)
