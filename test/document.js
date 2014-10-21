@@ -223,9 +223,30 @@ describe('save', function() {
                 done()
             }).error(done)
         });
+
     });
     describe("Replacement", function() {
         afterEach(cleanTables);
+
+        it('enforce_extra: "remove" should not save the field in the db', function(done){
+            var Model = thinky.createModel(modelNames[0], {
+                id: String,
+                date: Date
+            }, {enforce_extra: "remove"})
+
+            var t = new Model({
+                id: "foo",
+                num: 100,
+                str: "bar",
+                extra: "buzz"
+            });
+            t.save().then(function(result) {
+                return Model.get(t.id).execute();
+            }).then(function(result) {
+                assert.equal(result.extra, undefined)
+                done()
+            }).error(done).catch(done);
+        });
 
         it('Date as string should be coerced to ReQL dates', function(done){
             var Model = thinky.createModel(modelNames[0], {
@@ -2341,6 +2362,42 @@ describe('date', function() {
                 done();
             });
         }).error(done);;
+    });
+});
+
+describe('default should be saved', function() {
+    afterEach(cleanTables);
+
+    it('when generated on create', function(done) {
+        var Model = thinky.createModel(modelNames[0], {
+            id: String,
+            num: {_type: Number, default: function() { return 2 }}
+        });
+        var doc = new Model({});
+        doc.save().then(function(result) {
+            assert.strictEqual(doc, result);
+            assert.equal(doc.num, 2)
+            return Model.get(doc.id).execute()
+        }).then(function(result) {
+            assert.equal(result.num, 2)
+            done();
+        }).error(done).catch(done);
+    });
+    it('when generated on save', function(done) {
+        var Model = thinky.createModel(modelNames[0], {
+            id: String,
+            num: {_type: Number, default: function() { return 2 }}
+        });
+        var doc = new Model({});
+        delete doc.num;
+        doc.save().then(function(result) {
+            assert.strictEqual(doc, result);
+            assert.equal(doc.num, 2)
+            return Model.get(doc.id).execute()
+        }).then(function(result) {
+            assert.equal(result.num, 2)
+            done();
+        }).error(done).catch(done);
     });
 });
 
