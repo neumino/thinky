@@ -166,7 +166,8 @@ describe('generateDefault', function(){
         }, {init: false})
 
         doc = new Model({
-            id: str
+            id: str,
+            field: null
         })
         assert.equal(doc.id, str);
         assert.equal(doc.field, defaultValue);
