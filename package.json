@@ -24,6 +24,8 @@
     "url": "https://github.com/neumino/thinky/issues"
   },
   "dependencies":{
+    "generate-object-property": "latest",
+    "generate-function": "latest",
     "rethinkdbdash": "~1.15.0",
     "bluebird": "~ 2.1.3"
   },

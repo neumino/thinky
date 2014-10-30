@@ -412,7 +412,7 @@ describe('generateDefault', function(){
                 schema: {
                     field: {_type: Number, default: defaultValue}
                 },
-                default: defaultArray 
+                default: defaultArray
             }
         }, {init: false})
 
@@ -435,11 +435,11 @@ describe('generateDefault', function(){
                 _type: Array,
                 schema: {
                     field: {
-                        _type: Object, 
+                        _type: Object,
                         schema: {value: {_type: Number, default: defaultValue} }
                     }
                 },
-                default: defaultArray 
+                default: defaultArray
             }
         }, {init: false})
 
@@ -467,7 +467,7 @@ describe('generateDefault', function(){
                         field: {_type: Number, default: defaultValue}
                     }
                 },
-                default: defaultArray 
+                default: defaultArray
             }
         }, {init: false})
 
@@ -659,7 +659,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a string.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a string.")
         });
     });
     it('String - wrong type  - type: "loose"', function(){
@@ -679,7 +679,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a string or null.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a string or null.")
         });
 
     });
@@ -763,7 +763,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
+            return (error instanceof Error) && (error.message === "Value for .field must be defined.")
         });
 
     });
@@ -778,13 +778,13 @@ describe('validate', function(){
 
         doc = new Model({
             id: str,
-            field: null 
+            field: null
         })
 
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a string.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a string.")
         });
     });
     it('String - null  - type: "loose"', function(){
@@ -798,7 +798,7 @@ describe('validate', function(){
 
         doc = new Model({
             id: str,
-            field: null 
+            field: null
         })
 
         doc.validate();
@@ -836,7 +836,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a number.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a number.")
         });
     });
     it('Number - wrong type  - type: "loose"', function(){
@@ -845,7 +845,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: Number 
+            field: Number
         }, {init: false, enforce_type: 'loose'})
 
         doc = new Model({
@@ -856,7 +856,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a number or null.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a number or null.")
         });
 
     });
@@ -893,7 +893,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a boolean.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a boolean.")
         });
     });
     it('Boolean - wrong type  - type: "loose"', function(){
@@ -902,7 +902,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: Boolean 
+            field: Boolean
         }, {init: false, enforce_type: 'loose'})
 
         doc = new Model({
@@ -913,7 +913,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a boolean or null.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a boolean or null.")
         });
 
     });
@@ -939,7 +939,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: Date 
+            field: Date
         }, {init: false, enforce_type: 'strict'})
 
         doc = new Model({
@@ -955,7 +955,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: Date 
+            field: Date
         }, {init: false, enforce_type: 'strict'})
 
         doc = new Model({
@@ -966,7 +966,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a date or a valid string.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a date or a valid string.")
         });
     });
     it('Date - wrong type  - type: "loose"', function(){
@@ -986,7 +986,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a date or a valid string or null.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a date or a valid string or null.")
         });
     });
     it('Date - string type - type: "loose"', function(){
@@ -995,7 +995,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: Date 
+            field: Date
         }, {init: false, enforce_type: 'loose'})
 
         doc = new Model({
@@ -1027,7 +1027,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: Date 
+            field: Date
         }, {init: false, enforce_type: 'strict'})
 
         doc = new Model({
@@ -1043,7 +1043,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: Date 
+            field: Date
         }, {init: false, enforce_type: 'strict'})
 
         doc = new Model({
@@ -1053,7 +1053,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "The raw date object for [field] is missing the required field timezone.")
+            return (error instanceof Error) && (error.message === "The raw date object for .field is missing the required field timezone.")
         });
     });
     it('Date - raw type - missing epoch_time - type: "strict"', function(){
@@ -1062,7 +1062,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: Date 
+            field: Date
         }, {init: false, enforce_type: 'strict'})
 
         doc = new Model({
@@ -1072,7 +1072,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "The raw date object for [field] is missing the required field epoch_time.")
+            return (error instanceof Error) && (error.message === "The raw date object for .field is missing the required field epoch_time.")
         });
     });
     it('Date - r.now', function(){
@@ -1081,7 +1081,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: Date 
+            field: Date
         }, {init: false})
 
         doc = new Model({
@@ -1096,7 +1096,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: Date 
+            field: Date
         }, {init: false, enforce_missing: true})
 
         doc = new Model({
@@ -1105,7 +1105,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
+            return (error instanceof Error) && (error.message === "Value for .field must be defined.")
         });
     });
     it('Date - undefined - enforce_missing: false', function(){
@@ -1114,7 +1114,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: Date 
+            field: Date
         }, {init: false, enforce_missing: false})
 
         doc = new Model({
@@ -1159,7 +1159,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a buffer.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a buffer.")
         });
     });
     it('Buffer - wrong type  - type: "loose"', function(){
@@ -1179,7 +1179,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a buffer or null.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a buffer or null.")
         });
     });
 
@@ -1231,7 +1231,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "The raw binary object for [field] is missing the required field data.")
+            return (error instanceof Error) && (error.message === "The raw binary object for .field is missing the required field data.")
         });
     });
     it('Buffer - r.http', function(){
@@ -1264,7 +1264,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
+            return (error instanceof Error) && (error.message === "Value for .field must be defined.")
         });
     });
     it('Buffer - undefined - enforce_missing: false', function(){
@@ -1292,7 +1292,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: [Number] 
+            field: [Number]
         }, {init: false, enforce_missing: true})
 
         doc = new Model({
@@ -1302,7 +1302,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
+            return (error instanceof Error) && (error.message === "Value for .field must be defined.")
         });
     });
     it('Array - undefined - enforce_missing: true', function(){
@@ -1311,7 +1311,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: [Number] 
+            field: [Number]
         }, {init: false, enforce_missing: true})
 
         doc = new Model({
@@ -1321,7 +1321,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
+            return (error instanceof Error) && (error.message === "Value for .field must be defined.")
         });
     });
     it('Array - undefined - enforce_missing: false', function(){
@@ -1330,7 +1330,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: [Number] 
+            field: [Number]
         }, {init: false, enforce_missing: false})
 
         doc = new Model({
@@ -1345,7 +1345,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: [Number] 
+            field: [Number]
         }, {init: false, enforce_type: 'loose'})
 
         doc = new Model({
@@ -1356,7 +1356,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a array or null.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a array or null.")
         });
     });
     it('Array - wrong type - enforce_type: "loose"', function(){
@@ -1365,7 +1365,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: [Number] 
+            field: [Number]
         }, {init: false, enforce_type: 'loose'})
 
         doc = new Model({
@@ -1376,7 +1376,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a array or null.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a array or null.")
         });
     });
     it('Array - wrong type - enforce_type: "none"', function(){
@@ -1385,7 +1385,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: [Number] 
+            field: [Number]
         }, {init: false, enforce_type: 'none'})
 
         doc = new Model({
@@ -1400,7 +1400,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: [Number] 
+            field: [Number]
         }, {init: false, enforce_type: 'strict'})
 
         doc = new Model({
@@ -1411,7 +1411,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field][0] must be a number.")
+            return (error instanceof Error) && (error.message === "Value for .field[i] must be a number.")
         });
     });
     it('Array - wrong type inside - enforce_type: "loose"', function(){
@@ -1420,7 +1420,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: [Number] 
+            field: [Number]
         }, {init: false, enforce_type: 'loose'})
 
         doc = new Model({
@@ -1431,7 +1431,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field][0] must be a number or null.")
+            return (error instanceof Error) && (error.message === "Value for .field[i] must be a number or null.")
         });
     });
     it('Array - wrong type inside - enforce_type: "none"', function(){
@@ -1440,7 +1440,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: [Number] 
+            field: [Number]
         }, {init: false, enforce_type: 'none'})
 
         doc = new Model({
@@ -1456,7 +1456,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: [Number] 
+            field: [Number]
         }, {init: false, enforce_type: 'strict'})
 
         doc = new Model({
@@ -1467,7 +1467,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field][3] must be a number.")
+            return (error instanceof Error) && (error.message === "Value for .field[i] must be a number.")
         });
     });
     it('Array - wrong type inside - not first - enforce_type: "strict"', function(){
@@ -1476,7 +1476,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: [Number] 
+            field: [Number]
         }, {init: false, enforce_type: 'strict'})
 
         doc = new Model({
@@ -1487,7 +1487,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "The element in the array [field] (position 3) cannot be `undefined`.")
+            return (error instanceof Error) && (error.message === "The element in the array .field (position 3) cannot be `undefined`.")
         });
 
     });
@@ -1497,7 +1497,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: [Number] 
+            field: [Number]
         }, {init: false, enforce_type: 'loose'})
 
         doc = new Model({
@@ -1508,7 +1508,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "The element in the array [field] (position 3) cannot be `undefined`.")
+            return (error instanceof Error) && (error.message === "The element in the array .field (position 3) cannot be `undefined`.")
         });
 
 
@@ -1519,7 +1519,7 @@ describe('validate', function(){
 
         var Model = thinky.createModel(name, {
             id: String,
-            field: [Number] 
+            field: [Number]
         }, {init: false, enforce_type: 'loose'})
 
         doc = new Model({
@@ -1545,7 +1545,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
+            return (error instanceof Error) && (error.message === "Value for .field must be defined.")
         });
     });
     it('Object - undefined - enforce_missing: false', function(){
@@ -1580,7 +1580,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a object or null.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a object or null.")
         });
     });
     it('Object - undefined - enforce_type: "none"', function(){
@@ -1632,7 +1632,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a object.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a object.")
         });
     });
     it('Object - nested wrong type - enforce_type: "strict"', function(){
@@ -1654,7 +1654,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a object.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a object.")
         });
     });
     it('Object - nested wrong type - enforce_type: "strict" - 2', function(){
@@ -1678,7 +1678,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field][foo] must be a number.")
+            return (error instanceof Error) && (error.message === "Value for .field.foo must be a number.")
         });
     });
     it('Object - nested wrong type - enforce_type: "loose"', function(){
@@ -1702,7 +1702,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field][foo] must be a number or null.")
+            return (error instanceof Error) && (error.message === "Value for .field.foo must be a number or null.")
         });
     });
     it('Object - Empty - enforce_type: "strict"', function(){
@@ -1737,7 +1737,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field][foo] must be defined.")
+            return (error instanceof Error) && (error.message === "Value for .field.foo must be defined.")
         });
     });
     it('Object - undefined - enforce_type: "loose"', function(){
@@ -1777,7 +1777,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field][foo] must be a number or null.")
+            return (error instanceof Error) && (error.message === "Value for .field.foo must be a number or null.")
         });
     });
     it('Object - nested wrong type 5 - enforce_type: "none"', function(){
@@ -1832,7 +1832,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return error.message === "Extra field `buzz` in [foo][0] not allowed.";
+            return error.message === "Extra field `buzz` in .foo[i] not allowed.";
         });
     });
     it('Extra field - 3', function(){
@@ -1851,7 +1851,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return error.message === "Extra field `buzz` in [foo] not allowed.";
+            return error.message === "Extra field `buzz` in .foo not allowed.";
         });
     });
     it('Extra field - enforce_extra:"remove" - global option', function(){
@@ -1922,7 +1922,7 @@ describe('validate', function(){
             })
 
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a string.")
+            return (error instanceof Error) && (error.message === "Value for .field must be a string.")
         });
     });
 });
@@ -1960,7 +1960,7 @@ describe('validateAll', function() {
         assert.throws(function() {
             doc.validateAll();
         }, function(error) {
-            return error.message === "Value for [otherDoc][field] must be a string or null.";
+            return error.message === "Value for [otherDoc].field must be a string or null.";
         });
     });
     it('it should check joined Document too -- hasOne - 2', function() {
@@ -1995,7 +1995,7 @@ describe('validateAll', function() {
         assert.throws(function() {
             doc.validateAll({otherDoc: true});
         }, function(error) {
-            return error.message === "Value for [otherDoc][field] must be a string or null.";
+            return error.message === "Value for [otherDoc].field must be a string or null.";
         });
     });
     it('it should check joined Document too -- belongsTo - 1', function() {
@@ -2031,7 +2031,7 @@ describe('validateAll', function() {
         assert.throws(function() {
             doc.validateAll();
         }, function(error) {
-            return error.message === "Value for [otherDoc][field] must be a string or null.";
+            return error.message === "Value for [otherDoc].field must be a string or null.";
         });
     });
     it('it should check joined Document too -- belongsTo - 2', function() {
@@ -2067,7 +2067,7 @@ describe('validateAll', function() {
         assert.throws(function() {
             doc.validateAll({otherDoc: true});
         }, function(error) {
-            return error.message === "Value for [otherDoc][field] must be a string or null.";
+            return error.message === "Value for [otherDoc].field must be a string or null.";
         });
     });
     it('it should check joined Document too -- hasMany - 1', function() {
@@ -2103,7 +2103,7 @@ describe('validateAll', function() {
         assert.throws(function() {
             doc.validateAll();
         }, function(error) {
-            return error.message === "Value for [otherDocs][0][field] must be a string or null.";
+            return error.message === "Value for [otherDocs][0].field must be a string or null.";
         });
     });
     it('it should check joined Document too -- hasMany - 2', function() {
@@ -2139,7 +2139,7 @@ describe('validateAll', function() {
         assert.throws(function() {
             doc.validateAll({otherDocs: true});
         }, function(error) {
-            return error.message === "Value for [otherDocs][0][field] must be a string or null.";
+            return error.message === "Value for [otherDocs][0].field must be a string or null.";
         });
     });
     it('it should check joined Document too -- hasAndBelongsToMany - 1', function() {
@@ -2175,7 +2175,7 @@ describe('validateAll', function() {
         assert.throws(function() {
             doc.validateAll();
         }, function(error) {
-            return error.message === "Value for [otherDocs][0][field] must be a string or null.";
+            return error.message === "Value for [otherDocs][0].field must be a string or null.";
         });
     });
     it('it should check joined Document too -- hasAndBelongsToMany - 2', function() {
@@ -2211,7 +2211,7 @@ describe('validateAll', function() {
         assert.throws(function() {
             doc.validateAll({otherDocs: true});
         }, function(error) {
-            return error.message === "Value for [otherDocs][0][field] must be a string or null.";
+            return error.message === "Value for [otherDocs][0].field must be a string or null.";
         });
     });
     it('hasOne with a circular reference', function() {
@@ -2257,7 +2257,7 @@ describe('validateAll', function() {
         assert.throws(function() {
             doc.validateAll({}, {has: {belongsTo: true}});
         }, function(error) {
-            return error.message === "Value for [has][belongsTo][id] must be a string or null.";
+            return error.message === "Value for [has][belongsTo].id must be a string or null.";
         });
     });
 });
@@ -2474,7 +2474,7 @@ describe('_validator', function(){
             doc.validate();
         }, function(error) {
             return (error instanceof Error)
-                && (error.message === "Validator for the field [field] returned `false`.")
+                && (error.message === "Validator for the field .field returned `false`.")
         });
     });
     it('validate on a field - 4', function(){
@@ -2489,7 +2489,7 @@ describe('_validator', function(){
             doc.validate();
         }, function(error) {
             return (error instanceof Error)
-                && (error.message === "Validator for the field [field] returned `false`.")
+                && (error.message === "Validator for the field .field returned `false`.")
         });
     });
     it('validate on the whole document - nested field - 1 ', function(){
@@ -2548,7 +2548,7 @@ describe('_validator', function(){
             doc.validate();
         }, function(error) {
             return (error instanceof Error)
-                && (error.message === "Value for [arr][1] must be a number or null.")
+                && (error.message === "Value for .arr[i] must be a number or null.")
         });
     });
     it('validate with _type: Object - 1', function(){
@@ -2571,7 +2571,7 @@ describe('_validator', function(){
             doc.validate();
         }, function(error) {
             return (error instanceof Error)
-                && (error.message === "Value for [ob][foo] must be a string or null.")
+                && (error.message === "Value for .ob.foo must be a string or null.")
         });
     });
     it('Check extra fields only if the schema is an object without the _type field', function(){
@@ -2608,7 +2608,7 @@ describe('_validator', function(){
             doc.validate();
         }, function(error) {
             return (error instanceof Error)
-                && (error.message === "The field [field] must be one of these values: foo, bar, buzz.")
+                && (error.message === "The field .field must be one of these values: foo, bar, buzz.")
         });
     });
     it('Enum - throw - 2', function(){
@@ -2621,7 +2621,7 @@ describe('_validator', function(){
             doc.validate();
         }, function(error) {
             return (error instanceof Error)
-                && (error.message === "The field [field] must be one of these values: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10.")
+                && (error.message === "The field .field must be one of these values: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10.")
         });
     });
     it('Enum - throw - 3', function(){
@@ -2634,7 +2634,7 @@ describe('_validator', function(){
             doc.validate();
         }, function(error) {
             return (error instanceof Error)
-                && (error.message === "The field [field] must be one of these values: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10...")
+                && (error.message === "The field .field must be one of these values: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10...")
         });
 
     });

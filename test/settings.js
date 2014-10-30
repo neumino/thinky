@@ -119,7 +119,7 @@ describe('Priorities for options', function() {
         assert.throws(function() {
             var doc = new Model({})
         }, function(error) {
-            return error.message === "Value for [id] must be defined.";
+            return error.message === "Value for .id must be defined.";
         });
     });
     it("Thinky options can be overwritten by the Model's one", function() {
