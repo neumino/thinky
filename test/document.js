@@ -2577,7 +2577,7 @@ describe('hooks', function() {
                 Model.get(1).run().then(function(result) {
                     done(new Error("Was expecting an error"))
                 }).error(function(err) {
-                    assert.equal(err.message, "Value for [id] must be a string or null.");
+                    assert.equal(err.message, "Value for .id must be a string or null.");
                     done();
                 });
             }).error(done);

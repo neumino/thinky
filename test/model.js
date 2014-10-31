@@ -157,7 +157,7 @@ describe("Batch insert", function() {
     });
     it('Batch insert should validate fields before saving', function(done) {
         Model.save([{id: 4}]).error(function(err) {
-            assert.equal(err.message, "Value for [id] must be a string or null.")
+            assert.equal(err.message, "Value for .id must be a string or null.")
             done();
         });
     });
