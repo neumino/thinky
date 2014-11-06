@@ -173,11 +173,45 @@ describe("Batch insert", function() {
                 done(new Error("Was expecting an error"));
             }).error(function(e) {
                 assert.equal(e.message, "An error occurred during the batch insert.")
+                assert.ok(e.firstError, "Expected firstError to be set")
                 done();
             });
         });
     });
 
+    it('Batch insert should not fail when options.conflict is set to `update`', function(done) {
+        var docs = [];
+        for(var i=0; i<10; i++) {
+            docs.push({num: i})
+        }
+        Model.save(docs, { conflict: 'update' }).then(function(result) {
+            assert.strictEqual(result, docs);
+            for(i=0; i<10; i++) {
+                assert.equal(typeof docs[i].id, 'string');
+                assert(docs[i].isSaved());
+            }
+            done();
+        }).error(function(e) {
+            done(e);
+        });
+    })
+
+    it('Batch insert should not fail when options.conflict is set to `replace`', function(done) {
+        var docs = [];
+        for(var i=0; i<10; i++) {
+            docs.push({num: i})
+        }
+        Model.save(docs, { conflict: 'replace' }).then(function(result) {
+            assert.strictEqual(result, docs);
+            for(i=0; i<10; i++) {
+                assert.equal(typeof docs[i].id, 'string');
+                assert(docs[i].isSaved());
+            }
+            done();
+        }).error(function(e) {
+            done(e);
+        });
+    })
 });
 
 describe("Joins", function() {
