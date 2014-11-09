@@ -2499,7 +2499,7 @@ describe('hooks', function() {
 
     it('init post async', function(done) {
         var Model = thinky.createModel(modelNames[0], {id: String, title: String});
-        Model.post('init', true, function(next) {
+        Model.post('init', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2514,7 +2514,7 @@ describe('hooks', function() {
     });
     it('init post async - error', function(done) {
         var Model = thinky.createModel(modelNames[0], {id: String, title: String});
-        Model.post('init', true, function(next) {
+        Model.post('init', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2532,7 +2532,7 @@ describe('hooks', function() {
 
     it('validate oncreate sync', function(done) {
         var Model = thinky.createModel(modelNames[0], {id: String, title: String}, {validate: 'oncreate'});
-        Model.post('validate', true, function(next) {
+        Model.post('validate', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2547,14 +2547,14 @@ describe('hooks', function() {
     });
     it('validate oncreate + init async', function(done) {
         var Model = thinky.createModel(modelNames[0], {id: String, title: String}, {validate: 'oncreate'});
-        Model.post('init', true, function(next) {
+        Model.post('init', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title2 = self.id;
                 next();
             }, 100);
         })
-        Model.post('validate', true, function(next) {
+        Model.post('validate', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2596,7 +2596,7 @@ describe('hooks', function() {
 
     it('init validate async', function(done) {
         var Model = thinky.createModel(modelNames[0], {id: String, title: String});
-        Model.post('validate', true, function(next) {
+        Model.post('validate', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2612,7 +2612,7 @@ describe('hooks', function() {
     });
     it('init post async - error', function(done) {
         var Model = thinky.createModel(modelNames[0], {id: String, title: String});
-        Model.post('validate', true, function(next) {
+        Model.post('validate', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2630,7 +2630,7 @@ describe('hooks', function() {
     });
     it('init validateAll async', function(done) {
         var Model = thinky.createModel(modelNames[0], {id: String, title: String});
-        Model.post('validate', true, function(next) {
+        Model.post('validate', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2649,7 +2649,7 @@ describe('hooks', function() {
         var OtherModel = thinky.createModel(modelNames[1], {id: String, foreignKey: String});
         Model.hasOne(OtherModel, 'other', 'id', 'foreignKey');
 
-        OtherModel.post('validate', true, function(next) {
+        OtherModel.post('validate', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2669,7 +2669,7 @@ describe('hooks', function() {
     it('validate on save', function(done) {
         var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
-        Model.post('save', true, function(next) {
+        Model.post('save', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2687,7 +2687,7 @@ describe('hooks', function() {
     it('validate on retrieve - error on validate', function(done) {
         var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
-        Model.pre('validate', true, function(next) {
+        Model.pre('validate', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2709,7 +2709,7 @@ describe('hooks', function() {
     it('validate on retrieve - error on hook', function(done) {
         var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
-        Model.pre('validate', true, function(next) {
+        Model.pre('validate', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2731,7 +2731,7 @@ describe('hooks', function() {
     it('save pre', function(done) {
         var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
-        Model.pre('save', true, function(next) {
+        Model.pre('save', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2752,7 +2752,7 @@ describe('hooks', function() {
     it('save post', function(done) {
         var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
-        Model.post('save', true, function(next) {
+        Model.post('save', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2775,7 +2775,7 @@ describe('hooks', function() {
         var OtherModel = thinky.createModel(modelNames[1], {id: String, foreignKey: String});
         Model.hasOne(OtherModel, 'other', 'id', 'foreignKey');
 
-        OtherModel.pre('save', true, function(next) {
+        OtherModel.pre('save', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2797,7 +2797,7 @@ describe('hooks', function() {
         var OtherModel = thinky.createModel(modelNames[1], {id: String, foreignKey: String});
         Model.hasOne(OtherModel, 'other', 'id', 'foreignKey');
 
-        OtherModel.pre('save', true, function(next) {
+        OtherModel.pre('save', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2817,7 +2817,7 @@ describe('hooks', function() {
     it('delete pre', function(done) {
         var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
-        Model.pre('delete', true, function(next) {
+        Model.pre('delete', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2839,7 +2839,7 @@ describe('hooks', function() {
     it('delete post', function(done) {
         var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
-        Model.post('delete', true, function(next) {
+        Model.post('delete', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
@@ -2861,7 +2861,7 @@ describe('hooks', function() {
     it('hook for retrieve', function(done) {
         var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
-        Model.post('retrieve', true, function(next) {
+        Model.post('retrieve', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
