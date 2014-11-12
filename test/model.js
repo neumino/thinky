@@ -96,6 +96,23 @@ describe('Model', function() {
         assert(util.isPlainObject(doc));
         assert.equal(doc.str, str);
     });
+    it('Create multiple instances from the same document', function() {
+        var str = util.s8();
+        var num = util.random();
+
+        var values = {str: str, num: num};
+        var doc = new Model(values);
+        var otherDoc = new Model(values);
+
+        assert.strictEqual(doc, values);
+        assert.notStrictEqual(doc, otherDoc);
+        doc.str = doc.str+util.s8();
+        assert.notEqual(doc.str, otherDoc.str);
+
+        var anotherDoc = new Model(values);
+        assert.notStrictEqual(anotherDoc, otherDoc);
+        assert.notStrictEqual(anotherDoc, doc);
+    });
     it('Create two instances with the same argument of the Model', function() {
         var str = util.s8();
         var docValues = {str: str};

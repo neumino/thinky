@@ -2504,7 +2504,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
 
         var doc = new Model({id: "foobar"}).then(function() {
@@ -2519,7 +2519,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next(new Error("Async error thrown by a hook"));
-            }, 100);
+            }, 1);
         })
 
         var doc = new Model({id: "foobar"}).then(function() {
@@ -2537,7 +2537,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
 
         var doc = new Model({id: "foobar"}).then(function() {
@@ -2552,14 +2552,14 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title2 = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
         Model.post('validate', function(next) {
             var self = this;
             setTimeout(function() {
                 self.title = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
 
         var doc = new Model({id: "foobar"}).then(function() {
@@ -2601,7 +2601,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
 
         var doc = new Model({id: "foobar"});
@@ -2617,7 +2617,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next(new Error("Async error thrown by a hook"));
-            }, 100);
+            }, 1);
         })
 
         var doc = new Model({id: "foobar"});
@@ -2635,7 +2635,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
 
         var doc = new Model({id: "foobar"});
@@ -2654,7 +2654,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
 
         var doc = new Model({id: "foo"});
@@ -2674,7 +2674,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
 
         var doc = new Model({id: "foo"});
@@ -2692,7 +2692,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
 
         Model.once('ready', function() {
@@ -2714,7 +2714,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next(new Error("I'm Hook, and I'm a vilain"));
-            }, 100);
+            }, 1);
         })
 
         Model.once('ready', function() {
@@ -2736,7 +2736,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
 
         var doc = new Model({id: "foo"});
@@ -2757,7 +2757,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
 
         var doc = new Model({id: "foo"});
@@ -2780,7 +2780,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
 
         var doc = new Model({id: "foo"});
@@ -2802,7 +2802,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
 
         var doc = new Model({id: "foo"});
@@ -2822,7 +2822,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
 
         var doc = new Model({id: "foo"});
@@ -2844,7 +2844,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
 
         var doc = new Model({id: "foo"});
@@ -2866,7 +2866,7 @@ describe('hooks', function() {
             setTimeout(function() {
                 self.title = self.id;
                 next();
-            }, 100);
+            }, 1);
         })
 
         Model.once('ready', function() {
