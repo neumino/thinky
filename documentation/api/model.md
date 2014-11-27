@@ -503,17 +503,16 @@ A user with its friends will look like:
 ### [pre](#pre)
 
 ```js
-Model.pre(event[, isAsync], hook)
+Model.pre(event, hook)
 ```
 
 Add a hook that will be execcuted just before an event. The available pre-hooks are
 `save`, `delete`, `validate`.
 
-The argument `hook` is a function with the signature `function(next) { ... }`, where `next` should
-be called once the hook is done. The context of the hook will be set to the document triggering the event.   
-Call `next` with an error if you want the current event to be aborted.
-
-If the hook is asynchronous, make sure to pass `isAsync` set to true.
+The argument `hook` is a function that takes no argument if it is synchrone. If it as asynchrone,
+it takes exactly one argument `function(next) { ... }`. Call `next` when the hook is
+executed, and call it with an error if you want the current event to be aborted.
+The context of the hook will be set to the document triggering the event.
 
 __Note 1__: The method `Document.validate` is by default synchronous but will become asynchronous
 if an asynchonous hook is set on `validate` (and therefore will return a promise).
@@ -560,17 +559,16 @@ User.pre('save', true, function(next) {
 ### [post](#post)
 
 ```js
-Model.post(event[, isAsync], hook)
+Model.post(event, hook)
 ```
 
 Add a hook that will be execcuted just after an event. The available post-hooks are
 `save`, `delete`, `validate`, `init`, `retrieve`.
 
-The argument `hook` is a function with the signature `function(next) { ... }`, where `next` should
-be called once the hook is done. The context of the hook will be set to the document triggering the event.   
-Call `next` with an error if you want the current event to be aborted.
-
-If the hook is asynchronous, make sure to pass `isAsync` set to true.
+The argument `hook` is a function that takes no argument if it is synchrone. If it as asynchrone,
+it takes exactly one argument `function(next) { ... }`. Call `next` when the hook is
+executed, and call it with an error if you want the current event to be aborted.
+The context of the hook will be set to the document triggering the event.
 
 __Note 1__: The method `Document.validate` is by default synchronous but will become asynchronous
 if an asynchonous hook is set on `validate` (and therefore will return a promise).

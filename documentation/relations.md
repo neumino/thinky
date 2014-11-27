@@ -248,7 +248,8 @@ Use `save` only when you want to save local changes of document.
 The `saveAll` command will save the local document to the database and will recurse in joined documents to save them.
 The foreign keys and links will be automatically saved by `thinky.
 
-_Note_: To avoid infinite recursion with circular references, `saveAll` will not recurse in a field containing document(s)
+_Note_: To avoid infinite recursion with circular references (that appear as soon as you have
+a reciprocal relationship), `saveAll` will not recurse in a field containing document(s)
 of a previously saved model.
 
 __Note__: `saveAll` can delete foreign keys if the joined document is not present. The "rule"
