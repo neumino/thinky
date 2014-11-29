@@ -223,7 +223,16 @@ describe('save', function() {
                 done()
             }).error(done)
         });
-
+        it('Nesting undefined field', function(done){
+            var t = new Model({
+                id: util.s8(),
+                extra: {nested: {foo: 1}}
+            });
+            t.save().then(function(result) {
+                assert.equal(result.extra.nested.foo, 1)
+                done()
+            }).error(done)
+        });
     });
     describe("Replacement", function() {
         afterEach(cleanTables);
@@ -231,12 +240,11 @@ describe('save', function() {
         it('enforce_extra: "remove" should not save the field in the db', function(done){
             var Model = thinky.createModel(modelNames[0], {
                 id: String,
-                date: Date
+                str: String
             }, {enforce_extra: "remove"})
 
             var t = new Model({
                 id: "foo",
-                num: 100,
                 str: "bar",
                 extra: "buzz"
             });

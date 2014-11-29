@@ -87,9 +87,6 @@ describe('Options', function(){
 
         assert.deepEqual(doc._getOptions(), {
             timeFormat: 'raw',
-            enforce_extra: 'none',
-            enforce_missing: false,
-            enforce_type: 'none',
             validate: 'onsave'
         })
        

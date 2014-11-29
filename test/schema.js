@@ -1,6 +1,7 @@
 var config = require(__dirname+'/../config.js');
 var thinky = require(__dirname+'/../lib/thinky.js')(config);
 var r = thinky.r;
+var type = thinky.type;
 
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
@@ -122,30 +123,33 @@ describe('schema', function(){
         var name = util.s8();
         thinky.createModel(name, {id: {foo: {bar: String}}}, {init: false})
     });
-    it('Object in Object - non valid type', function(done){
+    it('Object in Object - non valid type - 1', function(done){
         var name = util.s8();
         try{
             thinky.createModel(name, {id: {foo: {bar: 1}}}, {init: false})
+            done(new Error("Expecting error"));
         }
         catch(err) {
             assert.equal(err.message, "The value must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array`/`'virtual'`/`'Point'` for [id][foo][bar]")
             done();
         }
     });
-    it('Object in Object - non valid type', function(done){
+    it('Object in Object - non valid type - 2', function(done){
         var name = util.s8();
         try{
             thinky.createModel(name, {id: {foo: {bar: {_type: 1}}}}, {init: false})
+            done(new Error("Expecting error"));
         }
         catch(err) {
             assert.equal(err.message, "The field `_type` must be `String`/`Number`/`Boolean`/`Date`/`Buffer`/`Object`/`Array`/`'virtual'`/`'Point'` for [id][foo][bar]")
             done();
         }
     });
-    it('Object in Object - non valid type', function(done){
+    it('Object in Object - non valid type - 3', function(done){
         var name = util.s8();
         try{
             thinky.createModel(name, 1, {init: false})
+            done(new Error("Expecting error"));
         }
         catch(err) {
             assert.equal(err.message, "The schema must be a plain object.")
@@ -153,6 +157,879 @@ describe('schema', function(){
         }
     });
 });
+describe('Chainable types', function(){
+    // Chainable types were added in 1.15.3, prior tests still validates options and such.
+    // These tests are mostly for new validators like `min`/`max`/`alphanum`/etc.
+    it('String - basic - valid string', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string()},
+            {init: false})
+        var doc = new Model({ id: util.s8() })
+    });
+    it('String - basic - wrong type', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string()},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 1 });
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be a string or null.")
+        });
+    });
+    it('String - basic - null', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string()},
+            {init: false})
+        var doc = new Model({});
+        doc.validate();
+    });
+    it('String - basic - null and strict', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().options({enforce_type: "strict"})},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: null});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be a string.")
+        });
+    });
+    it('String - basic - undefined', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().options({enforce_type: "strict"})},
+            {init: false})
+        var doc = new Model({});
+        doc.validate();
+    });
+    it('String - basic - undefined - enforce_missing: strict', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().options({enforce_missing: true})},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be defined.")
+        });
+    });
+    it('String - min - too short', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().min(2) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'a'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be longer than 2."); 
+        });
+    });
+    it('String - min - good', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().min(2) },
+            {init: false})
+        var doc = new Model({ id: 'abc'});
+        doc.validate();
+    });
+    it('String - max - too long', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().max(5) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'abcdefgh'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be shorter than 5."); 
+        });
+    });
+    it('String - max - good', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().max(5) },
+            {init: false})
+        var doc = new Model({ id: 'abc'});
+        doc.validate();
+    });
+    it('String - length - too long', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().length(5) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'abcdef'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be a string with 5 characters."); 
+        });
+    });
+    it('String - length - too short', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().length(5) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'abc'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be a string with 5 characters."); 
+        });
+    });
+    it('String - length - good', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().max(5) },
+            {init: false})
+        var doc = new Model({ id: 'abcde'});
+        doc.validate();
+    });
+    it('String - regex - not matching', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().regex('^foo') },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'bar'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must match the regex."); 
+        });
+    });
+    it('String - regex - good', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().regex('^foo') },
+            {init: false})
+        var doc = new Model({ id: 'foobar'});
+        doc.validate();
+    });
+    it('String - regex with flags - not matching', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().regex('^foo', 'i') },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'bar'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must match the regex."); 
+        });
+    });
+    it('String - regex with flags - good', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().regex('^foo', 'i') },
+            {init: false})
+        var doc = new Model({ id: 'FOObar'});
+        var doc = new Model({ id: 'Foobar'});
+        var doc = new Model({ id: 'fOObar'});
+        doc.validate();
+    });
+    it('String - alphanum - not alphanum', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().alphanum() },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'élégant'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be an alphanumeric string."); 
+        });
+    });
+    it('String - alphanum - match', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().alphanum() },
+            {init: false})
+        var doc = new Model({ id: 'fOOb12ar'});
+        doc.validate();
+    });
+    it('String - email - not an email', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().email() },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'fooATbar.com'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be a valid email."); 
+        });
+    });
+    it('String - email - match', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().email() },
+            {init: false})
+        var doc = new Model({ id: 'foo@bar.com'});
+        doc.validate();
+    });
+    it('String - lowercase - not lowercase', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().lowercase() },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'fooBar'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be a lowercase string."); 
+        });
+    });
+    it('String - lowercase - match', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().lowercase() },
+            {init: false})
+        var doc = new Model({ id: 'foobar'});
+        doc.validate();
+    });
+    it('String - uppercase - not uppercase', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().uppercase() },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'fooBar'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be a uppercase string."); 
+        });
+    });
+    it('String - uppercase - match', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().uppercase() },
+            {init: false})
+        var doc = new Model({ id: 'FOOBAR'});
+        doc.validate();
+    });
+    it('String - validator - return false', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().validator(function() { return false }) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'fooBar'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Validator for the field [id] returned `false`."); 
+        });
+    });
+    it('String - validator - return true', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().validator(function() { return true }) },
+            {init: false})
+        var doc = new Model({ id: 'FOOBAR'});
+        doc.validate();
+    });
+    it('String - validator - throw', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().validator(function() { throw new Error("Not good") }) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'fooBar'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Not good"); 
+        });
+    });
+    it('String - enum - unknown value - 1', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().enum("foo", "bar") },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'buzz'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "The field [id] must be one of these values: foo, bar."); 
+        });
+    });
+    it('String - enum - unknown value - 2', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().enum(["foo", "bar"]) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'buzz'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "The field [id] must be one of these values: foo, bar."); 
+        });
+    });
+    it('String - enum - unknown value - 3', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().enum(["foo"]) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'buzz'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "The field [id] must be one of these values: foo."); 
+        });
+    });
+    it('String - enum - unknown value - 4', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().enum("foo") },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 'buzz'});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "The field [id] must be one of these values: foo."); 
+        });
+    });
+
+    it('String - enum - known value - 1', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().enum("foo", "bar") },
+            {init: false})
+        var doc = new Model({ id: 'foo'});
+        doc.validate();
+    });
+    it('String - enum - known value - 2', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().enum(["foo", "bar"]) },
+            {init: false})
+        var doc = new Model({ id: 'foo'});
+        doc.validate();
+    });
+    it('String - enum - known value - 3', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().enum(["foo"]) },
+            {init: false})
+        var doc = new Model({ id: 'foo'});
+        doc.validate();
+    });
+    it('String - enum - known value - 4', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().enum("foo") },
+            {init: false})
+        var doc = new Model({ id: 'foo'});
+        doc.validate();
+    });
+
+    it('Number - basic - valid number', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number()},
+            {init: false})
+        var doc = new Model({ id: 1 })
+    });
+    it('Number - basic - wrong type', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number()},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: "foo" });
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be a finite number or null.")
+        });
+    });
+    it('Number - basic - NaN', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number()},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: NaN });
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be a finite number or null.")
+        });
+    });
+    it('Number - basic - Infinity', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number()},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: Infinity });
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be a finite number or null.")
+        });
+    });
+    it('Number - basic - -Infinity', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number()},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: -Infinity });
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be a finite number or null.")
+        });
+    });
+    it('Number - min - too small', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number().min(2) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 1});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be greater than 2."); 
+        });
+    });
+    it('Number - min - good', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number().min(2) },
+            {init: false})
+        var doc = new Model({ id: 3});
+        doc.validate();
+    });
+    it('Number - max - too big', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number().max(5) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 8});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be less than 5."); 
+        });
+    });
+    it('Number - max - good', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number().max(5) },
+            {init: false})
+        var doc = new Model({ id: 3});
+        doc.validate();
+    });
+    it('Number - integer - float', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number().integer() },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 3.14});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be an integer."); 
+        });
+    });
+    it('Number - integer - good', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number().integer() },
+            {init: false})
+        var doc = new Model({ id: 3});
+        doc.validate();
+    });
+    it('Number - validator - return false', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number().validator(function() { return false }) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 2});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Validator for the field [id] returned `false`."); 
+        });
+    });
+    it('Number - validator - return true', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number().validator(function() { return true }) },
+            {init: false})
+        var doc = new Model({ id: 3});
+        doc.validate();
+    });
+    it('Number - validator - throw', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number().validator(function() { throw new Error("Not good") }) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: 4});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Not good"); 
+        });
+    });
+
+    it('Boolean - basic - valid boolean', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.boolean()},
+            {init: false})
+        var doc = new Model({ id: true })
+    });
+    it('Boolean - basic - wrong type', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.boolean()},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: "foo" });
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be a boolean or null.")
+        });
+    });
+    it('Boolean - validator - return false', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.boolean().validator(function() { return false }) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: true});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Validator for the field [id] returned `false`."); 
+        });
+    });
+    it('Boolean - validator - return true', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.boolean().validator(function() { return true }) },
+            {init: false})
+        var doc = new Model({ id: true});
+        doc.validate();
+    });
+    it('Boolean - validator - throw', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number().validator(function() { throw new Error("Not good") }) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: true});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Not good"); 
+        });
+    });
+
+    it('Date - basic - valid date', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.date()},
+            {init: false})
+        var doc = new Model({ id: new Date() })
+    });
+    it('Date - basic - wrong type', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.date()},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: "foo" });
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be a date or a valid string or null.")
+        });
+    });
+    it('Date - min - too small', function(){
+        var minDate = new Date(0);
+        minDate.setUTCSeconds(60*60*24*2);
+        var valueDate = new Date(0);
+        valueDate.setUTCSeconds(60*60*24);
+
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.date().min(minDate) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: valueDate});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && ((error.message.match("Value for .id. must be after")) !== null); 
+        });
+    });
+    it('Date - min - good', function(){
+        var minDate = new Date(0);
+        minDate.setUTCSeconds(60*60*24);
+        var valueDate = new Date(0);
+        valueDate.setUTCSeconds(60*60*24*2);
+
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.date().min(minDate) },
+            {init: false})
+        var doc = new Model({ id: valueDate});
+        doc.validate();
+    });
+    it('Date - max - too big', function(){
+        var maxDate = new Date(0);
+        maxDate.setUTCSeconds(60*60*24);
+        var valueDate = new Date(0);
+        valueDate.setUTCSeconds(60*60*24*2);
+
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.date().max(maxDate) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: valueDate});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && ((error.message.match("Value for .id. must be before")) !== null); 
+        });
+    });
+    it('Date - max - good', function(){
+        var maxDate = new Date(0);
+        maxDate.setUTCSeconds(60*60*24*2);
+        var valueDate = new Date(0);
+        valueDate.setUTCSeconds(60*60*24);
+
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.date().max(maxDate) },
+            {init: false})
+        var doc = new Model({ id: valueDate});
+        doc.validate();
+    });
+    it('Date - validator - return false', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.date().validator(function() { return false }) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: new Date()});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Validator for the field [id] returned `false`."); 
+        });
+    });
+    it('Date - validator - return true', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.date().validator(function() { return true }) },
+            {init: false})
+        var doc = new Model({ id: new Date()});
+        doc.validate();
+    });
+    it('Date - validator - throw', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.date().validator(function() { throw new Error("Not good") }) },
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: new Date()});
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Not good"); 
+        });
+    });
+
+    it('Buffer - basic - valid buffer', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.buffer()},
+            {init: false})
+        var doc = new Model({ id: new Buffer("foobar") })
+    });
+    it('Buffer - basic - wrong type', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.buffer()},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: "foo" });
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be a buffer or null.")
+        });
+    });
+
+    it('Point - basic - valid point', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.point()},
+            {init: false})
+        var doc = new Model({ id: [10, 2] })
+    });
+    it('Point - basic - wrong type', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.point()},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: "foo" });
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be a Point or null.")
+        });
+    });
+
+    it('Object - basic - valid object', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.object().schema({
+                foo: type.string()
+            })},
+            {init: false})
+        var doc = new Model({ id: {foo: "bar" }})
+    });
+    it('Object - basic - wrong type', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.object().schema({
+                foo: type.string()
+            })},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: "foo" });
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be an object or null.")
+        });
+    });
+
+    it('Array - basic - valid array', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.array().schema(type.string())},
+            {init: false})
+        var doc = new Model({ id: ['bar']})
+    });
+    it('Array - basic - wrong type', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.array().schema(type.string())},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: "foo" });
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be an array or null.")
+        });
+    });
+    it('Array - basic - wrong nested type', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.array().schema(type.string())},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: [2] });
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id][0] must be a string or null.")
+        });
+    });
+    it('Array - basic - wrong nested type', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.array().schema(String)},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: [2] });
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id][0] must be a string or null.")
+        });
+    });
+    it('Array - basic - wrong nested type', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.array().schema({_type: String})},
+            {init: false})
+        assert.throws(function() {
+            var doc = new Model({ id: [2] });
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id][0] must be a string or null.")
+        });
+    });
+    it('Array - min - good', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.array().schema(type.string()).min(2)},
+            {init: false})
+        var doc = new Model({ id: ['foo', 'bar', 'buzz']});
+        doc.validate();
+    });
+    it('Array - min - error', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.array().schema(type.string()).min(2)},
+            {init: false})
+        var doc = new Model({ id: ['foo']});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must have at least 2 elements.")
+        });
+    });
+    it('Array - max - good', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.array().schema(type.string()).max(2)},
+            {init: false})
+        var doc = new Model({ id: ['foo']});
+        doc.validate();
+    });
+    it('Array - max - error', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.array().schema(type.string()).max(2)},
+            {init: false})
+        var doc = new Model({ id: ['foo', 'bar', 'buzz']});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must have at most 2 elements.")
+        });
+    });
+    it('Array - length - good', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.array().schema(type.string()).length(2)},
+            {init: false})
+        var doc = new Model({ id: ['foo', 'bar']});
+        doc.validate();
+    });
+    it('Array - length - error', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.array().schema(type.string()).length(2)},
+            {init: false})
+        var doc = new Model({ id: ['foo', 'bar', 'buzz']});
+        assert.throws(function() {
+            doc.validate();
+        }, function(error) {
+            return (error instanceof Error) && (error.message === "Value for [id] must be an array with 2 elements.")
+        });
+    });
+
+    it('Virtual - basic', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {
+                id: type.string(),
+                foo: type.virtual()
+            },
+            {init: false})
+        var doc = new Model({ id: 'bar', foo: "bar"})
+    });
+})
 
 describe('generateDefault', function(){
     it('String - constant', function(){
@@ -765,7 +1642,6 @@ describe('validate', function(){
         }, function(error) {
             return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
         });
-
     });
     it('String - null - type: "strict"', function(){
         var name = util.s8();
@@ -836,7 +1712,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a number.")
+            return (error instanceof Error) && (error.message === "Value for [field] must be a finite number.")
         });
     });
     it('Number - wrong type  - type: "loose"', function(){
@@ -856,7 +1732,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a number or null.")
+            return (error instanceof Error) && (error.message === "Value for [field] must be a finite number or null.")
         });
 
     });
@@ -1122,10 +1998,6 @@ describe('validate', function(){
         })
         doc.validate();
     });
-
-
-
-
     it('Buffer - type: "strict"', function(){
         var name = util.s8();
         var str = util.s8();
@@ -1281,11 +2153,6 @@ describe('validate', function(){
         })
         doc.validate();
     });
-
-
-
-
-
     it('Array - missing - enforce_missing: true', function(){
         var name = util.s8();
         var str = util.s8();
@@ -1356,7 +2223,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a array or null.")
+            return (error instanceof Error) && (error.message === "Value for [field] must be an array or null.")
         });
     });
     it('Array - wrong type - enforce_type: "loose"', function(){
@@ -1376,7 +2243,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a array or null.")
+            return (error instanceof Error) && (error.message === "Value for [field] must be an array or null.")
         });
     });
     it('Array - wrong type - enforce_type: "none"', function(){
@@ -1411,7 +2278,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field][0] must be a number.")
+            return (error instanceof Error) && (error.message === "Value for [field][0] must be a finite number.")
         });
     });
     it('Array - wrong type inside - enforce_type: "loose"', function(){
@@ -1431,7 +2298,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field][0] must be a number or null.")
+            return (error instanceof Error) && (error.message === "Value for [field][0] must be a finite number or null.")
         });
     });
     it('Array - wrong type inside - enforce_type: "none"', function(){
@@ -1450,7 +2317,7 @@ describe('validate', function(){
 
         doc.validate();
     });
-    it('Array - wrong type inside - not first - enforce_type: "strict"', function(){
+    it('Array - wrong type inside - not first - enforce_type: "strict" - 1', function(){
         var name = util.s8();
         var str = util.s8();
 
@@ -1467,10 +2334,10 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field][3] must be a number.")
+            return (error instanceof Error) && (error.message === "Value for [field][3] must be a finite number.")
         });
     });
-    it('Array - wrong type inside - not first - enforce_type: "strict"', function(){
+    it('Array - wrong type inside - not first - enforce_type: "strict" - 2', function(){
         var name = util.s8();
         var str = util.s8();
 
@@ -1489,7 +2356,6 @@ describe('validate', function(){
         }, function(error) {
             return (error instanceof Error) && (error.message === "The element in the array [field] (position 3) cannot be `undefined`.")
         });
-
     });
     it('Array - wrong type inside - not first - enforce_type: "loose"', function(){
         var name = util.s8();
@@ -1580,7 +2446,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a object or null.")
+            return (error instanceof Error) && (error.message === "Value for [field] must be an object or null.")
         });
     });
     it('Object - undefined - enforce_type: "none"', function(){
@@ -1632,7 +2498,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a object.")
+            return (error instanceof Error) && (error.message === "Value for [field] must be an object.")
         });
     });
     it('Object - nested wrong type - enforce_type: "strict"', function(){
@@ -1654,7 +2520,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field] must be a object.")
+            return (error instanceof Error) && (error.message === "Value for [field] must be an object.")
         });
     });
     it('Object - nested wrong type - enforce_type: "strict" - 2', function(){
@@ -1678,7 +2544,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field][foo] must be a number.")
+            return (error instanceof Error) && (error.message === "Value for [field][foo] must be a finite number.")
         });
     });
     it('Object - nested wrong type - enforce_type: "loose"', function(){
@@ -1702,7 +2568,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field][foo] must be a number or null.")
+            return (error instanceof Error) && (error.message === "Value for [field][foo] must be a finite number or null.")
         });
     });
     it('Object - Empty - enforce_type: "strict"', function(){
@@ -1777,7 +2643,7 @@ describe('validate', function(){
         assert.throws(function() {
             doc.validate();
         }, function(error) {
-            return (error instanceof Error) && (error.message === "Value for [field][foo] must be a number or null.")
+            return (error instanceof Error) && (error.message === "Value for [field][foo] must be a finite number or null.")
         });
     });
     it('Object - nested wrong type 5 - enforce_type: "none"', function(){
@@ -1897,7 +2763,7 @@ describe('validate', function(){
             bar: "keep"
         })
         doc.validate();
-
+        
         assert.equal(false, doc.foo.hasOwnProperty('buzz'));
         assert.deepEqual(doc, {
             id: str,
@@ -2548,7 +3414,7 @@ describe('_validator', function(){
             doc.validate();
         }, function(error) {
             return (error instanceof Error)
-                && (error.message === "Value for [arr][1] must be a number or null.")
+                && (error.message === "Value for [arr][1] must be a finite number or null.")
         });
     });
     it('validate with _type: Object - 1', function(){

@@ -682,7 +682,7 @@ describe('virtual', function(){
             numVirtual: 3
         })
         doc.save().then(function(result) {
-            return Model.get(1).run()
+            return Model.get(1).execute();
         }).then(function(result) {
             assert.equal(result.numVirtual, undefined);
             done();
