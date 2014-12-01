@@ -266,6 +266,11 @@ hr{
 #float-content li{
     margin: 8px 0px;
 }
+#float-content li ul li{
+    margin: 8px 0px;
+    list-style: circle;
+
+}
 ul{
     margin: 0px;
     padding: 0px 0px 0px 20px;
