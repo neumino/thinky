@@ -878,7 +878,6 @@ describe('Chainable types', function(){
             return (error instanceof Error) && (error.message === "Value for [id] must be a Point or null.")
         });
     });
-
     it('Object - basic - valid object', function(){
         var name = util.s8();
         var Model = thinky.createModel(name,
@@ -922,7 +921,7 @@ describe('Chainable types', function(){
             return (error instanceof Error) && (error.message === "Value for [id] must be an array or null.")
         });
     });
-    it('Array - basic - wrong nested type', function(){
+    it('Array - basic - wrong nested type - 1', function(){
         var name = util.s8();
         var Model = thinky.createModel(name,
             {id: type.array().schema(type.string())},
@@ -934,7 +933,7 @@ describe('Chainable types', function(){
             return (error instanceof Error) && (error.message === "Value for [id][0] must be a string or null.")
         });
     });
-    it('Array - basic - wrong nested type', function(){
+    it('Array - basic - wrong nested type - 2', function(){
         var name = util.s8();
         var Model = thinky.createModel(name,
             {id: type.array().schema(String)},
@@ -946,7 +945,7 @@ describe('Chainable types', function(){
             return (error instanceof Error) && (error.message === "Value for [id][0] must be a string or null.")
         });
     });
-    it('Array - basic - wrong nested type', function(){
+    it('Array - basic - wrong nested type - 3', function(){
         var name = util.s8();
         var Model = thinky.createModel(name,
             {id: type.array().schema({_type: String})},
@@ -1516,7 +1515,6 @@ describe('generateDefault', function(){
         assert.equal(doc.id, str);
         assert.deepEqual(doc.ar, [1,2,3]);
     });
-
 });
 describe('validate', function(){
     it('String - wrong type - type: "strict"', function(){
@@ -3502,6 +3500,12 @@ describe('_validator', function(){
             return (error instanceof Error)
                 && (error.message === "The field [field] must be one of these values: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10...")
         });
+    });
 
+    it('Array without type', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name, {id: Array}, {init: false})
+        doc = new Model({id: [1,2,3]});
+        doc.validate();
     });
 });

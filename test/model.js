@@ -1,6 +1,7 @@
 var config = require(__dirname+'/../config.js');
 var thinky = require(__dirname+'/../lib/thinky.js')(config);
 var r = thinky.r;
+var type = thinky.type;
 
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
@@ -731,12 +732,12 @@ describe('virtual', function(){
         })
         doc.save().then(function(result) {
             assert.equal(result.numVirtual, 10);
-            return Model.get(1).run()
+            return Model.get(1).execute()
         }).then(function(result) {
             assert.equal(result.numVirtual, undefined);
 
             done();
-        }).error(done);
+        }).error(done).catch(done);
     });
     it('Virtual fields should be genrated after other default values', function() {
         var Model = thinky.createModel(modelNames[0], {
@@ -766,4 +767,37 @@ describe('virtual', function(){
         assert.equal(doc.numVirtual, 3);
         assert.equal(doc.anumVirtual, 3);
     });
+    it('Virtual fields should be not be generated if a parent is undefined', function() {
+        var Model = thinky.createModel(modelNames[0], {
+            id: Number,
+            nested: {
+                field: {
+                    _type: "virtual",
+                    default: function() {
+                        return 3;
+                    }
+                }
+            }
+        });
+        var doc = new Model({
+            id: 1
+        })
+        doc.generateVirtualValues()
+        assert.equal(doc.nested, undefined);
+    });
+    it('Virtual fields should not throw if a parent has the wrong type', function() {
+        var Model = thinky.createModel(modelNames[0], {
+            id: Number,
+            ar: type.array().schema({
+                num: type.number().default(3)
+            }).options({enforce_type: "none"})
+        });
+        var doc = new Model({
+            id: 1,
+            ar: 3
+        })
+        doc._generateDefault();
+        assert.equal(doc.ar, 3);
+    });
+
 });
