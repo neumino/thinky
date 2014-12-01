@@ -24,9 +24,11 @@ var Post = thinky.createModel("Post", {
     idAuthor: String
 }); 
 
+// You can also add constraints on the schema
 var Author = thinky.createModel("Author", {
-    id: String,
-    name: String
+    id: type.string(),            // a normal string
+    name: type.string().min(2)    // a string of at least two characters
+    email: type.string().email()  // a string that is a valid email
 });
 
 // Join the models
@@ -44,7 +46,8 @@ var post = new Post({
 
 // Create a new author
 var author = new Author({
-    name: "Michel"
+    name: "Michel",
+    email: "orphee@gmail.com"
 });
 
 // Join the documents
@@ -60,7 +63,8 @@ post.saveAll().then(function(result) {
         idAuthor: "3851d8b4-5358-43f2-ba23-f4d481358901",
         author: {
             id: "3851d8b4-5358-43f2-ba23-f4d481358901",
-            name: "Michel"
+            name: "Michel",
+            email: "orphee@gmail.com"
         }
     }
     */
@@ -79,7 +83,8 @@ Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().run().then(function(r
         idAuthor: "3851d8b4-5358-43f2-ba23-f4d481358901",
         author: {
             id: "3851d8b4-5358-43f2-ba23-f4d481358901",
-            name: "Michel"
+            name: "Michel",
+            email: "orphee@gmail.com"
         }
     }
     */
