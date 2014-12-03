@@ -2769,6 +2769,34 @@ describe('validate', function(){
             bar: "keep"
         });
     });
+    it('Extra field - enforce_extra:"remove" - should not removed joined documents', function(){
+        var name = util.s8();
+        var str = util.s8();
+
+        var Model = thinky.createModel(name, {
+            id: String,
+        }, {init: false, enforce_extra: "remove"})
+
+
+        var OtherModel = thinky.createModel(util.s8(), {
+            id: String,
+            otherId: String
+        }, {init: false, enforce_extra: "remove"})
+
+        Model.hasOne(OtherModel, "otherDoc", "id", "otherId", {init: false});
+
+        var value = { id: util.s8() }
+        var value2 = { id: util.s8(), otherId: value.id }
+        doc = new Model(value)
+        var otherDoc = new OtherModel(value2)
+        doc.otherDoc = otherDoc;
+
+        doc.validateAll();
+
+        assert.deepEqual(doc, {id: value.id, otherDoc: {id: otherDoc.id, otherId: otherDoc.otherId}});
+       
+    });
+
     it('Test option validate="oncreate"', function(){
         var name = util.s8();
         var str = util.s8();
