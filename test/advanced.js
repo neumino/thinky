@@ -32,6 +32,7 @@ var cleanTables = function(done) {
 }
 
 
+
 describe('Advanced cases', function(){
     describe('saveAll', function(){
         afterEach(cleanTables);
@@ -680,13 +681,13 @@ describe('Advanced cases', function(){
                 assert.strictEqual(doc.has, otherDoc);
 
                 doc.deleteAll({}).then(function(result) {
-                    Model.get(doc.id).run().error(function(error) {
-                        assert(error instanceof Errors.DocumentNotFound);
-                        OtherModel.get(otherDoc.id).run().then(function(result) {
-                            assert.equal(result.id, otherDoc.id);
-                            done()
-                        });
-                    });
+                    return Model.get(doc.id).run()
+                }).error(function(error) {
+                    assert(error instanceof Errors.DocumentNotFound);
+                    return OtherModel.get(otherDoc.id).run();
+                }).then(function(result) {
+                    assert.equal(result.id, otherDoc.id);
+                    done()
                 });
             }).error(done);
         });
