@@ -219,6 +219,14 @@ describe('Chainable types', function(){
             return (error instanceof Error) && (error.message === "Value for [id] must be defined.")
         });
     });
+    it('String - r.uuid', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.string().default(r.uuid())},
+            {init: false})
+        var doc = new Model({});
+        doc.validate();
+    });
     it('String - min - too short', function(){
         var name = util.s8();
         var Model = thinky.createModel(name,
@@ -557,6 +565,14 @@ describe('Chainable types', function(){
         }, function(error) {
             return (error instanceof Error) && (error.message === "Value for [id] must be a finite number or null.")
         });
+    });
+    it('Number - r.random()', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.number().default(r.uuid())},
+            {init: false})
+        var doc = new Model({});
+        doc.validate();
     });
     it('Number - basic - Infinity', function(){
         var name = util.s8();
