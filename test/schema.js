@@ -749,6 +749,15 @@ describe('Chainable types', function(){
             {id: type.date()},
             {init: false})
         var doc = new Model({ id: new Date() })
+        doc.validate();
+    });
+    it('Date - null', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.date().options({enforce_type: "loose"})},
+            {init: false})
+        var doc = new Model({ id: null })
+        doc.validate();
     });
     it('Date - basic - wrong type', function(){
         var name = util.s8();
@@ -860,7 +869,16 @@ describe('Chainable types', function(){
         var Model = thinky.createModel(name,
             {id: type.buffer()},
             {init: false})
-        var doc = new Model({ id: new Buffer("foobar") })
+        var doc = new Model({ id: new Buffer("foobar") });
+        doc.validate();
+    });
+    it('Buffer - basic - valid buffer', function(){
+        var name = util.s8();
+        var Model = thinky.createModel(name,
+            {id: type.buffer()},
+            {init: false})
+        var doc = new Model({ id: null});
+        doc.validate();
     });
     it('Buffer - basic - wrong type', function(){
         var name = util.s8();
