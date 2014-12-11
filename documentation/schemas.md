@@ -47,7 +47,7 @@ There are two more ways to define a type, one is via the methods in `thinky.type
     for ReQL types like `r.now()`
 - `type.buffer()` for a `Buffer`
 - `type.object()` for an `Object`
-- `type.array)` for an `Array`
+- `type.array()` for an `Array`
 - `type.point()` for a `"Point"`
 - `type.virtual()` for a `"virtual"`
 
