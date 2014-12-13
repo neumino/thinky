@@ -926,3 +926,137 @@ describe('optimizer', function() {
         assert(query.match(/index: "name1"/) === null);
     })
 });
+
+describe('In place writes', function() {
+    afterEach(cleanTables);
+    it('Point write - valid', function(done) {
+        var Model = thinky.createModel(modelNames[0], {
+            id: String,
+            num: Number
+        });
+        var doc = new Model({id: util.s8(), num: 0});
+        doc.save().then(function() {
+            return Model.get(doc.id).update({num: 1}).run()
+        }).then(function(result) {
+            assert(result);
+            assert.equal(result.id, doc.id);
+            assert.equal(result.num, 1);
+            done();
+        }).error(done);
+    })
+    it('Point write - post non valid - primary key is a string', function(done) {
+        var Model = thinky.createModel(modelNames[0], {
+            id: String,
+            num: Number
+        });
+        var doc = new Model({id: util.s8(), num: 0});
+        doc.save().then(function() {
+            return Model.get(doc.id).update({num: r.expr("foo")}).run()
+        }).then(function() {
+            done(new Error("Was expecting an error"));
+        }).error(function(error) {
+            assert(error.message.match("The write failed, and the changes were reverted"));
+            Model.get(doc.id).run().then(function(result) {
+                assert.deepEqual(doc, result);
+                done();
+            }).error(done);
+        })
+    })
+    it('Point write - post non valid - primary key not a string', function(done) {
+        var Model = thinky.createModel(modelNames[0], {
+            id: Number,
+            num: Number
+        });
+        var doc = new Model({id: 1, num: 0});
+        doc.save().then(function() {
+            return Model.get(doc.id).update({num: r.expr("foo")}).run()
+        }).then(function() {
+            done(new Error("Was expecting an error"));
+        }).error(function(error) {
+            assert(error.message.match("The write failed, and the changes were reverted"));
+            Model.get(doc.id).run().then(function(result) {
+                assert.deepEqual(doc, result);
+                done();
+            }).error(done);
+        })
+    })
+    it('Range write - valid', function(done) {
+        var Model = thinky.createModel(modelNames[0], {
+            id: String,
+            num: Number
+        });
+        var docs = [{id: util.s8(), num: 0}, {id: util.s8(), num: 0}];
+        Model.save(docs).then(function() {
+            return Model.update({num: 1}).run()
+        }).then(function(result) {
+            assert(result);
+            docs.sort(function(a, b) { return (a.id > b.id) ? 1 : -1; });
+            result.sort(function(a, b) { return (a.id > b.id) ? 1 : -1; });
+
+            assert.equal(result[0].id, docs[0].id);
+            assert.equal(result[1].id, docs[1].id);
+            assert.equal(result[0].num, 1);
+            assert.equal(result[1].num, 1);
+            done();
+        }).error(done);
+    })
+    it('Range write - post non valid - primary key is a string', function(done) {
+        var Model = thinky.createModel(modelNames[0], {
+            id: String,
+            num: Number
+        });
+        var docs = [{id: util.s8(), num: 0}, {id: util.s8(), num: 1}];
+        Model.save(docs).then(function() {
+            return Model.update({num: r.expr("foo")}).run()
+        }).then(function() {
+            done(new Error("Was expecting an error"));
+        }).error(function(error) {
+            assert(error.message.match("The write failed, and the changes were reverted"));
+            Model.run().then(function(result) {
+                result.sort(function(a, b) { return (a.num > b.num) ? 1 : -1; });
+                assert.equal(result[0].num, 0);
+                assert.equal(result[1].num, 1);
+                done();
+            }).error(done);
+        }).error(done);
+    })
+    it('Range write - post non valid - primary key is not a string', function(done) {
+        var Model = thinky.createModel(modelNames[0], {
+            id: Number,
+            num: Number
+        });
+        var docs = [{id: 0, num: 0}, {id: 1, num: 1}];
+        Model.save(docs).then(function() {
+            return Model.update({num: r.expr("foo")}).run()
+        }).then(function() {
+            done(new Error("Was expecting an error"));
+        }).error(function(error) {
+            assert(error.message.match("The write failed, and the changes were reverted"));
+            Model.run().then(function(result) {
+                result.sort(function(a, b) { return (a.num > b.num) ? 1 : -1; });
+                assert.equal(result[0].num, 0);
+                assert.equal(result[1].num, 1);
+                done();
+            }).error(done);
+
+        }).error(done);
+    })
+    it('Point write - pre non valid', function(done) {
+        var Model = thinky.createModel(modelNames[0], {
+            id: String,
+            num: Number
+        });
+        var doc = new Model({id: util.s8(), num: 0});
+        doc.save().then(function() {
+            return Model.get(doc.id).update({num: "foo"}).run()
+        }).then(function() {
+            done(new Error("Was expecting an error"));
+        }).error(function(error) {
+            assert(error.message.match(/^The partial value is not valid, so the write was not executed. The original error was:/));
+            Model.get(doc.id).run().then(function(result) {
+                assert.deepEqual(doc, result);
+                done();
+            }).error(done);
+        })
+    })
+});
