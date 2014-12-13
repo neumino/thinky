@@ -318,3 +318,50 @@ User.filter({age: 18}).run().then(function(result) {
     // result is an array of instances of `User`
 });
 ```
+
+
+--------------
+
+<div id="reql"></div>
+### Overwritten [ReQL methods](#reql)
+
+A few methods have slightly different behavior than the original ReQL commands.
+
+- The `get` command will return an error if no document is found (instead of `null`). This
+lets you easily chain commands after `get` without having to use `r.branch`.
+
+```js
+User.get(1).getJoin().run().then(function(result) {
+    // ...
+});
+```
+
+
+- The commands `update` and `replace` will have their first argument partially validated,
+if the first argument is an object. The validation will be performed with `enforce_missing: false`.
+Once the queries has been executed, thinky will validate the returned values, and if an
+error occur during validation, the changes will be reverted (so another query will be issued).
+
+__Note__: Because reverting the changes require a round trip, this operation
+is not atomic and may overwrite another write.
+
+Typically, this may result in the document being `{id: 1, foo: "bar"}`.
+
+```js
+Model = thinky.createModel("User", {
+    id: Number,
+    age: Number
+});
+
+var promises = [];
+// Suppose that the document is {id: 1, age: 18}
+promises.push(Model.get(1).update({age: r.expr("string")}).run());
+promises.push(Model.get(1).update({age: 20).run());
+
+/*
+What may happen is:
+- The document becomes {id: 1, age: "string"}
+- The document becomes {id: 1, age: 20}
+- The document is reverted to {id: 1, age: 18}
+*/
+```
