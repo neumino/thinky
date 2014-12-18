@@ -59,6 +59,22 @@ describe('save', function() {
         done();
       }).error(done);
     });
+    it('Save should fail if validate throws', function(done){
+      var str = util.s8();
+      var num = util.random();
+
+      doc = new Model({
+        str: num,
+        num: num
+      })
+      assert.equal(doc.isSaved(), false);
+      doc.save().then(function(result) {
+        done(new Error("Was expecting an error"));
+      }).error(function(error) {
+        console.log(error);
+        done();
+      });
+    });
     it('Save should work with a callback', function(done){
       var str = util.s8();
       var num = util.random();
