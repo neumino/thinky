@@ -71,7 +71,6 @@ describe('save', function() {
       doc.save().then(function(result) {
         done(new Error("Was expecting an error"));
       }).error(function(error) {
-        console.log(error);
         done();
       });
     });
@@ -1284,6 +1283,19 @@ describe('save', function() {
       }).error(done);
     });
   })
+  describe('validate', function() {
+    afterEach(cleanTables);
+    it('should validate then build the query - Regression #163', function(done) {
+      var Model = thinky.createModel(modelNames[0], {id: Date});
+      var doc = new Model({id: "notADate"});
+      doc.save().then(function() {
+        done(new Error("Was expecting an error"));
+      }).error(function(error) {
+        assert.equal(error.message, 'Value for [id] must be a date or a valid string or null.')
+        done();
+      });
+    });
+  });
 });
 
 describe('delete', function() {
