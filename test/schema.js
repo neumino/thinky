@@ -893,12 +893,19 @@ describe('Chainable types', function(){
     });
   });
 
-  it('Point - basic - valid point', function(){
+  it('Point - basic - valid point - 1', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
       {id: type.point()},
       {init: false})
     var doc = new Model({ id: [10, 2] })
+  });
+  it('Point - basic - valid point - 2', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.point()},
+      {init: false})
+    var doc = new Model({ id: r.point(2, 10) });
   });
   it('Point - basic - wrong type', function(){
     var name = util.s8();

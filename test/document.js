@@ -2,6 +2,7 @@ var config = require(__dirname+'/../config.js');
 var thinky = require(__dirname+'/../lib/thinky.js')(config);
 var r = thinky.r;
 var Errors = thinky.Errors;
+var type = thinky.type;
 
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
@@ -245,6 +246,20 @@ describe('save', function() {
       });
       t.save().then(function(result) {
         assert.equal(result.extra.nested.foo, 1)
+        done()
+      }).error(done)
+    });
+    it('Point - ReQL point', function(done){
+      Model = thinky.createModel(modelNames[0], {
+        id: String,
+        point: type.point()
+      })
+      var t = new Model({
+        id: util.s8(),
+        point: r.point(2, 10)
+      });
+      t.save().then(function(result) {
+        assert.equal(result.point.$reql_type$, 'GEOMETRY');
         done()
       }).error(done)
     });
