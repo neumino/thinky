@@ -10,8 +10,11 @@ var Errors = thinky.Errors;
 
 
 var modelNameSet = {};
-modelNameSet[util.s8()] = true;
-modelNameSet[util.s8()] = true;
+//modelNameSet[util.s8()] = true;
+//modelNameSet[util.s8()] = true;
+modelNameSet["foo"] = true;
+modelNameSet['bar'] = true;
+
 var modelNames = Object.keys(modelNameSet);
 
 var cleanTables = function(done) {
@@ -256,13 +259,71 @@ describe('Advanced cases', function(){
           assert.equal(result.has[1].otherId, result.id);
           assert.equal(result.has[2].otherId, result.id);
 
-          OtherModel.getAll(doc.id, {index: "otherId"}).getJoin().run().then(function(result) {
+          OtherModel.run().then(function(result) {
             assert.equal(result.length, 3);
             done()
           })
         });
       }).error(done);
     });
+    it('hasMany - belongsTo - 2', function(done) {
+      var Model = thinky.createModel(modelNames[0], {
+        id: String
+      });
+
+      var OtherModel = thinky.createModel(modelNames[1], {
+        id: String,
+        otherId: String
+      });
+
+      Model.hasMany(OtherModel, "has", "id", "otherId");
+      OtherModel.belongsTo(Model, "belongsTo", "otherId", "id");
+
+      var values = {};
+      var otherValues = {};
+      var otherDocs = [new OtherModel(otherValues), new OtherModel(otherValues), new OtherModel(otherValues)];
+
+      values.has = otherDocs;
+      var doc = new Model(values);
+
+      doc.saveAll().then(function(result) {
+        assert.equal(typeof result.id, 'string');
+        assert.equal(result.has.length, 3);
+        for(var i=0; i<result.has.length; i++) {
+          assert.equal(typeof result.has[i].id, 'string')
+          assert.equal(result.has[i].otherId, result.id)
+        }
+
+        assert.strictEqual(result, doc);
+        for(var i=0; i<result.has.length; i++) {
+          assert.strictEqual(result.has[i], doc.has[i]);
+        }
+        assert.strictEqual(doc.has, otherDocs);
+
+        util.sortById(otherDocs);
+        Model.get(doc.id).getJoin({
+          has: {
+            _apply: function(sequence) {
+              return sequence.orderBy('id');
+            }
+          }}).run().then(function(result) {
+
+          assert.equal(result.id, doc.id);
+          assert.equal(result.has[0].id, doc.has[0].id);
+          assert.equal(result.has[1].id, doc.has[1].id);
+          assert.equal(result.has[2].id, doc.has[2].id);
+
+          assert.equal(result.has[0].otherId, result.id);
+          assert.equal(result.has[1].otherId, result.id);
+          assert.equal(result.has[2].otherId, result.id);
+
+          OtherModel.run().then(function(result) {
+            assert.equal(result.length, 3);
+            done()
+          })
+        });
+      }).error(done);
+    })
     it('hasMany - belongsTo', function(done) {
       var Model = thinky.createModel(modelNames[0], {
         id: String
@@ -391,8 +452,8 @@ describe('Advanced cases', function(){
 
       var values = {};
       var otherValues = {};
-      var doc1 = new Model({});
-      var doc2 = new Model({});
+      var doc1 = new Model(values);
+      var doc2 = new Model(otherValues);
       var otherDoc1 = new OtherModel({});
       var otherDoc2 = new OtherModel({});
       var otherDoc3 = new OtherModel({});
@@ -422,6 +483,159 @@ describe('Advanced cases', function(){
               assert.equal(result.links[2].id, doc2.links[2].id);
               done()
             })
+          });
+        });
+      }).error(done);
+    });
+    it('hasAndBelongsToMany -- primary keys - 2', function(done) {
+      var Model = thinky.createModel(modelNames[0], {
+        id: String
+      });
+
+      var OtherModel = thinky.createModel(modelNames[1], {
+        id: String
+      });
+
+      Model.hasAndBelongsToMany(OtherModel, "links", "id", "id");
+      OtherModel.hasAndBelongsToMany(Model, "links", "id", "id");
+
+      var values = {};
+      var otherValues = {};
+      var otherDoc1 = new OtherModel({});
+      var otherDoc2 = new OtherModel({});
+      var otherDoc3 = new OtherModel({});
+      var otherDoc4 = new OtherModel({});
+
+      values.links = [otherDoc1, otherDoc2, otherDoc4]
+      otherValues.links = [otherDoc2, otherDoc3, otherDoc4]
+      var doc1 = new Model(values);
+      var doc2 = new Model(otherValues);
+
+
+      doc1.saveAll().then(function(result) {
+        util.sortById(doc1.links);
+        doc2.saveAll().then(function(result) {
+          util.sortById(doc2.links);
+          Model.get(doc1.id).getJoin({links: { _apply: function(seq) {
+            return seq.orderBy('id')
+          }}}).run().then(function(result) {
+
+            assert.equal(result.id, doc1.id);
+            assert.equal(result.links[0].id, doc1.links[0].id);
+            assert.equal(result.links[1].id, doc1.links[1].id);
+            assert.equal(result.links[2].id, doc1.links[2].id);
+            Model.get(doc2.id).getJoin({links: { _apply: function(seq) {
+              return seq.orderBy('id');
+            }}}).run().then(function(result) {
+              assert.equal(result.id, doc2.id);
+              assert.equal(result.links[0].id, doc2.links[0].id);
+              assert.equal(result.links[1].id, doc2.links[1].id);
+              assert.equal(result.links[2].id, doc2.links[2].id);
+              done()
+            })
+          });
+        });
+      }).error(done);
+    });
+    it('hasAndBelongsToMany -- multiple saves', function(done) {
+      var Model = thinky.createModel(modelNames[0], {
+        id: String
+      });
+
+      var OtherModel = thinky.createModel(modelNames[1], {
+        id: String
+      });
+
+      Model.hasAndBelongsToMany(OtherModel, "links", "id", "id");
+      OtherModel.hasAndBelongsToMany(Model, "links", "id", "id");
+
+      var values = {};
+      var otherValues = {};
+      var otherDoc1 = new OtherModel({});
+      var otherDoc2 = new OtherModel({});
+      var otherDoc3 = new OtherModel({});
+      var otherDoc4 = new OtherModel({});
+
+      values.links = [otherDoc1]
+      var doc1 = new Model(values);
+
+
+      doc1.saveAll().then(function(result) {
+        doc1.links.push(otherDoc2);
+        doc1.links.push(otherDoc3);
+        doc1.links.push(otherDoc4);
+        doc1.saveAll().then(function(result) {
+          Model.get(doc1.id).getJoin({links: { _apply: function(seq) {
+            return seq.orderBy('id')
+          }}}).run().then(function(result) {
+            util.sortById(doc1.links);
+            assert.equal(result.id, doc1.id);
+            assert.equal(result.links[0].id, doc1.links[0].id);
+            assert.equal(result.links[1].id, doc1.links[1].id);
+            assert.equal(result.links[2].id, doc1.links[2].id);
+            assert.equal(result.links[3].id, doc1.links[3].id);
+            OtherModel.count().execute().then(function(result) {
+              assert.equal(result, 4);
+              thinky.models[Model._joins.links.link].count().execute().then(function(result) {
+                assert.equal(result, 4);
+                done()
+              });
+            });
+          });
+        });
+      }).error(done);
+    });
+    it('hasAndBelongsToMany -- partial delete', function(done) {
+      var Model = thinky.createModel(modelNames[0], {
+        id: String
+      });
+
+      var OtherModel = thinky.createModel(modelNames[1], {
+        id: String
+      });
+
+      Model.hasAndBelongsToMany(OtherModel, "links", "id", "id");
+      OtherModel.hasAndBelongsToMany(Model, "links", "id", "id");
+
+      var values = {};
+      var otherValues = {};
+      var otherDoc1 = new OtherModel({});
+      var otherDoc2 = new OtherModel({});
+      var otherDoc3 = new OtherModel({});
+      var otherDoc4 = new OtherModel({});
+
+      values.links = [otherDoc1, otherDoc2, otherDoc3, otherDoc4]
+      var doc1 = new Model(values);
+
+
+      doc1.saveAll().then(function(result) {
+        var removedOtherDocs = doc1.links.slice(2);
+        doc1.links = doc1.links.slice(0, 2);
+        doc1.saveAll().then(function(result) {
+          Model.get(doc1.id).getJoin({links: { _apply: function(seq) {
+            return seq.orderBy('id')
+          }}}).run().then(function(result) {
+            util.sortById(doc1.links);
+            assert.equal(result.id, doc1.id);
+            assert.equal(result.links[0].id, doc1.links[0].id);
+            assert.equal(result.links[1].id, doc1.links[1].id);
+            OtherModel.count().execute().then(function(result) {
+              assert.equal(result, 4);
+              thinky.models[Model._joins.links.link].count().execute().then(function(result) {
+                assert.equal(result, 2);
+
+                doc1.links.push.apply(doc1.links, removedOtherDocs);
+                doc1.saveAll().then(function(result) {
+                  OtherModel.count().execute().then(function(result) {
+                    assert.equal(result, 4);
+                    thinky.models[Model._joins.links.link].count().execute().then(function(result) {
+                      assert.equal(result, 2);
+                      done()
+                    });
+                  });
+                });
+              });
+            });
           });
         });
       }).error(done);
