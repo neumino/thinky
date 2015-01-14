@@ -172,14 +172,10 @@ exports.deleteAuthor = function (req, res) {
 // Edit an author
 exports.editAuthor = function (req, res) {
     // Update an author
-    Author.get(req.body.id).run().then(function(author) {
-        author.merge(req.body);
-
-        author.save().then(function(author) {
-            res.json({
-                author: author
-            })
-        });
+    Author.get(req.body.id).update(req.body).run().then(function(author) {
+        res.json({
+            author: author
+        })
     }).error(handleError(res));
 };
 

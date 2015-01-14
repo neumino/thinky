@@ -50,14 +50,11 @@ function create(req, res, next) {
 // Update a todo
 function update(req, res, next) {
     var todo = new Todo(req.body);
-    Todo.get(todo.id).run().then(function(todo) {
-    
-        todo.title = req.body.title;
-        todo.completed = req.body.completed;
-
-        todo.save().then(function(result) {
-            res.send(JSON.stringify(result));
-        }).error(handleError(res));
+    Todo.get(todo.id).update({
+       title: req.body.title,
+       completed: req.body.completed
+    }).run().then(function(todo) {
+        res.send(JSON.stringify(todo));
     }).error(handleError(res));
 
     // Another way to delete a todo is with

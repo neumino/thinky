@@ -3,4 +3,7 @@ build:
   # The steps that will be executed on build
   steps:
     - npm-install
+    - script:
+        name: Sleep
+        code: sleep 5
     - npm-test
