@@ -630,6 +630,21 @@ describe('ensureIndex', function(){
       done();
     });
   });
+  it('should accept ensureIndex(name, opts)', function(done) {
+    var Model = thinky.createModel(modelNames[0], { id: String, location: type.point() });
+    Model.ensureIndex("location", {geo: true});
+    var doc = new Model({location: [1,2]});
+    doc.save().then(function(result) {
+      return Model.getIntersecting(r.circle([1,2], 1), {index: "location"}).run()
+    }).then(function(result) {
+      assert.equal(result.length, 1);
+      return Model.getIntersecting(r.circle([3,2], 1), {index: "location"}).run()
+    }).then(function(result) {
+      assert.equal(result.length, 0);
+      done();
+    });
+  });
+
 });
 
 describe('virtual', function(){
