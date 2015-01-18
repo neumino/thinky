@@ -39,7 +39,7 @@ PostModel.getTableName(); // returns "Post"
 Model.define(key, fn);
 ```
 
-Define a function that documents will ba available for documents of this Model.
+Define a function that documents will be available for documents of this Model.
 
 
 _Example_: Add a method `isAdult` on `Users`.
@@ -70,7 +70,7 @@ grownup.isAdult(); // true
 Model.defineStatic(key, fn);
 ```
 
-Define a function that will ba available for this Model and on its query.
+Define a function that will be available for this Model and on its query.
 
 
 _Example_: Add a method `getView` on `Users` to never return the password.
