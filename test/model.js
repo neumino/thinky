@@ -172,16 +172,13 @@ describe('Model', function() {
 });
 
 describe("Batch insert", function() {
-  after(cleanTables);
+  afterEach(cleanTables);
 
-  var Model;
-  before(function() {
-    Model = thinky.createModel(modelNames[0], {
+  it('insert should work with a single doc', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
       id: String,
       num: Number
     });
-  });
-  it('insert should work with a single doc', function(done) {
     Model.save({id: "foo"}).then(function(result) {
       assert.equal(result.length, 1);
       assert.equal(result[0].id, "foo");
@@ -191,6 +188,10 @@ describe("Batch insert", function() {
     });
   });
   it('Batch insert should work', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      num: Number
+    });
     var docs = [];
     for(var i=0; i<10; i++) {
       docs.push({num: i})
@@ -207,13 +208,21 @@ describe("Batch insert", function() {
     });
   });
   it('Batch insert should validate fields before saving', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      num: Number
+    });
     Model.save([{id: 4}]).error(function(err) {
-      assert.equal(err.message, "Value for [id] must be a string or null.")
+      assert.equal(err.message, "One of the documents is not valid. Original error:\nValue for [id] must be a string or null.")
       done();
     });
   });
 
   it('Batch insert should properly error is __one__ insert fails', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      num: Number
+    });
     Model.save([{id: '4'}]).then(function(result) {
       assert.equal(result[0].id, 4);
       var docs = [];
@@ -223,11 +232,26 @@ describe("Batch insert", function() {
       Model.save(docs).then(function() {
         done(new Error("Was expecting an error"));
       }).error(function(e) {
-        assert.equal(e.message, "An error occurred during the batch insert.")
+        assert(e.message.match(/An error occurred during the batch insert/));
         done();
       });
     });
   });
+  it('Should generate savable copies', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      location: type.point()
+    });
+    Model.save({id: "foo", location: [1,2]}).then(function(result) {
+      assert.equal(result.length, 1);
+      assert.equal(result[0].id, "foo");
+      assert.equal(result[0].location.$reql_type$, "GEOMETRY");
+      done();
+    }).error(function(e) {
+      done(e);
+    });
+  });
+
 });
 
 describe("Joins", function() {
@@ -606,6 +630,21 @@ describe('ensureIndex', function(){
       done();
     });
   });
+  it('should accept ensureIndex(name, opts)', function(done) {
+    var Model = thinky.createModel(modelNames[0], { id: String, location: type.point() });
+    Model.ensureIndex("location", {geo: true});
+    var doc = new Model({location: [1,2]});
+    doc.save().then(function(result) {
+      return Model.getIntersecting(r.circle([1,2], 1), {index: "location"}).run()
+    }).then(function(result) {
+      assert.equal(result.length, 1);
+      return Model.getIntersecting(r.circle([3,2], 1), {index: "location"}).run()
+    }).then(function(result) {
+      assert.equal(result.length, 0);
+      done();
+    });
+  });
+
 });
 
 describe('virtual', function(){

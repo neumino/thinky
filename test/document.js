@@ -893,6 +893,54 @@ describe('save', function() {
         });
       }).error(done);
     })
+    it('Keep the same reference', function(done) {
+      var otherDoc = new OtherModel({str: util.s8(), num: util.random()});
+      var docValues = {
+        str: util.s8(),
+        num: util.random(),
+        otherDocs: [otherDoc]
+      }
+      var doc = new Model(docValues);
+      assert.strictEqual(doc.otherDocs[0], otherDoc);
+
+      return done();
+      doc.saveAll().then(function(doc) {
+        var linkName, found;
+
+        if(Model.getTableName() < OtherModel.getTableName()) {
+          linkName = Model.getTableName()+"_"+OtherModel.getTableName();
+        }
+        else {
+          linkName = OtherModel.getTableName()+"_"+Model.getTableName();
+        }
+        r.table(linkName).run().then(function(result) {
+          var total = 0;
+          // Check id
+          for(var i=0; i<result.length; i++) {
+            found = false
+            for(var j=0; j<otherDocs.length; j++) {
+              if (Model.getTableName() < OtherModel.getTableName()) {
+                if (result[i].id === doc.id+"_"+otherDocs[j].id) {
+                  total++;
+                  found = true;
+                  break;
+                }
+              }
+              else {
+                if (result[i].id === otherDocs[j].id+"_"+doc.id) {
+                  total++;
+                  found = true;
+                  break;
+                }
+              }
+            }
+          }
+          assert.equal(total, 3);
+
+          done();
+        }).error(done);
+      }).error(done);
+    })
 
   });
   
