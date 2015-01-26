@@ -126,6 +126,7 @@ The roadmap is defined with the issues/feedback on GitHub. Checkout:
 - [marshall007](https://github.com/marshall007)
 - [Morhaus](https://github.com/Morhaus)
 - [nikaspran](https://github.com/nikaspran)
+- [simonratner](https://github.com/simonratner)
 - [wezs](https://github.com/wezs)
 
 
