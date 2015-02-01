@@ -794,33 +794,27 @@ describe('thinky.Query', function() {
 describe('then', function() {
   afterEach(cleanTables);
 
-  it('should throw an error', function() {
+  it('should run the query', function() {
     var name = util.s8();
 
     var Query = thinky.Query;
     var r = thinky.r;
     var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
 
-
-    assert.throws(function() {
-      User.then(function() {});
-    }, function(error) {
-      return (error instanceof Error) && (error.message === "The method `then` is not defined on Query. Did you forgot `.run()` or `.execute()`?")
+    User.then(function() {
+        done();
     });
 
   });
-  it('should throw an error', function() {
+  it('should run the query', function() {
     var name = util.s8();
 
     var Query = thinky.Query;
     var r = thinky.r;
     var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
 
-
-    assert.throws(function() {
-      User.filter({}).then(function() {});
-    }, function(error) {
-      return (error instanceof Error) && (error.message === "The method `then` is not defined on Query. Did you forgot `.run()` or `.execute()`?")
+    User.filter({}).then(function() {
+        done();
     });
 
   });
