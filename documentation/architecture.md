@@ -67,7 +67,7 @@ Account.belongsTo(User, "user", "userId", "id");
 
 ```js
 // file: models/user.js
-var thinky = require(__dirname+'/thinky.js');
+var thinky = require(__dirname+'/util/thinky.js');
 
 var User = thinky.createModel("User", {
     id: String,
