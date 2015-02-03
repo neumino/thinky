@@ -951,6 +951,30 @@ michel.saveAll().then(function(michel) {
 });
 ```
 
+--------------
+
+<div id="getFeed"></div>
+### [getFeed](#getFeed)
+
+```
+document.getFeed() -> Feed
+```
+
+Return the change feed associated with this document.
+
+
+--------------
+
+<div id="closeFeed"></div>
+### [closeFeed](#closeFeed)
+
+```
+document.closeFeed() -> Promise
+```
+
+Close the change feed associated with this document.
+
+
 
 <div id="eventemittersmethods"></div>
 ### [EventEmitter's methods](#eventemittersmethods)

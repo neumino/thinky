@@ -13,12 +13,16 @@ Michel Tu - [orphee@gmail.com](orphee@gmail.com) - [http://justonepixel.com](htt
 ### Donations
 
 I built thinky for fun, and I do not need money.   
-If you found thinky useful and if you really want to thank me, give a few dollars to a
-charity &mdash; [Watsi](http://watsi.org) is a good one in my opinion.
+If you found thinky useful and if you really want to thank me, you can:
+
+- Spread the word about thinky
+- Write an example application using thinky
+- Fix a bug
+- Improve the documentation
 
 
 ### Notes
-This is a personal project and is not officially supported by RethinkDB.
+This is a personal project and is not officially supported by RethinkDB or my employer.
 
 
 ### License
