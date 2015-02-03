@@ -29,6 +29,7 @@ var cleanTables = function(done) {
   });
 }
 
+/*
 describe('Feeds', function() {
   var Model;
   after(cleanTables);
@@ -109,7 +110,110 @@ describe('Feeds', function() {
       Model.save(data).error(done);
     }).error(done);
   });
-
-
-
 });
+*/
+describe('Atom feeds', function() {
+  var Model;
+  //after(cleanTables);
+  before(function(done) {
+    Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    })
+    Model.on('ready', function() {
+      done();
+    });
+  });
+
+  it('get().changes() should work - and remove default(r.error)', function(done){
+    Model.get(1).changes().run().then(function(doc) {
+      assert(doc)
+      assert.deepEqual(doc, {});
+      return doc.closeFeed();
+    }).then(function() {
+      done();
+    }).error(done);
+  });
+
+  it('change events should be emitted - insert', function(done){
+    var data = {id: 'foo', str: 'bar', num: 3};
+    Model.get(data.id).changes().run().then(function(doc) {
+      assert(doc)
+      assert.deepEqual(doc, {});
+      doc.on('change', function() {
+        assert.deepEqual(doc.getOldValue(), null);
+        assert.deepEqual(doc, data);
+        doc.closeFeed().then(function() {
+          done();
+        }).error(done);
+      });
+      Model.save(data);
+    }).error(done);
+  });
+  it('change events should be emitted - update', function(done){
+    var data = {id: 'buzz', str: 'bar', num: 3};
+    Model.save(data).then(function() {
+      Model.get(data.id).changes().run().then(function(doc) {
+        assert.deepEqual(doc, data);
+        doc.on('change', function() {
+          assert.deepEqual(doc.getOldValue(), data);
+          assert.deepEqual(doc, {id: 'buzz', str: 'foo', num: 3});
+          doc.closeFeed().then(function() {
+            done();
+          }).error(done);
+        });
+        Model.get(data.id).update({str: "foo"}).run().error(done);
+      }).error(done);
+    })
+  });
+  it('change events should be emitted - delete', function(done){
+    var data = {id: 'bar', str: 'bar', num: 3};
+    Model.save(data).then(function() {
+      Model.get(data.id).changes().run().then(function(doc) {
+        assert.deepEqual(doc, data);
+        doc.on('change', function() {
+          assert.deepEqual(doc.getOldValue(), data);
+          assert.deepEqual(doc, {});
+          assert.equal(doc.isSaved(), false) 
+          doc.closeFeed().then(function() {
+            done();
+          }).error(done);
+        });
+        Model.get(data.id).delete().run().error(done);
+      }).error(done);
+
+    })
+  });
+  it('change events should be emitted - all', function(done){
+    var data = {id: 'last', str: 'bar', num: 3};
+    Model.get(data.id).changes().run().then(function(doc) {
+      assert(doc)
+      assert.deepEqual(doc, {});
+      var count = 0;
+      doc.on('change', function() {
+        if (count === 0) {
+          assert.deepEqual(doc.getOldValue(), null);
+          assert.deepEqual(doc, data);
+        }
+        else if (count === 1) {
+          assert.deepEqual(doc, {id: 'last', str: 'foo', num: 3});
+        }
+        else if (count === 2) {
+          assert.deepEqual(doc, {});
+          assert.equal(doc.isSaved(), false) 
+          doc.closeFeed().then(function() {
+            done();
+          }).error(done);
+        }
+        count++;
+      });
+      Model.save(data).then(function() {
+        Model.get(data.id).update({str: 'foo'}).run();
+      }).then(function() {
+        Model.get(data.id).delete().run();
+      }).error(done);
+    }).error(done);
+  });
+});
+

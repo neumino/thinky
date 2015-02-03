@@ -794,7 +794,7 @@ describe('thinky.Query', function() {
 describe('then', function() {
   afterEach(cleanTables);
 
-  it('should run the query', function() {
+  it('should run the query', function(done) {
     var name = util.s8();
 
     var Query = thinky.Query;
@@ -806,7 +806,7 @@ describe('then', function() {
     });
 
   });
-  it('should run the query', function() {
+  it('should run the query', function(done) {
     var name = util.s8();
 
     var Query = thinky.Query;
