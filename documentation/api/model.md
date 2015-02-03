@@ -751,6 +751,7 @@ newly created documents. All the methods are the same as in EventEmitter, except
 are prefixed with `"doc"` (using camelCase).
 
 The events that can be emited on a document are:
+
 - `"saving"`: just before a document is saved
 - `"save"`: once a document is saved
 - `"delete"`: once a document is deleted
