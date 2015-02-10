@@ -32,6 +32,10 @@ To avoid infinite recursion, `getJoin` will not recurse in a field that contains
 a model that was previously fetched.
 
 The option `modelToGet` can be an object where each field is a joined document that will also be retrieved.
+Two options are also available:
+- `_apply`: The function to apply on the joined sequence/document
+- `_array`: Set it to `false` to not coerce the joined sequence to an array
+
 For example you can have
 
 ```js
@@ -85,6 +89,43 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin()
      */
 });
 ```
+
+
+_Example_: Retrieve a user and the number of accounts
+
+```js
+var User = thinky.createModel("User", {
+    id: String,
+    name: String
+});
+
+var Account = thinky.createModel("Account", {
+    id: String,
+    userId: String,
+    sold: Number
+});
+
+User.hasOne(Account, "account", "id", "userId")
+
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({
+  _apply: function(seq) { return seq.count() },
+  _array: false
+}).run().then(function(user) {
+
+    /*
+     * user = {
+     *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *     name: "Michel",
+     *     account: {
+     *         id: "3851d8b4-5358-43f2-ba23-f4d481358901",
+     *         userId: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
+     *         sold: 2420
+     *     }
+     * }
+     */
+});
+```
+
 
 --------------
 
