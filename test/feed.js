@@ -29,7 +29,6 @@ var cleanTables = function(done) {
   });
 }
 
-/*
 describe('Feeds', function() {
   var Model;
   after(cleanTables);
@@ -111,12 +110,12 @@ describe('Feeds', function() {
     }).error(done);
   });
 });
-*/
+
 describe('Atom feeds', function() {
   var Model;
   //after(cleanTables);
   before(function(done) {
-    Model = thinky.createModel(modelNames[0], {
+    Model = thinky.createModel(modelNames[1], {
       id: String,
       str: String,
       num: Number
