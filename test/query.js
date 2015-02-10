@@ -542,6 +542,42 @@ describe('getJoin', function(){
         });
       }).error(done);
     });
+    it('_apply should work with count (not coerce to arrays)', function(done) {
+      var name = util.s8();
+      var Model = thinky.createModel(modelNames[0], {
+        id: String
+      });
+
+      var otherName = util.s8();
+      var OtherModel = thinky.createModel(modelNames[1], {
+        id: String,
+        otherId: String
+      });
+
+      Model.hasMany(OtherModel, "has", "id", "otherId");
+      OtherModel.belongsTo(Model, "belongsTo", "otherId", "id");
+
+      var values = {};
+      var otherValues = {};
+      var doc = new Model(values);
+      var otherDocs = [
+        new OtherModel(otherValues),
+        new OtherModel(otherValues),
+        new OtherModel(otherValues)
+      ];
+
+      doc.has = otherDocs;
+
+      doc.saveAll().then(function(result) {
+        Model.get(doc.id).getJoin({has: { _apply: function(seq) {
+          return seq.count()
+        }, _array: false}}).run().then(function(result) {
+          assert.equal(result.has, 3);
+          done();
+        });
+      }).error(done);
+    });
+
   });
   describe("should not throw with missing keys", function() {
     afterEach(cleanTables);
