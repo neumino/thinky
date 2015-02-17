@@ -25,7 +25,7 @@ var connect = function() {
 var createDatabase = function() {
     r.dbCreate(config.db).run(connection, function(error, result) {
         if (error) console.log(error);
-        if ((result != null) && (result.created === 1)) {
+        if ((result != null) && (result.dbs_created === 1)) {
             console.log('Database `blog` created');
         }
         else {
@@ -40,7 +40,7 @@ var createTablePost = function() {
     r.db(config.db).tableCreate('Post').run(connection, function(error, result) {
         if (error) console.log(error);
     
-        if ((result != null) && (result.created === 1)) {
+        if ((result != null) && (result.tables_created === 1)) {
             console.log('Table `Post` created');
         }
         else {
@@ -55,7 +55,7 @@ var createCommentTable = function() {
     r.db(config.db).tableCreate('Comment').run(connection, function(error, result) {
         if (error) console.log(error);
     
-        if ((result != null) && (result.created === 1)) {
+        if ((result != null) && (result.tables_created === 1)) {
             console.log('Table `Comment` created');
         }
         else {
@@ -70,7 +70,7 @@ var createAuthorTable = function() {
     r.db(config.db).tableCreate('Author').run(connection, function(error, result) {
         if (error) console.log(error);
     
-        if ((result != null) && (result.created === 1)) {
+        if ((result != null) && (result.tables_created === 1)) {
             console.log('Table `Author` created');
         }
         else {
