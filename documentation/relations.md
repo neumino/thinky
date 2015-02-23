@@ -161,7 +161,7 @@ var post = {
 - __n-n relation__
 
 A n-n relation means that each instance of a Model `A` possesses multiple instances of `B`, and that each instance of
-`B` also possesses multiple instances of B.
+`B` also possesses multiple instances of A.
 
 In terms of actual code, it means that you have:
 
@@ -248,7 +248,7 @@ Use `save` only when you want to save local changes of document.
 The `saveAll` command will save the local document to the database and will recurse in joined documents to save them.
 The foreign keys and links will be automatically saved by `thinky.
 
-_Note_: To avoid infinite recursion with circular references (that appear as soon as you have
+__Note__: To avoid infinite recursion with circular references (that appear as soon as you have
 a reciprocal relationship), `saveAll` will not recurse in a field containing document(s)
 of a previously saved model.
 
@@ -257,6 +257,11 @@ to make sure that such thing does not happen is to call `saveAll()` on a documen
 you retrieved it with `getJoin()`. If you retrieved the document with
 `getJoin(modelToGet)`, then you should call `saveAll(modelToSave)` with
 `modelToSave == modelToGet`.
+
+__Note__: A notable exception is for `hasAndBelongsToMany` relations. In this case you can provide
+an array with keys to link. `saveAll` will only create the relations between the document
+and not verify that the document actually do exist. This makes building an API more convenient (similiar
+to what `update` provides).
 
 
 _Example_:

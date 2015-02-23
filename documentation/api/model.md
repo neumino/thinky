@@ -607,14 +607,15 @@ User.post('init', function(next) {
 ### [save](#save)
 
 ```js
-Model.save(object) -> Promise
-Model.save(array) -> Promise
+Model.save(object, options) -> Promise
+Model.save(array, options) -> Promise
 ```
 
 
 Insert documents in the database. 
 If an array of documents is provided, `thinky` will execute a batch insert with only
-one `insert` command.
+one `insert` command. The object `options` can be the options provided to `insert`,
+that is to say `{conflict: 'error'/'replace'/'update'}`.
 
 If one error is produced by the server, the promise will be rejected.
 
