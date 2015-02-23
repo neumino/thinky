@@ -2855,6 +2855,130 @@ describe('Advanced cases', function(){
         });
       });
     });
+
+    it('hasAndBelongsToMany -- with keys only', function(done) {
+      var Model = thinky.createModel(modelNames[0], {
+        id: String
+      });
+
+      var OtherModel = thinky.createModel(modelNames[1], {
+        id: String
+      });
+
+      Model.hasAndBelongsToMany(OtherModel, "links", "id", "id");
+      OtherModel.hasAndBelongsToMany(Model, "links", "id", "id");
+
+      var values = {};
+      var otherValues = {};
+      var doc1 = new Model(values);
+      var doc2 = new Model(otherValues);
+      var otherDoc1 = new OtherModel({id: '1'});
+      var otherDoc2 = new OtherModel({id: '2'});
+      var otherDoc3 = new OtherModel({id: '3'});
+      var otherDoc4 = new OtherModel({id: '4'});
+
+      doc1.links = ['1', '2', '4']
+      doc2.links = ['2', '3', '4']
+
+      OtherModel.save([otherDoc1, otherDoc2, otherDoc3, otherDoc4]).then(function() {
+        return doc1.saveAll()
+      }).then(function(result) {
+        return doc2.saveAll()
+      }).then(function(result) {
+        Model.get(doc1.id).getJoin({links: { _apply: function(seq) {
+          return seq.orderBy('id')
+        }}}).run().then(function(result) {
+          assert.equal(result.id, doc1.id);
+          assert.equal(result.links[0].id, doc1.links[0]);
+          assert.equal(result.links[1].id, doc1.links[1]);
+          assert.equal(result.links[2].id, doc1.links[2]);
+          Model.get(doc2.id).getJoin({links: { _apply: function(seq) {
+            return seq.orderBy('id');
+          }}}).run().then(function(result) {
+            assert.equal(result.id, doc2.id);
+            assert.equal(result.links[0].id, doc2.links[0]);
+            assert.equal(result.links[1].id, doc2.links[1]);
+            assert.equal(result.links[2].id, doc2.links[2]);
+            done()
+          })
+        });
+      }).error(done);
+    });
+    it('hasAndBelongsToMany -- with keys only and a missing doc', function(done) {
+      var Model = thinky.createModel(modelNames[0], {
+        id: String
+      });
+
+      var OtherModel = thinky.createModel(modelNames[1], {
+        id: String
+      });
+
+      Model.hasAndBelongsToMany(OtherModel, "links", "id", "id");
+      OtherModel.hasAndBelongsToMany(Model, "links", "id", "id");
+
+      var values = {};
+      var otherValues = {};
+      var doc1 = new Model(values);
+      var doc2 = new Model(otherValues);
+      var otherDoc1 = new OtherModel({id: '1'});
+      var otherDoc2 = new OtherModel({id: '2'});
+      var otherDoc3 = new OtherModel({id: '3'});
+      //Missing doc
+      //var otherDoc4 = new OtherModel({id: '4'});
+
+      doc1.links = ['1', '2', '4']
+      doc2.links = ['2', '3', '4']
+
+      OtherModel.save([otherDoc1, otherDoc2, otherDoc3/*, otherDoc4*/]).then(function() {
+        return doc1.saveAll()
+      }).then(function(result) {
+        return doc2.saveAll()
+      }).then(function(result) {
+        return Model.get(doc1.id).getJoin({links: { _apply: function(seq) {
+          return seq.orderBy('id')
+        }}}).run()
+      }).then(function(result) {
+        assert.equal(result.id, doc1.id);
+        assert.equal(result.links.length, 2);
+        assert.equal(result.links[0].id, doc1.links[0]);
+        assert.equal(result.links[1].id, doc1.links[1]);
+        //assert.equal(result.links[2].id, doc1.links[2]);
+        return Model.get(doc2.id).getJoin({links: { _apply: function(seq) {
+          return seq.orderBy('id');
+        }}}).run()
+      }).then(function(result) {
+        assert.equal(result.id, doc2.id);
+        assert.equal(result.links.length, 2);
+        assert.equal(result.links[0].id, doc2.links[0]);
+        assert.equal(result.links[1].id, doc2.links[1]);
+        //assert.equal(result.links[2].id, doc2.links[2]);
+
+        var otherDoc4 = new OtherModel({id: '4'});
+        return otherDoc4.save();
+      }).then(function(result) {
+        return Model.get(doc1.id).getJoin({links: { _apply: function(seq) {
+          return seq.orderBy('id')
+        }}}).run()
+      }).then(function(result) {
+        assert.equal(result.id, doc1.id);
+        assert.equal(result.links.length, 3);
+        assert.equal(result.links[0].id, doc1.links[0]);
+        assert.equal(result.links[1].id, doc1.links[1]);
+        assert.equal(result.links[2].id, doc1.links[2]);
+        return Model.get(doc2.id).getJoin({links: { _apply: function(seq) {
+          return seq.orderBy('id');
+        }}}).run()
+      }).then(function(result) {
+        assert.equal(result.id, doc2.id);
+        assert.equal(result.links.length, 3);
+        assert.equal(result.links[0].id, doc2.links[0]);
+        assert.equal(result.links[1].id, doc2.links[1]);
+        assert.equal(result.links[2].id, doc2.links[2]);
+        done()
+      }).error(done);
+    });
+
+
   });
   describe('manual joins', function() {
     afterEach(cleanTables);
