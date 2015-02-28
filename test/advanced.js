@@ -2927,7 +2927,7 @@ describe('Advanced cases', function(){
       doc1.links = ['1', '2', '4']
       doc2.links = ['2', '3', '4']
 
-      OtherModel.save([otherDoc1, otherDoc2, otherDoc3/*, otherDoc4*/]).then(function() {
+      OtherModel.save([otherDoc1, otherDoc2, otherDoc3]).then(function() {
         return doc1.saveAll()
       }).then(function(result) {
         return doc2.saveAll()
@@ -3006,8 +3006,7 @@ describe('Advanced cases', function(){
       }).then(function(result) {
         return Model.get(doc1.id).run()
       }).then(function(result) {
-        result.links = [otherDoc4.id];
-
+        result.links = ['4'];
         return result.saveAll({links: true})
       }).then(function(result) {
         return Model.get(doc1.id).getJoin({links: { _apply: function(seq) {
@@ -3019,7 +3018,6 @@ describe('Advanced cases', function(){
         done()
       }).catch(done);
     });
-
   });
   describe('manual joins', function() {
     afterEach(cleanTables);
@@ -3082,9 +3080,6 @@ describe('Advanced cases', function(){
       doc1.saveAll({type1: true, type2: true}).then(function(result) {
         return doc2.saveAll({type1: true, type2: true})
       }).then(function(result) {
-        console.log(JSON.stringify(doc1, null, 2));
-        console.log(JSON.stringify(doc2, null, 2));
-
         return Model.get(doc1.id).getJoin({type1: true, type2: true}).run();
       }).then(function(result) {
         util.sortById(doc1.type1);
@@ -3094,7 +3089,6 @@ describe('Advanced cases', function(){
 
         util.sortById(result.type1);
         util.sortById(result.type2);
-        console.log(JSON.stringify(result, null, 2));
 
         assert.equal(result.type1.length, 2);
         assert.equal(result.type1[0].id, doc1.type1[0].id);
@@ -3123,8 +3117,6 @@ describe('Advanced cases', function(){
         util.sortById(result.type2);
         var expected = [doc1, doc2];
         util.sortById(expected);
-
-        console.log(JSON.stringify(result, null, 2));
 
         assert.equal(result.type1.length, 0);
         assert.equal(result.type2.length, 2);
