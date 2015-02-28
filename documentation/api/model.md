@@ -355,6 +355,8 @@ The joined is done via a third table that is automatically created and managed b
 - `rightKey`: the field of `OtherModel` used to perform the join.
 - `options`: set the field `init` to `false` if the indexes
 were already created and do not want `thinky` to try to create them.
+You can also specify a string for `type` which will be used to differentiate
+the table if you link multiple times the same mdoels.
 
 We __highly recommend__ to use the primary keys for the fields used to perform the join.  
 If you do not, read carefully [the article](/documentation/relations/) dedicated to relations
@@ -496,6 +498,26 @@ A user with its friends will look like:
     ]
 }
 ```
+
+
+_Example_: Use `type` to create multiple relations.
+
+```js
+var Class = thinky.createModel("Post", {
+    id: String,
+});
+var People = thinky.createModel("Tag", {
+    id: String,
+    name: String
+});
+
+Class.hasAndBelongsToMany(People, "teachers", "id", "id", {type: "teacher"})
+People.hasAndBelongsToMany(Class, "classes", "id", "id", {type: "teacher"})
+
+Class.hasAndBelongsToMany(People, "students", "id", "id", {type: "student"})
+People.hasAndBelongsToMany(Class, "classes", "id", "id", {type: "student"})
+```
+
 
 --------------
 
