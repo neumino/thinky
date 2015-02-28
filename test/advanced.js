@@ -10,10 +10,8 @@ var Errors = thinky.Errors;
 
 
 var modelNameSet = {};
-//modelNameSet[util.s8()] = true;
-//modelNameSet[util.s8()] = true;
-modelNameSet["foo"] = true;
-modelNameSet['bar'] = true;
+modelNameSet[util.s8()] = true;
+modelNameSet[util.s8()] = true;
 
 var modelNames = Object.keys(modelNameSet);
 
@@ -3019,7 +3017,7 @@ describe('Advanced cases', function(){
         assert.equal(result.id, doc1.id);
         assert.equal(result.links.length, 3);
         done()
-      }).error(done);
+      }).catch(done);
     });
 
   });
@@ -3052,4 +3050,88 @@ describe('Advanced cases', function(){
       });
     });
   });
+  describe('multiple hasAndBelongsToMany', function(){
+    afterEach(cleanTables);
+
+    it('between two modes should work (not just pairs)', function(done) {
+      var Model = thinky.createModel(modelNames[0], {
+        id: String
+      });
+
+      var OtherModel = thinky.createModel(modelNames[1], {
+        id: String,
+      });
+
+      Model.hasAndBelongsToMany(OtherModel, "type1", "id", "id", {type: "type1"});
+      Model.hasAndBelongsToMany(OtherModel, "type2", "id", "id", {type: "type2"});
+      OtherModel.hasAndBelongsToMany(Model, "type1", "id", "id", {type: "type1"});
+      OtherModel.hasAndBelongsToMany(Model, "type2", "id", "id", {type: "type2"});
+
+      var doc1 = new Model({});
+      var doc2 = new Model({});
+      var otherDoc1 = new OtherModel({});
+      var otherDoc2 = new OtherModel({});
+      var otherDoc3 = new OtherModel({});
+      var otherDoc4 = new OtherModel({});
+
+      doc1.type1 = [otherDoc1, otherDoc2];
+      doc1.type2 = [otherDoc3, otherDoc4];
+      doc2.type1 = [otherDoc3]
+      doc2.type2 = [otherDoc1, otherDoc4]
+
+      doc1.saveAll({type1: true, type2: true}).then(function(result) {
+        return doc2.saveAll({type1: true, type2: true})
+      }).then(function(result) {
+        console.log(JSON.stringify(doc1, null, 2));
+        console.log(JSON.stringify(doc2, null, 2));
+
+        return Model.get(doc1.id).getJoin({type1: true, type2: true}).run();
+      }).then(function(result) {
+        util.sortById(doc1.type1);
+        util.sortById(doc1.type2);
+        util.sortById(doc2.type1);
+        util.sortById(doc2.type2);
+
+        util.sortById(result.type1);
+        util.sortById(result.type2);
+        console.log(JSON.stringify(result, null, 2));
+
+        assert.equal(result.type1.length, 2);
+        assert.equal(result.type1[0].id, doc1.type1[0].id);
+        assert.equal(result.type1[1].id, doc1.type1[1].id);
+        assert.equal(result.type2.length, 2);
+        assert.equal(result.type2[0].id, doc1.type2[0].id);
+        assert.equal(result.type2[1].id, doc1.type2[1].id);
+        return Model.get(doc2.id).getJoin({type1: true, type2: true}).run();
+      }).then(function(result) {
+        util.sortById(result.type1);
+        util.sortById(result.type2);
+
+        assert.equal(result.type1.length, 1);
+        assert.equal(result.type1[0].id, doc2.type1[0].id);
+        assert.equal(result.type2.length, 2);
+        assert.equal(result.type2[0].id, doc2.type2[0].id);
+        assert.equal(result.type2[1].id, doc2.type2[1].id);
+        return OtherModel.get(otherDoc1.id).getJoin({type1: true, type2: true}).run();
+      }).then(function(result) {
+        assert.equal(result.type1.length, 1);
+        assert.equal(result.type1[0].id, doc1.id);
+        assert.equal(result.type2.length, 1);
+        assert.equal(result.type2[0].id, doc2.id);
+        return OtherModel.get(otherDoc4.id).getJoin({type1: true, type2: true}).run();
+      }).then(function(result) {
+        util.sortById(result.type2);
+        var expected = [doc1, doc2];
+        util.sortById(expected);
+
+        console.log(JSON.stringify(result, null, 2));
+
+        assert.equal(result.type1.length, 0);
+        assert.equal(result.type2.length, 2);
+        assert.equal(result.type2[0].id, expected[0].id);
+        assert.equal(result.type2[1].id, expected[1].id);
+        done();
+      }).catch(done);
+    });
+  }); 
 });
