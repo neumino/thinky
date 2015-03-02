@@ -31,7 +31,7 @@ There are two more ways to define a type, one is via the methods in `thinky.type
   - `length(number)`: set the length of the string
   - `alphanum()`: requires the string to be alphanumeric (`[a-zA-Z0-9]`)
   - `regex(regex[, flags])`: requires the string to match the given regex
-  - `email(regex[, flags])`: requires the string to be an email
+  - `email()`: requires the string to be an email
   - `lowercase()`: requires the string to be lowercase
   - `uppercase()`: requires the string to be uppercase
   - `enum(values...)` or `enum([enums]): the possible values for this string

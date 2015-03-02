@@ -105,7 +105,7 @@ var Account = thinky.createModel("Account", {
     sold: Number
 });
 
-User.hasOne(Account, "account", "id", "userId")
+User.hasMany(Account, "account", "id", "userId")
 
 User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({
   _apply: function(seq) { return seq.count() },
