@@ -19,6 +19,7 @@ config['validate'] = 'oncreate';
 var thinky = require(__dirname+'/../lib/thinky.js')(config);
 var r = thinky.r;
 
+var libUtil = require(__dirname+'/../lib/util.js');
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
 
@@ -174,5 +175,56 @@ describe('Priorities for options', function() {
     var Model = thinky.createModel(name, {id: {_type: String, options: {enforce_missing: false}}, name: {_type: String, options: {enforce_missing: false}}});
     var doc = new Model({})
     doc.validate();
+  });
+});
+
+describe('mergeOptions', function(){
+  it('mergeOptions - merge to an empty object', function() {
+    var newOptions = libUtil.mergeOptions(undefined, {enforce_missing: true});
+    assert.equal(newOptions.enforce_missing, true);
+    assert.equal(newOptions.enforce_extra, undefined);
+    assert.equal(newOptions.enforce_type, undefined);
+  });
+  it('mergeOptions - replace an existing option', function() {
+    var existingOptions = {enforce_missing: true};
+    var newOptions = libUtil.mergeOptions(existingOptions, {enforce_missing: false});
+    assert.equal(newOptions.enforce_missing, false);
+    assert.equal(newOptions.enforce_extra, undefined);
+    assert.equal(newOptions.enforce_type, undefined);
+  });
+  it('mergeOptions - without affecting other options - enforce_missing', function() {
+    var existingOptions = {enforce_type: "strict", enforce_extra: false};
+    var newOptions = libUtil.mergeOptions(existingOptions, {enforce_missing: true});
+    assert.equal(newOptions.enforce_missing, true);
+    assert.equal(newOptions.enforce_extra, false);
+    assert.equal(newOptions.enforce_type, "strict");
+  });
+  it('mergeOptions - without affecting other options - enforce_type', function() {
+    var existingOptions = {enforce_missing: true, enforce_extra: false};
+    var newOptions = libUtil.mergeOptions(existingOptions, {enforce_type: "loose"});
+    assert.equal(newOptions.enforce_missing, true);
+    assert.equal(newOptions.enforce_extra, false);
+    assert.equal(newOptions.enforce_type, "loose");
+  });
+  it('mergeOptions - without affecting other options - enforce_extra', function() {
+    var existingOptions = {enforce_missing: false, enforce_type: "loose"};
+    var newOptions = libUtil.mergeOptions(existingOptions, {enforce_extra: true});
+    assert.equal(newOptions.enforce_missing, false);
+    assert.equal(newOptions.enforce_extra, true);
+    assert.equal(newOptions.enforce_type, "loose");
+  });
+  it('mergeOptions - with empty new options object', function() {
+    var existingOptions = {enforce_missing: true, enforce_extra: true, enforce_type: "loose"};
+    var newOptions = libUtil.mergeOptions(existingOptions, {});
+    assert.equal(newOptions.enforce_missing, true);
+    assert.equal(newOptions.enforce_extra, true);
+    assert.equal(newOptions.enforce_type, "loose");
+  });
+  it('mergeOptions - with undefined new options object', function() {
+    var existingOptions = {enforce_missing: false, enforce_extra: false, enforce_type: "strict"};
+    var newOptions = libUtil.mergeOptions(existingOptions, undefined);
+    assert.equal(newOptions.enforce_missing, false);
+    assert.equal(newOptions.enforce_extra, false);
+    assert.equal(newOptions.enforce_type, "strict");
   });
 });
