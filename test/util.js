@@ -31,9 +31,15 @@ module.exports.isPlainObject = isPlainObject;
 
 function sortById(ar) {
   return ar.sort(function(a, b) {
-    if (a.id<b.id) { return -1}
-    else if (a.id>b.id) { return 1 }
-    else { return 0 }
+    if (a.id<b.id) {
+      return -1;
+    }
+    else if (a.id>b.id) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
   })
 }
 module.exports.sortById = sortById;

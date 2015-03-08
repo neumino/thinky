@@ -251,6 +251,39 @@ describe("Batch insert", function() {
       done(e);
     });
   });
+  it('Model.save should handle options - update', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      num: Number
+    });
+    Model.save({id: "foo"}).then(function(result) {
+      assert.equal(result.length, 1);
+      assert.equal(result[0].id, "foo");
+      return Model.save({id: "foo", bar: "buzz"}, {conflict: 'update'});
+    }).then(function(result) {
+      assert.deepEqual(result[0], {id: "foo", bar: "buzz"});
+      done();
+    }).error(function(e) {
+      done(e);
+    });
+  });
+  it('Model.save should handle options - replace', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      num: Number
+    });
+    Model.save({id: "foo", bar: "buzz"}).then(function(result) {
+      assert.equal(result.length, 1);
+      assert.equal(result[0].id, "foo");
+      return Model.save({id: "foo"}, {conflict: 'replace'});
+    }).then(function(result) {
+      assert.deepEqual(result[0], {id: "foo"});
+      done();
+    }).error(function(e) {
+      done(e);
+    });
+  });
+
 
 });
 
