@@ -2,6 +2,7 @@ var config = require(__dirname+'/../config.js');
 var thinky = require(__dirname+'/../lib/thinky.js')(config);
 var r = thinky.r;
 var type = thinky.type;
+var Errors = thinky.Errors;
 
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
@@ -213,7 +214,8 @@ describe("Batch insert", function() {
       num: Number
     });
     Model.save([{id: 4}]).error(function(err) {
-      assert.equal(err.message, "One of the documents is not valid. Original error:\nValue for [id] must be a string or null.")
+      assert.equal(err.message, "One of the documents is not valid. Original error:\nValue for [id] must be a string or null.");
+      assert(err instanceof Errors.ValidationError);
       done();
     });
   });
