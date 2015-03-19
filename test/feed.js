@@ -208,7 +208,7 @@ describe('Atom feeds', function() {
         count++;
       });
       Model.save(data).then(function() {
-        Model.get(data.id).update({str: 'foo'}).run();
+        return Model.get(data.id).update({str: 'foo'}).run();
       }).then(function() {
         Model.get(data.id).delete().run();
       }).error(done);

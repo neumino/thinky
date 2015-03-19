@@ -77,6 +77,7 @@ describe('Model queries', function() {
     }).error(done);
   });
 
+
   after(cleanTables);
 
   it('Model.run() should return', function(done){
@@ -1089,4 +1090,15 @@ describe('In place writes', function() {
       }).error(done);
     })
   })
+  it('Point write on non existing doc', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      num: Number
+    });
+    Model.get('nonExistingId').update({foo: 'bar'}).run().error(function(error) {
+      assert(/The query did not find a document and returned null.*/.test(error.message));
+      done();
+    });
+  })
+
 });
