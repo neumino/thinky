@@ -187,7 +187,7 @@ describe('Chainable types', function(){
     var doc = new Model({});
     doc.validate();
   });
-  it('String - basic - null and strict', function(){
+  it('String - basic - null and strict - deprecated', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
       {id: type.string().options({enforce_type: "strict"})},
@@ -199,10 +199,34 @@ describe('Chainable types', function(){
       return (error instanceof Error) && (error.message === "Value for [id] must be a string.")
     });
   });
+  it('String - basic - null and strict', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.string().allowNull(false)},
+      {init: false})
+    assert.throws(function() {
+      var doc = new Model({ id: null});
+      doc.validate();
+    }, function(error) {
+      return (error instanceof Error) && (error.message === "Value for [id] must be a string.")
+    });
+  });
+  it('String - basic - null and strict', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.string().allowNull(false)},
+      {init: false})
+    assert.throws(function() {
+      var doc = new Model({ id: null});
+      doc.validate();
+    }, function(error) {
+      return (error instanceof Error) && (error.message === "Value for [id] must be a string.")
+    });
+  });
   it('String - basic - undefined', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
-      {id: type.string().options({enforce_type: "strict"})},
+      {id: type.string().allowNull(false)},
       {init: false})
     var doc = new Model({});
     doc.validate();
@@ -210,7 +234,7 @@ describe('Chainable types', function(){
   it('String - basic - undefined - enforce_missing: strict', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
-      {id: type.string().options({enforce_missing: true})},
+      {id: type.string().required()},
       {init: false})
     assert.throws(function() {
       var doc = new Model({});
@@ -754,7 +778,7 @@ describe('Chainable types', function(){
   it('Date - null', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
-      {id: type.date().options({enforce_type: "loose"})},
+      {id: type.date().allowNull(true)},
       {init: false})
     var doc = new Model({ id: null })
     doc.validate();
@@ -2781,7 +2805,7 @@ describe('validate', function(){
       foo: { fizz: 'Hello' }
     });
   });
-  it('Extra field - enforce_extra:"remove" - local option', function(){
+  it('Extra field - enforce_extra:"remove" - deprecated', function(){
     var name = util.s8();
     var str = util.s8();
 
@@ -2810,6 +2834,31 @@ describe('validate', function(){
       bar: "keep"
     });
   });
+  it('Extra field - enforce_extra:"remove"', function(){
+    var name = util.s8();
+    var str = util.s8();
+
+    var Model = thinky.createModel(name, {
+      id: String,
+      foo: type.object().schema({
+        fizz: type.string() 
+      }).removeExtra()
+    }, {init: false})
+
+    doc = new Model({
+      id: str,
+      foo: {fizz: "Hello", buzz: "OMIT"},
+      bar: "keep"
+    })
+    doc.validate();
+    assert.equal(false, doc.foo.hasOwnProperty('buzz'));
+    assert.deepEqual(doc, {
+      id: str,
+      foo: { fizz: 'Hello' },
+      bar: "keep"
+    });
+  });
+
   it('Extra field - enforce_extra:"remove" - should not removed joined documents', function(){
     var name = util.s8();
     var str = util.s8();
