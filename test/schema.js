@@ -2,6 +2,7 @@ var config = require(__dirname+'/../config.js');
 var thinky = require(__dirname+'/../lib/thinky.js')(config);
 var r = thinky.r;
 var type = thinky.type;
+var Errors = thinky.Errors;
 
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
@@ -176,7 +177,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 1 });
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be a string or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a string or null.")
     });
   });
   it('String - basic - null', function(){
@@ -196,7 +197,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: null});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be a string.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a string.")
     });
   });
   it('String - basic - null and strict', function(){
@@ -240,7 +241,7 @@ describe('Chainable types', function(){
       var doc = new Model({});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be defined.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be defined.")
     });
   });
   it('String - r.uuid', function(){
@@ -260,7 +261,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'a'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be longer than 2."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be longer than 2."); 
     });
   });
   it('String - min - good', function(){
@@ -280,7 +281,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'abcdefgh'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be shorter than 5."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be shorter than 5."); 
     });
   });
   it('String - max - good', function(){
@@ -300,7 +301,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'abcdef'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be a string with 5 characters."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a string with 5 characters."); 
     });
   });
   it('String - length - too short', function(){
@@ -312,7 +313,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'abc'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be a string with 5 characters."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a string with 5 characters."); 
     });
   });
   it('String - length - good', function(){
@@ -332,7 +333,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'bar'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must match the regex."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must match the regex."); 
     });
   });
   it('String - regex - good', function(){
@@ -352,7 +353,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'bar'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must match the regex."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must match the regex."); 
     });
   });
   it('String - regex with flags - good', function(){
@@ -374,7 +375,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'élégant'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be an alphanumeric string."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be an alphanumeric string."); 
     });
   });
   it('String - alphanum - match', function(){
@@ -394,7 +395,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'fooATbar.com'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be a valid email."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a valid email."); 
     });
   });
   it('String - email - match', function(){
@@ -414,7 +415,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'fooBar'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be a lowercase string."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a lowercase string."); 
     });
   });
   it('String - lowercase - match', function(){
@@ -434,7 +435,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'fooBar'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be a uppercase string."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a uppercase string."); 
     });
   });
   it('String - uppercase - match', function(){
@@ -454,7 +455,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'fooBar'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Validator for the field [id] returned `false`."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Validator for the field [id] returned `false`."); 
     });
   });
   it('String - validator - return true', function(){
@@ -468,13 +469,13 @@ describe('Chainable types', function(){
   it('String - validator - throw', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
-      {id: type.string().validator(function() { throw new Error("Not good") }) },
+      {id: type.string().validator(function() { throw new Errors.ValidationError("Not good") }) },
       {init: false})
     assert.throws(function() {
       var doc = new Model({ id: 'fooBar'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Not good"); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Not good"); 
     });
   });
   it('String - enum - unknown value - 1', function(){
@@ -486,7 +487,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'buzz'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "The field [id] must be one of these values: foo, bar."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "The field [id] must be one of these values: foo, bar."); 
     });
   });
   it('String - enum - unknown value - 2', function(){
@@ -498,7 +499,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'buzz'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "The field [id] must be one of these values: foo, bar."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "The field [id] must be one of these values: foo, bar."); 
     });
   });
   it('String - enum - unknown value - 3', function(){
@@ -510,7 +511,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'buzz'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "The field [id] must be one of these values: foo."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "The field [id] must be one of these values: foo."); 
     });
   });
   it('String - enum - unknown value - 4', function(){
@@ -522,7 +523,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'buzz'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "The field [id] must be one of these values: foo."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "The field [id] must be one of these values: foo."); 
     });
   });
 
@@ -575,7 +576,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: "foo" });
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be a finite number or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a finite number or null.")
     });
   });
   it('Number - basic - NaN', function(){
@@ -587,7 +588,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: NaN });
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be a finite number or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a finite number or null.")
     });
   });
   it('Number - r.random()', function(){
@@ -607,7 +608,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: Infinity });
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be a finite number or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a finite number or null.")
     });
   });
   it('Number - basic - -Infinity', function(){
@@ -619,7 +620,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: -Infinity });
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be a finite number or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a finite number or null.")
     });
   });
   it('Number - min - too small', function(){
@@ -631,7 +632,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 1});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be greater than 2."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be greater than 2."); 
     });
   });
   it('Number - min - good', function(){
@@ -651,7 +652,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 8});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be less than 5."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be less than 5."); 
     });
   });
   it('Number - max - good', function(){
@@ -671,7 +672,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 3.14});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be an integer."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be an integer."); 
     });
   });
   it('Number - integer - good', function(){
@@ -691,7 +692,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 2});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Validator for the field [id] returned `false`."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Validator for the field [id] returned `false`."); 
     });
   });
   it('Number - validator - return true', function(){
@@ -705,13 +706,13 @@ describe('Chainable types', function(){
   it('Number - validator - throw', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
-      {id: type.number().validator(function() { throw new Error("Not good") }) },
+      {id: type.number().validator(function() { throw new Errors.ValidationError("Not good") }) },
       {init: false})
     assert.throws(function() {
       var doc = new Model({ id: 4});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Not good"); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Not good"); 
     });
   });
 
@@ -731,7 +732,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: "foo" });
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be a boolean or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a boolean or null.")
     });
   });
   it('Boolean - validator - return false', function(){
@@ -743,7 +744,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: true});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Validator for the field [id] returned `false`."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Validator for the field [id] returned `false`."); 
     });
   });
   it('Boolean - validator - return true', function(){
@@ -757,13 +758,13 @@ describe('Chainable types', function(){
   it('Boolean - validator - throw', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
-      {id: type.number().validator(function() { throw new Error("Not good") }) },
+      {id: type.number().validator(function() { throw new Errors.ValidationError("Not good") }) },
       {init: false})
     assert.throws(function() {
       var doc = new Model({ id: true});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Not good"); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Not good"); 
     });
   });
 
@@ -792,7 +793,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: "foo" });
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be a date or a valid string or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a date or a valid string or null.")
     });
   });
   it('Date - min - too small', function(){
@@ -809,7 +810,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: valueDate});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && ((error.message.match("Value for .id. must be after")) !== null); 
+      return (error instanceof Errors.ValidationError) && ((error.message.match("Value for .id. must be after")) !== null); 
     });
   });
   it('Date - min - good', function(){
@@ -839,7 +840,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: valueDate});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && ((error.message.match("Value for .id. must be before")) !== null); 
+      return (error instanceof Errors.ValidationError) && ((error.message.match("Value for .id. must be before")) !== null); 
     });
   });
   it('Date - max - good', function(){
@@ -864,7 +865,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: new Date()});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Validator for the field [id] returned `false`."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Validator for the field [id] returned `false`."); 
     });
   });
   it('Date - validator - return true', function(){
@@ -878,13 +879,13 @@ describe('Chainable types', function(){
   it('Date - validator - throw', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
-      {id: type.date().validator(function() { throw new Error("Not good") }) },
+      {id: type.date().validator(function() { throw new Errors.ValidationError("Not good") }) },
       {init: false})
     assert.throws(function() {
       var doc = new Model({ id: new Date()});
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Not good"); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Not good"); 
     });
   });
 
@@ -913,7 +914,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: "foo" });
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be a buffer or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a buffer or null.")
     });
   });
 
@@ -940,7 +941,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: "foo" });
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be a Point or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a Point or null.")
     });
   });
   it('Object - basic - valid object', function(){
@@ -963,7 +964,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: "foo" });
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be an object or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be an object or null.")
     });
   });
 
@@ -983,7 +984,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: "foo" });
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be an array or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be an array or null.")
     });
   });
   it('Array - basic - wrong nested type - 1', function(){
@@ -995,7 +996,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: [2] });
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id][0] must be a string or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id][0] must be a string or null.")
     });
   });
   it('Array - basic - wrong nested type - 2', function(){
@@ -1007,7 +1008,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: [2] });
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id][0] must be a string or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id][0] must be a string or null.")
     });
   });
   it('Array - basic - wrong nested type - 3', function(){
@@ -1019,7 +1020,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: [2] });
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id][0] must be a string or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id][0] must be a string or null.")
     });
   });
   it('Array - min - good', function(){
@@ -1039,7 +1040,7 @@ describe('Chainable types', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must have at least 2 elements.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must have at least 2 elements.")
     });
   });
   it('Array - max - good', function(){
@@ -1059,7 +1060,7 @@ describe('Chainable types', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must have at most 2 elements.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must have at most 2 elements.")
     });
   });
   it('Array - length - good', function(){
@@ -1079,7 +1080,7 @@ describe('Chainable types', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [id] must be an array with 2 elements.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be an array with 2 elements.")
     });
   });
 
@@ -1599,7 +1600,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be a string.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be a string.")
     });
   });
   it('String - wrong type  - type: "loose"', function(){
@@ -1619,7 +1620,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be a string or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be a string or null.")
     });
 
   });
@@ -1703,7 +1704,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be defined.")
     });
   });
   it('String - null - type: "strict"', function(){
@@ -1723,7 +1724,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be a string.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be a string.")
     });
   });
   it('String - null  - type: "loose"', function(){
@@ -1775,7 +1776,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be a finite number.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be a finite number.")
     });
   });
   it('Number - wrong type  - type: "loose"', function(){
@@ -1795,7 +1796,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be a finite number or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be a finite number or null.")
     });
 
   });
@@ -1832,7 +1833,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be a boolean.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be a boolean.")
     });
   });
   it('Boolean - wrong type  - type: "loose"', function(){
@@ -1852,7 +1853,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be a boolean or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be a boolean or null.")
     });
 
   });
@@ -1905,7 +1906,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be a date or a valid string.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be a date or a valid string.")
     });
   });
   it('Date - wrong type  - type: "loose"', function(){
@@ -1925,7 +1926,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be a date or a valid string or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be a date or a valid string or null.")
     });
   });
   it('Date - string type - type: "loose"', function(){
@@ -1992,7 +1993,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "The raw date object for [field] is missing the required field timezone.")
+      return (error instanceof Errors.ValidationError) && (error.message === "The raw date object for [field] is missing the required field timezone.")
     });
   });
   it('Date - raw type - missing epoch_time - type: "strict"', function(){
@@ -2011,7 +2012,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "The raw date object for [field] is missing the required field epoch_time.")
+      return (error instanceof Errors.ValidationError) && (error.message === "The raw date object for [field] is missing the required field epoch_time.")
     });
   });
   it('Date - r.now', function(){
@@ -2044,7 +2045,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be defined.")
     });
   });
   it('Date - undefined - enforce_missing: false', function(){
@@ -2094,7 +2095,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be a buffer.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be a buffer.")
     });
   });
   it('Buffer - wrong type  - type: "loose"', function(){
@@ -2114,7 +2115,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be a buffer or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be a buffer or null.")
     });
   });
 
@@ -2166,7 +2167,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "The raw binary object for [field] is missing the required field data.")
+      return (error instanceof Errors.ValidationError) && (error.message === "The raw binary object for [field] is missing the required field data.")
     });
   });
   it('Buffer - r.http', function(){
@@ -2199,7 +2200,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be defined.")
     });
   });
   it('Buffer - undefined - enforce_missing: false', function(){
@@ -2232,7 +2233,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be defined.")
     });
   });
   it('Array - undefined - enforce_missing: true', function(){
@@ -2251,7 +2252,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be defined.")
     });
   });
   it('Array - undefined - enforce_missing: false', function(){
@@ -2286,7 +2287,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be an array or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be an array or null.")
     });
   });
   it('Array - wrong type - enforce_type: "loose"', function(){
@@ -2306,7 +2307,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be an array or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be an array or null.")
     });
   });
   it('Array - wrong type - enforce_type: "none"', function(){
@@ -2341,7 +2342,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field][0] must be a finite number.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field][0] must be a finite number.")
     });
   });
   it('Array - wrong type inside - enforce_type: "loose"', function(){
@@ -2361,7 +2362,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field][0] must be a finite number or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field][0] must be a finite number or null.")
     });
   });
   it('Array - wrong type inside - enforce_type: "none"', function(){
@@ -2397,7 +2398,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field][3] must be a finite number.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field][3] must be a finite number.")
     });
   });
   it('Array - wrong type inside - not first - enforce_type: "strict" - 2', function(){
@@ -2417,7 +2418,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "The element in the array [field] (position 3) cannot be `undefined`.")
+      return (error instanceof Errors.ValidationError) && (error.message === "The element in the array [field] (position 3) cannot be `undefined`.")
     });
   });
   it('Array - wrong type inside - not first - enforce_type: "loose"', function(){
@@ -2437,7 +2438,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "The element in the array [field] (position 3) cannot be `undefined`.")
+      return (error instanceof Errors.ValidationError) && (error.message === "The element in the array [field] (position 3) cannot be `undefined`.")
     });
 
 
@@ -2474,7 +2475,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be defined.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be defined.")
     });
   });
   it('Object - undefined - enforce_missing: false', function(){
@@ -2509,7 +2510,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be an object or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be an object or null.")
     });
   });
   it('Object - undefined - enforce_type: "none"', function(){
@@ -2561,7 +2562,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be an object.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be an object.")
     });
   });
   it('Object - nested wrong type - enforce_type: "strict"', function(){
@@ -2583,7 +2584,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be an object.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be an object.")
     });
   });
   it('Object - nested wrong type - enforce_type: "strict" - 2', function(){
@@ -2607,7 +2608,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field][foo] must be a finite number.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field][foo] must be a finite number.")
     });
   });
   it('Object - nested wrong type - enforce_type: "loose"', function(){
@@ -2631,7 +2632,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field][foo] must be a finite number or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field][foo] must be a finite number or null.")
     });
   });
   it('Object - Empty - enforce_type: "strict"', function(){
@@ -2666,7 +2667,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field][foo] must be defined.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field][foo] must be defined.")
     });
   });
   it('Object - undefined - enforce_type: "loose"', function(){
@@ -2706,7 +2707,7 @@ describe('validate', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field][foo] must be a finite number or null.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field][foo] must be a finite number or null.")
     });
   });
   it('Object - nested wrong type 5 - enforce_type: "none"', function(){
@@ -2904,7 +2905,7 @@ describe('validate', function(){
       })
 
     }, function(error) {
-      return (error instanceof Error) && (error.message === "Value for [field] must be a string.")
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [field] must be a string.")
     });
   });
 });
@@ -3251,7 +3252,7 @@ describe('_validator', function(){
       foreignKey: String
     }, {init: false, validator: function() {
         if (this.id !== this.field) {
-          throw new Error("Expecting `id` value to be `field` value.")
+          throw new Errors.ValidationError("Expecting `id` value to be `field` value.")
         }
       }
     })
@@ -3266,7 +3267,7 @@ describe('_validator', function(){
       foreignKey: String
     }, {init: false, validator: function() {
         if (this.id !== this.field) {
-          throw new Error("Expecting `id` value to be `field` value.")
+          throw new Errors.ValidationError("Expecting `id` value to be `field` value.")
         }
       }
     })
@@ -3285,7 +3286,7 @@ describe('_validator', function(){
       field: String
     }, {validator: function() {
       if (this.otherDoc == null) {
-        throw new Error("Relation must be defined.")
+        throw new Errors.ValidationError("Relation must be defined.")
       }
     }})
     var doc = new Model({id: "abc", field: "abc"});
@@ -3294,7 +3295,7 @@ describe('_validator', function(){
       assert.throws(function() {
         doc.validate();
       }, function(error) {
-        return (error instanceof Error) && (error.message === "Relation must be defined.")
+        return (error instanceof Errors.ValidationError) && (error.message === "Relation must be defined.")
       });
 
       Model.hasOne(Model, 'otherDoc', 'id', 'foreignKey');
@@ -3342,7 +3343,7 @@ describe('_validator', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error)
+      return (error instanceof Errors.ValidationError)
         && (error.message === "Document's validator returned `false`.")
     });
   });
@@ -3352,7 +3353,7 @@ describe('_validator', function(){
       field: {_type: String}
     }, {init: false, validator: function() {
         if (this.id !== this.field) {
-          throw new Error("Expecting `id` value to be `field` value.")
+          throw new Errors.ValidationError("Expecting `id` value to be `field` value.")
         }
       }
     })
@@ -3361,7 +3362,7 @@ describe('_validator', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error)
+      return (error instanceof Errors.ValidationError)
         && (error.message === "Expecting `id` value to be `field` value.")
     });
   });
@@ -3378,7 +3379,7 @@ describe('_validator', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error)
+      return (error instanceof Errors.ValidationError)
         && (error.message === "Document's validator returned `false`.")
     });
   });
@@ -3388,7 +3389,7 @@ describe('_validator', function(){
       field: {_type: String}
     }, {init: false, validator: function() {
         if (this.id !== this.nested.field) {
-          throw new Error("Expecting `id` value to be `field` value.")
+          throw new Errors.ValidationError("Expecting `id` value to be `field` value.")
         }
       }
     })
@@ -3402,7 +3403,7 @@ describe('_validator', function(){
       field: {_type: String}
     }, {init: false, validator: function() {
         if (this.id !== this.nested.field) {
-          throw new Error("Expecting `field` value to be `field` value.")
+          throw new Errors.ValidationError("Expecting `field` value to be `field` value.")
         }
       }
     })
@@ -3411,7 +3412,7 @@ describe('_validator', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error)
+      return (error instanceof Errors.ValidationError)
         && (error.message === "Expecting `field` value to be `field` value.")
     });
   });
@@ -3420,7 +3421,7 @@ describe('_validator', function(){
       id: String,
       field: {_type: String, validator: function(value) {
         if (value !== "abc") {
-          throw new Error("Expecting `field` value to be 'abc'.")
+          throw new Errors.ValidationError("Expecting `field` value to be 'abc'.")
         }
       }}
     }, {init: false})
@@ -3432,7 +3433,7 @@ describe('_validator', function(){
       id: String,
       field: {_type: String, validator: function(value) {
         if (value !== "abc") {
-          throw new Error("Expecting `field` value to be 'abc'.")
+          throw new Errors.ValidationError("Expecting `field` value to be 'abc'.")
         }
       }}
     }, {init: false})
@@ -3440,7 +3441,7 @@ describe('_validator', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error)
+      return (error instanceof Errors.ValidationError)
         && (error.message === "Expecting `field` value to be 'abc'.")
     });
   });
@@ -3455,7 +3456,7 @@ describe('_validator', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error)
+      return (error instanceof Errors.ValidationError)
         && (error.message === "Validator for the field [field] returned `false`.")
     });
   });
@@ -3470,7 +3471,7 @@ describe('_validator', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error)
+      return (error instanceof Errors.ValidationError)
         && (error.message === "Validator for the field [field] returned `false`.")
     });
   });
@@ -3480,7 +3481,7 @@ describe('_validator', function(){
       nested: {
         field: {_type: String, validator: function(value) {
           if (value !== "abc") {
-            throw new Error("Expecting `field` value to be 'abc'.")
+            throw new Errors.ValidationError("Expecting `field` value to be 'abc'.")
           }
         }
       }}
@@ -3496,7 +3497,7 @@ describe('_validator', function(){
       nested: {
         field: {_type: String, validator: function(value) {
           if (value !== "abc") {
-            throw new Error("Expecting `field` value to be 'abc'.")
+            throw new Errors.ValidationError("Expecting `field` value to be 'abc'.")
           }
         }
       }}
@@ -3506,7 +3507,7 @@ describe('_validator', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error)
+      return (error instanceof Errors.ValidationError)
         && (error.message === "Expecting `field` value to be 'abc'.")
     });
   });
@@ -3529,7 +3530,7 @@ describe('_validator', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error)
+      return (error instanceof Errors.ValidationError)
         && (error.message === "Value for [arr][1] must be a finite number or null.")
     });
   });
@@ -3552,7 +3553,7 @@ describe('_validator', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error)
+      return (error instanceof Errors.ValidationError)
         && (error.message === "Value for [ob][foo] must be a string or null.")
     });
   });
@@ -3589,7 +3590,7 @@ describe('_validator', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error)
+      return (error instanceof Errors.ValidationError)
         && (error.message === "The field [field] must be one of these values: foo, bar, buzz.")
     });
   });
@@ -3602,7 +3603,7 @@ describe('_validator', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error)
+      return (error instanceof Errors.ValidationError)
         && (error.message === "The field [field] must be one of these values: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10.")
     });
   });
@@ -3615,7 +3616,7 @@ describe('_validator', function(){
     assert.throws(function() {
       doc.validate();
     }, function(error) {
-      return (error instanceof Error)
+      return (error instanceof Errors.ValidationError)
         && (error.message === "The field [field] must be one of these values: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10...")
     });
   });

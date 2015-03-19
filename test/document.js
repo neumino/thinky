@@ -1358,6 +1358,16 @@ describe('save', function() {
         done();
       });
     });
+    it('should throw a ValidationError', function(done) {
+      var Model = thinky.createModel(modelNames[0], {id: Date});
+      var doc = new Model({id: "notADate"});
+      doc.save().then(function() {
+        done(new Error("Was expecting an error"));
+      }).error(function(error) {
+        assert(error instanceof Errors.ValidationError)
+        done();
+      });
+    });
   });
 });
 
@@ -2800,6 +2810,7 @@ describe('hooks', function() {
           done(new Error("Was expecting an error"))
         }).error(function(err) {
           assert.equal(err.message, "Value for [id] must be a string or null.");
+          assert(err instanceof Errors.ValidationError);
           done();
         });
       }).error(done);
