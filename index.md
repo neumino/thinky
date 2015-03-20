@@ -38,18 +38,19 @@ Create models with schemas.
 
 ```javascript
 var thinky = require('thinky')();
+var type = thinky.type;
 
 // Create a model - the table is automatically created
 var Post = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String,
-    idAuthor: String
+    id: type.string(),
+    title: type.string(),
+    content: type.string(),
+    idAuthor: type.string()
 }); 
 
 var Author = thinky.createModel("Author", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 // Join the models

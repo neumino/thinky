@@ -54,7 +54,7 @@ For example, suppose you want the name to be unique.
 
 ```js
 var Model = thinky.createModel("user",
-    name: String
+    name: type.string()
 }, {
     pk: "name"
 });
@@ -91,7 +91,7 @@ For example, suppose you want the name to be unique.
 
 ```js
 var Model = thinky.createModel("user", 
-    name: String
+    name: type.string()
 }, {
     pk: "name"
 });

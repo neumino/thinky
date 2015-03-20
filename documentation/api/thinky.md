@@ -27,16 +27,22 @@ The `options` argument is optional and can have the fields:
     - `db`: the default database, default `"test"`
     - `authKey`: the authentification key to the RethinkDB server, default `""`
 - Options for the schemas
-    - `enforce_missing`: `Boolean`, `true` to forbid missing fields, default: `false`.
-    - `enforce_extra`: can be `"strict"`, `"remove"` (delete the extra fields on validation), `"none"`, default `"none"`
-    - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`, default `"loose"`
     - `validate`: can be `"onsave"` or `"oncreate"`. The default value is `"onsave"`
     - `timeFormat`: can be `"native"` or `"raw"`. The default value is `"native"`
 
 All the options for the schemas can be overwritten when creating them.
 
+
+
 _Note_: If you import `thinky` multiple times, the models will not be shared
 between instances.
+
+_Note_: The following options are deprecated:
+
+- `enforce_missing`: `Boolean`, `true` to forbid missing fields, default: `false`.
+- `enforce_extra`: can be `"strict"`, `"remove"` (delete the extra fields on validation), `"none"`, default `"none"`
+- `enforce_type`: can be `"strict"`, `"loose"`, `"none"`, default `"loose"`
+
 
 --------------
 
@@ -162,10 +168,10 @@ _Example_: Create a basic Model for a `user`.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String,
-    email: String,
-    age: Number,
+    id: type.string(),
+    name: type.string(),
+    email: type.string(),
+    age: type.number(),
     birthdate: Date
 })
 ```
@@ -174,12 +180,12 @@ _Example_: Create a model with nested fields
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
+    id: type.string(),
     contact: {
-        email: String,
-        phone: String
+        email: type.string(),
+        phone: type.string()
     },
-    age: Number
+    age: type.number()
 });
 ```
 
@@ -187,9 +193,9 @@ _Example_: Create a model where the field `"scores"` is an array of `Number`.
 
 ```js
 var Game = thinky.createModel("Game", {
-    id: String,
-    name: String,
-    scores: [Number]
+    id: type.string(),
+    name: type.string(),
+    scores: [type.number()]
 });
 ```
 
@@ -199,10 +205,10 @@ current date if not specified.
 
 ```js
 var Post = thinky.createModel("Post",{
-    id: String,
-    title: String,
-    content: String,
-    createdAt: {_type: String, default: r.now()}
+    id: type.string(),
+    title: type.string(),
+    content: type.string(),
+    createdAt: {_type: type.string(), default: r.now()}
 });
 ```
 
@@ -211,10 +217,10 @@ name.
 
 ```js
 var Post = thinky.createModel("Post",{
-    id: String,
-    firstname: String,
-    lastname: String,
-    nickname: {_type: String, default: function() {
+    id: type.string(),
+    firstname: type.string(),
+    lastname: type.string(),
+    nickname: {_type: type.string(), default: function() {
         return this.firstname;
     }}
 });
@@ -225,9 +231,9 @@ _Example_: Create a model for a `post` where the field `title` must be a `String
 
 ```js
 var Post = thinky.createModel("Post",{
-    id: String,
-    title: {_type: String, enforce_type: "strict"},
-    content: String,
-    createdAt: {_type: String, default: r.now()}
+    id: type.string(),
+    title: {_type: type.string(), enforce_type: "strict"},
+    content: type.string(),
+    createdAt: {_type: type.string(), default: r.now()}
 });
 ```

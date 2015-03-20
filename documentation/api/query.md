@@ -61,14 +61,14 @@ _Example_: Retrieve a user and all its joined documents.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 var Account = thinky.createModel("Account", {
-    id: String,
-    userId: String,
-    sold: Number
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
 });
 
 User.hasOne(Account, "account", "id", "userId")
@@ -95,14 +95,14 @@ _Example_: Retrieve a user and the number of accounts
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 var Account = thinky.createModel("Account", {
-    id: String,
-    userId: String,
-    sold: Number
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
 });
 
 User.hasMany(Account, "accounts", "id", "userId")
@@ -131,14 +131,14 @@ _Example_: Retrieve a user and only its account.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 var Account = thinky.createModel("Account", {
-    id: String,
-    userId: String,
-    sold: Number
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
 });
 
 User.hasOne(Account, "account", "id", "userId")
@@ -167,14 +167,14 @@ _Example_ Retrieve a user and all two accounts with the smallest sold.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 var Account = thinky.createModel("Account", {
-    id: String,
-    userId: String,
-    sold: Number
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
 });
 
 User.hasMany(Account, "accounts", "id", "userId")
@@ -210,23 +210,23 @@ _Example_: Retrieve a user, its account and its solds.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 var Account = thinky.createModel("Account", {
-    id: String,
-    userId: String,
-    sold: Number
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
 });
 
 User.hasOne(Account, "account", "id", "userId");
 User.hasAndBelongsToMany(User, "friends", "id", "id");
 
 var Bill = thinky.createModel("Bill", {
-    id: String,
-    sold: Number,
-    accountId: String
+    id: type.string(),
+    sold: type.number(),
+    accountId: type.string()
 });
 
 Account.hasMany(Bill, "bills", "id", "accountId");
@@ -375,7 +375,7 @@ User.get(1).getJoin().run().then(function(result) {
 
 
 - The commands `update` and `replace` will have their first argument partially validated,
-if the first argument is an object. The validation will be performed with `enforce_missing: false`.
+if the first argument is an object. The validation will be performed with all fields set as optional.
 Once the queries has been executed, thinky will validate the returned values, and if an
 error occur during validation, the changes will be reverted (so another query will be issued).
 
@@ -386,8 +386,8 @@ Typically, this may result in the document being `{id: 1, foo: "bar"}`.
 
 ```js
 Model = thinky.createModel("User", {
-    id: Number,
-    age: Number
+    id: type.number(),
+    age: type.number()
 });
 
 var promises = [];

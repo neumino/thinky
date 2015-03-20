@@ -50,21 +50,24 @@ There are two more ways to define a type, one is via the methods in `thinky.type
 - `type.array()` for an `Array`
 - `type.point()` for a `"Point"`
 - `type.virtual()` for a `"virtual"`
+- `type.any()` for any type. No validation will be performed on this field.
 
-All these types (except `"virtual"`) come with two more methods:
+All these types come with a few more methods:
 
-- `options(options)`: set the options for this field
-  - `enforce_missing`: `Boolean`, `true` to forbid missing fields.
-  - `enforce_extra`: can be `"strict"` to forbid fields not defined in the schema,
-    `"remove"` to remove fields
-    not declared in the schema, or `"none"`
-  - `enforce_type`: can be `"strict"`, `"loose"`, `"none"`.
+- `required()`: set the field as required (cannot be `undefined` or `null`)
+- `optional()`: set the field as optional (cannot be `undefined` or `null`)
+- `allowNull(<boolean>)`: whether `null` is considered valid or not.
 - `default(valueOrFunction)`: The first argument can be constant value or a function
   that will be called with the document as the context.
 - `validator(fn)`: a function that will be used to validate a field before saving the
   document. The function should return `true` if the field is valid, `false` otherwise.
   The function can also throw an error.
 
+
+Objects have two extra methods:
+
+- `allowExtra(<boolean>)`: whether we should allow extra fields and save them
+- `removeExtra()`: remove the fields not defined in the schema before saving
 
 
 __Note__: About fields for joined documents:
@@ -75,7 +78,7 @@ __Note__: About dates:
 
 There are three valid values for a `Date`:
 
-- A JavaScript Date object - like `new Date()`.
+- A JavaScript Date object, like `new Date()`.
 - A ReQL raw date object like:
 
 ```js
@@ -114,24 +117,16 @@ The default value for a virtual field will be generated once all the other non-v
 This is the only guarantee. A default value should not rely on another default value.
 
 
-__Note__: About options:
-
-The options used to enforce the schema will be the most localized one. That is to say, in order:
-
-- The field's options
-- The model's options
-- thinky's options
-
 
 _Example_: Create a basic Model for a `user`.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String,
-    email: String,
-    age: Number,
-    birthdate: Date
+    id: type.string(),
+    name: type.string(),
+    email: type.string(),
+    age: type.number(),
+    birthdate: type.date()
 })
 ```
 
@@ -161,12 +156,12 @@ _Example_: Create a model with nested fields.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
+    id: type.string(),
     contact: {
-        email: String,
-        phone: String
+        email: type.string(),
+        phone: type.string()
     },
-    age: Number
+    age: type.number()
 });
 ```
 
@@ -205,9 +200,9 @@ _Example_: Create a model where the field `scores` is an array of `Number`.
 
 ```js
 var Game = thinky.createModel("Game", {
-    id: String,
-    name: String,
-    scores: [Number]
+    id: type.string(),
+    name: type.string(),
+    scores: [type.number()]
 });
 ```
 
@@ -226,8 +221,8 @@ One more is with:
 
 ```js
 var Game = thinky.createModel("Game", {
-    id: String,
-    name: String,
+    id: type.string(),
+    name: type.string(),
     scores: [type.number()]
 });
 ```
@@ -238,11 +233,11 @@ _Example_: Create a model where the field `game` is an array of objects with two
 
 ```js
 var Game = thinky.createModel("Game", {
-    id: String,
-    name: String,
+    id: type.string(),
+    name: type.string(0,
     game: [{
-        score: Number,
-        winner: String
+        score: type.number(),
+        winner: type.string()
     }]
 });
 ```
@@ -251,8 +246,8 @@ You can also do the same with:
 
 ```js
 var Game = thinky.createModel("Game", {
-    id: String,
-    name: String,
+    id: type.string(),
+    name: type.string(),
     game: type.array().schema(type.object().schema({
         score: Number,
         winner: String
@@ -268,10 +263,10 @@ current date if not specified.
 
 ```js
 var Post = thinky.createModel("Post",{
-    id: String,
-    title: String,
-    content: String,
-    createdAt: type.string().default(r.now())
+    id: type.string(),
+    title: type.string(),
+    content: type.string(),
+    createdAt: type.date().default(r.now())
 });
 ```
 
@@ -280,9 +275,9 @@ name.
 
 ```js
 var Post = thinky.createModel("Post",{
-    id: String,
-    firstname: String,
-    lastname: String,
+    id: type.string(),
+    firstname: type.string(),
+    lastname: type.string(),
     nickname: type.string().default(function() {
         return this.firstname;
     }}
@@ -309,7 +304,7 @@ var validator = require('validator');
 
 var User = thinky.createModel("Users",{
     id: type.string(),
-    email: type.string().email(),
+    email: type.string().email().required(),
     age: type.number()
 });
 ```
@@ -320,7 +315,7 @@ var validator = require('validator');
 var User = thinky.createModel("Users",{
     id: type.string(),
     email: type.string().validator(validator.isEmail)
-    age: Number
+    age: type.number()
 });
 ```
 

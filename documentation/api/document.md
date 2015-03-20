@@ -21,10 +21,10 @@ _Example_: Get the constructor of a post document and create a new one.
 
 ```js
 var Post = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String,
-    authorId: String
+    id: type.string(),
+    title: type.string(),
+    content: type.string(),
+    authorId: type.string()
 });
 
 var post = new Post({
@@ -76,14 +76,15 @@ Post.get(data.id).run().then(function(post) {
 ### [validate](#validate)
 
 ```
-document.validate([options])
-document.validate([options]) -> Promise
+document.validate()
+document.validate() -> Promise
 ```
 
 Validate a document.  
 The method `validate` is called before saving a document.
 
-The `option` argument is optional. It can be an object with the fields:
+
+_Note_: The option that you can pass to validate are deprecated.
 
 - `enforce_missing`: `Boolean`, `true` to forbid missing fields.
 - `enforce_extra`: can be `"strict"`, `"remove"` (delete the extra fields on validation), `"none"`, default `"none"`
@@ -170,8 +171,8 @@ _Example_: Save a new user.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 })
 
 var user = new User({
@@ -240,14 +241,14 @@ Suppose the models `User` and `Account` are linked with a
 
 ```
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 var Account = thinky.createModel("Account", {
-    id: String,
-    userId: String,
-    sold: Number
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
 });
 
 User.hasOne(Account, "account", "id", "userId")
@@ -296,13 +297,13 @@ _Example_: Update a hasOne relation.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 var Account = thinky.createModel("Account", {
-    id: String,
-    sold: Number,
-    userId: String
+    id: type.string(),
+    sold: type.number(),
+    userId: type.string()
 });
 
 User.hasOne(Account, "account", "id", "userId");
@@ -350,14 +351,14 @@ _Example_: Update a hasMany relation.
 
 ```js
 var Author = thinky.createModel("Author", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 var Post = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String,
-    authorId: String
+    id: type.string(),
+    title: type.string(),
+    content: type.string(),
+    authorId: type.string()
 });
 
 Author.hasMany(Post, "posts", "id", "authorId");
@@ -419,15 +420,15 @@ Author.get("3851d8b4-5358-43f2-ba23-f4d481358901").run()
 
 ```js
 var Post = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String,
-    authorId: String
+    id: type.string(),
+    title: type.string(),
+    content: type.string(),
+    authorId: type.string()
 });
 
 var Author = thinky.createModel("Author", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 Post.belongsTo(Author, "author", "authorId", "id")
@@ -472,15 +473,15 @@ _Example_: Save a document and a joined document with `belongsTo`.
 
 ```js
 var Post = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String,
-    authorId: String
+    id: type.string(),
+    title: type.string(),
+    content: type.string(),
+    authorId: type.string()
 });
 
 var Author = thinky.createModel("Author", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 Post.belongsTo(Author, "author", "authorId", "id")
@@ -519,8 +520,8 @@ _Example_: Save a user and all its friends.
 
 ```js
 var User = thinky.createModel("Post", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 User.hasAndBelongsToMany(User, "friends", "id", "id")
@@ -701,8 +702,8 @@ _Example_: Delete a single document.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 })
 
 User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").then(function(user) {
@@ -718,14 +719,14 @@ _Example_: Delete a single document and update a joined document.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 var Account = thinky.createModel("Account", {
-    id: String,
-    userId: String,
-    sold: Number
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
 });
 
 User.hasOne(Account, "account", "id", "userId")
@@ -798,14 +799,14 @@ _Example_: Delete a single document and its account.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 var Account = thinky.createModel("Account", {
-    id: String,
-    userId: String,
-    sold: Number
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
 });
 
 User.hasOne(Account, "account", "id", "userId")
@@ -836,8 +837,8 @@ _Example_: Delete a user and all its friends.
 
 ```js
 var User = thinky.createModel("Post", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 User.hasAndBelongsToMany(User, "friends", "id", "id")
@@ -919,8 +920,8 @@ the database.
 
 ```js
 var User = thinky.createModel("Post", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 User.hasAndBelongsToMany(User, "friends", "id", "id")
