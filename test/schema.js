@@ -161,6 +161,13 @@ describe('schema', function(){
 describe('Chainable types', function(){
   // Chainable types were added in 1.15.3, prior tests still validates options and such.
   // These tests are mostly for new validators like `min`/`max`/`alphanum`/etc.
+  it('General - chainable types in nested schemas', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name, 
+     {id: type.string(),
+      objectArray: [{ myAttribute: thinky.type.object() }]})
+    var doc = new Model({ id: util.s8(), objectArray : {} })
+  });
   it('String - basic - valid string', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
