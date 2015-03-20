@@ -10,13 +10,14 @@ var config = require(__dirname+"/config.js")
 //var thinky = require('thinky')(config.rethinkdb);
 var thinky = require('thinky')(config.rethinkdb);
 var r = thinky.r;
+var type = thinky.type;
 
 // Create the model
 var Todo = thinky.createModel("todos", {
-    id: String,
-    title: String,
-    completed: Boolean,
-    createdAt: {_type: Date, default: r.now()}
+    id: type.string(),
+    title: type.string(),
+    completed: type.boolean(),
+    createdAt: type.date().default(r.now())
 });
 
 // Ensure that an index createdAt exists
