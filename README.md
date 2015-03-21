@@ -120,6 +120,7 @@ The roadmap is defined with the issues/feedback on GitHub. Checkout:
 
 ### Contributors
 
+- [chrisfosterelli](https://github.com/chrisfosterelli)
 - [colprog](https://github.com/colprog)
 - [dulichan](https://github.com/dulichan)
 - [flienteen](https://github.com/flienteen)
