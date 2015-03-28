@@ -231,7 +231,7 @@ var Bill = thinky.createModel("Bill", {
 
 Account.hasMany(Bill, "bills", "id", "accountId");
 
-User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({account: {sold: true}})
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({account: {bills: true}})
     .run().then(function(user) {
 
     /*
