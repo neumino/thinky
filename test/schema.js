@@ -1588,6 +1588,36 @@ describe('generateDefault', function(){
     assert.equal(doc.id, str);
     assert.deepEqual(doc.ar, [1,2,3]);
   });
+  it('Object - default should make a deep copy', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name, {
+      field: type.object().default({foo: "bar"}).schema({
+        foo: type.string()
+      })
+    }, {init: false})
+    var doc1 = new Model({});
+    var doc2 = new Model({});
+    assert.equal(doc1.field.foo, "bar");
+    assert.equal(doc2.field.foo, "bar");
+    assert.notEqual(doc1.field, doc2.field)
+    assert.deepEqual(doc1.field, doc2.field)
+  });
+  it('Array - default should make a deep copy', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name, {
+      field: type.array().default([{foo: "bar"}]).schema({
+        foo: type.string()
+      })
+    }, {init: false})
+    var doc1 = new Model({});
+    var doc2 = new Model({});
+    assert.equal(doc1.field.length, 1);
+    assert.equal(doc2.field.length, 1);
+    assert.equal(doc1.field[0].foo, "bar");
+    assert.equal(doc2.field[0].foo, "bar");
+    assert.notEqual(doc1.field, doc2.field)
+    assert.deepEqual(doc1.field, doc2.field)
+  });
 });
 describe('validate', function(){
   it('String - wrong type - type: "strict"', function(){
