@@ -3036,7 +3036,7 @@ describe('Advanced cases', function(){
       var promises = [doc.save(), otherDocs[0].save(), otherDocs[1].save(), otherDocs[2].save()];
 
       Promise.all(promises).then(function() {
-        return Model.innerJoin(OtherModel.between(null, null)._query, function() { return true}).execute()
+        return Model.innerJoin(OtherModel.between(r.minval, r.maxval)._query, function() { return true}).execute()
       }).then(function(cursor) {
         return cursor.toArray();
       }).then(function(result) {
