@@ -208,7 +208,7 @@ var Post = thinky.createModel("Post",{
     id: type.string(),
     title: type.string(),
     content: type.string(),
-    createdAt: {_type: type.string(), default: r.now()}
+    createdAt: type.string().default(r.now())}
 });
 ```
 
@@ -220,9 +220,9 @@ var Post = thinky.createModel("Post",{
     id: type.string(),
     firstname: type.string(),
     lastname: type.string(),
-    nickname: {_type: type.string(), default: function() {
+    nickname: type.string().default(function() {
         return this.firstname;
-    }}
+    })
 });
 ```
 
@@ -234,6 +234,6 @@ var Post = thinky.createModel("Post",{
     id: type.string(),
     title: {_type: type.string(), enforce_type: "strict"},
     content: type.string(),
-    createdAt: {_type: type.string(), default: r.now()}
+    createdAt: type.string().default(t.row())
 });
 ```
