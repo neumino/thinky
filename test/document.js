@@ -2990,3 +2990,142 @@ describe('hooks', function() {
     });
   });
 });
+
+describe('removeRelations', function(){
+  afterEach(cleanTables);
+
+  it('should work for hasOne', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    });
+
+    var otherName = util.s8();
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    })
+    Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey")
+
+    var docValues = {str: util.s8(), num: util.random()}
+    var otherDocValues = {str: util.s8(), num: util.random()}
+
+    doc = new Model(docValues);
+    var otherDoc = new OtherModel(otherDocValues);
+    doc.otherDoc = otherDoc;
+
+    doc.saveAll().then(function(doc) {
+      return doc.removeRelations({otherDoc: true})
+    }).then(function(result) {
+      return OtherModel.get(otherDoc.id).run()
+    }).then(function(doc) {
+      assert.equal(doc.foreignKey, undefined);
+      done();
+    });
+  });
+
+  it('should work for hasMany', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    });
+
+    var otherName = util.s8();
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    })
+    Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey")
+
+    var docValues = {str: util.s8(), num: util.random()}
+    var otherDocValues = {str: util.s8(), num: util.random()}
+
+    doc = new Model(docValues);
+    var otherDoc = new OtherModel(otherDocValues);
+    doc.otherDocs = [otherDoc];
+
+    doc.saveAll().then(function(doc) {
+      return doc.removeRelations({otherDocs: true})
+    }).then(function(doc) {
+      return OtherModel.get(otherDoc.id).run()
+    }).then(function(doc) {
+      assert.equal(doc.foreignKey, undefined);
+      done();
+    });
+  });
+
+  it('should work for belongsTo', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    });
+
+    var otherName = util.s8();
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number
+    })
+    Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id")
+
+    var docValues = {str: util.s8(), num: util.random()}
+    var otherDocValues = {str: util.s8(), num: util.random()}
+
+    doc = new Model(docValues);
+    var otherDoc = new OtherModel(otherDocValues);
+    doc.otherDoc = otherDoc;
+
+    doc.saveAll().then(function(doc) {
+      return doc.removeRelations({otherDoc: true})
+    }).then(function(newDoc) {
+      assert.equal(doc.foreignKey, undefined);
+      assert.equal(newDoc.foreignKey, undefined);
+      return Model.get(doc.id).run()
+    }).then(function(doc) {
+      assert.equal(doc.foreignKey, undefined);
+      done();
+    });
+  });
+
+  it('should work for hasAndBelongsTo', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    });
+
+    var otherName = util.s8();
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    })
+    Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id")
+
+    var docValues = {str: util.s8(), num: util.random()}
+    var otherDocValues = {str: util.s8(), num: util.random()}
+
+    doc = new Model(docValues);
+    var otherDoc = new OtherModel(otherDocValues);
+    doc.otherDocs = [otherDoc];
+
+    doc.saveAll().then(function(doc) {
+      return doc.removeRelations({otherDocs: true})
+    }).then(function(doc) {
+      return Model.get(doc.id).getJoin({otherDocs: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.otherDocs.length, 0);
+      done();
+    });
+  });
+});
+

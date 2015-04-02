@@ -687,6 +687,143 @@ describe('getJoin', function(){
   });
 });
 
+describe('removeRelations', function(){
+  afterEach(cleanTables);
+
+  it('should work for hasOne', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    });
+
+    var otherName = util.s8();
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    })
+    Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey")
+
+    var docValues = {str: util.s8(), num: util.random()}
+    var otherDocValues = {str: util.s8(), num: util.random()}
+
+    doc = new Model(docValues);
+    var otherDoc = new OtherModel(otherDocValues);
+    doc.otherDoc = otherDoc;
+
+    doc.saveAll().then(function(doc) {
+      return Model.get(doc.id).removeRelations({otherDoc: true}).run()
+    }).then(function(doc) {
+      return OtherModel.get(otherDoc.id).run()
+    }).then(function(doc) {
+      assert.equal(doc.foreignKey, undefined);
+      done();
+    });
+  });
+
+  it('should work for hasMany', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    });
+
+    var otherName = util.s8();
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    })
+    Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey")
+
+    var docValues = {str: util.s8(), num: util.random()}
+    var otherDocValues = {str: util.s8(), num: util.random()}
+
+    doc = new Model(docValues);
+    var otherDoc = new OtherModel(otherDocValues);
+    doc.otherDocs = [otherDoc];
+
+    doc.saveAll().then(function(doc) {
+      return Model.get(doc.id).removeRelations({otherDocs: true}).run()
+    }).then(function(doc) {
+      return OtherModel.get(otherDoc.id).run()
+    }).then(function(doc) {
+      assert.equal(doc.foreignKey, undefined);
+      done();
+    });
+  });
+
+  it('should work for belongsTo', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    });
+
+    var otherName = util.s8();
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number
+    })
+    Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id")
+
+    var docValues = {str: util.s8(), num: util.random()}
+    var otherDocValues = {str: util.s8(), num: util.random()}
+
+    doc = new Model(docValues);
+    var otherDoc = new OtherModel(otherDocValues);
+    doc.otherDoc = otherDoc;
+
+    doc.saveAll().then(function(doc) {
+      return Model.get(doc.id).removeRelations({otherDoc: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.foreignKey, undefined);
+      return Model.get(doc.id).run()
+    }).then(function(doc) {
+      assert.equal(doc.foreignKey, undefined);
+      done();
+    });
+  });
+
+  it('should work for hasAndBelongsTo', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    });
+
+    var otherName = util.s8();
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    })
+    Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id")
+
+    var docValues = {str: util.s8(), num: util.random()}
+    var otherDocValues = {str: util.s8(), num: util.random()}
+
+    doc = new Model(docValues);
+    var otherDoc = new OtherModel(otherDocValues);
+    doc.otherDocs = [otherDoc];
+
+    doc.saveAll().then(function(doc) {
+      return Model.get(doc.id).removeRelations({otherDocs: true}).run()
+    }).then(function(doc) {
+      return Model.get(doc.id).getJoin({otherDocs: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.otherDocs.length, 0);
+      done();
+    });
+  });
+});
+
 describe('Query.run() should take options', function(){
   var Model;
   var data = [];
@@ -1096,9 +1233,8 @@ describe('In place writes', function() {
       num: Number
     });
     Model.get('nonExistingId').update({foo: 'bar'}).run().error(function(error) {
-      assert(/The query did not find a document and returned null.*/.test(error.message));
+      assert(/The query did not find a document and returned null/.test(error.message));
       done();
     });
   })
-
 });
