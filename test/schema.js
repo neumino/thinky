@@ -1090,7 +1090,6 @@ describe('Chainable types', function(){
       return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be an array with 2 elements.")
     });
   });
-
   it('Virtual - basic', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
@@ -1100,6 +1099,23 @@ describe('Chainable types', function(){
       },
       {init: false})
     var doc = new Model({ id: 'bar', foo: "bar"})
+  });
+  it('Any - basic', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {
+        id: type.string(),
+        foo: type.any()
+      },
+      {init: false})
+    var doc = new Model({ id: 'bar', foo: "bar"})
+    doc.validate();
+    doc = new Model({ id: 'bar', foo: 2})
+    doc.validate();
+    doc = new Model({ id: 'bar', foo: undefined})
+    doc.validate();
+    doc = new Model({ id: 'bar', foo: null})
+    doc.validate();
   });
 })
 
