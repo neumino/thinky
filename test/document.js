@@ -325,6 +325,29 @@ describe('save', function() {
         }).error(done);
       }).error(done)
     });
+    it('Raw ReQL points should work', function(done){
+      var Model = thinky.createModel(modelNames[0], {
+        id: String,
+        loc: "Point"
+      })
+      var t = new Model({
+        id: util.s8(),
+        loc: { '$reql_type$': 'GEOMETRY',
+          coordinates: [ 1, 2 ],
+          type: 'Point'
+        }
+      });
+
+      t.save().then(function(result) {
+        Model.get(t.id).execute().then(function(result) {
+          assert.equal(t.loc.$reql_type$, "GEOMETRY")
+          assert.equal(t.loc.type, "Point")
+          assert(Array.isArray(t.loc.coordinates))
+          done()
+        }).error(done);
+      }).error(done)
+    });
+
     it('Points as objects should be coerced to ReQL points', function(done){
       var Model = thinky.createModel(modelNames[0], {
         id: String,
