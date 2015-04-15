@@ -8,6 +8,7 @@ var Promise = require('bluebird');
 
 var modelNameSet = {};
 modelNameSet[util.s8()] = true;
+modelNameSet[util.s8()] = true;
 var modelNames = Object.keys(modelNameSet);
 
 var cleanTables = function(done) {
@@ -123,7 +124,7 @@ describe('Events', function(){
   });
   it('Test saving event to validate a relation', function(done){
     var Model = thinky.createModel(modelNames[0], {id: String})
-    var OtherModel = thinky.createModel(util.s8(), {id: String, foreignKey: String})
+    var OtherModel = thinky.createModel(modelNames[1], {id: String, foreignKey: String})
 
     Model.hasOne(OtherModel, 'joinedDoc', 'id', 'foreignKey');
     var doc = new Model({});
@@ -161,4 +162,33 @@ describe('Events', function(){
       });
     });
   });
+  it('Test retrieved event for joined documents', function(done){
+    var Model = thinky.createModel(modelNames[0], {id: String})
+    var OtherModel = thinky.createModel(modelNames[1], {id: String, foreignKey: String})
+    Model.hasOne(OtherModel, 'joinedDoc', 'id', 'foreignKey');
+
+    var doc = new Model({id: util.s8()});
+    var otherDoc = new OtherModel({id: util.s8()})
+    doc.joinedDoc = otherDoc;
+
+    var count = 0;
+    Model.addListener("retrieved", function(doc) {
+      count++;
+      if (count == 2) {
+        done();
+      }
+    });
+    OtherModel.addListener("retrieved", function(doc) {
+      count++;
+      if (count == 2) {
+        done();
+      }
+    });
+
+    doc.saveAll().then(function() {
+      Model.get(doc.id).getJoin().run().then(function(result) {
+      });
+    });
+  });
+
 });
