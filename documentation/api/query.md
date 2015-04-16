@@ -382,6 +382,15 @@ error occur during validation, the changes will be reverted (so another query wi
 __Note__: Because reverting the changes require a round trip, this operation
 is not atomic and may overwrite another write.
 
+__Note__: If your queries does update something, you will get for a point-write (`.get(...).update/replace(...)`):
+- the updated document  if the query did update the document
+- `undefined` if no document is updated
+
+For a range write (`table.update/replace`, `table.filter(...).update/replace`), you will get an array of the
+updated documents. If no document is updated, you will get an empty array.
+
+
+
 Typically, this may result in the document being `{id: 1, foo: "bar"}`.
 
 ```js
