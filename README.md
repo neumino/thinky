@@ -120,12 +120,16 @@ The roadmap is defined with the issues/feedback on GitHub. Checkout:
 
 ### Contributors
 
+- [chrisfosterelli](https://github.com/chrisfosterelli)
 - [colprog](https://github.com/colprog)
 - [dulichan](https://github.com/dulichan)
 - [flienteen](https://github.com/flienteen)
 - [marshall007](https://github.com/marshall007)
+- [mindjuice](https://github.com/mindjuice)
 - [Morhaus](https://github.com/Morhaus)
+- [primitive-type](https://github.com/primitive-type)
 - [nikaspran](https://github.com/nikaspran)
+- [simonratner](https://github.com/simonratner)
 - [wezs](https://github.com/wezs)
 
 

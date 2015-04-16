@@ -2,28 +2,29 @@
 var config = require(__dirname+'/../config.js');
 var thinky = require('thinky')(config);
 var r = thinky.r;
+var type = thinky.type;
 
 // Create the models
 // Note: if we don't provide the field date, the default function will be called
 var Post = thinky.createModel('Post', {
-    id: String,
-    title: String,
-    text: String,
-    authorId: String,
-    date: {_type: Date, default: r.now()}
+    id: type.string(),
+    title: type.string(),
+    text: type.string(),
+    authorId: type.string(),
+    date: type.date().default(r.now)
 });
 var Author = thinky.createModel('Author', {
-    id: String,
-    name: String,
-    email: String,
-    website: String
+    id: type.string(),
+    name: type.string(),
+    email: type.string(),
+    website: type.string()
 });
 var Comment = thinky.createModel('Comment', {
-    id: String,
-    name: String,
-    comment: String,
-    postId: String,
-    date: {_type: Date, default: r.now()}
+    id: type.string(),
+    name: type.string(),
+    comment: type.string(),
+    postId: type.string(),
+    date: type.date().default(r.now())
 });
 
 

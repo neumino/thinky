@@ -2,6 +2,7 @@ var config = require(__dirname+'/../config.js');
 var thinky = require(__dirname+'/../lib/thinky.js')(config);
 var r = thinky.r;
 var type = thinky.type;
+var Errors = thinky.Errors;
 
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
@@ -213,7 +214,8 @@ describe("Batch insert", function() {
       num: Number
     });
     Model.save([{id: 4}]).error(function(err) {
-      assert.equal(err.message, "One of the documents is not valid. Original error:\nValue for [id] must be a string or null.")
+      assert.equal(err.message, "One of the documents is not valid. Original error:\nValue for [id] must be a string or null.");
+      assert(err instanceof Errors.ValidationError);
       done();
     });
   });
@@ -251,6 +253,39 @@ describe("Batch insert", function() {
       done(e);
     });
   });
+  it('Model.save should handle options - update', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      num: Number
+    });
+    Model.save({id: "foo"}).then(function(result) {
+      assert.equal(result.length, 1);
+      assert.equal(result[0].id, "foo");
+      return Model.save({id: "foo", bar: "buzz"}, {conflict: 'update'});
+    }).then(function(result) {
+      assert.deepEqual(result[0], {id: "foo", bar: "buzz"});
+      done();
+    }).error(function(e) {
+      done(e);
+    });
+  });
+  it('Model.save should handle options - replace', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      num: Number
+    });
+    Model.save({id: "foo", bar: "buzz"}).then(function(result) {
+      assert.equal(result.length, 1);
+      assert.equal(result[0].id, "foo");
+      return Model.save({id: "foo"}, {conflict: 'replace'});
+    }).then(function(result) {
+      assert.deepEqual(result[0], {id: "foo"});
+      done();
+    }).error(function(e) {
+      done(e);
+    });
+  });
+
 
 });
 

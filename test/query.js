@@ -77,6 +77,7 @@ describe('Model queries', function() {
     }).error(done);
   });
 
+
   after(cleanTables);
 
   it('Model.run() should return', function(done){
@@ -542,6 +543,42 @@ describe('getJoin', function(){
         });
       }).error(done);
     });
+    it('_apply should work with count (not coerce to arrays)', function(done) {
+      var name = util.s8();
+      var Model = thinky.createModel(modelNames[0], {
+        id: String
+      });
+
+      var otherName = util.s8();
+      var OtherModel = thinky.createModel(modelNames[1], {
+        id: String,
+        otherId: String
+      });
+
+      Model.hasMany(OtherModel, "has", "id", "otherId");
+      OtherModel.belongsTo(Model, "belongsTo", "otherId", "id");
+
+      var values = {};
+      var otherValues = {};
+      var doc = new Model(values);
+      var otherDocs = [
+        new OtherModel(otherValues),
+        new OtherModel(otherValues),
+        new OtherModel(otherValues)
+      ];
+
+      doc.has = otherDocs;
+
+      doc.saveAll().then(function(result) {
+        Model.get(doc.id).getJoin({has: { _apply: function(seq) {
+          return seq.count()
+        }, _array: false}}).run().then(function(result) {
+          assert.equal(result.has, 3);
+          done();
+        });
+      }).error(done);
+    });
+
   });
   describe("should not throw with missing keys", function() {
     afterEach(cleanTables);
@@ -646,6 +683,143 @@ describe('getJoin', function(){
         }).error(done);
       }).error(done);
 
+    });
+  });
+});
+
+describe('removeRelations', function(){
+  afterEach(cleanTables);
+
+  it('should work for hasOne', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    });
+
+    var otherName = util.s8();
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    })
+    Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey")
+
+    var docValues = {str: util.s8(), num: util.random()}
+    var otherDocValues = {str: util.s8(), num: util.random()}
+
+    doc = new Model(docValues);
+    var otherDoc = new OtherModel(otherDocValues);
+    doc.otherDoc = otherDoc;
+
+    doc.saveAll().then(function(doc) {
+      return Model.get(doc.id).removeRelations({otherDoc: true}).run()
+    }).then(function(doc) {
+      return OtherModel.get(otherDoc.id).run()
+    }).then(function(doc) {
+      assert.equal(doc.foreignKey, undefined);
+      done();
+    });
+  });
+
+  it('should work for hasMany', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    });
+
+    var otherName = util.s8();
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    })
+    Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey")
+
+    var docValues = {str: util.s8(), num: util.random()}
+    var otherDocValues = {str: util.s8(), num: util.random()}
+
+    doc = new Model(docValues);
+    var otherDoc = new OtherModel(otherDocValues);
+    doc.otherDocs = [otherDoc];
+
+    doc.saveAll().then(function(doc) {
+      return Model.get(doc.id).removeRelations({otherDocs: true}).run()
+    }).then(function(doc) {
+      return OtherModel.get(otherDoc.id).run()
+    }).then(function(doc) {
+      assert.equal(doc.foreignKey, undefined);
+      done();
+    });
+  });
+
+  it('should work for belongsTo', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    });
+
+    var otherName = util.s8();
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number
+    })
+    Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id")
+
+    var docValues = {str: util.s8(), num: util.random()}
+    var otherDocValues = {str: util.s8(), num: util.random()}
+
+    doc = new Model(docValues);
+    var otherDoc = new OtherModel(otherDocValues);
+    doc.otherDoc = otherDoc;
+
+    doc.saveAll().then(function(doc) {
+      return Model.get(doc.id).removeRelations({otherDoc: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.foreignKey, undefined);
+      return Model.get(doc.id).run()
+    }).then(function(doc) {
+      assert.equal(doc.foreignKey, undefined);
+      done();
+    });
+  });
+
+  it('should work for hasAndBelongsTo', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    });
+
+    var otherName = util.s8();
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    })
+    Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id")
+
+    var docValues = {str: util.s8(), num: util.random()}
+    var otherDocValues = {str: util.s8(), num: util.random()}
+
+    doc = new Model(docValues);
+    var otherDoc = new OtherModel(otherDocValues);
+    doc.otherDocs = [otherDoc];
+
+    doc.saveAll().then(function(doc) {
+      return Model.get(doc.id).removeRelations({otherDocs: true}).run()
+    }).then(function(doc) {
+      return Model.get(doc.id).getJoin({otherDocs: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.otherDocs.length, 0);
+      done();
     });
   });
 });
@@ -794,33 +968,27 @@ describe('thinky.Query', function() {
 describe('then', function() {
   afterEach(cleanTables);
 
-  it('should throw an error', function() {
+  it('should run the query', function(done) {
     var name = util.s8();
 
     var Query = thinky.Query;
     var r = thinky.r;
     var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
 
-
-    assert.throws(function() {
-      User.then(function() {});
-    }, function(error) {
-      return (error instanceof Error) && (error.message === "The method `then` is not defined on Query. Did you forgot `.run()` or `.execute()`?")
+    User.then(function() {
+        done();
     });
 
   });
-  it('should throw an error', function() {
+  it('should run the query', function(done) {
     var name = util.s8();
 
     var Query = thinky.Query;
     var r = thinky.r;
     var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
 
-
-    assert.throws(function() {
-      User.filter({}).then(function() {});
-    }, function(error) {
-      return (error instanceof Error) && (error.message === "The method `then` is not defined on Query. Did you forgot `.run()` or `.execute()`?")
+    User.filter({}).then(function() {
+        done();
     });
 
   });
@@ -941,6 +1109,10 @@ describe('In place writes', function() {
       assert(result);
       assert.equal(result.id, doc.id);
       assert.equal(result.num, 1);
+      return Model.get(doc.id).update({num: 1}).run()
+    }).then(function(result) {
+      // We currently do not run another point read after a write.
+      assert.equal(result, undefined);
       done();
     }).error(done);
   })
@@ -1000,6 +1172,22 @@ describe('In place writes', function() {
       done();
     }).error(done);
   })
+  it('Range write with one doc - valid', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      num: Number
+    });
+    var docs = [{id: util.s8(), num: 0}, {id: util.s8(), num: 0}];
+    Model.save(docs).then(function() {
+      return Model.filter({id: docs[0].id}).update({num: 1}).run()
+    }).then(function(result) {
+      assert(Array.isArray(result));
+      assert.equal(result[0].id, docs[0].id);
+      assert.equal(result[0].num, 1);
+      done();
+    }).error(done);
+  })
+
   it('Range write - post non valid - primary key is a string', function(done) {
     var Model = thinky.createModel(modelNames[0], {
       id: String,
@@ -1058,5 +1246,15 @@ describe('In place writes', function() {
         done();
       }).error(done);
     })
+  })
+  it('Point write on non existing doc', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      num: Number
+    });
+    Model.get('nonExistingId').update({foo: 'bar'}).run().error(function(error) {
+      assert(/The query did not find a document and returned null/.test(error.message));
+      done();
+    });
   })
 });
