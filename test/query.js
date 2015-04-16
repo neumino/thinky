@@ -1109,6 +1109,10 @@ describe('In place writes', function() {
       assert(result);
       assert.equal(result.id, doc.id);
       assert.equal(result.num, 1);
+      return Model.get(doc.id).update({num: 1}).run()
+    }).then(function(result) {
+      // We currently do not run another point read after a write.
+      assert.equal(result, undefined);
       done();
     }).error(done);
   })
@@ -1168,6 +1172,22 @@ describe('In place writes', function() {
       done();
     }).error(done);
   })
+  it('Range write with one doc - valid', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      num: Number
+    });
+    var docs = [{id: util.s8(), num: 0}, {id: util.s8(), num: 0}];
+    Model.save(docs).then(function() {
+      return Model.filter({id: docs[0].id}).update({num: 1}).run()
+    }).then(function(result) {
+      assert(Array.isArray(result));
+      assert.equal(result[0].id, docs[0].id);
+      assert.equal(result[0].num, 1);
+      done();
+    }).error(done);
+  })
+
   it('Range write - post non valid - primary key is a string', function(done) {
     var Model = thinky.createModel(modelNames[0], {
       id: String,
