@@ -83,7 +83,6 @@ Users.changes().then(function(feed) {
       console.log("New value:");
       console.log(stringify(doc));
     }
-    else {
   });
 }).error(function(error) {
   console.log(error);
