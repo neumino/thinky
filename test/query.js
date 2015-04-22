@@ -6,6 +6,9 @@ var Document = require(__dirname+'/../lib/document.js');
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
 var Promise = require('bluebird');
+Promise.onPossiblyUnhandledRejection(function() {
+    // suppress possibly unhandled rejection warnings
+});
 
 var modelNameSet = {};
 modelNameSet[util.s8()] = true;
@@ -978,7 +981,6 @@ describe('then', function() {
     User.then(function() {
         done();
     });
-
   });
   it('should run the query', function(done) {
     var name = util.s8();
@@ -990,7 +992,76 @@ describe('then', function() {
     User.filter({}).then(function() {
         done();
     });
+  });
+  it('should return a promise', function(done) {
+    var name = util.s8();
 
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    User.filter({}).then(function() {
+        // no-op
+    }).spread(function() {
+        done();
+    });
+  });
+});
+describe('catch', function() {
+  afterEach(cleanTables);
+
+  it('should run the query', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    User.filter(r.error('test')).catch(function() {
+        done();
+    });
+  });
+  it('should return a promise', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    User.filter(r.error('test')).catch(function() {
+        // no-op
+    }).spread(function() {
+        done();
+    });
+  });
+});
+describe('finally', function() {
+  afterEach(cleanTables);
+
+  it('should run the query', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    User.filter(r.error('test')).finally(function() {
+        done();
+    });
+  });
+  it('should return a promise', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    User.filter(r.error('test')).finally(function() {
+        // no-op
+    }).spread(function() {
+    }).finally(function() {
+        done();
+    });
   });
 });
 describe('clone', function() {
