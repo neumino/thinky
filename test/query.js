@@ -1007,6 +1007,34 @@ describe('then', function() {
     });
   });
 });
+describe('error', function() {
+  afterEach(cleanTables);
+
+  it('should run the query', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    User.filter(r.error('test')).error(function() {
+        done();
+    });
+  });
+  it('should return a promise', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    User.filter(r.error('test')).error(function() {
+        // no-op
+    }).spread(function() {
+        done();
+    });
+  });
+});
 describe('catch', function() {
   afterEach(cleanTables);
 
