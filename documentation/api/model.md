@@ -82,7 +82,7 @@ var User = thinky.createModel("User", {
     password: String
 });
 
-User.define("getView", function() {
+User.defineStatic("getView", function() {
     return this.without('password');
 });
 
