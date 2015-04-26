@@ -57,8 +57,8 @@ var stringify = function(doc) {
 }
 
 var Users = thinky.createModel("Users", {
-  id: String,
-  name: String
+  id: type.string(),
+  name: type.string()
 });
 
 Users.changes().then(function(feed) {
@@ -83,7 +83,6 @@ Users.changes().then(function(feed) {
       console.log("New value:");
       console.log(stringify(doc));
     }
-    else {
   });
 }).error(function(error) {
   console.log(error);
@@ -100,8 +99,8 @@ var stringify = function(doc) {
 }
 
 var Users = thinky.createModel("Users", {
-  id: String,
-  name: String
+  id: type.string(),
+  name: type.string()
 });
 
 Users.get("3851d8b4").changes().then(function(doc) {

@@ -61,14 +61,14 @@ _Example_: Retrieve a user and all its joined documents.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 var Account = thinky.createModel("Account", {
-    id: String,
-    userId: String,
-    sold: Number
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
 });
 
 User.hasOne(Account, "account", "id", "userId")
@@ -95,17 +95,17 @@ _Example_: Retrieve a user and the number of accounts
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 var Account = thinky.createModel("Account", {
-    id: String,
-    userId: String,
-    sold: Number
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
 });
 
-User.hasMany(Account, "account", "id", "userId")
+User.hasMany(Account, "accounts", "id", "userId")
 
 User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({
   _apply: function(seq) { return seq.count() },
@@ -116,11 +116,7 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({
      * user = {
      *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
      *     name: "Michel",
-     *     account: {
-     *         id: "3851d8b4-5358-43f2-ba23-f4d481358901",
-     *         userId: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
-     *         sold: 2420
-     *     }
+     *     account: 3
      * }
      */
 });
@@ -135,14 +131,14 @@ _Example_: Retrieve a user and only its account.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 var Account = thinky.createModel("Account", {
-    id: String,
-    userId: String,
-    sold: Number
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
 });
 
 User.hasOne(Account, "account", "id", "userId")
@@ -171,14 +167,14 @@ _Example_ Retrieve a user and all two accounts with the smallest sold.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 var Account = thinky.createModel("Account", {
-    id: String,
-    userId: String,
-    sold: Number
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
 });
 
 User.hasMany(Account, "accounts", "id", "userId")
@@ -214,28 +210,28 @@ _Example_: Retrieve a user, its account and its solds.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 var Account = thinky.createModel("Account", {
-    id: String,
-    userId: String,
-    sold: Number
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
 });
 
 User.hasOne(Account, "account", "id", "userId");
 User.hasAndBelongsToMany(User, "friends", "id", "id");
 
 var Bill = thinky.createModel("Bill", {
-    id: String,
-    sold: Number,
-    accountId: String
+    id: type.string(),
+    sold: type.number(),
+    accountId: type.string()
 });
 
 Account.hasMany(Bill, "bills", "id", "accountId");
 
-User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({account: {sold: true}})
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({account: {bills: true}})
     .run().then(function(user) {
 
     /*
@@ -379,19 +375,28 @@ User.get(1).getJoin().run().then(function(result) {
 
 
 - The commands `update` and `replace` will have their first argument partially validated,
-if the first argument is an object. The validation will be performed with `enforce_missing: false`.
+if the first argument is an object. The validation will be performed with all fields set as optional.
 Once the queries has been executed, thinky will validate the returned values, and if an
 error occur during validation, the changes will be reverted (so another query will be issued).
 
 __Note__: Because reverting the changes require a round trip, this operation
 is not atomic and may overwrite another write.
 
+__Note__: If your queries does update something, you will get for a point-write (`.get(...).update/replace(...)`):
+- the updated document  if the query did update the document
+- `undefined` if no document is updated
+
+For a range write (`table.update/replace`, `table.filter(...).update/replace`), you will get an array of the
+updated documents. If no document is updated, you will get an empty array.
+
+
+
 Typically, this may result in the document being `{id: 1, foo: "bar"}`.
 
 ```js
 Model = thinky.createModel("User", {
-    id: Number,
-    age: Number
+    id: type.number(),
+    age: type.number()
 });
 
 var promises = [];

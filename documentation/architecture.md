@@ -32,11 +32,12 @@ For example to declare a model `User`:
 ```js
 // file: models/user.js
 var thinky = require(__dirname+'/util/thinky.js');
+var type = thinky.type;
 
 var User = thinky.createModel("User", {
-    id: String,
-    name: String,
-    age: Number
+    id: type.string(),
+    name: type.string(),
+    age: type.number()
 });
 
 module.exports = User;
@@ -51,11 +52,12 @@ Suppose that a `User` has one `Account`. You would have two files:
 ```js
 // file: models/account.js
 var thinky = require(__dirname+'/util/thinky.js');
+var type = thinky.type;
 
 var Account = thinky.createModel("Account", {
-    id: String,
-    sold: Number,
-    userId: String
+    id: type.string(),
+    sold: type.number(),
+    userId: type.string()
 });
 
 module.exports = Account;
@@ -68,11 +70,12 @@ Account.belongsTo(User, "user", "userId", "id");
 ```js
 // file: models/user.js
 var thinky = require(__dirname+'/util/thinky.js');
+var type = thinky.type;
 
 var User = thinky.createModel("User", {
-    id: String,
-    name: String,
-    age: Number
+    id: type.string(),
+    name: type.string(),
+    age: type.number()
 });
 
 module.exports = User;

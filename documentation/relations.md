@@ -37,13 +37,13 @@ _Example_: Each user has exactly one account, and each account belongs to exactl
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 var Account = thinky.createModel("Account", {
-    id: String,
-    sold: Number,
-    userId: String
+    id: type.string(),
+    sold: type.number(),
+    userId: type.string()
 });
 
 User.hasOne(Account, "account", "id", "userId");
@@ -96,14 +96,14 @@ _Example_: An author has many posts, but each post is written by only one author
 
 ```js
 var Author = thinky.createModel("Author", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 var Post = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String,
-    authorId: String
+    id: type.string(),
+    title: type.string(),
+    content: type.string(),
+    authorId: type.string()
 });
 
 Author.hasMany(Post, "posts", "id", "authorId");
@@ -174,13 +174,13 @@ The relation `hasAndBelongsToMany` is symmetric, meaning that if `a` "has" `b`, 
 
 ```js
 var Post = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String
+    id: type.string(),
+    title: type.string(),
+    content: type.string()
 });
 var Tag = thinky.createModel("Tag", {
-    id: String,
-    tag: String
+    id: type.string(),
+    tag: type.string()
 });
 
 Post.hasAndBelongsToMany(Tag, "tags", "id", "id")
@@ -270,13 +270,13 @@ Suppose we have the following code:
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 var Account = thinky.createModel("Account", {
-    id: String,
-    sold: Number,
-    userId: String
+    id: type.string(),
+    sold: type.number(),
+    userId: type.string()
 });
 
 User.hasOne(Account, "account", "id", "userId");
@@ -311,9 +311,9 @@ _Example_:
 
 ```js
 var Human = thinky.createModel("Human", {
-    id: String,
-    name: String,
-    contactId: String
+    id: type.string(),
+    name: type.string(),
+    contactId: type.string()
 });
 Human.belongsTo(Human, "emergencyContact", "contactId", "id");
 
@@ -344,13 +344,13 @@ _Example_: Update a hasOne relation.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 var Account = thinky.createModel("Account", {
-    id: String,
-    sold: Number,
-    userId: String
+    id: type.string(),
+    sold: type.number(),
+    userId: type.string()
 });
 
 User.hasOne(Account, "account", "id", "userId");
@@ -407,13 +407,13 @@ _Example_: Basic usage.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 var Account = thinky.createModel("Account", {
-    id: String,
-    sold: Number,
-    userId: String
+    id: type.string(),
+    sold: type.number(),
+    userId: type.string()
 });
 
 User.hasOne(Account, "account", "id", "userId");
@@ -441,9 +441,9 @@ _Example_: You can manually set the joined documents to retrieve.
 
 ```js
 var Human = thinky.createModel("Human", {
-    id: String,
-    name: String,
-    partnerId: String
+    id: type.string(),
+    name: type.string(),
+    partnerId: type.string()
 });
 Human.belongsTo(Human, "emergencyContact", "contactId", "id");
 
@@ -486,13 +486,13 @@ _Example_:
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 var Account = thinky.createModel("Account", {
-    id: String,
-    sold: Number,
-    userId: String
+    id: type.string(),
+    sold: type.number(),
+    userId: type.string()
 });
 
 User.hasOne(Account, "account", "id", "userId");
@@ -532,15 +532,15 @@ _Example_: Update a `belongsTo` relation.
 
 ```js
 var Post = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String,
-    authorId: String
+    id: type.string(),
+    title: type.string(),
+    content: type.string(),
+    authorId: type.string()
 });
 
 var Author = thinky.createModel("Author", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 Post.belongsTo(Author, "author", "authorId", "id")
@@ -588,13 +588,13 @@ _Example_: Delete a user and its associated account.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 var Account = thinky.createModel("Account", {
-    id: String,
-    sold: Number,
-    userId: String
+    id: type.string(),
+    sold: type.number(),
+    userId: type.string()
 });
 
 User.hasOne(Account, "account", "id", "userId");
@@ -625,9 +625,9 @@ _Example_: You can manually set the joined documents to delete.
 
 ```js
 var Human = thinky.createModel("Human", {
-    id: String,
-    name: String,
-    partnerId: String
+    id: type.string(),
+    name: type.string(),
+    partnerId: type.string()
 });
 Human.belongsTo(Human, "emergencyContact", "contactId", "id");
 

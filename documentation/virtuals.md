@@ -24,14 +24,11 @@ Suppose we have the following `User` model:
 
 ```js
 var User = thinky.createModel('user', {
-    firstName: String,
-    lastName: String,
-    fullName: {
-        _type: "virtual",
-        default: function() {
-            return this.firstName+" "+this.lastName;
-        }
-   }
+    firstName: type.string(),
+    lastName: type.string(),
+    fullName: type.virtual().default(function() {
+        return this.firstName+" "+this.lastName;
+    }
 })
 ```
 
@@ -87,11 +84,9 @@ after saving the document (the virtual fields are however not saved).
 
 ```js
 var User = thinky.createModel('user', {
-    firstName: String,
-    lastName: String,
-    fullName: {
-        _type: "virtual"
-   }
+    firstName: type.string(),
+    lastName: type.string(),
+    fullName: type.virtual()
 })
 
 var user = new User({
@@ -118,19 +113,17 @@ This can be achieve with `define` in thinky.
 
 ```js
 var User = thinky.createModel('user', {
-    firstName: String,
-    lastName: String,
-    fullName: {
-        _type: "virtual"
-   }
+    firstName: type.string(),
+    lastName: type.string(),
+    fullName: type.virtual()
 })
 
 User.define("setFullname", function(fullname) {
-  var split = fullname.split(' ');
+    var split = fullname.split(' ');
 
-  this.fullName = fullName;
-  this.firstName = split[0];
-  this.lastName = split[1];
+    this.fullName = fullName;
+    this.firstName = split[0];
+    this.lastName = split[1];
 })
 
 var user = new User({});

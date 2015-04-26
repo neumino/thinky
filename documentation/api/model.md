@@ -22,9 +22,9 @@ _Example_: Return the name of table used for `PostModel`.
 
 ```js
 var PostModel = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    author: String
+    id: type.string(),
+    title: type.string(),
+    author: type.string()
 });
 
 PostModel.getTableName(); // returns "Post"
@@ -46,8 +46,8 @@ _Example_: Add a method `isAdult` on `Users`.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    age: Number
+    id: type.string(),
+    age: type.number()
 });
 
 User.define("isAdult", function() {
@@ -77,9 +77,9 @@ _Example_: Add a method `getView` on `Users` to never return the password.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    age: Number,
-    password: String
+    id: type.string(),
+    age: type.number(),
+    password: type.string()
 });
 
 User.defineStatic("getView", function() {
@@ -115,9 +115,9 @@ _Example_: Ensure that an index on the field `"createdAt"` exists.
 
 ```js
 var Posts = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String,
+    id: type.string(),
+    title: type.string(),
+    content: type.string(),
     createdAt: Date
 });
 
@@ -128,9 +128,9 @@ _Example_: Ensure that an index on the concatenation of `"firstName"` and `"last
 
 ```js
 var Users = thinky.createModel("User", {
-    id: String,
-    firstName: String,
-    lastName: String
+    id: type.string(),
+    firstName: type.string(),
+    lastName: type.string()
 });
 
 Users.ensureIndex("fullName", function(doc) {
@@ -173,14 +173,14 @@ _Example_:
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 var Account = thinky.createModel("Account", {
-    id: String,
-    userId: String,
-    sold: Number
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
 });
 
 User.hasOne(Account, "account", "id", "userId")
@@ -231,15 +231,15 @@ _Example_:
 
 ```js
 var Post = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String,
-    authorId: String
+    id: type.string(),
+    title: type.string(),
+    content: type.string(),
+    authorId: type.string()
 });
 
 var Author = thinky.createModel("Author", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 Post.belongsTo(Author, "author", "authorId", "id")
@@ -293,15 +293,15 @@ _Example_:
 
 ```js
 var Author = thinky.createModel("Author", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 var Post = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String,
-    authorId: String
+    id: type.string(),
+    title: type.string(),
+    content: type.string(),
+    authorId: type.string()
 });
 
 Author.hasMany(Post, "posts", "id", "authorId")
@@ -366,13 +366,13 @@ _Example_: Link two models with `hasAndBelongsTo`.
 
 ```js
 var Post = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String
+    id: type.string(),
+    title: type.string(),
+    content: type.string()
 });
 var Tag = thinky.createModel("Tag", {
-    id: String,
-    tag: String
+    id: type.string(),
+    tag: type.string()
 });
 
 Post.hasAndBelongsToMany(Tag, "tags", "id", "id")
@@ -406,13 +406,13 @@ _Example_: Link two models with `hasAndBelongsTo` both ways.
 
 ```js
 var Post = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String
+    id: type.string(),
+    title: type.string(),
+    content: type.string()
 });
 var Tag = thinky.createModel("Tag", {
-    id: String,
-    tag: String
+    id: type.string(),
+    tag: type.string()
 });
 
 Post.hasAndBelongsToMany(Tag, "tags", "id", "id")
@@ -466,9 +466,9 @@ _Example_: Link documents of the same models between them.
 
 ```js
 var User = thinky.createModel("Post", {
-    id: String,
-    name: String,
-    email: String
+    id: type.string(),
+    name: type.string(),
+    email: type.string()
 });
 
 User.hasAndBelongsToMany(User, "friends", "id", "id")
@@ -504,11 +504,11 @@ _Example_: Use `type` to create multiple relations.
 
 ```js
 var Class = thinky.createModel("Post", {
-    id: String,
+    id: type.string(),
 });
 var People = thinky.createModel("Tag", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 Class.hasAndBelongsToMany(People, "teachers", "id", "id", {type: "teacher"})
@@ -547,8 +547,8 @@ _Example_: Make sure that the age of a user is greater than 18 before saving a d
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    age: Number
+    id: type.string(),
+    age: type.number()
 });
 User.pre('save', function(next) {
     if (age < 18) {
@@ -564,8 +564,8 @@ _Example_: Make sure that the website of of a user works.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    website: String
+    id: type.string(),
+    website: type.string()
 });
 User.pre('save', true, function(next) {
     var self = this;
@@ -605,8 +605,8 @@ _Example_: Add an extra field `isAdult` but do not save it in the database.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    age: Number
+    id: type.string(),
+    age: type.number()
 });
 User.pre('save', function(next) {
     delete this.isAdult;
@@ -649,8 +649,8 @@ _Example_: Insert 3 new users at the same time.
 
 ```js
 var User = thinky.createModel("User", {
-    id: String,
-    name: String
+    id: type.string(),
+    name: type.string()
 });
 
 User.save([
@@ -686,9 +686,9 @@ Suppose the model `Post` is defined with:
 
 ```js
 var Post = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String
+    id: type.string(),
+    title: type.string(),
+    content: type.string()
 })
 ```
 
@@ -740,10 +740,10 @@ _Example_: Log when a table is ready to use:
 
 ```js
 var Post = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String,
-    authorId: String
+    id: type.string(),
+    title: type.string(),
+    content: type.string(),
+    authorId: type.string()
 });
 
 Post.addListener('ready', function(model) {
@@ -784,10 +784,10 @@ _Example_: Log every post that we save in the database.
 
 ```js
 var Post = thinky.createModel("Post", {
-    id: String,
-    title: String,
-    content: String,
-    authorId: String
+    id: type.string(),
+    title: type.string(),
+    content: type.string(),
+    authorId: type.string()
 });
 
 Post.docAddListener('save', function(post) {
