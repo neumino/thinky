@@ -339,7 +339,7 @@ A user with its joined posts will look like:
 <div id="hasandbelongstomany"></div>
 ### [hasAndBelongsToMany](#hasAndBelongsToMany)
 ```js
-Model.hasMany(OtherModel, fieldName, leftKey, rightKey[, options]);
+Model.hasAndBelongsToMany(OtherModel, fieldName, leftKey, rightKey[, options]);
 ```
 
 Define a "has and belongs to many" relation between two models where the reciprocal relation
