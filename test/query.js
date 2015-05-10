@@ -201,7 +201,7 @@ describe('Model queries', function() {
     });
   });
 
-   
+
   it('Model.filter() should work', function(done){
     Model.filter(true).run().then(function(result) {
       assert.equal(result.length, 3);
@@ -1000,7 +1000,7 @@ describe('clone', function() {
     var name = util.s8();
     var Model = thinky.createModel(modelNames[0], {id: String});
     var query = Model.filter(true);
-    
+
     var result = 0;
     query.count().execute().then(function(result) {
       assert.equal(result, 0);
@@ -1023,7 +1023,7 @@ describe('optimizer', function() {
   before(function(done) {
     var name = util.s8();
     r.tableCreate(name).run().then(function(result) {
-      
+
       r.table(name).indexCreate('name1').run().then(function() {
 
         Model = thinky.createModel(modelNames[0], {
