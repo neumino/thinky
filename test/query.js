@@ -12,6 +12,8 @@ modelNameSet[util.s8()] = true;
 modelNameSet[util.s8()] = true;
 var modelNames = Object.keys(modelNameSet);
 
+var documentNotFoundRegex = new RegExp('^' + new thinky.Errors.DocumentNotFound().message);
+
 var cleanTables = function(done) {
   var promises = [];
   var name;
@@ -147,7 +149,7 @@ describe('Model queries', function() {
     Model.get("NonExistingKey").merge({foo: "bar"}).run().then(function(result) {
       done(new Error("Was expecting an error"));
     }).error(function(error) {
-      assert(error.message.match(/^The query did not find a document and returned null./));
+      assert(error.message.match(documentNotFoundRegex));
       done();
     });
   });
@@ -870,7 +872,7 @@ describe('Query.run() should take options', function(){
     Model.get(0).run().then(function() {
       done(new Error("Was expecting an error"))
     }).catch(Errors.DocumentNotFound, function(err) {
-      assert(err.message.match(/^The query did not find a document and returned null./));
+      assert(err.message.match(documentNotFoundRegex));
       done();
     }).error(function() {
       done(new Error("Not the expected error"))
@@ -882,7 +884,7 @@ describe('Query.run() should take options', function(){
       done(new Error("Was expecting an error"))
     }).error(function(err) {
       assert(err instanceof Errors.DocumentNotFound);
-      assert(err.message.match(/^The query did not find a document and returned null./));
+      assert(err.message.match(documentNotFoundRegex));
       done();
     });
   });
@@ -1253,7 +1255,7 @@ describe('In place writes', function() {
       num: Number
     });
     Model.get('nonExistingId').update({foo: 'bar'}).run().error(function(error) {
-      assert(/The query did not find a document and returned null/.test(error.message));
+      assert(documentNotFoundRegex.test(error.message));
       done();
     });
   })
