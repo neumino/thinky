@@ -1,5 +1,5 @@
 REPORTER ?= spec
-TESTS = $(shell find ./test/* -name "*.js")
+TESTS = $(shell find ./test/* -name "*.test.js")
 NPM_BIN = ./node_modules/.bin
 
 jshint:
