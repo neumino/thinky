@@ -29,6 +29,9 @@
     "validator": "~ 3.22.1"
   },
   "devDependencies": {
-    "mocha": "~1.21.5"
+    "mocha": "^2.1.0",
+    "chai": "^2.0.0",
+    "jshint": "^2.6.0",
+    "istanbul": "^0.3.6"
   }
 }
