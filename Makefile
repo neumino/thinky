@@ -9,7 +9,7 @@ fixjsstyle:
 	fixjsstyle -r lib --strict --jslint_error=all
 
 coverage:
-	$(NPM_BIN)/istanbul cover $(NPM_BIN)/_mocha --report lcovonly -- -t 10000 --ui tdd $(TESTS); \
+	make jshint && $(NPM_BIN)/istanbul cover $(NPM_BIN)/_mocha --report lcovonly -- -t 10000 --ui tdd $(TESTS); \
 
 test:
 	@if [ "$$GREP" ]; then \

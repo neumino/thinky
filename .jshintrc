@@ -21,6 +21,7 @@
   "unused":"vars",
   "nonbsp": true,
   "maxdepth": 8,
+  "proto": true,
   "globals": {
     "Promise": true
   },
