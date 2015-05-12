@@ -649,7 +649,7 @@ describe('Advanced cases', function(){
       });
 
       Model.hasAndBelongsToMany(OtherModel, "links", "id", "id");
-      
+
       OtherModel.hasAndBelongsToMany(Model, "links2", "id", "id");
 
       var values = {};
@@ -675,7 +675,7 @@ describe('Advanced cases', function(){
         assert.equal(doc1.links[1].isSaved(), true);
         assert.equal(doc1.links[2].isSaved(), true);
         assert.strictEqual(doc1, result);
-        
+
         // All saved docs have an id
         assert.equal(typeof doc1.id, 'string');
         assert.equal(typeof doc1.links[0].id, 'string');
@@ -718,7 +718,7 @@ describe('Advanced cases', function(){
           util.sortById(otherDoc3.links2);
           util.sortById(otherDoc4.links2);
 
-          Model.get(doc1.id).getJoin({links: { 
+          Model.get(doc1.id).getJoin({links: {
             _apply: function(seq) {
               return seq.orderBy('id');
             }
@@ -727,7 +727,7 @@ describe('Advanced cases', function(){
             assert.equal(result.links[0].id, doc1.links[0].id);
             assert.equal(result.links[1].id, doc1.links[1].id);
             assert.equal(result.links[2].id, doc1.links[2].id);
-            Model.get(doc2.id).getJoin({links: { 
+            Model.get(doc2.id).getJoin({links: {
               _apply: function(seq) {
                 return seq.orderBy('id');
               }
@@ -981,7 +981,7 @@ describe('Advanced cases', function(){
       }).error(function(error) {
         assert(error instanceof Errors.DocumentNotFound);
         OtherModel.get(otherDoc.id).run().then(function(result) {
-          done(new Error("Was expecting the document to be deleted"));   
+          done(new Error("Was expecting the document to be deleted"));
         }).error(function(error) {
           assert(error instanceof Errors.DocumentNotFound);
           done()
@@ -2354,7 +2354,7 @@ describe('Advanced cases', function(){
       });
 
       Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
-       
+
       var doc = new Model({});
       var otherDoc = new OtherModel({});
       doc.otherDoc = otherDoc;
@@ -2383,7 +2383,7 @@ describe('Advanced cases', function(){
       });
 
       Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
-       
+
       var doc = new Model({});
       var otherDoc = new OtherModel({});
       doc.otherDoc = otherDoc;
@@ -2411,7 +2411,7 @@ describe('Advanced cases', function(){
       });
 
       Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
-       
+
       var doc = new Model({});
       var otherDoc = new OtherModel({});
       doc.otherDoc = otherDoc;
@@ -2443,7 +2443,7 @@ describe('Advanced cases', function(){
       });
 
       Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey");
-       
+
       var doc = new Model({});
       var otherDoc = new OtherModel({});
       doc.otherDoc = otherDoc;
@@ -2474,7 +2474,7 @@ describe('Advanced cases', function(){
       });
 
       Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id");
-       
+
       var doc = new Model({});
       var otherDoc = new OtherModel({});
       doc.otherDoc = otherDoc;
@@ -2527,7 +2527,7 @@ describe('Advanced cases', function(){
       });
 
       Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id");
-       
+
       var doc = new Model({});
       var otherDoc = new OtherModel({});
       doc.otherDoc = otherDoc;
@@ -2552,7 +2552,7 @@ describe('Advanced cases', function(){
       });
 
       Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "id");
-      
+
       var doc = new Model({});
       var otherDoc = new OtherModel({});
       doc.otherDoc = otherDoc;
@@ -2585,7 +2585,7 @@ describe('Advanced cases', function(){
       });
 
       Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
-       
+
       var doc = new Model({});
       var otherDoc1 = new OtherModel({});
       var otherDoc2 = new OtherModel({});
@@ -2619,7 +2619,7 @@ describe('Advanced cases', function(){
       });
 
       Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
-       
+
       var doc = new Model({});
       var otherDoc1 = new OtherModel({});
       var otherDoc2 = new OtherModel({});
@@ -2654,7 +2654,7 @@ describe('Advanced cases', function(){
       });
 
       Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
-       
+
       var doc = new Model({});
       var otherDoc1 = new OtherModel({});
       var otherDoc2 = new OtherModel({});
@@ -2693,7 +2693,7 @@ describe('Advanced cases', function(){
       });
 
       Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey");
-       
+
       var doc = new Model({});
       var otherDoc1 = new OtherModel({});
       var otherDoc2 = new OtherModel({});
@@ -2732,7 +2732,7 @@ describe('Advanced cases', function(){
       });
 
       Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
-       
+
       var doc = new Model({});
       var otherDoc1 = new OtherModel({});
       var otherDoc2 = new OtherModel({});
@@ -2763,7 +2763,7 @@ describe('Advanced cases', function(){
       });
 
       Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
-       
+
       var doc = new Model({});
       var otherDoc1 = new OtherModel({});
       var otherDoc2 = new OtherModel({});
@@ -2793,7 +2793,7 @@ describe('Advanced cases', function(){
       });
 
       Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
-       
+
       var doc = new Model({});
       var otherDoc1 = new OtherModel({});
       var otherDoc2 = new OtherModel({});
@@ -2826,7 +2826,7 @@ describe('Advanced cases', function(){
       });
 
       Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id");
-       
+
       var doc = new Model({});
       var otherDoc1 = new OtherModel({});
       var otherDoc2 = new OtherModel({});
@@ -3125,5 +3125,5 @@ describe('Advanced cases', function(){
         done();
       }).catch(done);
     });
-  }); 
+  });
 });

@@ -885,7 +885,7 @@ describe('save', function() {
           done();
         }).error(done);
 
-        
+
       }).error(done);
     })
     it('saveAll should delete links if they are missing', function(done) {
@@ -966,7 +966,7 @@ describe('save', function() {
     })
 
   });
-  
+
   describe('saveAll with missing docs for hasOne', function() {
     afterEach(cleanTables);
 
