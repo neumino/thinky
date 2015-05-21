@@ -6,9 +6,6 @@ var Document = require(__dirname+'/../lib/document.js');
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
 var Promise = require('bluebird');
-Promise.onPossiblyUnhandledRejection(function() {
-    // suppress possibly unhandled rejection warnings
-});
 
 var modelNameSet = {};
 modelNameSet[util.s8()] = true;
@@ -971,7 +968,7 @@ describe('thinky.Query', function() {
 describe('then', function() {
   afterEach(cleanTables);
 
-  it('should run the query', function(done) {
+  it('should run the query and call handler (naked table)', function(done) {
     var name = util.s8();
 
     var Query = thinky.Query;
@@ -982,7 +979,7 @@ describe('then', function() {
         done();
     });
   });
-  it('should run the query', function(done) {
+  it('should run the query and call handler', function(done) {
     var name = util.s8();
 
     var Query = thinky.Query;
@@ -1000,9 +997,10 @@ describe('then', function() {
     var r = thinky.r;
     var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
 
-    User.filter({}).then(function() {
-        // no-op
-    }).spread(function() {
+    var promise = User.filter({}).then(function() {});
+    assert(promise instanceof Promise, 'not a promise');
+
+    promise.finally(function() {
         done();
     });
   });
@@ -1010,7 +1008,7 @@ describe('then', function() {
 describe('error', function() {
   afterEach(cleanTables);
 
-  it('should run the query', function(done) {
+  it('should run the query and call handler', function(done) {
     var name = util.s8();
 
     var Query = thinky.Query;
@@ -1028,9 +1026,10 @@ describe('error', function() {
     var r = thinky.r;
     var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
 
-    User.filter(r.error('test')).error(function() {
-        // no-op
-    }).spread(function() {
+    var promise = User.filter(r.error('test')).error(function() {});
+    assert(promise instanceof Promise, 'not a promise');
+
+    promise.finally(function() {
         done();
     });
   });
@@ -1038,7 +1037,7 @@ describe('error', function() {
 describe('catch', function() {
   afterEach(cleanTables);
 
-  it('should run the query', function(done) {
+  it('should run the query and call handler', function(done) {
     var name = util.s8();
 
     var Query = thinky.Query;
@@ -1056,9 +1055,10 @@ describe('catch', function() {
     var r = thinky.r;
     var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
 
-    User.filter(r.error('test')).catch(function() {
-        // no-op
-    }).spread(function() {
+    var promise = User.filter(r.error('test')).catch(function() {});
+    assert(promise instanceof Promise, 'not a promise');
+
+    promise.finally(function() {
         done();
     });
   });
@@ -1066,14 +1066,14 @@ describe('catch', function() {
 describe('finally', function() {
   afterEach(cleanTables);
 
-  it('should run the query', function(done) {
+  it('should run the query and call handler', function(done) {
     var name = util.s8();
 
     var Query = thinky.Query;
     var r = thinky.r;
     var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
 
-    User.filter(r.error('test')).finally(function() {
+    User.filter({}).finally(function() {
         done();
     });
   });
@@ -1084,10 +1084,10 @@ describe('finally', function() {
     var r = thinky.r;
     var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
 
-    User.filter(r.error('test')).finally(function() {
-        // no-op
-    }).spread(function() {
-    }).finally(function() {
+    var promise = User.filter({}).finally(function() {});
+    assert(promise instanceof Promise, 'not a promise');
+
+    promise.finally(function() {
         done();
     });
   });
