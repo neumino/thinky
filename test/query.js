@@ -968,7 +968,7 @@ describe('thinky.Query', function() {
 describe('then', function() {
   afterEach(cleanTables);
 
-  it('should run the query', function(done) {
+  it('should run the query and call handler (naked table)', function(done) {
     var name = util.s8();
 
     var Query = thinky.Query;
@@ -978,9 +978,8 @@ describe('then', function() {
     User.then(function() {
         done();
     });
-
   });
-  it('should run the query', function(done) {
+  it('should run the query and call handler', function(done) {
     var name = util.s8();
 
     var Query = thinky.Query;
@@ -990,7 +989,107 @@ describe('then', function() {
     User.filter({}).then(function() {
         done();
     });
+  });
+  it('should return a promise', function(done) {
+    var name = util.s8();
 
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    var promise = User.filter({}).then(function() {});
+    assert(promise instanceof Promise, 'not a promise');
+
+    promise.finally(function() {
+        done();
+    });
+  });
+});
+describe('error', function() {
+  afterEach(cleanTables);
+
+  it('should run the query and call handler', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    User.filter(r.error('test')).error(function() {
+        done();
+    });
+  });
+  it('should return a promise', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    var promise = User.filter(r.error('test')).error(function() {});
+    assert(promise instanceof Promise, 'not a promise');
+
+    promise.finally(function() {
+        done();
+    });
+  });
+});
+describe('catch', function() {
+  afterEach(cleanTables);
+
+  it('should run the query and call handler', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    User.filter(r.error('test')).catch(function() {
+        done();
+    });
+  });
+  it('should return a promise', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    var promise = User.filter(r.error('test')).catch(function() {});
+    assert(promise instanceof Promise, 'not a promise');
+
+    promise.finally(function() {
+        done();
+    });
+  });
+});
+describe('finally', function() {
+  afterEach(cleanTables);
+
+  it('should run the query and call handler', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    User.filter({}).finally(function() {
+        done();
+    });
+  });
+  it('should return a promise', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    var promise = User.filter({}).finally(function() {});
+    assert(promise instanceof Promise, 'not a promise');
+
+    promise.finally(function() {
+        done();
+    });
   });
 });
 describe('clone', function() {
