@@ -234,6 +234,6 @@ var Post = thinky.createModel("Post",{
     id: type.string(),
     title: {_type: type.string(), enforce_type: "strict"},
     content: type.string(),
-    createdAt: type.string().default(r.row())
+    createdAt: type.string().default(r.now())
 });
 ```
