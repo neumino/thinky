@@ -129,9 +129,10 @@ The roadmap is defined with the issues/feedback on GitHub. Checkout:
 - [Morhaus](https://github.com/Morhaus)
 - [primitive-type](https://github.com/primitive-type)
 - [nikaspran](https://github.com/nikaspran)
+- [rasapetter](https://github.com/rasapetter)
 - [simonratner](https://github.com/simonratner)
 - [wezs](https://github.com/wezs)
-
+ 
 
 ### License
 Copyright (c) 2013-2014 Michel Tu <orphee@gmail.com>
