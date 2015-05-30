@@ -305,7 +305,7 @@ _Example_: Return all the ids of the users
 
 ```js
 User.map(r.row("id")).execute().then(function(cursor) {
-    cursor.each(function(userId) {
+    cursor.each(function(err, userId) {
         console.log(userId);
     }
 })
