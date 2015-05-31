@@ -93,10 +93,16 @@ Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().run().then(function(r
 
 
 
-### Docs
+### Documentation
 
-http://thinky.io
+[https://thinky.io](https://thinky.io)
 
+### Help
+
+No SLA, but a few developers hang out there and may be able to help:
+
+- [irc://irc.freenode.org/rethinkdb](irc://irc.freenode.org/rethinkdb)
+- [https://gitter.im/neumino/thinky](https://gitter.im/neumino/thinky)
 
 ### Run the tests
 
