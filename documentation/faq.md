@@ -28,6 +28,15 @@ I __sincerely__ apologize for breaking the API, but given the feedback I got, th
 were necessary.
 
 
+#### Help?
+
+No SLA, but a few developers may be able to help there:
+
+- [irc://irc.freenode.org/rethinkdb](irc://irc.freenode.org/rethinkdb)
+- [https://gitter.im/neumino/thinky](https://gitter.im/neumino/thinky)
+
+
+
 <div class="space"></div>
 
 #### What is the difference with [Reheat](http://reheat.codetrain.io/)?
