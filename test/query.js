@@ -79,7 +79,6 @@ describe('Model queries', function() {
     }).error(done);
   });
 
-
   after(cleanTables);
 
   it('Model.run() should return', function(done){
@@ -1358,4 +1357,25 @@ describe('In place writes', function() {
       done();
     });
   })
+
+  it('should spread filter and count queries', function() {
+    //var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+    var Model = thinky.createModel(modelNames[0], {id: String});
+
+    var query = Model;
+    query = query.orderBy(r.desc('id'));
+    query = query.slice(0, 1);
+
+    var countQuery = query;
+
+    return Promise.all([
+      query.run(),
+      countQuery.count().execute()
+    ])
+    .spread(function(results, total) {
+      assert(results !== undefined);
+      assert(total !== undefined);
+    });
+  });
+
 });
