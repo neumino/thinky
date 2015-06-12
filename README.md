@@ -15,6 +15,7 @@ Use:
 
 ```javascript
 var thinky = require('thinky')();
+var type   = thinky.type;
 
 // Create a model - the table is automatically created
 var Post = thinky.createModel("Post", {
@@ -27,7 +28,7 @@ var Post = thinky.createModel("Post", {
 // You can also add constraints on the schema
 var Author = thinky.createModel("Author", {
   id: type.string(),      // a normal string
-  name: type.string().min(2)  // a string of at least two characters
+  name: type.string().min(2),  // a string of at least two characters
   email: type.string().email()  // a string that is a valid email
 });
 
