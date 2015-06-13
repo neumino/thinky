@@ -551,7 +551,7 @@ var User = thinky.createModel("User", {
     age: type.number()
 });
 User.pre('save', function(next) {
-    if (age < 18) {
+    if (this.age < 18) {
         next(new Error("A user must be at least 18 years old."));
     }
     else {
