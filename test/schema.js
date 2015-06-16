@@ -163,7 +163,7 @@ describe('Chainable types', function(){
   // These tests are mostly for new validators like `min`/`max`/`alphanum`/etc.
   it('General - chainable types in nested schemas', function(){
     var name = util.s8();
-    var Model = thinky.createModel(name, 
+    var Model = thinky.createModel(name,
      {id: type.string(),
       objectArray: [{ myAttribute: thinky.type.object() }]})
     var doc = new Model({ id: util.s8(), objectArray : {} })
@@ -268,7 +268,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'a'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be longer than 2."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be longer than 2.");
     });
   });
   it('String - min - good', function(){
@@ -288,7 +288,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'abcdefgh'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be shorter than 5."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be shorter than 5.");
     });
   });
   it('String - max - good', function(){
@@ -308,7 +308,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'abcdef'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a string with 5 characters."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a string with 5 characters.");
     });
   });
   it('String - length - too short', function(){
@@ -320,7 +320,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'abc'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a string with 5 characters."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a string with 5 characters.");
     });
   });
   it('String - length - good', function(){
@@ -340,7 +340,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'bar'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must match the regex."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must match the regex.");
     });
   });
   it('String - regex - good', function(){
@@ -360,7 +360,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'bar'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must match the regex."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must match the regex.");
     });
   });
   it('String - regex with flags - good', function(){
@@ -382,7 +382,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'élégant'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be an alphanumeric string."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be an alphanumeric string.");
     });
   });
   it('String - alphanum - match', function(){
@@ -402,7 +402,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'fooATbar.com'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a valid email."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a valid email.");
     });
   });
   it('String - email - match', function(){
@@ -422,7 +422,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'fooBar'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a lowercase string."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a lowercase string.");
     });
   });
   it('String - lowercase - match', function(){
@@ -442,7 +442,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'fooBar'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a uppercase string."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a uppercase string.");
     });
   });
   it('String - uppercase - match', function(){
@@ -462,7 +462,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'fooBar'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Validator for the field [id] returned `false`."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Validator for the field [id] returned `false`.");
     });
   });
   it('String - validator - return true', function(){
@@ -482,7 +482,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'fooBar'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Not good"); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Not good");
     });
   });
   it('String - enum - unknown value - 1', function(){
@@ -494,7 +494,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'buzz'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "The field [id] must be one of these values: foo, bar."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "The field [id] must be one of these values: foo, bar.");
     });
   });
   it('String - enum - unknown value - 2', function(){
@@ -506,7 +506,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'buzz'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "The field [id] must be one of these values: foo, bar."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "The field [id] must be one of these values: foo, bar.");
     });
   });
   it('String - enum - unknown value - 3', function(){
@@ -518,7 +518,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'buzz'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "The field [id] must be one of these values: foo."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "The field [id] must be one of these values: foo.");
     });
   });
   it('String - enum - unknown value - 4', function(){
@@ -530,7 +530,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'buzz'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "The field [id] must be one of these values: foo."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "The field [id] must be one of these values: foo.");
     });
   });
 
@@ -639,7 +639,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 1});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be greater than 2."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be greater than 2.");
     });
   });
   it('Number - min - good', function(){
@@ -659,7 +659,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 8});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be less than 5."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be less than 5.");
     });
   });
   it('Number - max - good', function(){
@@ -679,7 +679,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 3.14});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be an integer."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be an integer.");
     });
   });
   it('Number - integer - good', function(){
@@ -699,7 +699,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 2});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Validator for the field [id] returned `false`."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Validator for the field [id] returned `false`.");
     });
   });
   it('Number - validator - return true', function(){
@@ -719,7 +719,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 4});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Not good"); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Not good");
     });
   });
 
@@ -751,7 +751,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: true});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Validator for the field [id] returned `false`."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Validator for the field [id] returned `false`.");
     });
   });
   it('Boolean - validator - return true', function(){
@@ -771,7 +771,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: true});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Not good"); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Not good");
     });
   });
 
@@ -817,7 +817,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: valueDate});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && ((error.message.match("Value for .id. must be after")) !== null); 
+      return (error instanceof Errors.ValidationError) && ((error.message.match("Value for .id. must be after")) !== null);
     });
   });
   it('Date - min - good', function(){
@@ -847,7 +847,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: valueDate});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && ((error.message.match("Value for .id. must be before")) !== null); 
+      return (error instanceof Errors.ValidationError) && ((error.message.match("Value for .id. must be before")) !== null);
     });
   });
   it('Date - max - good', function(){
@@ -872,7 +872,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: new Date()});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Validator for the field [id] returned `false`."); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Validator for the field [id] returned `false`.");
     });
   });
   it('Date - validator - return true', function(){
@@ -892,7 +892,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: new Date()});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Not good"); 
+      return (error instanceof Errors.ValidationError) && (error.message === "Not good");
     });
   });
 
@@ -1377,7 +1377,7 @@ describe('generateDefault', function(){
         schema: {
           field: {_type: Number, default: defaultValue}
         },
-        default: defaultArray 
+        default: defaultArray
       }
     }, {init: false})
 
@@ -1400,11 +1400,11 @@ describe('generateDefault', function(){
         _type: Array,
         schema: {
           field: {
-            _type: Object, 
+            _type: Object,
             schema: {value: {_type: Number, default: defaultValue} }
           }
         },
-        default: defaultArray 
+        default: defaultArray
       }
     }, {init: false})
 
@@ -1432,7 +1432,7 @@ describe('generateDefault', function(){
             field: {_type: Number, default: defaultValue}
           }
         },
-        default: defaultArray 
+        default: defaultArray
       }
     }, {init: false})
 
@@ -1771,7 +1771,7 @@ describe('validate', function(){
 
     doc = new Model({
       id: str,
-      field: null 
+      field: null
     })
 
     assert.throws(function() {
@@ -1791,7 +1791,7 @@ describe('validate', function(){
 
     doc = new Model({
       id: str,
-      field: null 
+      field: null
     })
 
     doc.validate();
@@ -1838,7 +1838,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: Number 
+      field: Number
     }, {init: false, enforce_type: 'loose'})
 
     doc = new Model({
@@ -1895,7 +1895,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: Boolean 
+      field: Boolean
     }, {init: false, enforce_type: 'loose'})
 
     doc = new Model({
@@ -1932,7 +1932,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: Date 
+      field: Date
     }, {init: false, enforce_type: 'strict'})
 
     doc = new Model({
@@ -1948,7 +1948,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: Date 
+      field: Date
     }, {init: false, enforce_type: 'strict'})
 
     doc = new Model({
@@ -1988,7 +1988,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: Date 
+      field: Date
     }, {init: false, enforce_type: 'loose'})
 
     doc = new Model({
@@ -2020,7 +2020,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: Date 
+      field: Date
     }, {init: false, enforce_type: 'strict'})
 
     doc = new Model({
@@ -2036,7 +2036,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: Date 
+      field: Date
     }, {init: false, enforce_type: 'strict'})
 
     doc = new Model({
@@ -2055,7 +2055,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: Date 
+      field: Date
     }, {init: false, enforce_type: 'strict'})
 
     doc = new Model({
@@ -2074,7 +2074,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: Date 
+      field: Date
     }, {init: false})
 
     doc = new Model({
@@ -2089,7 +2089,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: Date 
+      field: Date
     }, {init: false, enforce_missing: true})
 
     doc = new Model({
@@ -2107,7 +2107,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: Date 
+      field: Date
     }, {init: false, enforce_missing: false})
 
     doc = new Model({
@@ -2276,7 +2276,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: [Number] 
+      field: [Number]
     }, {init: false, enforce_missing: true})
 
     doc = new Model({
@@ -2295,7 +2295,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: [Number] 
+      field: [Number]
     }, {init: false, enforce_missing: true})
 
     doc = new Model({
@@ -2314,7 +2314,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: [Number] 
+      field: [Number]
     }, {init: false, enforce_missing: false})
 
     doc = new Model({
@@ -2329,7 +2329,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: [Number] 
+      field: [Number]
     }, {init: false, enforce_type: 'loose'})
 
     doc = new Model({
@@ -2349,7 +2349,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: [Number] 
+      field: [Number]
     }, {init: false, enforce_type: 'loose'})
 
     doc = new Model({
@@ -2369,7 +2369,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: [Number] 
+      field: [Number]
     }, {init: false, enforce_type: 'none'})
 
     doc = new Model({
@@ -2384,7 +2384,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: [Number] 
+      field: [Number]
     }, {init: false, enforce_type: 'strict'})
 
     doc = new Model({
@@ -2404,7 +2404,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: [Number] 
+      field: [Number]
     }, {init: false, enforce_type: 'loose'})
 
     doc = new Model({
@@ -2424,7 +2424,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: [Number] 
+      field: [Number]
     }, {init: false, enforce_type: 'none'})
 
     doc = new Model({
@@ -2440,7 +2440,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: [Number] 
+      field: [Number]
     }, {init: false, enforce_type: 'strict'})
 
     doc = new Model({
@@ -2460,7 +2460,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: [Number] 
+      field: [Number]
     }, {init: false, enforce_type: 'strict'})
 
     doc = new Model({
@@ -2480,7 +2480,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: [Number] 
+      field: [Number]
     }, {init: false, enforce_type: 'loose'})
 
     doc = new Model({
@@ -2502,7 +2502,7 @@ describe('validate', function(){
 
     var Model = thinky.createModel(name, {
       id: String,
-      field: [Number] 
+      field: [Number]
     }, {init: false, enforce_type: 'loose'})
 
     doc = new Model({
@@ -2880,7 +2880,7 @@ describe('validate', function(){
       bar: "keep"
     })
     doc.validate();
-    
+
     assert.equal(false, doc.foo.hasOwnProperty('buzz'));
     assert.deepEqual(doc, {
       id: str,
@@ -2895,7 +2895,7 @@ describe('validate', function(){
     var Model = thinky.createModel(name, {
       id: String,
       foo: type.object().schema({
-        fizz: type.string() 
+        fizz: type.string()
       }).removeExtra()
     }, {init: false})
 
@@ -2938,7 +2938,7 @@ describe('validate', function(){
     doc.validateAll();
 
     assert.deepEqual(doc, {id: value.id, otherDoc: {id: otherDoc.id, otherId: otherDoc.otherId}});
-     
+
   });
 
   it('Test option validate="oncreate"', function(){
@@ -3681,3 +3681,32 @@ describe('_validator', function(){
     doc.validate();
   });
 });
+
+describe('export', function() {
+  it('should export the schema', function() {
+    var Model = thinky.createModel(util.s8(), {
+      any: thinky.type.any(),
+      array: [ thinky.type.string() ],
+      boolean: thinky.type.boolean(),
+      buffer: thinky.type.buffer(),
+      date: thinky.type.date(),
+      number: thinky.type.number(),
+      object: thinky.type.object(),
+      point: thinky.type.point(),
+      string: thinky.type.string(),
+      virtual: thinky.type.virtual()
+    }, {init: false});
+    var exported = Model.getSchema().export();
+    assert.deepEqual(exported, {
+      any: 'any',
+      array: '[string]',
+      boolean: 'boolean',
+      buffer: 'buffer',
+      date: 'date',
+      number: 'number',
+      object: 'object',
+      point: 'point',
+      string: 'string'
+    });
+  });
+})
