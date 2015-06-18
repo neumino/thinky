@@ -12,6 +12,8 @@ modelNameSet[util.s8()] = true;
 modelNameSet[util.s8()] = true;
 var modelNames = Object.keys(modelNameSet);
 
+var documentNotFoundRegex = new RegExp('^' + new thinky.Errors.DocumentNotFound().message);
+
 var cleanTables = function(done) {
   var promises = [];
   var name;
@@ -76,7 +78,6 @@ describe('Model queries', function() {
       done()
     }).error(done);
   });
-
 
   after(cleanTables);
 
@@ -147,7 +148,7 @@ describe('Model queries', function() {
     Model.get("NonExistingKey").merge({foo: "bar"}).run().then(function(result) {
       done(new Error("Was expecting an error"));
     }).error(function(error) {
-      assert(error.message.match(/^The query did not find a document and returned null./));
+      assert(error.message.match(documentNotFoundRegex));
       done();
     });
   });
@@ -870,7 +871,7 @@ describe('Query.run() should take options', function(){
     Model.get(0).run().then(function() {
       done(new Error("Was expecting an error"))
     }).catch(Errors.DocumentNotFound, function(err) {
-      assert(err.message.match(/^The query did not find a document and returned null./));
+      assert(err.message.match(documentNotFoundRegex));
       done();
     }).error(function() {
       done(new Error("Not the expected error"))
@@ -882,7 +883,7 @@ describe('Query.run() should take options', function(){
       done(new Error("Was expecting an error"))
     }).error(function(err) {
       assert(err instanceof Errors.DocumentNotFound);
-      assert(err.message.match(/^The query did not find a document and returned null./));
+      assert(err.message.match(documentNotFoundRegex));
       done();
     });
   });
@@ -968,7 +969,7 @@ describe('thinky.Query', function() {
 describe('then', function() {
   afterEach(cleanTables);
 
-  it('should run the query', function(done) {
+  it('should run the query and call handler (naked table)', function(done) {
     var name = util.s8();
 
     var Query = thinky.Query;
@@ -978,9 +979,8 @@ describe('then', function() {
     User.then(function() {
         done();
     });
-
   });
-  it('should run the query', function(done) {
+  it('should run the query and call handler', function(done) {
     var name = util.s8();
 
     var Query = thinky.Query;
@@ -990,7 +990,107 @@ describe('then', function() {
     User.filter({}).then(function() {
         done();
     });
+  });
+  it('should return a promise', function(done) {
+    var name = util.s8();
 
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    var promise = User.filter({}).then(function() {});
+    assert(promise instanceof Promise, 'not a promise');
+
+    promise.finally(function() {
+        done();
+    });
+  });
+});
+describe('error', function() {
+  afterEach(cleanTables);
+
+  it('should run the query and call handler', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    User.filter(r.error('test')).error(function() {
+        done();
+    });
+  });
+  it('should return a promise', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    var promise = User.filter(r.error('test')).error(function() {});
+    assert(promise instanceof Promise, 'not a promise');
+
+    promise.finally(function() {
+        done();
+    });
+  });
+});
+describe('catch', function() {
+  afterEach(cleanTables);
+
+  it('should run the query and call handler', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    User.filter(r.error('test')).catch(function() {
+        done();
+    });
+  });
+  it('should return a promise', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    var promise = User.filter(r.error('test')).catch(function() {});
+    assert(promise instanceof Promise, 'not a promise');
+
+    promise.finally(function() {
+        done();
+    });
+  });
+});
+describe('finally', function() {
+  afterEach(cleanTables);
+
+  it('should run the query and call handler', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    User.filter({}).finally(function() {
+        done();
+    });
+  });
+  it('should return a promise', function(done) {
+    var name = util.s8();
+
+    var Query = thinky.Query;
+    var r = thinky.r;
+    var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+
+    var promise = User.filter({}).finally(function() {});
+    assert(promise instanceof Promise, 'not a promise');
+
+    promise.finally(function() {
+        done();
+    });
   });
 });
 describe('clone', function() {
@@ -1253,8 +1353,29 @@ describe('In place writes', function() {
       num: Number
     });
     Model.get('nonExistingId').update({foo: 'bar'}).run().error(function(error) {
-      assert(/The query did not find a document and returned null/.test(error.message));
+      assert(documentNotFoundRegex.test(error.message));
       done();
     });
   })
+
+  it('should spread filter and count queries', function() {
+    //var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
+    var Model = thinky.createModel(modelNames[0], {id: String});
+
+    var query = Model;
+    query = query.orderBy(r.desc('id'));
+    query = query.slice(0, 1);
+
+    var countQuery = query;
+
+    return Promise.all([
+      query.run(),
+      countQuery.count().execute()
+    ])
+    .spread(function(results, total) {
+      assert(results !== undefined);
+      assert(total !== undefined);
+    });
+  });
+
 });

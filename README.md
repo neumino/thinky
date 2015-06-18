@@ -15,6 +15,7 @@ Use:
 
 ```javascript
 var thinky = require('thinky')();
+var type   = thinky.type;
 
 // Create a model - the table is automatically created
 var Post = thinky.createModel("Post", {
@@ -27,7 +28,7 @@ var Post = thinky.createModel("Post", {
 // You can also add constraints on the schema
 var Author = thinky.createModel("Author", {
   id: type.string(),      // a normal string
-  name: type.string().min(2)  // a string of at least two characters
+  name: type.string().min(2),  // a string of at least two characters
   email: type.string().email()  // a string that is a valid email
 });
 
@@ -93,10 +94,16 @@ Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().run().then(function(r
 
 
 
-### Docs
+### Documentation
 
-http://thinky.io
+[https://thinky.io](https://thinky.io)
 
+### Help
+
+No SLA, but a few developers hang out there and may be able to help:
+
+- [irc://irc.freenode.org/rethinkdb](irc://irc.freenode.org/rethinkdb)
+- [https://gitter.im/neumino/thinky](https://gitter.im/neumino/thinky)
 
 ### Run the tests
 
@@ -129,25 +136,11 @@ The roadmap is defined with the issues/feedback on GitHub. Checkout:
 - [Morhaus](https://github.com/Morhaus)
 - [primitive-type](https://github.com/primitive-type)
 - [nikaspran](https://github.com/nikaspran)
+- [rasapetter](https://github.com/rasapetter)
 - [simonratner](https://github.com/simonratner)
 - [wezs](https://github.com/wezs)
-
+ 
 
 ### License
-Copyright (c) 2013-2014 Michel Tu <orphee@gmail.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this
-software and associated documentation files (the 'Software'), to deal in the Software
-without restriction, including without limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of the Software, and to permit
-persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or
-substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
-FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
+MIT, see the [LICENSE](https://github.com/neumino/thinky/blob/master/LICENSE) file
