@@ -19,7 +19,7 @@ function random() {
 module.exports.random = random;
 
 function bool() {
-  return Math.random() > 0.5 
+  return Math.random() > 0.5
 }
 module.exports.bool = bool;
 

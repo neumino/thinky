@@ -90,7 +90,7 @@ describe('Options', function(){
       timeFormat: 'raw',
       validate: 'onsave'
     })
-     
+
     // Make sure we didn't messed up the global options
     assert.deepEqual(thinky.getOptions(), {
       timeFormat: 'raw',

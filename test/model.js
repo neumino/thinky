@@ -152,7 +152,7 @@ describe('Model', function() {
 
     assert.equal(doc1.getModel(), doc2.getModel());
   });
-  
+
   it('Docs from different models should not interfer', function() {
     var str = util.s8();
     var doc = new Model({str: str});
