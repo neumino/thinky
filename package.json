@@ -1,6 +1,6 @@
 {
   "name": "thinky",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "RethinkDB ORM for Node.js",
   "main": "lib/thinky.js",
   "directories": {
@@ -24,7 +24,7 @@
     "url": "https://github.com/neumino/thinky/issues"
   },
   "dependencies":{
-    "rethinkdbdash": "~2.0.0",
+    "rethinkdbdash": "~2.0.13",
     "bluebird": "~2.1.3",
     "validator": "~ 3.22.1"
   },
