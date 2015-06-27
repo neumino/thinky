@@ -174,7 +174,7 @@ describe('Atom feeds', function() {
         doc.on('change', function() {
           assert.deepEqual(doc.getOldValue(), data);
           assert.deepEqual(doc, {});
-          assert.equal(doc.isSaved(), false) 
+          assert.equal(doc.isSaved(), false)
           doc.closeFeed().then(function() {
             done();
           }).error(done);
@@ -200,7 +200,7 @@ describe('Atom feeds', function() {
         }
         else if (count === 2) {
           assert.deepEqual(doc, {});
-          assert.equal(doc.isSaved(), false) 
+          assert.equal(doc.isSaved(), false)
           doc.closeFeed().then(function() {
             done();
           }).error(done);
