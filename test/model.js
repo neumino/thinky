@@ -181,8 +181,7 @@ describe("Batch insert", function() {
       num: Number
     });
     Model.save({id: "foo"}).then(function(result) {
-      assert.equal(result.length, 1);
-      assert.equal(result[0].id, "foo");
+      assert.deepEqual(result, {id: "foo"});
       done();
     }).error(function(e) {
       done(e);
@@ -245,9 +244,8 @@ describe("Batch insert", function() {
       location: type.point()
     });
     Model.save({id: "foo", location: [1,2]}).then(function(result) {
-      assert.equal(result.length, 1);
-      assert.equal(result[0].id, "foo");
-      assert.equal(result[0].location.$reql_type$, "GEOMETRY");
+      assert.equal(result.id, "foo");
+      assert.equal(result.location.$reql_type$, "GEOMETRY");
       done();
     }).error(function(e) {
       done(e);
@@ -259,11 +257,10 @@ describe("Batch insert", function() {
       num: Number
     });
     Model.save({id: "foo"}).then(function(result) {
-      assert.equal(result.length, 1);
-      assert.equal(result[0].id, "foo");
+      assert.equal(result.id, "foo");
       return Model.save({id: "foo", bar: "buzz"}, {conflict: 'update'});
     }).then(function(result) {
-      assert.deepEqual(result[0], {id: "foo", bar: "buzz"});
+      assert.deepEqual(result, {id: "foo", bar: "buzz"});
       done();
     }).error(function(e) {
       done(e);
@@ -275,11 +272,10 @@ describe("Batch insert", function() {
       num: Number
     });
     Model.save({id: "foo", bar: "buzz"}).then(function(result) {
-      assert.equal(result.length, 1);
-      assert.equal(result[0].id, "foo");
+      assert.equal(result.id, "foo");
       return Model.save({id: "foo"}, {conflict: 'replace'});
     }).then(function(result) {
-      assert.deepEqual(result[0], {id: "foo"});
+      assert.deepEqual(result, {id: "foo"});
       done();
     }).error(function(e) {
       done(e);
