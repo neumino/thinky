@@ -3681,3 +3681,32 @@ describe('_validator', function(){
     doc.validate();
   });
 });
+
+describe('export', function() {
+  it('should export the schema', function() {
+    var Model = thinky.createModel(util.s8(), {
+      any: thinky.type.any(),
+      array: [ thinky.type.string() ],
+      boolean: thinky.type.boolean(),
+      buffer: thinky.type.buffer(),
+      date: thinky.type.date(),
+      number: thinky.type.number(),
+      object: thinky.type.object(),
+      point: thinky.type.point(),
+      string: thinky.type.string(),
+      virtual: thinky.type.virtual()
+    }, {init: false});
+    var exported = Model.getSchema().export();
+    assert.deepEqual(exported, {
+      any: 'any',
+      array: '[string]',
+      boolean: 'boolean',
+      buffer: 'buffer',
+      date: 'date',
+      number: 'number',
+      object: 'object',
+      point: 'point',
+      string: 'string'
+    });
+  });
+})
