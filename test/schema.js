@@ -1869,6 +1869,22 @@ describe('validate', function(){
 
     doc.validate();
   });
+  it('Number - not wrong type - numeric string', function(){
+    var name = util.s8();
+    var str = util.s8();
+
+    var Model = thinky.createModel(name, {
+      id: String,
+      field: Number
+    }, {init: false})
+
+    doc = new Model({
+      id: str,
+      field: "123456"
+    })
+
+    doc.validate();
+  });
   it('Boolean - wrong type - type: "strict"', function(){
     var name = util.s8();
     var str = util.s8();
