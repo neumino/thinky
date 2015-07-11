@@ -209,7 +209,7 @@ Model.belongsTo(OtherModel, fieldName, leftKey, rightKey[, options]);
 ```
 
 Define a "belongs to" relation between two models. The foreign key is
-`leftKey` and will be stored in `OtherModel`.
+`leftKey` and will be stored in `Model`.
 
 If you want to store the foreign key on the joined model, use [hasOne](#hasone).
 
