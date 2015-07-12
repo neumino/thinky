@@ -306,6 +306,26 @@ describe('save', function() {
         done()
       }).error(done)
     });
+    it('Date as number should be coerced to ReQL dates', function(done){
+      var Model = thinky.createModel(modelNames[0], {
+        id: String,
+        date: Date
+      })
+      var t = new Model({
+        id: util.s8(),
+        date: Date.now()
+      });
+
+      t.save().then(function(result) {
+        assert(t.date instanceof Date)
+
+        return Model.get(t.id).execute({timeFormat: "raw"})
+      }).then(function(result) {
+        assert.equal(Object.prototype.toString.call(result.date), "[object Object]");
+        assert.equal(result.date.$reql_type$, "TIME");
+        done()
+      }).error(done)
+    });
     it('Points as array should be coerced to ReQL points', function(done){
       var Model = thinky.createModel(modelNames[0], {
         id: String,
@@ -381,6 +401,24 @@ describe('save', function() {
       }).then(function(result) {
         assert.equal(t.loc.$reql_type$, "GEOMETRY")
         assert(Array.isArray(t.loc.coordinates))
+        done()
+      }).error(done)
+    });
+    it('Number as string should be coerced to number', function(done){
+      var Model = thinky.createModel(modelNames[0], {
+        id: String,
+        number: Number
+      })
+      var t = new Model({
+        id: util.s8(),
+        number: "123456"
+      });
+
+      t.save().then(function(result) {
+        return Model.get(t.id).execute()
+      }).then(function(result) {
+        assert.equal(typeof t.number, "number")
+        assert.equal(t.number, 123456)
         done()
       }).error(done)
     });

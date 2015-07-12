@@ -791,6 +791,14 @@ describe('Chainable types', function(){
     var doc = new Model({ id: null })
     doc.validate();
   });
+  it('Date - number', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.date()},
+      {init: false})
+    var doc = new Model({ id: Date.now() })
+    doc.validate();
+  });
   it('Date - basic - wrong type', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
@@ -1865,6 +1873,22 @@ describe('validate', function(){
     doc = new Model({
       id: str,
       field: "hello"
+    })
+
+    doc.validate();
+  });
+  it('Number - not wrong type - numeric string', function(){
+    var name = util.s8();
+    var str = util.s8();
+
+    var Model = thinky.createModel(name, {
+      id: String,
+      field: Number
+    }, {init: false})
+
+    doc = new Model({
+      id: str,
+      field: "123456"
     })
 
     doc.validate();
