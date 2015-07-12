@@ -791,6 +791,14 @@ describe('Chainable types', function(){
     var doc = new Model({ id: null })
     doc.validate();
   });
+  it('Date - number', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.date()},
+      {init: false})
+    var doc = new Model({ id: Date.now() })
+    doc.validate();
+  });
   it('Date - basic - wrong type', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
