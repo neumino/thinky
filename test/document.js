@@ -384,6 +384,24 @@ describe('save', function() {
         done()
       }).error(done)
     });
+    it('Number as string should be coerced to number', function(done){
+      var Model = thinky.createModel(modelNames[0], {
+        id: String,
+        number: Number
+      })
+      var t = new Model({
+        id: util.s8(),
+        number: "123456"
+      });
+
+      t.save().then(function(result) {
+        return Model.get(t.id).execute()
+      }).then(function(result) {
+        assert.equal(typeof t.number, "number")
+        assert.equal(t.number, 123456)
+        done()
+      }).error(done)
+    });
   });
   describe("Joins - hasOne", function() {
     afterEach(cleanTables);
