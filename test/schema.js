@@ -1026,6 +1026,35 @@ describe('Chainable types', function(){
       return (error instanceof Errors.ValidationError) && (error.message === "Value for [id][0] must be a string or null.")
     });
   });
+  it('Array - no schema - valid array - 1', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.array()},
+      {init: false})
+    var doc = new Model({ id: ['bar']})
+    doc.validate();
+  });
+  it('Array - no schema - valid array - 2', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.array()},
+      {init: false})
+    var doc = new Model({ id: [{foo: "bar"}]})
+    doc.validate();
+  });
+  it('Array - no schema - non valid array', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.array()},
+      {init: false})
+    var doc = new Model({ id: 'bar'})
+    assert.throws(function() {
+      doc.validate();
+    }, function(error) {
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be an array or null.")
+    });
+  });
+
   it('Array - basic - wrong nested type - 3', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
