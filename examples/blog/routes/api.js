@@ -160,7 +160,7 @@ exports.deleteAuthor = function (req, res) {
     var id = req.params.id;
 
     // Delete an author and update all the post referencing the author
-    Author.get(id).getJoin().run().then(function(author) {
+    Author.get(id).getJoin({posts: true}).run().then(function(author) {
         author.delete().then(function(author) {
             res.json({
                 result: author
