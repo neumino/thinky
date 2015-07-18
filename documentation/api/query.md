@@ -21,7 +21,7 @@ database will be converted to instances of the model stored.
 ### [getJoin](#getjoin)
 
 ```js
-query.getJoin([modelToGet]) -> query
+query.getJoin(modelToGet) -> query
 ```
 
 Retrieve the joined documents of the given model.
@@ -57,7 +57,7 @@ Users.getJoin({
 ```
 
 
-_Example_: Retrieve a user and all its joined documents.
+_Example_: Retrieve a user and its account
 
 ```js
 var User = thinky.createModel("User", {
@@ -73,7 +73,7 @@ var Account = thinky.createModel("Account", {
 
 User.hasOne(Account, "account", "id", "userId")
 
-User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin()
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({account: true})
     .run().then(function(user) {
 
     /*
@@ -368,7 +368,7 @@ A few methods have slightly different behavior than the original ReQL commands.
 lets you easily chain commands after `get` without having to use `r.branch`.
 
 ```js
-User.get(1).getJoin().run().then(function(result) {
+User.get(1).run().then(function(result) {
     // ...
 });
 ```

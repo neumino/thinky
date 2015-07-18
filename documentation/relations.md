@@ -245,18 +245,12 @@ Use `save` only when you want to save local changes of document.
 
 #### saveAll
 
-The `saveAll` command will save the local document to the database and will recurse in joined documents to save them.
+The `saveAll` command will save the local document to the database and will recurse in joined documents for the provided keys.
 The foreign keys and links will be automatically saved by `thinky.
 
-__Note__: To avoid infinite recursion with circular references (that appear as soon as you have
-a reciprocal relationship), `saveAll` will not recurse in a field containing document(s)
-of a previously saved model.
-
 __Note__: `saveAll` can delete foreign keys if the joined document is not present. The "rule"
-to make sure that such thing does not happen is to call `saveAll()` on a document only if
-you retrieved it with `getJoin()`. If you retrieved the document with
-`getJoin(modelToGet)`, then you should call `saveAll(modelToSave)` with
-`modelToSave == modelToGet`.
+to make sure that such thing does not happen is to call `saveAll` on a document only if
+you retrieved it with `getJoin` with the same argument.
 
 __Note__: A notable exception is for `hasAndBelongsToMany` relations. In this case you can provide
 an array with keys to link. `saveAll` will only create the relations between the document
@@ -291,14 +285,12 @@ account.user = user;
 ```
 
 ```
-user.saveAll().then(...);
+user.saveAll({account: true}).then(...);
 ```
 
 We will first save `user`, then copy `user`'s id in `account.userId`, then save `account`.
-The `saveAll` command will not recurse in the field `account.user` since we previously already saved an instance of `User` (`user`).
 
-
-Executing `account.saveAll()` will save things in the same order since we need to save `user` first
+Executing `account.saveAll({user: true})` will save things in the same order since we need to save `user` first
 to fill the foreign key in `account`. Using the appropriate order to save documents will be done by `thinky`.
 
 
@@ -356,7 +348,7 @@ var Account = thinky.createModel("Account", {
 User.hasOne(Account, "account", "id", "userId");
 
 User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
-    .getJoin().run().then(function(user) {
+    .getJoin({account: true}).run().then(function(user) {
     /*
      * var user = {
      *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
@@ -399,10 +391,6 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
 
 Use the `getJoin` command to retrieve joined documents.
 
-Like for `saveAll`, `getJoin` will recurse in a field as long as it does not contain 
-a Model previously fetched in another field.
-You can manually force `getJoin` to retrieve a joined document by manually specifying the field.
-
 _Example_: Basic usage.
 
 ```js
@@ -420,7 +408,7 @@ User.hasOne(Account, "account", "id", "userId");
 Account.belongsTo(User, "user", "userId", "id");
 
 
-User.getJoin().run().then(function(result) {
+User.getJoin({account: true}).run().then(function(result) {
     /*
      * All the documents in `result` will be like
      * var user = {
@@ -546,7 +534,7 @@ var Author = thinky.createModel("Author", {
 Post.belongsTo(Author, "author", "authorId", "id")
 
 Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
-    .getJoin().run().then(function(post) {
+    .getJoin({author: true}).run().then(function(post) {
 
     /*
      * post = {
@@ -562,7 +550,7 @@ Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
      */
     post.author.delete().then(function() {
         Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
-            .getJoin().run().then(function(post) {
+            .getJoin({author: true}).run().then(function(post) {
 
             /*
              * post = {

@@ -230,7 +230,7 @@ The promise will be resolved with the document and the document will
 be updated in place.
 
 __Rule__: If you want to make sure not to destroy relations when calling `saveAll`, the "rule" is to
-call `saveAll()` on a document only if you retrieved it with `getJoin()`. If you retrieved the document
+call `saveAll(...)` on a document only if you retrieved it with `getJoin(...)`. If you retrieved the document
 with `getJoin(modelToGet)`, then you should call `saveAll(modelToSave)` with `modelToSave == modelToGet`.
 
 
@@ -264,7 +264,7 @@ var user = new User({
     }
 })
 
-user.saveAll().then(function(result) {
+user.saveAll({account: true}).then(function(result) {
     /*
      * user = {
      *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
@@ -309,7 +309,7 @@ var Account = thinky.createModel("Account", {
 User.hasOne(Account, "account", "id", "userId");
 
 User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
-    .getJoin().run().then(function(user) {
+    .getJoin({account: true}).run().then(function(user) {
     /*
      * var user = {
      *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
@@ -322,7 +322,7 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
      * }
      */
      user.account = null;
-     user.saveAll().then(function(user) {
+     user.saveAll({account: true}).then(function(user) {
         /*
          * var user = {
          *     id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
@@ -391,8 +391,8 @@ Author.get("3851d8b4-5358-43f2-ba23-f4d481358901").run()
      * }
      */
     user.splice(1, 1);
-    user.saveAll().then(function(user) {
-        User.get(user.id).getJoin().run().then(function(user) {
+    user.saveAll({posts: true}).then(function(user) {
+        User.get(user.id).getJoin({posts: true}).run().then(function(user) {
         /*
          * var author = {
          *     id: "3851d8b4-5358-43f2-ba23-f4d481358901",
@@ -434,7 +434,7 @@ var Author = thinky.createModel("Author", {
 Post.belongsTo(Author, "author", "authorId", "id")
 
 Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
-    .getJoin().run().then(function(post) {
+    .getJoin({author: true}).run().then(function(post) {
 
     /*
      * post = {
@@ -449,10 +449,10 @@ Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
      * }
      */
     delete post.author;
-    post.saveAll().then(function(post) {
+    post.saveAll({author: true}).then(function(post) {
 
         Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
-            .getJoin().run().then(function(post) {
+            .getJoin({author: true}).run().then(function(post) {
 
             /*
              * post = {
@@ -731,7 +731,7 @@ var Account = thinky.createModel("Account", {
 
 User.hasOne(Account, "account", "id", "userId")
 
-User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().run()
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({account: true}).run()
     .then(function(user) {
 
     /*
@@ -811,7 +811,7 @@ var Account = thinky.createModel("Account", {
 
 User.hasOne(Account, "account", "id", "userId")
 
-User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin()
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({account: true})
     .run().then(function(user) {
 
     /*
@@ -941,7 +941,7 @@ var ben = new User({
 
 michel.friends = [marc, sophia, ben]
 
-michel.saveAll().then(function(michel) {
+michel.saveAll({friends}).then(function(michel) {
     User.get(michel.id).then(function(michel) {
         // michel.friends === undefined
         michel.purge().then(function(michel) {

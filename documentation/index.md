@@ -55,7 +55,7 @@ var author = new Author({
 // Join the documents
 post.author = author;
 
-post.saveAll().then(function(result) {
+post.saveAll({author: true}).then(function(result) {
     /*
     post = result = {
         id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a",
@@ -75,7 +75,7 @@ Retrieve the post with its author, and delete its author.
 
 ```js
 Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
-    .getJoin().then(function(post) {
+    .getJoin({author: true}).then(function(post) {
 
     /*
     post = {
