@@ -298,6 +298,7 @@ describe('save', function() {
 
       t.save().then(function(result) {
         assert(t.date instanceof Date)
+        assert.equal(t.date.getYear(), new Date().getYear());
 
         return Model.get(t.id).execute({timeFormat: "raw"})
       }).then(function(result) {

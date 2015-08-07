@@ -144,6 +144,13 @@ describe('Model queries', function() {
       done();
     }).error(done);
   });
+  it('Model._get() should return null if no doc is found', function(done){
+    Model._get('nonExistingId').execute().then(function(result) {
+      assert.equal(result, null)
+      done();
+    }).error(done);
+  });
+
   it('Model.get().merge(..) should throw before calling merge', function(done){
     Model.get("NonExistingKey").merge({foo: "bar"}).run().then(function(result) {
       done(new Error("Was expecting an error"));
