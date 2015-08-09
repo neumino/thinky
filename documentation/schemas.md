@@ -55,7 +55,7 @@ There are two more ways to define a type, one is via the methods in `thinky.type
 All these types come with a few more methods:
 
 - `required()`: set the field as required (cannot be `undefined` or `null`)
-- `optional()`: set the field as optional (cannot be `undefined` or `null`)
+- `optional()`: set the field as optional (can be `undefined` or `null`)
 - `allowNull(<boolean>)`: whether `null` is considered valid or not.
 - `default(valueOrFunction)`: The first argument can be constant value or a function
   that will be called with the document as the context.
