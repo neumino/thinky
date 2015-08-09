@@ -1468,7 +1468,7 @@ describe('delete', function() {
       }).error(done);
     });
     it('should work with a callback', function(done) {
-      doc.delete().then(function() {
+      doc.delete(function() {
         Model.run(function(err, result) {
           assert.equal(result.length, 0);
           done();
