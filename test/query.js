@@ -1241,8 +1241,8 @@ describe('In place writes', function() {
       assert.equal(result.num, 1);
       return Model.get(doc.id).update({num: 1}).run()
     }).then(function(result) {
-      // We currently do not run another point read after a write.
-      assert.equal(result, undefined);
+      // We can force changes to be retrieved with returnChanges: 'always'
+      assert.deepEqual(result, {id: doc.id, num: 1});
       done();
     }).error(done);
   })
