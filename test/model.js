@@ -429,10 +429,9 @@ describe("Joins", function() {
           done();
         }).error(done);
       }).error(done);
-
     })
   });
-  it('BelongsTo should create an index on the model called', function(done) {
+  it('BelongsTo should create an index on the other model', function(done) {
     var model = thinky.createModel(modelNames[0], { id: String, otherId: String });
 
     var foreignKey = util.s8();
@@ -443,9 +442,9 @@ describe("Joins", function() {
 
     model.belongsTo(otherModel, "otherDoc", foreignKey, "otherId");
 
-    model.once("ready", function() {
-      r.table(model.getTableName()).indexList().run().then(function(cursor) {
-        r.table(model.getTableName()).indexWait(foreignKey).run().then(function() {
+    otherModel.once("ready", function() {
+      r.table(otherModel.getTableName()).indexList().run().then(function(result) {
+        r.table(otherModel.getTableName()).indexWait('otherId').run().then(function() {
           done();
         }).error(done);
       }).error(done);
