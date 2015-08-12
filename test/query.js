@@ -718,7 +718,7 @@ describe('getJoin', function(){
 });
 
 
-describe('removeRelations', function(){
+describe('addRelation', function(){
   afterEach(cleanTables);
 
   it('hasOne - pk', function(done) {
@@ -1002,7 +1002,7 @@ describe('removeRelations', function(){
 
 });
 
-describe('removeRelations', function(){
+describe('removeRelation', function(){
   afterEach(cleanTables);
 
   it('should work for hasOne', function(done) {
@@ -1029,7 +1029,7 @@ describe('removeRelations', function(){
     doc.otherDoc = otherDoc;
 
     doc.saveAll().then(function(doc) {
-      return Model.get(doc.id).removeRelations({otherDoc: true}).run()
+      return Model.get(doc.id).removeRelation('otherDoc').run()
     }).then(function(doc) {
       return OtherModel.get(otherDoc.id).run()
     }).then(function(doc) {
@@ -1062,7 +1062,7 @@ describe('removeRelations', function(){
     doc.otherDocs = [otherDoc];
 
     doc.saveAll().then(function(doc) {
-      return Model.get(doc.id).removeRelations({otherDocs: true}).run()
+      return Model.get(doc.id).removeRelation('otherDocs').run()
     }).then(function(doc) {
       return OtherModel.get(otherDoc.id).run()
     }).then(function(doc) {
@@ -1095,7 +1095,7 @@ describe('removeRelations', function(){
     doc.otherDoc = otherDoc;
 
     doc.saveAll().then(function(doc) {
-      return Model.get(doc.id).removeRelations({otherDoc: true}).run()
+      return Model.get(doc.id).removeRelation('otherDoc').run()
     }).then(function(doc) {
       assert.equal(doc.foreignKey, undefined);
       return Model.get(doc.id).run()
@@ -1129,7 +1129,7 @@ describe('removeRelations', function(){
     doc.otherDocs = [otherDoc];
 
     doc.saveAll().then(function(doc) {
-      return Model.get(doc.id).removeRelations({otherDocs: true}).run()
+      return Model.get(doc.id).removeRelation('otherDocs').run()
     }).then(function(doc) {
       return Model.get(doc.id).getJoin({otherDocs: true}).run()
     }).then(function(doc) {
