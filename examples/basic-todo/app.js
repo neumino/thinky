@@ -58,7 +58,7 @@ function update(req, res, next) {
         res.send(JSON.stringify(todo));
     }).error(handleError(res));
 
-    // Another way to delete a todo is with
+    // Another way to update a todo is with
     // Todo.get(req.body.id).update(todo).execute()
 }
 
