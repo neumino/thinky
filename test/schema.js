@@ -1671,6 +1671,25 @@ describe('generateDefault', function(){
     assert.notEqual(doc1.field, doc2.field)
     assert.deepEqual(doc1.field, doc2.field)
   });
+  it('Nested object should not throw with a null value - #314', function(){
+    var name = util.s8();
+    var str = util.s8();
+    var defaultValue = util.s8();
+
+    var Model = thinky.createModel(name, {
+      id: String,
+      nested: {
+        field: type.string().default(2)
+      }
+    }, {init: false})
+
+    doc = new Model({
+      id: str,
+      nested: null
+    })
+    doc.validate()
+  });
+
 });
 describe('validate', function(){
   it('String - wrong type - type: "strict"', function(){
