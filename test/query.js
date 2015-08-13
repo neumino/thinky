@@ -999,7 +999,6 @@ describe('addRelation', function(){
       done();
     });
   });
-
 });
 
 describe('removeRelation', function(){
@@ -1030,7 +1029,10 @@ describe('removeRelation', function(){
 
     doc.saveAll().then(function(doc) {
       return Model.get(doc.id).removeRelation('otherDoc').run()
-    }).then(function(doc) {
+    }).then(function(otherDocResults) {
+      assert.equal(otherDocResults.id, otherDoc.id); 
+      assert.equal(otherDocResults.str, otherDoc.str); 
+      assert.equal(otherDocResults.num, otherDoc.num); 
       return OtherModel.get(otherDoc.id).run()
     }).then(function(doc) {
       assert.equal(doc.foreignKey, undefined);
@@ -1038,7 +1040,7 @@ describe('removeRelation', function(){
     });
   });
 
-  it('should work for hasMany', function(done) {
+  it('should work for hasMany - all', function(done) {
     var Model = thinky.createModel(modelNames[0], {
       id: String,
       str: String,
@@ -1063,10 +1065,56 @@ describe('removeRelation', function(){
 
     doc.saveAll().then(function(doc) {
       return Model.get(doc.id).removeRelation('otherDocs').run()
-    }).then(function(doc) {
+    }).then(function(otherDocResults) {
+      assert.equal(otherDocResults.length, 1);
+      assert.equal(otherDocResults[0].id, otherDoc.id); 
+      assert.equal(otherDocResults[0].str, otherDoc.str); 
+      assert.equal(otherDocResults[0].num, otherDoc.num); 
+
       return OtherModel.get(otherDoc.id).run()
     }).then(function(doc) {
       assert.equal(doc.foreignKey, undefined);
+      done();
+    });
+  });
+
+  it('should work for hasMany - one', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    });
+
+    var otherName = util.s8();
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    })
+    Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey")
+
+    var docValues = {str: util.s8(), num: util.random()}
+    var otherDocValues1 = {str: util.s8(), num: util.random()}
+    var otherDocValues2 = {str: util.s8(), num: util.random()}
+
+    doc = new Model(docValues);
+    var otherDoc1 = new OtherModel(otherDocValues1);
+    var otherDoc2 = new OtherModel(otherDocValues2);
+    doc.otherDocs = [otherDoc1, otherDoc2];
+
+    doc.saveAll().then(function(doc) {
+      return Model.get(doc.id).removeRelation('otherDocs', {id: otherDoc2.id}).run()
+    }).then(function(otherDocResults) {
+      assert.equal(otherDocResults.length, 1);
+      assert.equal(otherDocResults[0].id, otherDoc2.id); 
+      assert.equal(otherDocResults[0].str, otherDoc2.str); 
+      assert.equal(otherDocResults[0].num, otherDoc2.num); 
+
+      return Model.get(doc.id).getJoin({otherDocs: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.otherDocs.length, 1);
+      assert.equal(doc.otherDocs[0].id, otherDoc1.id);
       done();
     });
   });
@@ -1096,8 +1144,11 @@ describe('removeRelation', function(){
 
     doc.saveAll().then(function(doc) {
       return Model.get(doc.id).removeRelation('otherDoc').run()
-    }).then(function(doc) {
-      assert.equal(doc.foreignKey, undefined);
+    }).then(function(docResult) {
+      assert.equal(docResult.foreignKey, undefined);
+      assert.equal(docResult.id, doc.id);
+      assert.equal(docResult.str, doc.str);
+      assert.equal(docResult.num, doc.num);
       return Model.get(doc.id).run()
     }).then(function(doc) {
       assert.equal(doc.foreignKey, undefined);
@@ -1105,7 +1156,7 @@ describe('removeRelation', function(){
     });
   });
 
-  it('should work for hasAndBelongsTo', function(done) {
+  it('should work for hasAndBelongsTo - all', function(done) {
     var Model = thinky.createModel(modelNames[0], {
       id: String,
       str: String,
@@ -1128,12 +1179,98 @@ describe('removeRelation', function(){
     var otherDoc = new OtherModel(otherDocValues);
     doc.otherDocs = [otherDoc];
 
-    doc.saveAll().then(function(doc) {
+    doc.saveAll({otherDocs: true}).then(function(doc) {
       return Model.get(doc.id).removeRelation('otherDocs').run()
-    }).then(function(doc) {
+    }).then(function() {
       return Model.get(doc.id).getJoin({otherDocs: true}).run()
     }).then(function(doc) {
       assert.equal(doc.otherDocs.length, 0);
+      done();
+    });
+  });
+  it('should work for hasAndBelongsTo - one', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    });
+
+    var otherName = util.s8();
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    })
+    Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "id")
+
+    var docValues = {str: util.s8(), num: util.random()}
+    var otherDocValues1 = {str: util.s8(), num: util.random()}
+    var otherDocValues2 = {str: util.s8(), num: util.random()}
+
+    doc = new Model(docValues);
+    var otherDoc1 = new OtherModel(otherDocValues1);
+    var otherDoc2 = new OtherModel(otherDocValues2);
+    doc.otherDocs = [otherDoc1, otherDoc2];
+
+    doc.saveAll({otherDocs: true}).then(function(doc) {
+      return Model.get(doc.id).removeRelation('otherDocs', {id: otherDoc2.id}).run()
+    }).then(function() {
+      return Model.get(doc.id).getJoin({otherDocs: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.otherDocs.length, 1);
+      assert.equal(doc.otherDocs[0].id, otherDoc1.id);
+      done();
+    });
+  });
+
+  it('should work for hasAndBelongsToMany - pair - all', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    });
+
+    Model.hasAndBelongsToMany(Model, "others", "id", "id")
+
+    doc = new Model({str: util.s8(), num: util.random()});
+    var otherDoc1 = new Model({str: util.s8(), num: util.random()});
+    var otherDoc2 = new Model({str: util.s8(), num: util.random()});
+    doc.others = [otherDoc1, otherDoc2];
+
+    doc.saveAll({others: true}).then(function(doc) {
+      return Model.get(doc.id).removeRelation('others').run()
+    }).then(function() {
+      return Model.get(doc.id).getJoin({'others': true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.others.length, 0);
+      done();
+    });
+  });
+
+  it('should work for hasAndBelongsToMany - pair - one', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    });
+
+    Model.hasAndBelongsToMany(Model, "others", "id", "id")
+
+    doc = new Model({str: util.s8(), num: util.random()});
+    var otherDoc1 = new Model({str: util.s8(), num: util.random()});
+    var otherDoc2 = new Model({str: util.s8(), num: util.random()});
+    doc.others = [otherDoc1, otherDoc2];
+
+    doc.saveAll({others: true}).then(function(doc) {
+      return Model.get(doc.id).removeRelation('others', {id: otherDoc2.id}).run()
+    }).then(function() {
+      return Model.get(doc.id).getJoin({'others': true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.others.length, 1);
+      assert.equal(doc.others[0].id, otherDoc1.id);
       done();
     });
   });

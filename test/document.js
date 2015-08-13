@@ -3053,7 +3053,7 @@ describe('hooks', function() {
   });
 });
 
-describe('removeRelations', function(){
+describe('removeRelation', function(){
   afterEach(cleanTables);
 
   it('should work for hasOne', function(done) {
@@ -3080,8 +3080,8 @@ describe('removeRelations', function(){
     doc.otherDoc = otherDoc;
 
     doc.saveAll().then(function(doc) {
-      return doc.removeRelations({otherDoc: true})
-    }).then(function(result) {
+      return doc.removeRelation('otherDoc')
+    }).then(function() {
       return OtherModel.get(otherDoc.id).run()
     }).then(function(doc) {
       assert.equal(doc.foreignKey, undefined);
@@ -3113,7 +3113,7 @@ describe('removeRelations', function(){
     doc.otherDocs = [otherDoc];
 
     doc.saveAll().then(function(doc) {
-      return doc.removeRelations({otherDocs: true})
+      return doc.removeRelation('otherDocs')
     }).then(function(doc) {
       return OtherModel.get(otherDoc.id).run()
     }).then(function(doc) {
@@ -3146,10 +3146,8 @@ describe('removeRelations', function(){
     doc.otherDoc = otherDoc;
 
     doc.saveAll().then(function(doc) {
-      return doc.removeRelations({otherDoc: true})
-    }).then(function(newDoc) {
-      assert.equal(doc.foreignKey, undefined);
-      assert.equal(newDoc.foreignKey, undefined);
+      return doc.removeRelation('otherDoc')
+    }).then(function() {
       return Model.get(doc.id).run()
     }).then(function(doc) {
       assert.equal(doc.foreignKey, undefined);
@@ -3181,8 +3179,8 @@ describe('removeRelations', function(){
     doc.otherDocs = [otherDoc];
 
     doc.saveAll().then(function(doc) {
-      return doc.removeRelations({otherDocs: true})
-    }).then(function(doc) {
+      return doc.removeRelation('otherDocs')
+    }).then(function() {
       return Model.get(doc.id).getJoin({otherDocs: true}).run()
     }).then(function(doc) {
       assert.equal(doc.otherDocs.length, 0);
