@@ -894,6 +894,33 @@ Users.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").run().then(function(michel) {
 });
 ```
 
+<div id="addrelation"></div>
+### [addRelation](#addrelation)
+
+```
+document.addRelation(field, joinedDocument) -> Promise
+```
+
+Shortcut for
+
+```
+Model.get(document.id).addRelation(field, joinedDocument).run()
+```
+
+--------------
+
+<div id="removerelation"></div>
+### [removeRelation](#removerelation)
+
+```
+document.removeRelation(field[, joinedDocument]) -> Promise
+```
+
+Shortcut for
+
+```
+Model.get(document.id).removeRelation(field[, joinedDocument]).run()
+```
 
 --------------
 

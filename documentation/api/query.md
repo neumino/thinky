@@ -267,6 +267,173 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({account: {bills: true}
 
 --------------
 
+<div id="addrelation"></div>
+### [addRelation](#addrelation)
+
+```js
+query.addRelation(field, joinedDocument) -> query
+```
+
+Add a relation for the given `joinedDocument` returned by `query`. This method does not saved both documents, only create the
+relation between the two of them.
+The value for `joinedDocument` must be an object with different requirement depending of the relation:
+
+- for a `hasOne` relation, the primary key of the document must be defined
+- for a `hasMany` relation, the primary key of the document must be defined
+- for a `belongsTo` relation, the primary key of the document or the value of the right key must be defined
+- for a `hasAndBelongsToMany` relation, the primary key of the document or the value of the right key must be defined
+
+The promise get resolved with different value depending of the relation:
+
+- for a `hasOne` relation, the joined document is returned
+- for a `hasMany` relation, the joined document is returned
+- for a `belongsTo` relation, the document returned by `query` is returned.
+- for a `hasAndBelongsToMany` relation, `true` is returned.
+
+Note that `query` must return a unique object, not a sequence.
+
+
+_Example_: Link the user with id `0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a` with the account which id is
+`3851d8b4-5358-43f2-ba23-f4d481358901` for a `hasOne` relation.
+
+```js
+var User = thinky.createModel("User", {
+    id: type.string(),
+    name: type.string()
+});
+
+var Account = thinky.createModel("Account", {
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
+});
+
+User.hasOne(Account, "account", "id", "userId")
+
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
+    .addRelation("account", {id: "3851d8b4-5358-43f2-ba23-f4d481358901"})
+    .run()
+```
+
+_Example_: Link the user with id `0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a` with the account which id is
+`3851d8b4-5358-43f2-ba23-f4d481358901` for a `belongsTo` relation
+
+```js
+var User = thinky.createModel("User", {
+    id: type.string(),
+    name: type.string(),
+    _account: type.string()
+});
+
+var Account = thinky.createModel("Account", {
+    id: type.string(),
+    sold: type.number(),
+    accountNumber: type.string()
+});
+
+User.hasOne(Account, "account", "_account", "accountNumber")
+
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
+    .addRelation("account", {accountNumber: "XXXX-XXXX-XXXX"})
+    .run()
+
+// Or with the primary key
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
+    .addRelation("account", {id: "3851d8b4-5358-43f2-ba23-f4d481358901"})
+    .run()
+
+```
+
+
+_Example_: Make two users friends
+
+```js
+var User = thinky.createModel("User", {
+    id: type.string(),
+    name: type.string()
+});
+
+User.hasAndBelongsToMany(User, "friends", "id", "id")
+
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
+    .addRelation("friends", {id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a"})
+    .run()
+```
+
+--------------
+
+<div id="removerelation"></div>
+### [removeRelation](#removerelation)
+
+```js
+query.removeRelation(field[, joinedDocument]) -> query
+```
+
+Remove the relation for the joinedDocument returned by `query` stored in `field`. By default, all
+the relations are destroyed. The argument `joinedDocument` can be defined for `hasMany` and `hasAndBelongsToMany`
+relations to remove a unique relation.
+
+- For `hasMany`, the joinedDocument must be an object with the primary key of the joined document.
+- For `hasAndBelongsToMany`, the joinedDocument must be an object with the primary key of the joined document or the right key.
+
+
+_Example_: Remove an account from a user
+
+```js
+var User = thinky.createModel("User", {
+    id: type.string(),
+    name: type.string()
+});
+
+var Account = thinky.createModel("Account", {
+    id: type.string(),
+    userId: type.string(),
+    sold: type.number()
+});
+
+User.hasOne(Account, "account", "id", "userId")
+
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
+    .addRelation("account")
+    .run()
+```
+
+
+_Example_: Remove all the friends of a given user
+
+```js
+var User = thinky.createModel("User", {
+    id: type.string(),
+    name: type.string()
+});
+
+User.hasAndBelongsToMany(User, "friends", "id", "id")
+
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
+    .removeRelation("friends")
+    .run()
+```
+
+
+_Example_: Delete one friendship
+
+```js
+var User = thinky.createModel("User", {
+    id: type.string(),
+    name: type.string()
+});
+
+User.hasAndBelongsToMany(User, "friends", "id", "id")
+
+User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
+    .removeRelation("friends", {id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a"})
+    .run()
+```
+
+
+--------------
+
+
 <div id="run"></div>
 ### [run](#run)
 
