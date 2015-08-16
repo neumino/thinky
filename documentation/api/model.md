@@ -353,8 +353,9 @@ The joined is done via a third table that is automatically created and managed b
 - `fieldName`: the field where the joined document will be stored.
 - `leftKey`: the field of `Model` used to perform the join.
 - `rightKey`: the field of `OtherModel` used to perform the join.
-- `options`: set the field `init` to `false` if the indexes
-were already created and do not want `thinky` to try to create them.
+- `options`: 
+  - set the field `init` to `false` if the indexes were already created and do not want `thinky` to try to create them.
+  - set the field `type` to a string to differentiate two n-n relations for the same two models.
 You can also specify a string for `type` which will be used to differentiate
 the table if you link multiple times the same mdoels.
 
