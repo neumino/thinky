@@ -438,7 +438,7 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
 ### [run](#run)
 
 ```
-query.run([callback]) -> Promise
+query.run([options][, callback]) -> Promise
 ```
 
 
@@ -460,7 +460,7 @@ User.run().then(function(result) {
 ### [execute](#execute)
 
 ```
-query.execute([callback]) -> Promise
+query.execute([options][, callback]) -> Promise
 ```
 
 Execute the query but do not parse the response from the server, for example
