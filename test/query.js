@@ -260,31 +260,25 @@ describe('Model queries', function() {
     }).error(done);
   });
   it('Model.execute should not return instances of the model', function(done){
-    Model.execute().then(function(cursor) {
-      cursor.toArray().then(function(result) {
-        assert(!(result[0] instanceof Document));
-        assert.equal(result.length, 3);
-        done();
-      });
+    Model.execute().then(function(result) {
+      assert(!(result[0] instanceof Document));
+      assert.equal(result.length, 3);
+      done();
     }).error(done);
   });
   it('Model.execute should work with a callback', function(done){
-    Model.execute(function(err, cursor) {
-      cursor.toArray().then(function(result) {
-        assert(!(result[0] instanceof Document));
-        assert.equal(result.length, 3);
-        done();
-      });
+    Model.execute(function(err, result) {
+      assert(!(result[0] instanceof Document));
+      assert.equal(result.length, 3);
+      done();
     }).error(done);
   });
 
   it('Model.map(1).execute should work', function(done){
-    Model.map(function() { return 1 }).execute().then(function(cursor) {
-      cursor.toArray().then(function(result) {
-        assert(!(result[0] instanceof Document));
-        assert.equal(result.length, 3);
-        done();
-      })
+    Model.map(function() { return 1 }).execute().then(function(result) {
+      assert(!(result[0] instanceof Document));
+      assert.equal(result.length, 3);
+      done();
     }).error(done);
   });
   it('Model.add(1).execute() should be able to error', function(done){

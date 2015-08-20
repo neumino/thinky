@@ -3037,8 +3037,6 @@ describe('Advanced cases', function(){
 
       Promise.all(promises).then(function() {
         return Model.innerJoin(OtherModel.between(r.minval, r.maxval)._query, function() { return true}).execute()
-      }).then(function(cursor) {
-        return cursor.toArray();
       }).then(function(result) {
         assert.equal(result.length, 3);
         assert.deepEqual(result[0].left, doc);
