@@ -307,6 +307,32 @@ describe('save', function() {
         done()
       }).error(done)
     });
+    it('Date as string should be coerced to ReQL dates in array', function(done){
+      var Model = thinky.createModel(modelNames[0], {
+        id: String,
+        array: type.array().schema({
+          date: Date
+        })
+      })
+      var t = new Model({
+        id: util.s8(),
+        array: [{
+          date: (new Date()).toISOString()
+        }]
+      });
+
+      t.save().then(function(result) {
+        assert(t.array[0].date instanceof Date)
+        assert.equal(t.array[0].date.getYear(), new Date().getYear());
+
+        return Model.get(t.id).execute({timeFormat: "raw"})
+      }).then(function(result) {
+        assert.equal(Object.prototype.toString.call(result.array[0].date), "[object Object]");
+        assert.equal(result.array[0].date.$reql_type$, "TIME");
+        done()
+      }).error(done)
+    });
+
     it('Date as number should be coerced to ReQL dates', function(done){
       var Model = thinky.createModel(modelNames[0], {
         id: String,
