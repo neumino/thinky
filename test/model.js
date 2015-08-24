@@ -356,16 +356,11 @@ describe("Joins", function() {
 
 
     model.hasAndBelongsToMany(otherModel, "otherDoc", "id", "otherId", {init: false});
-    try{
-      model.hasAndBelongsToMany(anotherModel, "otherDoc", "id", "otherId");
-    }
-    catch(err) {
-      assert.equal(err.message, "The field `otherDoc` is already used by another relation.")
-      // Wait for the link table to be ready since we wont' drop/recreate the table
-      thinky.models[model._getModel()._joins["otherDoc"].link].once('ready', function() {
-        // TODO Remove when tableWait is implemented on the server
-        done();
-      })
+    try {
+      model.hasAndBelongsToMany(anotherModel, "otherDoc", "id", "otherId", {init: false});
+    } catch(err) {
+      assert.equal(err.message, "The field `otherDoc` is already used by another relation.");
+      done();
     }
   });
   it('hasOne should throw if the first argument is not a model', function(done) {

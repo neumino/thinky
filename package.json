@@ -29,6 +29,8 @@
     "validator": "~ 3.22.1"
   },
   "devDependencies": {
-    "mocha": "~1.21.5"
+    "mocha": "^2.2.5",
+    "chai": "^3.2.0",
+    "chai-as-promised": "^5.1.0"
   }
 }
