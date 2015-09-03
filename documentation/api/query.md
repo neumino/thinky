@@ -271,7 +271,7 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({account: {bills: true}
 ### [addRelation](#addrelation)
 
 ```js
-query.addRelation(field, joinedDocument) -> query
+query.addRelation(field, joinedDocument) -> Promise
 ```
 
 Add a relation for the given `joinedDocument` returned by `query`. This method does not saved both documents, only create the
@@ -312,7 +312,6 @@ User.hasOne(Account, "account", "id", "userId")
 
 User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
     .addRelation("account", {id: "3851d8b4-5358-43f2-ba23-f4d481358901"})
-    .run()
 ```
 
 _Example_: Link the user with id `0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a` with the account which id is
@@ -335,13 +334,10 @@ User.hasOne(Account, "account", "_account", "accountNumber")
 
 User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
     .addRelation("account", {accountNumber: "XXXX-XXXX-XXXX"})
-    .run()
 
 // Or with the primary key
 User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
     .addRelation("account", {id: "3851d8b4-5358-43f2-ba23-f4d481358901"})
-    .run()
-
 ```
 
 
@@ -357,7 +353,6 @@ User.hasAndBelongsToMany(User, "friends", "id", "id")
 
 User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
     .addRelation("friends", {id: "0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a"})
-    .run()
 ```
 
 --------------
