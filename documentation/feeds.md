@@ -70,7 +70,7 @@ Users.changes().then(function(feed) {
 
     if (doc.isSaved() === false) {
       console.log("The following document was deleted:");
-      console.log(stringify(doc.getOldValue()));
+      console.log(stringify(doc));
     }
     else if (doc.getOldValue() == null) {
       console.log("A new document was inserted:");
