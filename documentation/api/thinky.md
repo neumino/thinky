@@ -94,6 +94,7 @@ Custom errors are thrown by `thinky` to allow your code to respond elegantly.
 These custom errors extend the native `Error` object.
 
 Currently `thinky` will throw the following errors:
+
 - `DocumentNotFound` is thrown when a `get` call returns `null` instead of a document.
 - `InvalidWrite` is thrown when an in place upgrade/replace returns a non-valid document.
 - `ValidationError` is thrown when the schema validation of a document fails.
