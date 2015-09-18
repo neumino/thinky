@@ -90,9 +90,14 @@ var thinky = require('thinky')();
 var Errors = thinky.Errors;
 ```
 
-Custom errors created by `thinky`. For now the only error that thinky will
-create is a `DocumentNotFound`, and is triggered when a query returns `null`
-while it expects to get back a full document.
+Custom errors are thrown by `thinky` to allow your code to respond elegantly.
+These custom errors extend the native `Error` object.
+
+Currently `thinky` will throw the following errors:
+- `DocumentNotFound` is thrown when a `get` call returns `null` instead of a document.
+- `InvalidWrite` is thrown when an in place upgrade/replace returns a non-valid document.
+- `ValidationError` is thrown when the schema validation of a document fails.
+  Read more about the schema and validation on [this article](/documentation/schemas/).
 
 
 _Example_: Retrieve a document with its primary key and print a message
@@ -106,6 +111,30 @@ Post.get(1).run().then(function(post) {
 }).error(function(error) {
     // Unexpected error
 });
+```
+_Example_: Saving an object that breaks schema validation and printing
+the cause of the validation error.
+
+```js
+var User = thinky.createModel("User", {
+    id: type.string(),
+    name: type.string(),
+    email: type.number().email() // <-- Valid e-mail address required
+});
+
+User.save({
+    name: "Jessie",
+    email: "555-1234" // <-- Not an e-mail address
+}).then(function(result) {
+    // Skipped due to ValidationError
+}).catch(Errors.ValidationError, function(err) {
+    console.log("Validation Error: " + err.message)
+}).error(function(error) {
+    // Unexpected error
+});
+
+
+
 ```
 
 --------------
