@@ -469,11 +469,8 @@ describe('Advanced cases', function(){
         assert.equal(true, resultM1.linksOM !== undefined);
         assert.equal(1, resultM1.linksOM.length);
         assert.equal(true, resultM1.linksOM[0].pivot !== undefined);
-        console.log(resultM1.linksOM[0]);
         assert.equal("foo", resultM1.linksOM[0].pivot.extra);
         done();
-      }).catch(function (err) {
-        console.log('ERR', err);
       })
     });
     it('hasAndBelongsToMany -- custom pivot tables with the same table', function(done) {
