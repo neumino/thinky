@@ -14,7 +14,7 @@ var modelNameSet = {};
 modelNameSet[util.s8()] = true;
 modelNameSet[util.s8()] = true;
 
-var modelNames = Object.keys(modelNameSet);
+var modelNames = Object.keys(modelNameSet).sort();
 
 var cleanTables = function(done) {
   var promises = [];
@@ -436,6 +436,76 @@ describe('Advanced cases', function(){
           });
         });
       }).error(done);
+    });
+    it('hasAndBelongsToMany -- custom pivot tables', function(done) {
+      var Model = thinky.createModel(modelNames[0], {
+        id: String
+      });
+
+      var OtherModel = thinky.createModel(modelNames[1], {
+        id: String
+      });
+
+      var LinkMOM = thinky.createModel(modelNames[0] + '_' + modelNames[1], {
+        id: String,
+        extra: String
+      });
+
+      Model.hasAndBelongsToMany(OtherModel, "linksOM", "id", "id", { through: LinkMOM });
+      OtherModel.hasAndBelongsToMany(Model, "linksM", "id", "id", { through: LinkMOM });
+
+      var m1 = new Model({ id: 'm1' });
+      var om1 = new OtherModel({ id: 'om1' });
+
+      m1.linksOM = [ om1 ];
+
+      om1.save().then(function () {
+        return m1.saveAll({ linksOM: true });
+      }).then(function () {
+        return LinkMOM.get('m1_om1').update({ extra: "foo" });
+      }).then(function () {
+        return Model.get("m1").getJoin({ linksOM: true });
+      }).then(function (resultM1) {
+        assert.equal(true, resultM1.linksOM !== undefined);
+        assert.equal(1, resultM1.linksOM.length);
+        assert.equal(true, resultM1.linksOM[0].pivot !== undefined);
+        console.log(resultM1.linksOM[0]);
+        assert.equal("foo", resultM1.linksOM[0].pivot.extra);
+        done();
+      }).catch(function (err) {
+        console.log('ERR', err);
+      })
+    });
+    it('hasAndBelongsToMany -- custom pivot tables with the same table', function(done) {
+      var Model = thinky.createModel(modelNames[0], {
+        id: String
+      });
+
+      var LinkMM = thinky.createModel(modelNames[0] + '_' + modelNames[1], {
+        id: String,
+        extra: String
+      });
+
+      Model.hasAndBelongsToMany(Model, "linksM", "id", "id", { through: LinkMM });
+
+      var m1 = new Model({ id: 'm1' });
+      var m2 = new Model({ id: 'm2' });
+
+      m1.linksM = [ m2 ];
+
+      m2.save().then(function () {
+        return m1.saveAll({ linksM: true });
+      }).then(function () {
+        return LinkMM.get("m1_m2").update({ extra: "foo" });
+      }).then(function () {
+        return Model.get("m1").getJoin({ linksM: true });
+      }).then(function (resultM1) {
+        assert.equal(true, resultM1.linksM !== undefined);
+        assert.equal(1, resultM1.linksM.length);
+        assert.equal(true, resultM1.linksM[0].pivot !== undefined);
+        assert.equal("foo", resultM1.linksM[0].pivot.extra);
+        done();
+      })
     });
     it('hasAndBelongsToMany -- primary keys', function(done) {
       var Model = thinky.createModel(modelNames[0], {
