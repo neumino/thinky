@@ -470,7 +470,7 @@ describe('Advanced cases', function(){
         assert.equal(true, resultM1.linksOM[0].pivot !== undefined);
         assert.equal("foo", resultM1.linksOM[0].pivot.extra);
         done();
-      })
+      });
     });
     it('hasAndBelongsToMany -- custom pivot tables with the same table', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -501,7 +501,41 @@ describe('Advanced cases', function(){
         assert.equal(true, resultM1.linksM[0].pivot !== undefined);
         assert.equal("foo", resultM1.linksM[0].pivot.extra);
         done();
-      })
+      });
+    });
+    it('hasAndBelongsToMany -- inset pivot table', function (done) {
+      var Model = thinky.createModel(modelNames[0], {
+        id: String
+      });
+
+      var OtherModel = thinky.createModel(modelNames[1], {
+        id: String
+      });
+
+      var LinkMOM = thinky.createModel(modelNames[0] + '_' + modelNames[1], {
+        id: String,
+        extra: String
+      });
+
+      Model.hasAndBelongsToMany(OtherModel, "linksOM", "id", "id", { through: LinkMOM });
+      OtherModel.hasAndBelongsToMany(Model, "linksM", "id", "id", { through: LinkMOM });
+
+      var m1 = new Model({ id: 'm1' });
+      var om1 = new OtherModel({ id: 'om1', pivot: { extra: 'foo' } });
+
+      m1.linksOM = [ om1 ];
+
+      om1.save().then(function () {
+        return m1.saveAll({ linksOM: true });
+      }).then(function () {
+        return Model.get("m1").getJoin({ linksOM: true });
+      }).then(function (resultM1) {
+        assert.equal(true, resultM1.linksOM !== undefined);
+        assert.equal(1, resultM1.linksOM.length);
+        assert.equal(true, resultM1.linksOM[0].pivot !== undefined);
+        assert.equal("foo", resultM1.linksOM[0].pivot.extra);
+        done();
+      });
     });
     it('hasAndBelongsToMany -- primary keys', function(done) {
       var Model = thinky.createModel(modelNames[0], {
