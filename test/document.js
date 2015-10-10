@@ -2947,6 +2947,25 @@ describe('hooks', function() {
       });
     }).error(done);
   });
+  it('save pre - sync', function(done) {
+    var Model = thinky.createModel(modelNames[0], {id: String, title: String});
+
+    Model.pre('save', function() {
+      console.log("HELLO",this);
+      this.title = this.id;
+    })
+
+    var doc = new Model({id: "foo"});
+    doc.save().then(function(result) {
+      assert.strictEqual(result, doc)
+      assert.equal(doc.id, doc.title);
+      r.table(Model.getTableName()).get(doc.id).run().then(function(result) {
+        assert.equal(result.id, result.title);
+        done();
+      });
+    }).error(done);
+  });
+
   it('save post', function(done) {
     var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
@@ -3214,4 +3233,3 @@ describe('removeRelation', function(){
     });
   });
 });
-
