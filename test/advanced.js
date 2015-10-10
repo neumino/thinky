@@ -2,6 +2,7 @@ var config = require(__dirname+'/../config.js');
 
 var thinky = require(__dirname+'/../lib/thinky.js')(config);
 var r = thinky.r;
+var type = thinky.type;
 
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
@@ -3017,6 +3018,70 @@ describe('Advanced cases', function(){
         assert.equal(result.links.length, 3);
         done()
       }).catch(done);
+    });
+    it('Regression #356 - 1', function(done) {
+      var Model = thinky.createModel(modelNames[0], {
+        id: String
+      });
+
+      var OtherModel = thinky.createModel(modelNames[1], {
+        id: String,
+        foreignKey: type.string().required()
+      });
+
+      Model.hasMany(OtherModel, 'others', 'id', 'foreignKey' );
+      OtherModel.belongsTo(Model, 'joined', 'foreignKey', 'id');
+
+      var doc = new Model({
+        id: '1',
+        others: [
+          {id: '10'},
+          {id: '20'},
+          {id: '30'},
+        ]
+      });
+
+      doc.saveAll({ others: true }).then(function(user){
+        return doc.others[1].delete();
+      }).then(function() {
+        assert.equal(doc.others.length, 2);
+        return doc.saveAll({others: true});
+      }).then(function() {
+        return OtherModel._get('20').execute()
+      }).then(function(result) {
+        assert.equal(result, null);
+        done();
+      });
+    });
+    it('Regression #356 - 2', function(done) {
+      var Model = thinky.createModel(modelNames[0], {
+        id: String
+      });
+
+      var OtherModel = thinky.createModel(modelNames[1], {
+        id: String,
+        foreignKey: type.string().required()
+      });
+
+      Model.hasOne(OtherModel, 'other', 'id', 'foreignKey' );
+      OtherModel.belongsTo(Model, 'joined', 'foreignKey', 'id');
+
+      var doc = new Model({
+        id: '1',
+        other: {id: '10'}
+      });
+
+      doc.saveAll({ other: true }).then(function(user){
+        return doc.other.delete();
+      }).then(function() {
+        assert.equal(doc.other, undefined)
+        return doc.saveAll({other: true});
+      }).then(function() {
+        return OtherModel._get('10').execute()
+      }).then(function(result) {
+        assert.equal(result, null);
+        done();
+      });
     });
   });
   describe('manual joins', function() {
