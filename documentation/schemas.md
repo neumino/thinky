@@ -213,7 +213,7 @@ var type = thinky.type;
 var Game = thinky.createModel("Game", {
     id: type.string(),
     name: type.string(),
-    scores: type.array().schema(type.number)
+    scores: type.array().schema(type.number())
 });
 ```
 
