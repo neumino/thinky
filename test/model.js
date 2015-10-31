@@ -869,4 +869,26 @@ describe('virtual', function(){
     assert.equal(doc.ar, 3);
   });
 
+  it('Virtual fields should work in nested arrays', function() {
+    var Model = thinky.createModel(modelNames[0], {
+      nested : [
+        {
+          foo: String,
+          bar: type.virtual().default(function() {
+            return "buzz";
+          })
+        }
+      ]
+    });
+    var doc = new Model({
+      nested : [
+        {
+          foo: 'hello'
+        }
+      ]
+    });
+
+    assert.equal(doc.nested[0].bar, 'buzz');
+  });
+
 });
