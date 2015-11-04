@@ -17,6 +17,8 @@ modelNameSet[util.s8()] = true;
 modelNameSet[util.s8()] = true;
 var modelNames = Object.keys(modelNameSet);
 
+var duplicatePrimaryKeyRegex = new RegExp('^' + new thinky.Errors.DuplicatePrimaryKey().name);
+
 var cleanTables = function(done) {
   var promises = [];
   var name;
@@ -104,8 +106,9 @@ describe('save', function() {
         })
         doc2.save().then(function(r) {
           done(new Error("Expecting error"))
-        }).error(function(error) {
-          assert(error.message.match(/^Duplicate primary key/));
+        }).error(function (err) {
+          assert(err instanceof Errors.DuplicatePrimaryKey);
+          assert(err.message.match(duplicatePrimaryKeyRegex));
           done();
         });
       }).error(done);
