@@ -1822,4 +1822,24 @@ describe('In place writes', function() {
       assert(total !== undefined);
     });
   });
+
+describe('Functional Utilities', function () {
+  it('should provide chainable interface to bind runs for later execution', function (done) {
+    var Model = thinky.createModel(modelNames[0], {id: String});
+    
+    var doc = new Model({id: util.s8(), num: 0});
+    var bound = Model.get(doc.id).bind();
+
+    doc.save().then(function(){
+      Model.get(doc.id).then(function(instance1){
+        bound().then(function(instance2){
+          assert(instance2.id == instance1.id);
+          done()
+        });
+      });
+    });
+
+  });
+});
+  
 });
