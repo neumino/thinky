@@ -72,3 +72,9 @@ function log(value) {
   console.log(JSON.stringify(value, null, 2));
 }
 module.exports.log = log;
+
+// pseudo computational chain helper
+function passThru (fn) {
+  return fn();
+}
+module.exports.passThru = passThru;
