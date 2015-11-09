@@ -578,11 +578,17 @@ What may happen is:
 
 <div id="functional"></div>
 ### [Functional Utilities](#functional-utilities)
+Thinky provides some Functional instance methods for easily plugging Queries
+into functional computation chains or pipelines that handle promises or node-style callbacks
+such as [Ramda.js](http://ramdajs.com/0.14/docs/#composeP) or `async` for example.
 
-Thinky provides the `Query.prototype.bind` instance method for easily plugging Query 
-into functional computation chains that handle promises, such as [Ramda.js](http://ramdajs.com/0.14/docs/#composeP) for example.
++ Query.prototype.bindRun()
 
-Using it returns an instance of `Query.prototype.run` bound to `this`.
+returns an instance of `Query.prototype.run` bound to the current instance of `Query`
+
++ Query.prototype.bindExecute()
+
+returns an instance of `Query.prototype.execute` bound to the current instance of `Query`
 
 A contrived example might look like:
 
@@ -598,10 +604,26 @@ var User = thinky.createModel("User", {
 /* Somewhere else */
 
 R.composeP(
-    User.get(req.session.id).bind(), // No need to declare an extraneous variable to bind the instance of Query to   
+    User.get(req.session.id).bindRun(), // No need to declare an extraneous variable to bind the instance of Query to   
     isAdmin                          // Some other promised function
 ).then(function(allowed){
    // Do your admin stuff here; 
 });
+
+/* async example */
+
+async.parallel({
+    users: User.orderBy('id').bindRun(),
+    posts: Post.orderby('id').bindRun()
+}, function (err, accumulator) {
+    /*
+      accumulator example:
+        {
+            users: [{your users}]
+            posts: [{your posts}]
+        }
+    */
+});
+
 
 ```
