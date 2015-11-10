@@ -12,8 +12,6 @@ modelNameSet[util.s8()] = true;
 modelNameSet[util.s8()] = true;
 var modelNames = Object.keys(modelNameSet);
 
-var documentNotFoundRegex = new RegExp('^' + new thinky.Errors.DocumentNotFound().message);
-
 var cleanTables = function(done) {
   var promises = [];
   var name;
@@ -155,7 +153,7 @@ describe('Model queries', function() {
     Model.get("NonExistingKey").merge({foo: "bar"}).run().then(function(result) {
       done(new Error("Was expecting an error"));
     }).error(function(error) {
-      assert(error.message.match(documentNotFoundRegex));
+      assert(error.message.match(Errors.DocumentNotFoundRegex));
       done();
     });
   });
