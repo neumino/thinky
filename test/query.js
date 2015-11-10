@@ -1822,4 +1822,86 @@ describe('In place writes', function() {
       assert(total !== undefined);
     });
   });
+
+describe.only('Functional Utilities', function () {
+
+
+  describe('Query.prototype.bindRun()', function () {
+
+    it('handles Promises', function (done) {
+      var Model = thinky.createModel(modelNames[0], {id: String});
+    
+      var doc = new Model({id: util.s8(), num: 0});
+      var bound = Model.get(doc.id).bindRun();
+
+      doc.save().then(function(){
+        Model.get(doc.id).then(function(instance1){
+          util.passThru(bound).then(function(instance2){
+            assert(instance2.id == instance1.id);
+            done()
+          });
+        });
+      });
+
+    });
+
+    it('handles node-style callbacks', function (done) {
+      var Model = thinky.createModel(modelNames[0], {id: String});
+    
+      var doc = new Model({id: util.s8(), num: 0});
+      var bound = Model.get(doc.id).bindRun();
+
+      doc.save().then(function(){
+        Model.get(doc.id).run(function (err, instance1) {
+          bound(function (err, instance2){
+            assert(instance2.id == instance1.id);
+            done()
+          });
+        });
+      });
+
+    });
+
+  });
+
+  describe('Query.prototype.bindExecute()', function () {
+
+    it('handles Promises', function (done) {
+      var Model = thinky.createModel(modelNames[0], {id: String});
+    
+      var doc = new Model({id: util.s8(), num: 0});
+      var bound = Model.get(doc.id).bindExecute();
+
+      doc.save().then(function(){
+        Model.get(doc.id).then(function(instance1){
+          util.passThru(bound).then(function(instance2){
+            assert(instance2.id == instance1.id);
+            done()
+          });
+        });
+      });
+
+    });
+
+    it('handles node-style callbacks', function (done) {
+      var Model = thinky.createModel(modelNames[0], {id: String});
+    
+      var doc = new Model({id: util.s8(), num: 0});
+      var bound = Model.get(doc.id).bindExecute();
+
+      doc.save().then(function(){
+        Model.get(doc.id).run(function (err, instance1) {
+          console.log(err);
+          bound(function (err, instance2){
+            assert(instance2.id == instance1.id);
+            done()
+          });
+        });
+      });
+
+    });
+
+  });
+});
+  
 });
