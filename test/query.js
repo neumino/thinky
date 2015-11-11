@@ -2,6 +2,7 @@ var config = require(__dirname+'/../config.js');
 var thinky = require(__dirname+'/../lib/thinky.js')(config);
 var r = thinky.r;
 var Document = require(__dirname+'/../lib/document.js');
+var Errors = require(__dirname+'/../lib/errors.js');
 
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
@@ -1314,7 +1315,7 @@ describe('Query.run() should take options', function(){
     Model.get(0).run().then(function() {
       done(new Error("Was expecting an error"))
     }).catch(Errors.DocumentNotFound, function(err) {
-      assert(err.message.match(documentNotFoundRegex));
+      assert(err.message.match(Errors.DuplicatePrimaryKeyRegex));
       done();
     }).error(function() {
       done(new Error("Not the expected error"))
@@ -1326,7 +1327,7 @@ describe('Query.run() should take options', function(){
       done(new Error("Was expecting an error"))
     }).error(function(err) {
       assert(err instanceof Errors.DocumentNotFound);
-      assert(err.message.match(documentNotFoundRegex));
+      assert(err.message.match(Errors.DuplicatePrimaryKeyRegex));
       done();
     });
   });
@@ -1796,7 +1797,7 @@ describe('In place writes', function() {
       num: Number
     });
     Model.get('nonExistingId').update({foo: 'bar'}).run().error(function(error) {
-      assert(documentNotFoundRegex.test(error.message));
+      assert(Errors.DuplicatePrimaryKeyRegex.test(error.message));
       done();
     });
   })
