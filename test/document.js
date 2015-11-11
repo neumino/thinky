@@ -2891,7 +2891,7 @@ describe('hooks', function() {
         self.title = self.id;
         next();
       }, 1);
-    })
+    });
 
     Model.once('ready', function() {
       r.table(Model.getTableName()).insert({id: 1}).run().then(function(result) {

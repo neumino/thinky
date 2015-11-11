@@ -1315,7 +1315,7 @@ describe('Query.run() should take options', function(){
     Model.get(0).run().then(function() {
       done(new Error("Was expecting an error"))
     }).catch(Errors.DocumentNotFound, function(err) {
-      assert(err.message.match(Errors.DuplicatePrimaryKeyRegex));
+      assert(err.message.match(Errors.DocumentNotFoundRegex));
       done();
     }).error(function() {
       done(new Error("Not the expected error"))
@@ -1327,7 +1327,7 @@ describe('Query.run() should take options', function(){
       done(new Error("Was expecting an error"))
     }).error(function(err) {
       assert(err instanceof Errors.DocumentNotFound);
-      assert(err.message.match(Errors.DuplicatePrimaryKeyRegex));
+      assert(err.message.match(Errors.DocumentNotFoundRegex));
       done();
     });
   });
@@ -1797,7 +1797,7 @@ describe('In place writes', function() {
       num: Number
     });
     Model.get('nonExistingId').update({foo: 'bar'}).run().error(function(error) {
-      assert(Errors.DuplicatePrimaryKeyRegex.test(error.message));
+      assert(Errors.DocumentNotFoundRegex.test(error.message));
       done();
     });
   })
