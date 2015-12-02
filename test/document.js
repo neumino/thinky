@@ -106,7 +106,7 @@ describe('save', function() {
           done(new Error("Expecting error"))
         }).error(function (err) {
           assert(err instanceof Errors.DuplicatePrimaryKey);
-          assert(err.message.match(Errors.DOCUMENT_NOT_FOUND_REGEX));
+          assert(err.message.match(Errors.DUPLICATE_PRIMARY_KEY_REGEX));
           done();
         });
       }).error(done);

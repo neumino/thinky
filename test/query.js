@@ -1822,9 +1822,6 @@ describe('In place writes', function() {
     });
   });
 
-describe.only('Functional Utilities', function () {
-
-
   describe('Query.prototype.bindRun()', function () {
 
     it('handles Promises', function (done) {
@@ -1900,6 +1897,5 @@ describe.only('Functional Utilities', function () {
     });
 
   });
-});
   
 });
