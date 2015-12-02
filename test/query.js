@@ -2,6 +2,7 @@ var config = require(__dirname+'/../config.js');
 var thinky = require(__dirname+'/../lib/thinky.js')(config);
 var r = thinky.r;
 var Document = require(__dirname+'/../lib/document.js');
+var Errors = require(__dirname+'/../lib/errors.js');
 
 var util = require(__dirname+'/util.js');
 var assert = require('assert');
@@ -11,8 +12,6 @@ var modelNameSet = {};
 modelNameSet[util.s8()] = true;
 modelNameSet[util.s8()] = true;
 var modelNames = Object.keys(modelNameSet);
-
-var documentNotFoundRegex = new RegExp('^' + new thinky.Errors.DocumentNotFound().message);
 
 var cleanTables = function(done) {
   var promises = [];
@@ -155,7 +154,7 @@ describe('Model queries', function() {
     Model.get("NonExistingKey").merge({foo: "bar"}).run().then(function(result) {
       done(new Error("Was expecting an error"));
     }).error(function(error) {
-      assert(error.message.match(documentNotFoundRegex));
+      assert(error.message.match(Errors.DocumentNotFoundRegex));
       done();
     });
   });
@@ -1316,7 +1315,7 @@ describe('Query.run() should take options', function(){
     Model.get(0).run().then(function() {
       done(new Error("Was expecting an error"))
     }).catch(Errors.DocumentNotFound, function(err) {
-      assert(err.message.match(documentNotFoundRegex));
+      assert(err.message.match(Errors.DocumentNotFoundRegex));
       done();
     }).error(function() {
       done(new Error("Not the expected error"))
@@ -1328,7 +1327,7 @@ describe('Query.run() should take options', function(){
       done(new Error("Was expecting an error"))
     }).error(function(err) {
       assert(err instanceof Errors.DocumentNotFound);
-      assert(err.message.match(documentNotFoundRegex));
+      assert(err.message.match(Errors.DocumentNotFoundRegex));
       done();
     });
   });
@@ -1798,7 +1797,7 @@ describe('In place writes', function() {
       num: Number
     });
     Model.get('nonExistingId').update({foo: 'bar'}).run().error(function(error) {
-      assert(documentNotFoundRegex.test(error.message));
+      assert(Errors.DocumentNotFoundRegex.test(error.message));
       done();
     });
   })

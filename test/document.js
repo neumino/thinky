@@ -104,8 +104,9 @@ describe('save', function() {
         })
         doc2.save().then(function(r) {
           done(new Error("Expecting error"))
-        }).error(function(error) {
-          assert(error.message.match(/^Duplicate primary key/));
+        }).error(function (err) {
+          assert(err instanceof Errors.DuplicatePrimaryKey);
+          assert(err.message.match(Errors.DuplicatePrimaryKeyRegex));
           done();
         });
       }).error(done);
@@ -2890,7 +2891,7 @@ describe('hooks', function() {
         self.title = self.id;
         next();
       }, 1);
-    })
+    });
 
     Model.once('ready', function() {
       r.table(Model.getTableName()).insert({id: 1}).run().then(function(result) {
