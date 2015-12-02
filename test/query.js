@@ -1891,7 +1891,6 @@ describe.only('Functional Utilities', function () {
 
       doc.save().then(function(){
         Model.get(doc.id).run(function (err, instance1) {
-          console.log(err);
           bound(function (err, instance2){
             assert(instance2.id == instance1.id);
             done()
