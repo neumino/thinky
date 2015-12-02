@@ -126,7 +126,7 @@ describe('Atom feeds', function() {
   });
 
   it('get().changes() should work - and remove default(r.error)', function(done){
-    Model.get(1).changes().run().then(function(doc) {
+    Model.get(1).changes({includeInitial: true}).run().then(function(doc) {
       assert(doc)
       assert.deepEqual(doc, {});
       return doc.closeFeed();
@@ -137,7 +137,7 @@ describe('Atom feeds', function() {
 
   it('change events should be emitted - insert', function(done){
     var data = {id: 'foo', str: 'bar', num: 3};
-    Model.get(data.id).changes().run().then(function(doc) {
+    Model.get(data.id).changes({includeInitial: true}).run().then(function(doc) {
       assert(doc)
       assert.deepEqual(doc, {});
       doc.on('change', function() {
@@ -153,7 +153,7 @@ describe('Atom feeds', function() {
   it('change events should be emitted - update', function(done){
     var data = {id: 'buzz', str: 'bar', num: 3};
     Model.save(data).then(function() {
-      Model.get(data.id).changes().run().then(function(doc) {
+      Model.get(data.id).changes({includeInitial: true}).run().then(function(doc) {
         assert.deepEqual(doc, data);
         doc.on('change', function() {
           assert.deepEqual(doc.getOldValue(), data);
@@ -169,7 +169,7 @@ describe('Atom feeds', function() {
   it('change events should be emitted - delete', function(done){
     var data = {id: 'bar', str: 'bar', num: 3};
     Model.save(data).then(function() {
-      Model.get(data.id).changes().run().then(function(doc) {
+      Model.get(data.id).changes({includeInitial: true}).run().then(function(doc) {
         assert.deepEqual(doc, data);
         doc.on('change', function() {
           assert.deepEqual(doc.getOldValue(), data);
@@ -186,7 +186,7 @@ describe('Atom feeds', function() {
   });
   it('change events should be emitted - all', function(done){
     var data = {id: 'last', str: 'bar', num: 3};
-    Model.get(data.id).changes().run().then(function(doc) {
+    Model.get(data.id).changes({includeInitial: true}).run().then(function(doc) {
       assert(doc)
       assert.deepEqual(doc, {});
       var count = 0;
