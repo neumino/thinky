@@ -29,6 +29,7 @@ The `options` argument is optional and can have the fields:
 - Options for the schemas
     - `validate`: can be `"onsave"` or `"oncreate"`. The default value is `"onsave"`
     - `timeFormat`: can be `"native"` or `"raw"`. The default value is `"native"`
+    - `r`: An instance of `rethinkdbdash`
 
 All the options for the schemas can be overwritten when creating them.
 
