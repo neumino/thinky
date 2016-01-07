@@ -107,6 +107,7 @@ describe('save', function() {
         }).error(function (err) {
           assert(err instanceof Errors.DuplicatePrimaryKey);
           assert(err.message.match(Errors.DUPLICATE_PRIMARY_KEY_REGEX));
+          assert.equal(err.primaryKey, 'id');
           done();
         });
       }).error(done);
