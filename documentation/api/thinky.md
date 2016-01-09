@@ -91,8 +91,7 @@ var thinky = require('thinky')();
 var Errors = thinky.Errors;
 ```
 
-Custom errors are thrown by `thinky` to allow your code to respond elegantly.
-These custom errors extend the native `Error` object.
+All operational errors created by Thinky are sub classes of `ThinkyError`.
 
 Currently `thinky` will throw the following errors:
 
