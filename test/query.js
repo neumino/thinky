@@ -509,6 +509,39 @@ describe('getJoin', function(){
       }).error(done);
     })
   })
+
+  describe("Joins - hasAndBelongsToMany with same model, same key, backref option", function() {
+    var Model, doc;
+    before(function(done) {
+      var otherDocs;
+      Model = thinky.createModel(modelNames[0], {
+        id: String,
+      });
+      Model.hasAndBelongsToMany(Model, "following", "id", "id", { backref: "followers" });
+      doc = new Model({});
+      var otherDocs = [new Model({})];
+      doc.following = otherDocs;
+      doc.saveAll({ followers: true, following: true })
+        .then(function() {
+          done();
+        }).error(done);
+    });
+
+    after(cleanTables);
+
+    it('should retrieve joined documents with object', function(done) {
+      Model.get(doc.id).getJoin({ following: true, followers: true }).run().then(function(result) {
+        Model.get(result.following[0].id).getJoin({ following: true, followers: true }).run().then(function(otherResult) {
+          assert.deepEqual(result.following[0].id, otherResult.id);
+          assert.deepEqual(otherResult.followers[0].id, result.id);
+          assert(result.isSaved());
+          assert(otherResult.isSaved());
+          done();
+        });
+      }).error(done);
+    });
+  });
+
   describe('options', function() {
     afterEach(cleanTables);
 

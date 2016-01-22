@@ -546,6 +546,20 @@ describe("Joins", function() {
       }).error(done);
     });
   });
+
+  it('hasAndBelongsToMany with same model, same key, backref option should save reverse join', function() {
+    var model = thinky.createModel(modelNames[0], { id: String });
+    model.hasAndBelongsToMany(model, 'following', 'id', 'id', { backref: 'followers' });
+
+    assert(model._joins['following']);
+    assert.equal(model._joins['following'].backref, 'followers');
+    assert.equal(model._joins['following'].reverse, false);
+
+    assert(model._joins['followers']);
+    assert.equal(model._joins['followers'].backref, 'following');
+    assert.equal(model._joins['followers'].reverse, true);
+  });
+
   it('_apply is reserved ', function() {
     var model = thinky.createModel(modelNames[0], { id: String, notid1: String }, {init: false});
 
