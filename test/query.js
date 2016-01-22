@@ -1110,6 +1110,29 @@ describe('addRelation', function(){
       done();
     });
   });
+
+  it('hasAndBelongsToMany - same table, same key with backref', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+    });
+    Model.hasAndBelongsToMany(Model, "following", "id", "id", { backref: "followers" });
+
+    var doc = new Model({});
+    var otherDoc = new Model({});
+    doc.save().then(function() {
+      return otherDoc.save();
+    }).then(function() {
+      return Model.get(doc.id).addRelation('followers', otherDoc);
+    }).then(function() {
+      return Model.get(doc.id).getJoin({ followers: true }).run();
+    }).then(function(doc) {
+      assert.equal(doc.followers.length, 1);
+      return Model.get(otherDoc.id).getJoin({ following: true }).run();
+    }).then(function(otherDoc) {
+      assert.equal(otherDoc.following.length, 1);
+      done();
+    }).error(done);
+  });
 });
 
 describe('removeRelation', function(){
@@ -1384,6 +1407,28 @@ describe('removeRelation', function(){
       assert.equal(doc.others[0].id, otherDoc1.id);
       done();
     });
+  });
+
+  it('should work for hasAndBelongsToMany - same table, same key with backref', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+    });
+    Model.hasAndBelongsToMany(Model, "following", "id", "id", { backref: "followers" });
+
+    var doc = new Model({});
+    var otherDoc = new Model({});
+    doc.followers = [otherDoc];
+    doc.saveAll({ followers: true }).then(function() {
+      return Model.get(doc.id).removeRelation('followers', otherDoc);
+    }).then(function() {
+      return Model.get(doc.id).getJoin({ followers: true }).run();
+    }).then(function(doc) {
+      assert.equal(doc.followers.length, 0);
+      return Model.get(otherDoc.id).getJoin({ following: true }).run();
+    }).then(function(otherDoc) {
+      assert.equal(otherDoc.following.length, 0);
+      done();
+    }).error(done);
   });
 });
 
