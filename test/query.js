@@ -1409,24 +1409,56 @@ describe('removeRelation', function(){
     });
   });
 
-  it('should work for hasAndBelongsToMany - same table, same key with backref', function(done) {
+  it('should work for hasAndBelongsToMany - same table, same key with backref - all', function(done) {
     var Model = thinky.createModel(modelNames[0], {
       id: String,
     });
     Model.hasAndBelongsToMany(Model, "following", "id", "id", { backref: "followers" });
 
     var doc = new Model({});
-    var otherDoc = new Model({});
-    doc.followers = [otherDoc];
-    doc.saveAll({ followers: true }).then(function() {
-      return Model.get(doc.id).removeRelation('followers', otherDoc);
+    var otherDoc1 = new Model({});
+    var otherDoc2 = new Model({});
+    var otherDoc3 = new Model({});
+    doc.followers = [otherDoc1, otherDoc2];
+    doc.following = [otherDoc3];
+    doc.saveAll({ followers: true, following: true }).then(function(doc) {
+      return Model.get(doc.id).removeRelation('followers');
     }).then(function() {
-      return Model.get(doc.id).getJoin({ followers: true }).run();
+      return Model.get(doc.id).getJoin({ followers: true, following: true }).run();
     }).then(function(doc) {
       assert.equal(doc.followers.length, 0);
-      return Model.get(otherDoc.id).getJoin({ following: true }).run();
-    }).then(function(otherDoc) {
-      assert.equal(otherDoc.following.length, 0);
+      assert.equal(doc.following.length, 1);
+      return Model.getAll(otherDoc1.id, otherDoc2.id).getJoin({ following: true }).run();
+    }).then(function(otherDocs) {
+      assert.equal(otherDocs[0].following.length, 0);
+      assert.equal(otherDocs[1].following.length, 0);
+      done();
+    }).error(done);
+  });
+
+  it.only('should work for hasAndBelongsToMany - same table, same key with backref - one', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+    });
+    Model.hasAndBelongsToMany(Model, "following", "id", "id", { backref: "followers" });
+
+    var doc = new Model({});
+    var otherDoc1 = new Model({});
+    var otherDoc2 = new Model({});
+    var otherDoc3 = new Model({});
+    var otherDoc4 = new Model({});
+    doc.followers = [otherDoc1, otherDoc2];
+    doc.following = [otherDoc3, otherDoc4];
+    doc.saveAll({ followers: true, following: true }).then(function(doc) {
+      return Model.get(doc.id).removeRelation('followers', otherDoc1);
+    }).then(function() {
+      return Model.get(doc.id).getJoin({ followers: true, following: true }).run();
+    }).then(function(doc) {
+      assert.equal(doc.followers.length, 1);
+      assert.equal(doc.following.length, 2);
+      return Model.get(otherDoc1.id).getJoin({ following: true }).run();
+    }).then(function(otherDoc1) {
+      assert.equal(otherDoc1.following.length, 0);
       done();
     }).error(done);
   });
