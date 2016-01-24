@@ -22,7 +22,7 @@ var cleanTables = function(done) {
   for(var name in modelNameSet) {
     promises.push(r.table(name).delete().run());
   }
-  Promise.settle(promises).error(function () {/*ignore*/}).finally(function() {
+  Promise.settle(promises).catch(function () {/*ignore*/}).finally(function() {
     // Add the links table
     for(var model in thinky.models) {
       modelNameSet[model] = true;
@@ -79,7 +79,7 @@ describe('Advanced cases', function(){
             done()
           })
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasOne - belongsTo', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -121,7 +121,7 @@ describe('Advanced cases', function(){
             done()
           })
         });
-      }).error(done);
+      }).catch(done);
     });
     it('belongsTo - hasOne', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -163,7 +163,7 @@ describe('Advanced cases', function(){
             done()
           })
         });
-      }).error(done);
+      }).catch(done);
     });
     it('belongsTo - hasOne -- circular references', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -205,7 +205,7 @@ describe('Advanced cases', function(){
             done()
           })
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasMany - belongsTo', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -263,7 +263,7 @@ describe('Advanced cases', function(){
             done()
           })
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasMany - belongsTo - 2', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -321,7 +321,7 @@ describe('Advanced cases', function(){
             done()
           })
         });
-      }).error(done);
+      }).catch(done);
     })
     it('hasMany - belongsTo', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -378,7 +378,7 @@ describe('Advanced cases', function(){
             done()
           })
         });
-      }).error(done);
+      }).catch(done);
     });
     it('belongsTo - hasMany -- circular references', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -435,7 +435,7 @@ describe('Advanced cases', function(){
             });
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- primary keys', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -484,7 +484,7 @@ describe('Advanced cases', function(){
             })
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- primary keys - 2', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -534,7 +534,7 @@ describe('Advanced cases', function(){
             })
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- multiple saves', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -582,7 +582,7 @@ describe('Advanced cases', function(){
             });
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- partial delete', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -637,7 +637,7 @@ describe('Advanced cases', function(){
             });
           });
         });
-      }).error(done);
+      }).catch(done);
     });
 
     it('hasAndBelongsToMany -- primary keys -- circular references', function(done) {
@@ -773,7 +773,7 @@ describe('Advanced cases', function(){
             });
           });
         });
-      }).error(done);
+      }).catch(done);
     });
   });
   describe('deleteAll', function(){
@@ -812,15 +812,15 @@ describe('Advanced cases', function(){
 
         doc.deleteAll().then(function(result) {
 
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
-            OtherModel.get(otherDoc.id).run().error(function(error) {
+            OtherModel.get(otherDoc.id).run().catch(function(error) {
               assert(error instanceof Errors.DocumentNotFound);
               done()
             });
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasOne - belongsTo -- with modelToDelete', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -853,15 +853,15 @@ describe('Advanced cases', function(){
         assert.strictEqual(doc.has, otherDoc);
 
         doc.deleteAll({has: true}).then(function(result) {
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
-            OtherModel.get(otherDoc.id).run().error(function(error) {
+            OtherModel.get(otherDoc.id).run().catch(function(error) {
               assert(error instanceof Errors.DocumentNotFound);
               done()
             });
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasOne - belongsTo -- with empty modelToDelete', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -895,14 +895,14 @@ describe('Advanced cases', function(){
 
         doc.deleteAll({}).then(function(result) {
           return Model.get(doc.id).run()
-        }).error(function(error) {
+        }).catch(function(error) {
           assert(error instanceof Errors.DocumentNotFound);
           return OtherModel.get(otherDoc.id).run();
         }).then(function(result) {
           assert.equal(result.id, otherDoc.id);
           done()
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasOne - belongsTo -- with non matching modelToDelete', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -935,7 +935,7 @@ describe('Advanced cases', function(){
         assert.strictEqual(doc.has, otherDoc);
 
         doc.deleteAll({foo: {bar: true}}).then(function(result) {
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
             OtherModel.get(otherDoc.id).run().then(function(result) {
               assert.equal(result.id, otherDoc.id);
@@ -943,7 +943,7 @@ describe('Advanced cases', function(){
             });
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('belongsTo - hasOne -- with no arg', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -977,17 +977,17 @@ describe('Advanced cases', function(){
         assert.strictEqual(otherDoc.belongsTo, doc);
 
         return otherDoc.deleteAll();
-      }).error(done).then(function(result) {
+      }).catch(done).then(function(result) {
         return Model.get(doc.id).run()
-      }).error(function(error) {
+      }).catch(function(error) {
         assert(error instanceof Errors.DocumentNotFound);
         OtherModel.get(otherDoc.id).run().then(function(result) {
           done(new Error("Was expecting the document to be deleted"));
-        }).error(function(error) {
+        }).catch(function(error) {
           assert(error instanceof Errors.DocumentNotFound);
           done()
         });
-      }).error(done);
+      }).catch(done);
     });
     it('belongsTo - hasOne -- with modelToDelete', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1020,15 +1020,15 @@ describe('Advanced cases', function(){
         assert.strictEqual(otherDoc.belongsTo, doc);
 
         otherDoc.deleteAll({belongsTo: true}).then(function(result) {
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
-            OtherModel.get(otherDoc.id).run().error(function(error) {
+            OtherModel.get(otherDoc.id).run().catch(function(error) {
               assert(error instanceof Errors.DocumentNotFound);
               done()
             });
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('belongsTo - hasOne -- with empty modelToDelete', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1063,13 +1063,13 @@ describe('Advanced cases', function(){
         otherDoc.deleteAll({}).then(function(result) {
           Model.get(doc.id).run().then(function(result) {
             assert.equal(result.id, doc.id);
-            OtherModel.get(otherDoc.id).run().error(function(error) {
+            OtherModel.get(otherDoc.id).run().catch(function(error) {
               assert(error instanceof Errors.DocumentNotFound);
               done()
             });
           });
         });
-      }).error(done);
+      }).catch(done);
     });
 
     it('hasMany - belongsTo', function(done) {
@@ -1118,7 +1118,7 @@ describe('Advanced cases', function(){
 
           assert.equal(doc.isSaved(), false);
 
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
             OtherModel.getAll(doc.id, {index: "otherId"}).run().then(function(result) {
               assert.equal(result.length, 0);
@@ -1126,7 +1126,7 @@ describe('Advanced cases', function(){
             });
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasMany - belongsTo -- empty modelToDelete', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1168,7 +1168,7 @@ describe('Advanced cases', function(){
         util.sortById(otherDocs);
 
         doc.deleteAll({}).then(function(result) {
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
             OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id, {index: "id"}).run().then(function(result) {
               assert.equal(result.length, 3);
@@ -1180,7 +1180,7 @@ describe('Advanced cases', function(){
           });
         });
 
-      }).error(done);
+      }).catch(done);
     });
     it('hasMany - belongsTo -- good modelToDelete', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1222,7 +1222,7 @@ describe('Advanced cases', function(){
         util.sortById(otherDocs);
 
         doc.deleteAll({has: true}).then(function(result) {
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
             OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id, {index: "id"}).run().then(function(result) {
               assert.equal(result.length, 0);
@@ -1236,7 +1236,7 @@ describe('Advanced cases', function(){
           });
         });
 
-      }).error(done);
+      }).catch(done);
     });
     it('hasMany - belongsTo -- non matching modelToDelete', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1278,7 +1278,7 @@ describe('Advanced cases', function(){
         util.sortById(otherDocs);
 
         doc.deleteAll({foo: true}).then(function(result) {
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
             OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id, {index: "id"}).run().then(function(result) {
               assert.equal(result.length, 3);
@@ -1291,7 +1291,7 @@ describe('Advanced cases', function(){
           });
         });
 
-      }).error(done);
+      }).catch(done);
     });
     it('belongsTo - hasMany -- circular references', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1331,7 +1331,7 @@ describe('Advanced cases', function(){
       }).then(function(result) {
         assert.equal(result, 0);
         done();
-      }).catch(done).error(done);
+      }).catch(done).catch(done);
     });
     it('belongsTo - hasMany -- must manually overwrite', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1370,7 +1370,7 @@ describe('Advanced cases', function(){
             done();
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- primary keys', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1410,7 +1410,7 @@ describe('Advanced cases', function(){
         assert.equal(otherDoc4.isSaved(), false);
         assert.equal(otherDoc3.isSaved(), true);
         done();
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- primary keys -- bidirectional - 1', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1457,7 +1457,7 @@ describe('Advanced cases', function(){
 
         assert.equal(doc2.isSaved(), false)
         done();
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- primary keys -- bidirectional - 2', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1504,7 +1504,7 @@ describe('Advanced cases', function(){
         assert.equal(otherDoc4.isSaved(), false);
 
         done();
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- primary keys -- bidirectional - 3', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1551,7 +1551,7 @@ describe('Advanced cases', function(){
         assert.equal(otherDoc4.isSaved(), false);
 
         done();
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- not primary keys - 1', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1597,7 +1597,7 @@ describe('Advanced cases', function(){
         assert.equal(otherDoc3.isSaved(), true);
         assert.equal(otherDoc4.isSaved(), false);
         done();
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- not primary keys - 2', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1643,7 +1643,7 @@ describe('Advanced cases', function(){
         assert.equal(otherDoc3.isSaved(), true);
         assert.equal(otherDoc4.isSaved(), false);
         done();
-      }).error(done);
+      }).catch(done);
     });
 
     it('hasAndBelongsToMany -- not primary keys -- doing what should never be done - 1', function(done) {
@@ -1695,7 +1695,7 @@ describe('Advanced cases', function(){
             });
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- not primary keys -- doing what should never be done - 2', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1747,7 +1747,7 @@ describe('Advanced cases', function(){
             });
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- not primary keys -- doing what should never be done - 3', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1798,7 +1798,7 @@ describe('Advanced cases', function(){
             });
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- not primary keys -- doing what should never be done - 4', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1856,7 +1856,7 @@ describe('Advanced cases', function(){
             });
           });
         });
-      }).error(done);
+      }).catch(done);
     });
   });
   describe('getJoin', function(){
@@ -1896,7 +1896,7 @@ describe('Advanced cases', function(){
           });
         });
 
-      }).error(done);
+      }).catch(done);
     });
     it('hasOne - belongsTo - non matching modelToGet', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1931,7 +1931,7 @@ describe('Advanced cases', function(){
           });
         });
 
-      }).error(done);
+      }).catch(done);
     });
     it('hasOne - belongsTo - matching modelToGet', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -1966,7 +1966,7 @@ describe('Advanced cases', function(){
             done()
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasMany - belongsTo -- matching modelToGet', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -2004,7 +2004,7 @@ describe('Advanced cases', function(){
             done()
           })
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasMany - belongsTo -- non matching modelToGet', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -2042,7 +2042,7 @@ describe('Advanced cases', function(){
             done()
           })
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasMany - belongsTo -- default, fetch everything', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -2081,7 +2081,7 @@ describe('Advanced cases', function(){
             done()
           })
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- primary keys -- fetch everything by default', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -2121,7 +2121,7 @@ describe('Advanced cases', function(){
             })
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- primary keys -- matching modelToGet', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -2161,7 +2161,7 @@ describe('Advanced cases', function(){
             })
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- primary keys -- non matching modelToGet', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -2201,7 +2201,7 @@ describe('Advanced cases', function(){
             })
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- primary keys -- matching modelToGet with options', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -2254,7 +2254,7 @@ describe('Advanced cases', function(){
             })
           });
         });
-      }).error(done);
+      }).catch(done);
     });
   });
   describe('pair', function(){
@@ -2296,7 +2296,7 @@ describe('Advanced cases', function(){
       }).then(function(result) {
         assert.equal(result.links.length, 2);
         done();
-      }).error(done);
+      }).catch(done);
     });
 
     it('hasAndBelongsToMany -- pairs', function(done) {
@@ -2318,7 +2318,7 @@ describe('Advanced cases', function(){
       }).then(function(result) {
         assert.deepEqual(result.links[0], doc2);
         done();
-      }).error(done);
+      }).catch(done);
     });
 
     it('hasOne/belongsTo -- pairs', function(done) {
@@ -2339,7 +2339,7 @@ describe('Advanced cases', function(){
         assert.equal(sophia.isSaved(), true);
         assert.equal(sophia.id, michel.contactId);
         done();
-      }).error(done);
+      }).catch(done);
     });
   });
   describe('delete - hidden links behavior', function() {
@@ -2901,7 +2901,7 @@ describe('Advanced cases', function(){
             done()
           })
         });
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- with keys only and a missing doc', function(done) {
       var Model = thinky.createModel(modelNames[0], {
@@ -2974,7 +2974,7 @@ describe('Advanced cases', function(){
         assert.equal(result.links[1].id, doc2.links[1]);
         assert.equal(result.links[2].id, doc2.links[2]);
         done()
-      }).error(done);
+      }).catch(done);
     });
     it('hasAndBelongsToMany -- Adding a new relation', function(done) {
       var Model = thinky.createModel(modelNames[0], {

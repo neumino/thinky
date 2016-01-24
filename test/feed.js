@@ -49,7 +49,7 @@ describe('Feeds', function() {
       assert.equal(feed.toString(), '[object Feed]')
       feed.close();
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('should implement each', function(done){
     var data = [{}, {}, {}]
@@ -64,12 +64,12 @@ describe('Feeds', function() {
         if (count === data.length) {
           feed.close().then(function() {
             done();
-          }).error(done);
+          }).catch(done);
         }
       })
-      //Model.insert(data).execute().error(done);
-      Model.save(data).error(done);
-    }).error(done);
+      //Model.insert(data).execute().catch(done);
+      Model.save(data).catch(done);
+    }).catch(done);
   });
   it('should implement next', function(done){
     var data = [{}, {}, {}]
@@ -86,10 +86,10 @@ describe('Feeds', function() {
         return feed.close()
       }).then(function() {
         done();
-      }).error(done);
+      }).catch(done);
 
-      Model.save(data).error(done);
-    }).error(done);
+      Model.save(data).catch(done);
+    }).catch(done);
   });
   it('should handle events', function(done){
     var data = [{}, {}, {}]
@@ -102,12 +102,12 @@ describe('Feeds', function() {
           feed.removeAllListeners();
           feed.close().then(function() {
             done();
-          }).error(done);
+          }).catch(done);
         }
       });
 
-      Model.save(data).error(done);
-    }).error(done);
+      Model.save(data).catch(done);
+    }).catch(done);
   });
 });
 
@@ -132,7 +132,7 @@ describe('Atom feeds', function() {
       return doc.closeFeed();
     }).then(function() {
       done();
-    }).error(done);
+    }).catch(done);
   });
 
   it('change events should be emitted - insert', function(done){
@@ -145,10 +145,10 @@ describe('Atom feeds', function() {
         assert.deepEqual(doc, data);
         doc.closeFeed().then(function() {
           done();
-        }).error(done);
+        }).catch(done);
       });
       Model.save(data);
-    }).error(done);
+    }).catch(done);
   });
   it('change events should be emitted - update', function(done){
     var data = {id: 'buzz', str: 'bar', num: 3};
@@ -160,10 +160,10 @@ describe('Atom feeds', function() {
           assert.deepEqual(doc, {id: 'buzz', str: 'foo', num: 3});
           doc.closeFeed().then(function() {
             done();
-          }).error(done);
+          }).catch(done);
         });
-        Model.get(data.id).update({str: "foo"}).run().error(done);
-      }).error(done);
+        Model.get(data.id).update({str: "foo"}).run().catch(done);
+      }).catch(done);
     })
   });
   it('change events should be emitted - delete', function(done){
@@ -177,10 +177,10 @@ describe('Atom feeds', function() {
           assert.equal(doc.isSaved(), false)
           doc.closeFeed().then(function() {
             done();
-          }).error(done);
+          }).catch(done);
         });
-        Model.get(data.id).delete().run().error(done);
-      }).error(done);
+        Model.get(data.id).delete().run().catch(done);
+      }).catch(done);
 
     })
   });
@@ -203,7 +203,7 @@ describe('Atom feeds', function() {
           assert.equal(doc.isSaved(), false)
           doc.closeFeed().then(function() {
             done();
-          }).error(done);
+          }).catch(done);
         }
         count++;
       });
@@ -211,8 +211,8 @@ describe('Atom feeds', function() {
         return Model.get(data.id).update({str: 'foo'}).run();
       }).then(function() {
         Model.get(data.id).delete().run();
-      }).error(done);
-    }).error(done);
+      }).catch(done);
+    }).catch(done);
   });
 });
 
