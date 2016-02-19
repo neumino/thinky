@@ -169,7 +169,7 @@ were already created and do not want `thinky` to try to create them.
 
 Read more about `hasOne` on [the article](/documentation/relations/) dedicated to relations.
 
-_Example_: 
+_Example_:
 
 ```js
 var User = thinky.createModel("User", {
@@ -227,7 +227,7 @@ Read more about `belongsTo` on [the article](/documentation/relations/) dedicate
 Do not use the primary key of `Model` as the left key.
 
 
-_Example_: 
+_Example_:
 
 ```js
 var Post = thinky.createModel("Post", {
@@ -289,7 +289,7 @@ were already created and do not want `thinky` to try to create them.
 
 Read more about `hasMany` on [the article](/documentation/relations/) dedicated to relations
 
-_Example_: 
+_Example_:
 
 ```js
 var Author = thinky.createModel("Author", {
@@ -347,13 +347,13 @@ is another "has and belongs to many".
 
 If you need a "one to many" relations between two models, use [hasMany](#hasMany) and [belongsTo](#belongsto).
 
-The joined is done via a third table that is automatically created and managed by thinky.
+The join is done via a third table that is automatically created and managed by thinky.
 
 - `OtherModel`: the joined model.
 - `fieldName`: the field where the joined document will be stored.
 - `leftKey`: the field of `Model` used to perform the join.
 - `rightKey`: the field of `OtherModel` used to perform the join.
-- `options`: 
+- `options`:
   - set the field `init` to `false` if the indexes were already created and do not want `thinky` to try to create them.
   - set the field `type` to a string to differentiate two n-n relations for the same two models.
 You can also specify a string for `type` which will be used to differentiate
@@ -457,7 +457,7 @@ A tag with its joined posts will look like:
         id: "eaed7d80-5205-488c-aedc-eb91e9f77d6b",
         title: "Second test",
         content: "Trying another post.",
-    }, 
+    },
     ]
 }
 ```
@@ -635,7 +635,7 @@ Model.save(array, options) -> Promise
 ```
 
 
-Insert documents in the database. 
+Insert documents in the database.
 If an array of documents is provided, `thinky` will execute a batch insert with only
 one `insert` command. The object `options` can be the options provided to `insert`,
 that is to say `{conflict: 'error'/'replace'/'update'}`.
@@ -675,7 +675,7 @@ User.save([
 
 All the methods defined on a [Query](/documentation/api/query/) object are also available on a Model.
 
-In terms of `Query`, a model is equivalent to 
+In terms of `Query`, a model is equivalent to
 
 ```js
 r.table(model.getTableName())
