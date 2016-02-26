@@ -457,7 +457,7 @@ A tag with its joined posts will look like:
         id: "eaed7d80-5205-488c-aedc-eb91e9f77d6b",
         title: "Second test",
         content: "Trying another post.",
-    },
+    }
     ]
 }
 ```
@@ -466,7 +466,7 @@ A tag with its joined posts will look like:
 _Example_: Link documents of the same models between them.
 
 ```js
-var User = thinky.createModel("Post", {
+var User = thinky.createModel("User", {
     id: type.string(),
     name: type.string(),
     email: type.string()
@@ -504,10 +504,10 @@ A user with its friends will look like:
 _Example_: Use `type` to create multiple relations.
 
 ```js
-var Class = thinky.createModel("Post", {
+var Class = thinky.createModel("Class", {
     id: type.string(),
 });
-var People = thinky.createModel("Tag", {
+var People = thinky.createModel("People", {
     id: type.string(),
     name: type.string()
 });
