@@ -392,6 +392,124 @@ describe('getJoin', function(){
       }).error(done);
     })
   })
+  describe("Joins - hasMany with allowExtra(false)", function() {
+    var Model, OtherModel, doc;
+    before(function(done) {
+      var name = util.s8();
+      Model = thinky.createModel(modelNames[0], thinky.type.object().schema({
+        id: thinky.type.string(),
+        str: thinky.type.string(),
+        num: thinky.type.number()
+      }).allowExtra(false));
+
+      var otherName = util.s8();
+      OtherModel = thinky.createModel(modelNames[1], {
+        id: String,
+        str: String,
+        num: Number,
+        foreignKey: String
+      });
+      Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey")
+
+      var docValues = {str: util.s8(), num: util.random()}
+      doc = new Model(docValues);
+      var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+      doc.otherDocs = otherDocs;
+
+      doc.saveAll().then(function(doc) {
+        util.sortById(doc.otherDocs);
+        done();
+      }).error(done);
+
+    });
+
+    after(cleanTables);
+
+    it('should retrieve joined documents with object', function(done) {
+      Model.get(doc.id).getJoin().run().then(function(result) {
+        util.sortById(result.otherDocs);
+
+        assert.deepEqual(doc, result);
+        assert(result.isSaved());
+        for(var i=0; i<result.otherDocs.length; i++) {
+          assert.equal(result.otherDocs[i].isSaved(), true);
+        }
+        done()
+      }).error(done);
+    })
+    it('should retrieve joined documents with sequence', function(done) {
+      Model.filter({id: doc.id}).getJoin().run().then(function(result) {
+        util.sortById(result[0].otherDocs);
+
+        assert.deepEqual([doc], result);
+        assert(result[0].isSaved());
+        for(var i=0; i<result[0].otherDocs.length; i++) {
+          assert.equal(result[0].otherDocs[i].isSaved(), true);
+        }
+
+        done()
+      }).error(done);
+    })
+  })
+  describe("Joins - hasMany with removeExtra()", function() {
+    var Model, OtherModel, doc;
+    before(function(done) {
+      var name = util.s8();
+      Model = thinky.createModel(modelNames[0], thinky.type.object().schema({
+        id: thinky.type.string(),
+        str: thinky.type.string(),
+        num: thinky.type.number()
+      }).removeExtra());
+
+      var otherName = util.s8();
+      OtherModel = thinky.createModel(modelNames[1], {
+        id: String,
+        str: String,
+        num: Number,
+        foreignKey: String
+      });
+      Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey")
+
+      var docValues = {str: util.s8(), num: util.random()}
+      doc = new Model(docValues);
+      var otherDocs = [new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()}), new OtherModel({str: util.s8(), num: util.random()})];
+      doc.otherDocs = otherDocs;
+
+      doc.saveAll().then(function(doc) {
+        util.sortById(doc.otherDocs);
+        done();
+      }).error(done);
+
+    });
+
+    after(cleanTables);
+
+    it('should retrieve joined documents with object', function(done) {
+      Model.get(doc.id).getJoin().run().then(function(result) {
+        util.sortById(result.otherDocs);
+
+        assert.deepEqual(doc, result);
+        assert(result.isSaved());
+        for(var i=0; i<result.otherDocs.length; i++) {
+          assert.equal(result.otherDocs[i].isSaved(), true);
+        }
+        done()
+      }).error(done);
+    })
+    it('should retrieve joined documents with sequence', function(done) {
+      Model.filter({id: doc.id}).getJoin().run().then(function(result) {
+        util.sortById(result[0].otherDocs);
+
+        assert.deepEqual([doc], result);
+        assert(result[0].isSaved());
+        for(var i=0; i<result[0].otherDocs.length; i++) {
+          assert.equal(result[0].otherDocs[i].isSaved(), true);
+        }
+
+        done()
+      }).error(done);
+    })
+  })
   describe("Joins - hasMany", function() {
     var Model, OtherModel, doc;
     before(function(done) {
