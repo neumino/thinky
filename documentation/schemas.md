@@ -139,7 +139,7 @@ var User = thinky.createModel("User", {
     name: type.string(),
     email: type.string(),
     age: type.number(),
-    birthdate: type.date() 
+    birthdate: type.date()
 })
 ```
 
@@ -173,7 +173,7 @@ var User = thinky.createModel("User", {
     id: type.string(),
     contact: {
         email: type.string(),
-        phone: type.string() 
+        phone: type.string()
     },
     age: type.number()
 });
@@ -187,7 +187,7 @@ var User = thinky.createModel("User", {
     id: type.string(),
     contact: type.object().schema({
         email: type.string(),
-        phone: type.string() 
+        phone: type.string()
     }),
     age: type.number()
 });
@@ -304,22 +304,12 @@ var validator = require('validator');
 
 var User = thinky.createModel("Users",{
     id: type.string(),
-    email: type.string().email().required(),
-    age: type.number()
-});
-```
-
-```js
-var validator = require('validator');
-
-var User = thinky.createModel("Users",{
-    id: type.string(),
     email: type.string().validator(validator.isEmail)
     age: type.number()
 });
 ```
 
-================
+----------------------
  
 __Note__: With versions prior to 1.15.2, it is possible to declare fields with extra information (options,
 validator etc.) with a special object:
