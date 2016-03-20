@@ -1,4 +1,4 @@
-markdown: redcarpet
-pygments: true
+markdown: kramdown
+highlighter: rouge
 markdown_ext:  markdown,mkd,mkdn,md
 relative_permalinks: false
