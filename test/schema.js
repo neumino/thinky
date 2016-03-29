@@ -453,14 +453,14 @@ describe('Chainable types', function(){
     var doc = new Model({ id: 'FOOBAR'});
     doc.validate();
   });
-  it('String - uuid - not uuid v4', function (){
+  it('String - uuid - not uuid v3', function (){
     var name = util.s8();
     var Model = thinky.createModel(name,
       {id: type.string().uuid(3) },
       {init: false})
     var doc = new Model({id: "xxxA987FBC9-4BED-3078-CF07-9141BA07C9F3"})
   });
-  it('String - uuid - is uuid v4', function (){
+  it('String - uuid - is uuid v3', function (){
     var name = util.s8();
     var Model = thinky.createModel(name,
       {id: type.string().uuid(3) },
