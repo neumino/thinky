@@ -453,18 +453,6 @@ describe('Chainable types', function(){
     var doc = new Model({ id: 'FOOBAR'});
     doc.validate();
   });
-  it('String - uuid - checks version is number', function(){
-    var name = util.s8();
-    var Model = thinky.createModel(name,
-      {id: type.string().uuid("NaN") },
-      {init: false})
-    assert.throws(function() {
-      var doc = new Model({ id: "A987FBC9-4BED-3078-CF07-9141BA07C9F3" });
-      doc.validate();
-    }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "The value for `version` must be a number.")
-    });
-  });
   it('String - uuid - not uuid v3', function (){
     var name = util.s8();
     var Model = thinky.createModel(name,
