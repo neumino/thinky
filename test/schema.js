@@ -453,6 +453,48 @@ describe('Chainable types', function(){
     var doc = new Model({ id: 'FOOBAR'});
     doc.validate();
   });
+  it('String - uuid - not uuid v3', function (){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.string().uuid(3) },
+      {init: false})
+    var doc = new Model({id: "xxxA987FBC9-4BED-3078-CF07-9141BA07C9F3"})
+  });
+  it('String - uuid - is uuid v3', function (){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.string().uuid(3) },
+      {init: false})
+    var doc = new Model({id: "A987FBC9-4BED-3078-CF07-9141BA07C9F3"})
+  });
+  it('String - uuid - not uuid v4', function (){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.string().uuid(4) },
+      {init: false})
+    var doc = new Model({id: "A987FBC9-4BED-5078-AF07-9141BA07C9F3"})
+  });
+  it('String - uuid - is uuid v4', function (){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.string().uuid(4) },
+      {init: false})
+    var doc = new Model({id: "713ae7e3-cb32-45f9-adcb-7c4fa86b90c1"})
+  });
+  it('String - uuid - not uuid v5', function (){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.string().uuid(5) },
+      {init: false})
+    var doc = new Model({id: "9c858901-8a57-4791-81fe-4c455b099bc9"})
+  });
+  it('String - uuid - is uuid v5', function (){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.string().uuid(5) },
+      {init: false})
+    var doc = new Model({id: "987FBC97-4BED-5078-BF07-9141BA07C9F3"})
+  });
   it('String - validator - return false', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
