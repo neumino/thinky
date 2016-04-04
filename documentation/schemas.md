@@ -34,7 +34,7 @@ There are two more ways to define a type, one is via the methods in `thinky.type
   - `email()`: requires the string to be an email
   - `lowercase()`: requires the string to be lowercase
   - `uppercase()`: requires the string to be uppercase
-  - `enum(values...)` or `enum([enums]): the possible values for this string
+  - `enum(values...)` or `enum([enums])`: the possible values for this string
   - `uuid(version)`: requires the string to be a UUID (Supported versions: 3, 4 or 5)
 - `type.boolean()` for a `Boolean`
 - `type.number()` for a `Number`
