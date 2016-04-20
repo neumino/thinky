@@ -18,6 +18,7 @@ database will be converted to instances of the model stored.
 --------------
 
 <div id="getjoin"></div>
+
 ### [getJoin](#getjoin)
 
 ```js
@@ -268,6 +269,7 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({account: {bills: true}
 --------------
 
 <div id="addrelation"></div>
+
 ### [addRelation](#addrelation)
 
 ```js
@@ -358,6 +360,7 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
 --------------
 
 <div id="removerelation"></div>
+
 ### [removeRelation](#removerelation)
 
 ```js
@@ -430,6 +433,7 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
 
 
 <div id="run"></div>
+
 ### [run](#run)
 
 ```
@@ -452,6 +456,7 @@ User.run().then(function(result) {
 --------------
 
 <div id="execute"></div>
+
 ### [execute](#execute)
 
 ```
@@ -479,6 +484,7 @@ cannot be converted to an instance of `User`.
 --------------
 
 <div id="reql"></div>
+
 ### [ReQL methods](#reql)
 
 All the methods defined in ReQL can be called on a Query object.
@@ -522,6 +528,7 @@ User.filter({age: 18}).run().then(function(result) {
 --------------
 
 <div id="reql"></div>
+
 ### Overwritten [ReQL methods](#reql)
 
 A few methods have slightly different behavior than the original ReQL commands.
@@ -577,6 +584,7 @@ What may happen is:
 --------------
 
 <div id="functional"></div>
+
 ### [Functional Utilities](#functional-utilities)
 Thinky provides some Functional instance methods for easily plugging Queries
 into functional computation chains or pipelines that handle promises or node-style callbacks

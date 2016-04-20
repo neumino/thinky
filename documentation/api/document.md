@@ -9,6 +9,7 @@ A document is returned from calling `new` on a [Model](/documentation/api/model/
 
 
 <div id="getmodel"></div>
+
 ### [getModel](#getmodel)
 
 ```
@@ -50,6 +51,7 @@ post.getModel().getTableName();
 --------------
 
 <div id="merge"></div>
+
 ### [merge](#merge)
 
 ```
@@ -73,6 +75,7 @@ Post.get(data.id).run().then(function(post) {
 --------------
 
 <div id="validate"></div>
+
 ### [validate](#validate)
 
 ```
@@ -111,6 +114,7 @@ catch(err) {
 
 --------------
 <div id="validateall"></div>
+
 ### [validateAll](#validateall)
 
 ```
@@ -152,6 +156,7 @@ catch(err) {
 --------------
 
 <div id="save"></div>
+
 ### [save](#save)
 
 ```
@@ -206,6 +211,7 @@ user.save(function(error, doc) {
 --------------
 
 <div id="saveall"></div>
+
 ### [saveAll](#saveall)
 
 ```
@@ -590,6 +596,7 @@ michel.saveAll({friends: true}, function(error, result) {
 --------------
 
 <div id="issaved"></div>
+
 ### [isSaved](#issaved)
 ```
 document.isSaved() -> Boolean
@@ -616,6 +623,7 @@ post.save().then(function() {
 --------------
 
 <div id="getoldvalue"></div>
+
 ### [getOldValue](#getoldvalue)
 ```
 document.getOldValue()
@@ -650,6 +658,7 @@ post.save().then(function() {
 --------------
 
 <div id="setsaved"></div>
+
 ### [setSaved](#setsaved)
 ```
 document.setSaved()
@@ -680,6 +689,7 @@ post.save().then(function() {
 --------------
 
 <div id="delete"></div>
+
 ### [delete](#delete)
 ```
 document.delete([callback]) -> Promise
@@ -772,6 +782,7 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({account: true}).run()
 --------------
 
 <div id="deleteall"></div>
+
 ### [deleteAll](#deleteall)
 ```
 document.deleteAll([modelToDelete], [callback]) -> Promise
@@ -895,6 +906,7 @@ Users.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").run().then(function(michel) {
 ```
 
 <div id="addrelation"></div>
+
 ### [addRelation](#addrelation)
 
 ```
@@ -910,6 +922,7 @@ Model.get(document.id).addRelation(field, joinedDocument).run()
 --------------
 
 <div id="removerelation"></div>
+
 ### [removeRelation](#removerelation)
 
 ```
@@ -925,6 +938,7 @@ Model.get(document.id).removeRelation(field[, joinedDocument]).run()
 --------------
 
 <div id="purge"></div>
+
 ### [purge](#purge)
 
 ```
@@ -982,6 +996,7 @@ michel.saveAll({friends}).then(function(michel) {
 --------------
 
 <div id="getFeed"></div>
+
 ### [getFeed](#getFeed)
 
 ```
@@ -994,6 +1009,7 @@ Return the change feed associated with this document.
 --------------
 
 <div id="closeFeed"></div>
+
 ### [closeFeed](#closeFeed)
 
 ```
@@ -1005,6 +1021,7 @@ Close the change feed associated with this document.
 
 
 <div id="eventemittersmethods"></div>
+
 ### [EventEmitter's methods](#eventemittersmethods)
 
 All the methods defined on
