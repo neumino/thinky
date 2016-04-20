@@ -57,7 +57,7 @@ console.log(user.fullName); // "John Doe"
 user.firsName = "Marc";
 console.log(user.fullName); // "John Doe"
 
-user.generateVirtualFields();
+user.generateVirtualValues();
 console.log(user.fullName); // "Marc Doe"
 ```
 

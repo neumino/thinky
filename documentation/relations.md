@@ -161,7 +161,7 @@ var post = {
 - __n-n relation__
 
 A n-n relation means that each instance of a Model `A` possesses multiple instances of `B`, and that each instance of
-`B` also possesses multiple instances of A.
+`B` also possesses multiple instances of `A`.
 
 In terms of actual code, it means that you have:
 
@@ -170,7 +170,7 @@ A.hasAndBelongsToMany(B, ...)
 B.hasAndBelongsToMany(A, ...)
 ```
 
-The relation `hasAndBelongsToMany` is symmetric, meaning that if `a` "has" `b`, then `b` also "has" `a`.
+The relation `hasAndBelongsToMany` is symmetric, meaning that if `A` "has" `B`, then `B` also "has" `A`.
 
 ```js
 var Post = thinky.createModel("Post", {
@@ -224,7 +224,7 @@ A tag with its joined posts will look like:
             id: "eaed7d80-5205-488c-aedc-eb91e9f77d6b",
             title: "Second test",
             content: "Trying another post.",
-        }, 
+        },
     ]
 }
 ```
@@ -567,7 +567,7 @@ Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
 
 #### deleteAll
 
-Like for `saveAll` and `getJoin`, `deleteAll` will recurse in a field as long as it does not contain 
+Like for `saveAll` and `getJoin`, `deleteAll` will recurse in a field as long as it does not contain
 a Model previously deleted in another field.
 You can manually force `deleteAll` to delete a joined document by manually specifying the field.
 
@@ -646,4 +646,3 @@ Human.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a")
 
 The `purge` command works like the `delete` one except that it will run range update/delete in the database to keep data
 consistent.
-

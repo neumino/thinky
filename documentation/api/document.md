@@ -194,7 +194,7 @@ With a callback:
 
 ```js
 user.save(function(error, doc) {
-    if (err) {
+    if (error) {
         // handle error
     }
     else {
