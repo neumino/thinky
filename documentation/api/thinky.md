@@ -49,6 +49,7 @@ _Note_: The following options are deprecated:
 
 
 <div id="r"></div>
+
 ### [thinky.r](#r)
 
 ```js
@@ -84,6 +85,7 @@ var p = r.table("posts").count().run()
 
 
 <div id="errors"></div>
+
 ### [thinky.Errors](#errors)
 
 ```js
@@ -142,6 +144,7 @@ User.save({
 
 
 <div id="query"></div>
+
 ### [thinky.Query](#query)
 
 ```js
@@ -169,6 +172,7 @@ query.expr([1,2,3]).map(function(id) {
 
 
 <div id="createmodel"></div>
+
 ### [thinky.createModel](#createmodel)
 
 ```js
