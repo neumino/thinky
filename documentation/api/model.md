@@ -338,6 +338,7 @@ A user with its joined posts will look like:
 
 <div id="hasandbelongstomany"></div>
 ### [hasAndBelongsToMany](#hasAndBelongsToMany)
+
 ```js
 Model.hasAndBelongsToMany(OtherModel, fieldName, leftKey, rightKey[, options]);
 ```
