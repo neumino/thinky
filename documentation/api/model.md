@@ -9,6 +9,7 @@ A model is returned from [thinky.createModel](/documentation/api/thinky/#createm
 
 
 <div id="gettablename"></div>
+
 ### [getTableName](#gettablename)
 
 ```js
@@ -33,6 +34,7 @@ PostModel.getTableName(); // returns "Post"
 --------------
 
 <div id="define"></div>
+
 ### [define](#define)
 
 ```js
@@ -64,6 +66,7 @@ grownup.isAdult(); // true
 --------------
 
 <div id="defineStatic"></div>
+
 ### [defineStatic](#defineStatic)
 
 ```js
@@ -98,6 +101,7 @@ User.get(1).getView().run().then(user) {
 --------------
 
 <div id="ensureindex"></div>
+
 ### [ensureIndex](#ensureindex)
 
 ```js
@@ -146,6 +150,7 @@ Users.ensureIndex("fullName", function(doc) {
 
 
 <div id="hasone"></div>
+
 ### [hasOne](#hasone)
 ```js
 Model.hasOne(OtherModel, fieldName, leftKey, rightKey[, options]);
@@ -203,6 +208,7 @@ A user with its joined account will look like:
 --------------
 
 <div id="belongsto"></div>
+
 ### [belongsTo](#belongsto)
 ```js
 Model.belongsTo(OtherModel, fieldName, leftKey, rightKey[, options]);
@@ -264,6 +270,7 @@ A post with its joined author will look like:
 --------------
 
 <div id="hasmany"></div>
+
 ### [hasMany](#hasmany)
 ```js
 Model.hasMany(OtherModel, fieldName, leftKey, rightKey[, options]);
@@ -337,6 +344,7 @@ A user with its joined posts will look like:
 --------------
 
 <div id="hasandbelongstomany"></div>
+
 ### [hasAndBelongsToMany](#hasAndBelongsToMany)
 
 ```js
