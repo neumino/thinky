@@ -271,3 +271,18 @@ var Post = thinky.createModel("Post",{
     createdAt: type.date().default(r.now())
 });
 ```
+
+
+
+--------------
+
+
+<div id="dbReady"></div>
+
+### [thinky.dbReady](#dbready)
+
+```js
+var promise = thinky.dbReady();
+```
+
+Return a promise that will be resolved when the database is available.
