@@ -48,6 +48,9 @@ describe('Sub Document Functions', function(){
       geoCode: function() {
         return this.street;
       }
+    },
+    topLevelFunc: function() {
+      return "topLevel";
     }
   }
   var basicModelOne = null;
@@ -95,6 +98,7 @@ describe('Sub Document Functions', function(){
       }
     });
     assert.equal(typeof one.address, 'object');
+    assert.equal(one.topLevelFunc(), 'topLevel');
     assert.equal(one.address.geoCode(), "123 Fake Street");
     var two =  new basicModelTwo({
       id: '7777b2c1-26ac-45e0-a0f2-f11e613265b9',
