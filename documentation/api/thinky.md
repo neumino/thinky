@@ -195,6 +195,7 @@ Read more about schemas on [this article](/documentation/schemas/)
     - `enforce_extra`: can be `"strict"`, `"remove"` (delete the extra fields on validation), `"none"`, default `"none"`
     - `enforce_type`: can be `"strict"`, `"loose"` or `"none"`.
     - `validator`: A function that will be used to validate a document before saving it. The context is set to the whole document.
+    - `table`: an `object` that will be used to create the table, useful to set replicas, shards etc.
 
 Read more about `enforce_missing`/`enforce_extra`/`enforce_type` on [the article](/documentation/schemas/) about schemas.
 
