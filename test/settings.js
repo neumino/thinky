@@ -74,6 +74,20 @@ describe('Options', function(){
       });
     });
   });
+  it('table option on a model', function(done){
+    var name = util.s8();
+    var Model = thinky.createModel(name, {id: String, name: String}, {
+      table: {
+        durability: 'soft'
+      }
+    });
+    Model.once('ready', function() {
+      r.table(Model.getTableName()).config().run().then(function(result) {
+        assert.equal(result.durability, 'soft');
+        done();
+      });
+    });
+  });
   it('Options on a document', function(){
     var name = util.s8();
     var Model = thinky.createModel(name, {id: String, name: String});
