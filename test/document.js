@@ -2949,6 +2949,24 @@ describe('hooks', function() {
       });
     }).error(done);
   });
+  it('save pre - with error and callback', function(done) {
+    var Model = thinky.createModel(modelNames[0], {id: String, title: String});
+
+    Model.pre('save', function(next) {
+      var self = this;
+      setTimeout(function() {
+        next(new Error("foo"));
+      }, 1);
+    })
+
+    var doc = new Model({id: "foo"});
+    doc.save(function(err) {
+      assert(err instanceof Error);
+      assert.equal(err.message, "foo");
+      done();
+    })
+  });
+
   it('save pre - sync', function(done) {
     var Model = thinky.createModel(modelNames[0], {id: String, title: String});
 
