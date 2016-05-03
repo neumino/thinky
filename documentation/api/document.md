@@ -245,7 +245,7 @@ _Example_: Save a user and its account.
 Suppose the models `User` and `Account` are linked with a
 "hasOne" relation.
 
-```
+```js
 var User = thinky.createModel("User", {
     id: type.string(),
     name: type.string()
@@ -525,7 +525,7 @@ post.save().then(function(result) {
 _Example_: Save a user and all its friends.
 
 ```js
-var User = thinky.createModel("Post", {
+var User = thinky.createModel("User", {
     id: type.string(),
     name: type.string()
 });
@@ -847,7 +847,7 @@ User.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin({account: true})
 _Example_: Delete a user and all its friends.
 
 ```js
-var User = thinky.createModel("Post", {
+var User = thinky.createModel("User", {
     id: type.string(),
     name: type.string()
 });
@@ -960,7 +960,7 @@ the database.
 
 
 ```js
-var User = thinky.createModel("Post", {
+var User = thinky.createModel("User", {
     id: type.string(),
     name: type.string()
 });
@@ -988,8 +988,8 @@ michel.saveAll({friends}).then(function(michel) {
         michel.purge().then(function(michel) {
             // michel is deleted
             // marc, sophia and ben relations with michel have been deleted 
-        }):
-    }):
+        });
+    });
 });
 ```
 
