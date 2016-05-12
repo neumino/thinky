@@ -1704,6 +1704,7 @@ describe('optimizer', function() {
         Model.hasAndBelongsToMany(Model, 'manyToMany', 'hasAndBelongsToMany1', 'hasAndBelongsToMany2')
 
         Model.ensureIndex('name1');
+        Model.ensureCompoundIndex('fullName', [ 'name1', 'name2' ]);
         Model.once('ready', function() {
           done();
         })
@@ -1738,6 +1739,10 @@ describe('optimizer', function() {
     var query = Model.orderBy('name1').toString();
     assert(query.match(/index: "name1"/));
   })
+  it('orderBy should be able to use an index - multiple fields - compound index', function() {
+    var query = Model.orderBy('name1', 'name2').toString();
+    assert(query.match(/index: "fullName"/));
+  })
   it('filter should be able to use an index - single field', function() {
     var query = Model.filter({name1: "Michel"}).toString();
     assert(query.match(/index: "name1"/));
@@ -1745,6 +1750,10 @@ describe('optimizer', function() {
   it('filter should be able to use an index - multiple fields', function() {
     var query = Model.filter({name1: "Michel", foo: "bar"}).toString();
     assert.equal(query.replace(/\s/g, ''), 'r.table("'+Model.getTableName()+'").getAll("Michel",{index:"name1"}).filter({foo:"bar"})')
+  })
+  it('filter should be able to use an index - multiple fields - compound index', function() {
+    var query = Model.filter({name1: "Michel", name2: "Bar"}).toString();
+    assert.equal(query.replace(/\s/g, ''), 'r.table("'+Model.getTableName()+'").getAll(["Michel","Bar"],{index:"fullName"})')
   })
   it('filter should not optimize a field without index', function() {
     var query = Model.filter({name2: "Michel"}).toString();
