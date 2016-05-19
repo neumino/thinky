@@ -106,7 +106,7 @@ describe('Model', function() {
     var doc = new Model(values);
     var otherDoc = new Model(values);
 
-    //assert.strictEqual(doc, values);
+    assert.strictEqual(doc, values);
     assert.notStrictEqual(doc, otherDoc);
     doc.str = doc.str+util.s8();
     assert.notEqual(doc.str, otherDoc.str);
