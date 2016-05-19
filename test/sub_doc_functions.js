@@ -172,4 +172,46 @@ describe('Sub Document Functions', function(){
     }).error(done);
   });
 
+  var basicModelFourSpec = {
+    id: String,
+    name: String,
+    email: type.string(),
+    address: {
+      street: String,
+      zipCode: {
+        num: Number,
+        lookup: function() {
+          return "North Pole";
+        },
+        source: {
+          name: String,
+          rep: function() {
+            return 24;
+          }
+        }
+      }
+    }
+  }
+
+  it('can create object models with custom functions not on top level', function(done){
+    var testModelFour = thinky.createModel("TestModelFour", basicModelFourSpec);
+    var four = new basicModelThree({
+      id: 'e9c8111e-a09a-4268-b25e-e42583113058',
+      name: 'Tester3',
+      email: 'tester3@test.com',
+      address: {
+        street: "123 Fake Street",
+        zipCode: {
+          num: 4000,
+          source: {
+            name: "Test Source"
+          }
+        }
+      }
+    });
+    assert.equal(four.address.street, "123 Fake Street");
+    assert.equal(four.address.zipCode.lookup(), "North Pole");
+    done();
+  });
+
 });
