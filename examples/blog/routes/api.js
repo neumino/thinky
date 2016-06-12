@@ -199,7 +199,7 @@ exports.deleteComment = function (req, res) {
     var id = req.params.id;
 
     // We can directly delete the comment since there is no foreign key to clean
-    Comment.get(id).delete().run().then(function(error, result) {
+    Comment.get(id).delete().execute().then(function(error, result) {
         res.json({
             error: error,
             result: result
