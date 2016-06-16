@@ -122,7 +122,7 @@ the cause of the validation error.
 var User = thinky.createModel("User", {
     id: type.string(),
     name: type.string(),
-    email: type.number().email() // <-- Valid e-mail address required
+    email: type.string().email() // <-- Valid e-mail address required
 });
 
 User.save({
