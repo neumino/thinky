@@ -681,8 +681,16 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 1});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be greater than 2.");
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be greater than or equal to 2.");
     });
+  });
+  it('Number - min - negative', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.number().min(-2) },
+      {init: false})
+    var doc = new Model({ id: -1});
+    doc.validate();
   });
   it('Number - min - good', function(){
     var name = util.s8();
@@ -690,6 +698,14 @@ describe('Chainable types', function(){
       {id: type.number().min(2) },
       {init: false})
     var doc = new Model({ id: 3});
+    doc.validate();
+  });
+  it('Number - min - just right', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.number().min(2) },
+      {init: false})
+    var doc = new Model({ id: 2});
     doc.validate();
   });
   it('Number - max - too big', function(){
@@ -701,8 +717,16 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 8});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be less than 5.");
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be less than or equal to 5.");
     });
+  });
+  it('Number - max - negative', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.number().max(-5) },
+      {init: false})
+    var doc = new Model({ id: -8});
+    doc.validate();
   });
   it('Number - max - good', function(){
     var name = util.s8();
@@ -710,6 +734,14 @@ describe('Chainable types', function(){
       {id: type.number().max(5) },
       {init: false})
     var doc = new Model({ id: 3});
+    doc.validate();
+  });
+  it('Number - max - just right', function(){
+    var name = util.s8();
+    var Model = thinky.createModel(name,
+      {id: type.number().max(5) },
+      {init: false})
+    var doc = new Model({ id: 5});
     doc.validate();
   });
   it('Number - integer - float', function(){
