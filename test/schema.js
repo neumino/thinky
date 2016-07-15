@@ -268,7 +268,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'a'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be longer than 2.");
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must not be shorter than 2.");
     });
   });
   it('String - min - good', function(){
@@ -288,7 +288,7 @@ describe('Chainable types', function(){
       var doc = new Model({ id: 'abcdefgh'});
       doc.validate();
     }, function(error) {
-      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be shorter than 5.");
+      return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must not be  longer than 5.");
     });
   });
   it('String - max - good', function(){
