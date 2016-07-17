@@ -73,7 +73,7 @@ the primary key.
 For example, suppose you want the name to be unique.
 
 ```js
-var Model = thinky.createModel("user",
+var Model = thinky.createModel("user", {
     name: type.string()
 }, {
     pk: "name"
