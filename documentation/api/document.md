@@ -396,7 +396,7 @@ Author.get("3851d8b4-5358-43f2-ba23-f4d481358901").run()
      *     ]
      * }
      */
-    user.splice(1, 1);
+    user.posts.splice(1, 1);
     user.saveAll({posts: true}).then(function(user) {
         User.get(user.id).getJoin({posts: true}).run().then(function(user) {
         /*
