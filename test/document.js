@@ -3118,6 +3118,289 @@ describe('hooks', function() {
   });
 });
 
+describe('addRelation', function(){
+  afterEach(cleanTables);
+
+  it('hasOne - pk', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    });
+
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    })
+
+    Model.hasOne(OtherModel, "otherDoc", "id", "foreignKey")
+
+    var doc = new Model({str: util.s8(), num: util.random()});
+    var otherDoc = new OtherModel({str: util.s8(), num: util.random()});
+
+    doc.save().then(function() {
+      return otherDoc.save();
+    }).then(function() {
+      return doc.addRelation('otherDoc', {id: otherDoc.id});
+    }).then(function(otherDocResult) {
+      assert.equal(otherDocResult.foreignKey, doc.id);
+      return Model.get(doc.id).getJoin({otherDoc: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.otherDoc.foreignKey, doc.id);
+      assert.deepEqual(doc.otherDoc.id, otherDoc.id);
+      assert.deepEqual(doc.otherDoc.str, otherDoc.str);
+      assert.deepEqual(doc.otherDoc.name, otherDoc.name);
+      done();
+    });
+  });
+
+  it('hasMany - pk', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    });
+
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    })
+
+    Model.hasMany(OtherModel, "otherDocs", "id", "foreignKey")
+
+    var doc = new Model({str: util.s8(), num: util.random()});
+    var otherDoc = new OtherModel({str: util.s8(), num: util.random()});
+
+    doc.save().then(function() {
+      return otherDoc.save();
+    }).then(function() {
+      return doc.addRelation('otherDocs', {id: otherDoc.id});
+    }).then(function(otherDocResult) {
+      assert.equal(otherDocResult.foreignKey, doc.id);
+      return Model.get(doc.id).getJoin({otherDocs: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.otherDocs.length, 1);
+      assert.equal(doc.otherDocs[0].foreignKey, doc.id);
+      assert.deepEqual(doc.otherDocs[0].id, otherDoc.id);
+      assert.deepEqual(doc.otherDocs[0].str, otherDoc.str);
+      assert.deepEqual(doc.otherDocs[0].name, otherDoc.name);
+      done();
+    });
+  });
+
+  it('belongsTo - pk', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    });
+
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+    })
+
+    Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "str")
+
+    var doc = new Model({str: util.s8(), num: util.random()});
+    var otherDoc = new OtherModel({str: util.s8(), num: util.random()});
+
+    doc.save().then(function() {
+      return otherDoc.save();
+    }).then(function() {
+      return doc.addRelation('otherDoc', {id: otherDoc.id});
+    }).then(function(doc) {
+      assert.equal(doc.foreignKey, otherDoc.str);
+      return Model.get(doc.id).getJoin({otherDoc: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.foreignKey, doc.otherDoc.str);
+      assert.deepEqual(doc.otherDoc.id, otherDoc.id);
+      assert.deepEqual(doc.otherDoc.str, otherDoc.str);
+      assert.deepEqual(doc.otherDoc.name, otherDoc.name);
+      done();
+    });
+  });
+
+  it('belongsTo - field', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    });
+
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+    })
+
+    Model.belongsTo(OtherModel, "otherDoc", "foreignKey", "str")
+
+    var doc = new Model({str: util.s8(), num: util.random()});
+    var otherDoc = new OtherModel({str: util.s8(), num: util.random()});
+
+    doc.save().then(function() {
+      return otherDoc.save();
+    }).then(function() {
+      return doc.addRelation('otherDoc', {str: otherDoc.str});
+    }).then(function(doc) {
+      assert.equal(doc.foreignKey, otherDoc.str);
+      return Model.get(doc.id).getJoin({otherDoc: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.foreignKey, doc.otherDoc.str);
+      assert.deepEqual(doc.otherDoc.id, otherDoc.id);
+      assert.deepEqual(doc.otherDoc.str, otherDoc.str);
+      assert.deepEqual(doc.otherDoc.name, otherDoc.name);
+      done();
+    });
+  });
+
+  it('hasAndBelongsToMany - pair - field', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    });
+
+    Model.hasAndBelongsToMany(Model, "others", "id", "str")
+
+    var doc = new Model({str: util.s8(), num: util.random()});
+    var otherDoc = new Model({str: util.s8(), num: util.random()});
+    var anotherDoc = new Model({str: otherDoc.str, num: util.random()});
+
+    doc.save().then(function() {
+      return otherDoc.save();
+    }).then(function() {
+      return doc.addRelation('others', {str: otherDoc.str});
+    }).then(function(result) {
+      assert.equal(result, true); // Change the default value?
+      return Model.get(doc.id).getJoin({others: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.others.length, 1);
+      return anotherDoc.save();
+    }).then(function() {
+      return Model.get(doc.id).getJoin({others: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.others.length, 2);
+      done();
+    });
+  });
+
+  it('hasAndBelongsToMany - pair - id', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number
+    });
+
+    Model.hasAndBelongsToMany(Model, "others", "id", "str")
+
+    var doc = new Model({str: util.s8(), num: util.random()});
+    var otherDoc = new Model({str: util.s8(), num: util.random()});
+    var anotherDoc = new Model({str: otherDoc.str, num: util.random()});
+
+    doc.save().then(function() {
+      return otherDoc.save();
+    }).then(function() {
+      return doc.addRelation('others', {id: otherDoc.id});
+    }).then(function(result) {
+      assert.equal(result, true); // Change the default value?
+      return Model.get(doc.id).getJoin({others: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.others.length, 1);
+      return anotherDoc.save();
+    }).then(function() {
+      return Model.get(doc.id).getJoin({others: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.others.length, 2);
+      done();
+    });
+  });
+
+  it('hasAndBelongsToMany - id', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    });
+
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+    })
+
+
+    Model.hasAndBelongsToMany(OtherModel, "others", "id", "str")
+
+    var doc = new Model({str: util.s8(), num: util.random()});
+    var otherDoc = new OtherModel({str: util.s8(), num: util.random()});
+    var anotherDoc = new OtherModel({str: otherDoc.str, num: util.random()});
+
+    doc.save().then(function() {
+      return otherDoc.save();
+    }).then(function() {
+      return doc.addRelation('others', {id: otherDoc.id});
+    }).then(function(result) {
+      assert.equal(result, true); // Change the default value?
+      return Model.get(doc.id).getJoin({others: true}).run()
+    }).then(function(doc) {
+      return anotherDoc.save();
+    }).then(function() {
+      return Model.get(doc.id).getJoin({others: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.others.length, 2);
+      done();
+    });
+  });
+
+  it('hasAndBelongsToMany - field', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      str: String,
+      num: Number,
+      foreignKey: String
+    });
+
+    var OtherModel = thinky.createModel(modelNames[1], {
+      id: String,
+      str: String,
+      num: Number,
+    })
+
+
+    Model.hasAndBelongsToMany(OtherModel, "others", "id", "str")
+
+    var doc = new Model({str: util.s8(), num: util.random()});
+    var otherDoc = new OtherModel({str: util.s8(), num: util.random()});
+    var anotherDoc = new OtherModel({str: otherDoc.str, num: util.random()});
+
+    doc.save().then(function() {
+      return otherDoc.save();
+    }).then(function() {
+      return doc.addRelation('others', {str: otherDoc.str});
+    }).then(function(result) {
+      assert.equal(result, true); // Change the default value?
+      return Model.get(doc.id).getJoin({others: true}).run()
+    }).then(function(doc) {
+      return anotherDoc.save();
+    }).then(function() {
+      return Model.get(doc.id).getJoin({others: true}).run()
+    }).then(function(doc) {
+      assert.equal(doc.others.length, 2);
+      done();
+    });
+  });
+});
+
 describe('removeRelation', function(){
   afterEach(cleanTables);
 
