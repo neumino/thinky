@@ -26,6 +26,7 @@ var assert = require('assert');
 describe('Options', function(){
   it('Options on the top level namespace', function(){
     assert.deepEqual(thinky.getOptions(), {
+      pingInterval: -1,
       timeFormat: 'raw',
       enforce_extra: 'strict',
       enforce_missing: true,
@@ -54,6 +55,7 @@ describe('Options', function(){
 
     // Make sure we didn't messed up the global options
     assert.deepEqual(thinky.getOptions(), {
+      pingInterval: -1,
       timeFormat: 'raw',
       enforce_extra: 'strict',
       enforce_missing: true,
@@ -93,6 +95,7 @@ describe('Options', function(){
     var Model = thinky.createModel(name, {id: String, name: String});
 
     var doc = new Model({}, {
+      pingInterval: -1,
       timeFormat: 'raw',
       enforce_extra: 'none',
       enforce_missing: false,
@@ -107,6 +110,7 @@ describe('Options', function(){
 
     // Make sure we didn't messed up the global options
     assert.deepEqual(thinky.getOptions(), {
+      pingInterval: -1,
       timeFormat: 'raw',
       enforce_extra: 'strict',
       enforce_missing: true,
