@@ -245,7 +245,7 @@ var Post = thinky.createModel("Post",{
     id: type.string(),
     title: type.string(),
     content: type.string(),
-    createdAt: type.date().default(r.now())}
+    createdAt: type.date().default(r.now())
 });
 ```
 
