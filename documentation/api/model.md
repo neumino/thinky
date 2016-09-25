@@ -365,8 +365,9 @@ The join is done via a third table that is automatically created and managed by 
 - `options`:
   - set the field `init` to `false` if the indexes were already created and do not want `thinky` to try to create them.
   - set the field `type` to a string to differentiate two n-n relations for the same two models.
+  - set the field `table` to an object specifying the table settings as you would with [thinky.createModel](/documentation/api/thinky/#createmodel)
 You can also specify a string for `type` which will be used to differentiate
-the table if you link multiple times the same mdoels.
+the table if you link multiple times the same models.
 
 We __highly recommend__ to use the primary keys for the fields used to perform the join.  
 If you do not, read carefully [the article](/documentation/relations/) dedicated to relations
