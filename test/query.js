@@ -605,6 +605,7 @@ describe('getJoin', function(){
       Model.get(doc.id).getJoin().run().then(function(result) {
         util.sortById(result.otherDocs);
 
+        console.log(doc, result);
         assert.deepEqual(doc, result);
         assert(result.isSaved());
         for(var i=0; i<result.otherDocs.length; i++) {

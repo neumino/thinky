@@ -478,7 +478,7 @@ describe('Advanced cases', function(){
         id: String
       });
 
-      var LinkMM = thinky.createModel(modelNames[0] + '_' + modelNames[1], {
+      var LinkMM = thinky.createModel(modelNames[0] + '_' + modelNames[0], {
         id: String,
         extra: String
       });
@@ -504,7 +504,7 @@ describe('Advanced cases', function(){
         done();
       });
     });
-    it('hasAndBelongsToMany -- inset pivot table', function (done) {
+    it('hasAndBelongsToMany -- insert pivot table', function (done) {
       var Model = thinky.createModel(modelNames[0], {
         id: String
       });
@@ -531,6 +531,7 @@ describe('Advanced cases', function(){
       }).then(function () {
         return Model.get("m1").getJoin({ linksOM: true });
       }).then(function (resultM1) {
+        console.log('RESULT');
         assert.equal(true, resultM1.linksOM !== undefined);
         assert.equal(1, resultM1.linksOM.length);
         assert.equal(true, resultM1.linksOM[0].pivot !== undefined);
@@ -2417,7 +2418,7 @@ describe('Advanced cases', function(){
       doc1.saveAll({links: true}).then(function(result) {
         return Model.get(doc1.id).getJoin({links: true}).run()
       }).then(function(result) {
-        assert.deepEqual(result.links[0], doc2);
+        assert.equal(result.links[0].id, doc2.id);
         done();
       }).error(done);
     });
