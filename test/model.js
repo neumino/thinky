@@ -19,7 +19,7 @@ var cleanTables = function(done) {
   for(var name in modelNameSet) {
     promises.push(r.table(name).delete().run());
   }
-  Promise.settle(promises).error(function () {/*ignore*/}).finally(function() {
+  Promise.settle(promises).catch(function () {/*ignore*/}).finally(function() {
     // Add the links table
     for(var model in thinky.models) {
       modelNameSet[model] = true;
@@ -43,7 +43,7 @@ describe('createModel', function(){
       r.tableList().run().then(function(result) {
         assert.notEqual(result.indexOf(modelNames[0]), -1)
         done();
-      }).error(done)
+      }).catch(done)
     });
   });
   it('Create multiple models', function(done) {
@@ -61,7 +61,7 @@ describe('createModel', function(){
   });
   it('Check if the table was created', function(done){
     model = thinky.createModel("nonExistingTable", {id: String, name: String}, {init: false})
-    model.get(1).run().then(function() { done(new Error("Expecting error")) }).error(function(e) {
+    model.get(1).run().then(function() { done(new Error("Expecting error")) }).catch(function(e) {
       assert(e.message.match(/^Table `.*` does not exist in/));
       done();
     });
@@ -183,7 +183,7 @@ describe("Batch insert", function() {
     Model.save({id: "foo"}).then(function(result) {
       assert.deepEqual(result, {id: "foo"});
       done();
-    }).error(function(e) {
+    }).catch(function(e) {
       done(e);
     });
   });
@@ -203,7 +203,7 @@ describe("Batch insert", function() {
         assert(docs[i].isSaved());
       }
       done();
-    }).error(function(e) {
+    }).catch(function(e) {
       done(e);
     });
   });
@@ -212,7 +212,7 @@ describe("Batch insert", function() {
       id: String,
       num: Number
     });
-    Model.save([{id: 4}]).error(function(err) {
+    Model.save([{id: 4}]).catch(function(err) {
       assert.equal(err.message, "One of the documents is not valid. Original error:\nValue for [id] must be a string or null.");
       assert(err instanceof Errors.ValidationError);
       done();
@@ -232,7 +232,7 @@ describe("Batch insert", function() {
       }
       Model.save(docs).then(function() {
         done(new Error("Was expecting an error"));
-      }).error(function(e) {
+      }).catch(function(e) {
         assert(e.message.match(/An error occurred during the batch insert/));
         done();
       });
@@ -247,7 +247,7 @@ describe("Batch insert", function() {
       assert.equal(result.id, "foo");
       assert.equal(result.location.$reql_type$, "GEOMETRY");
       done();
-    }).error(function(e) {
+    }).catch(function(e) {
       done(e);
     });
   });
@@ -262,7 +262,7 @@ describe("Batch insert", function() {
     }).then(function(result) {
       assert.deepEqual(result, {id: "foo", bar: "buzz"});
       done();
-    }).error(function(e) {
+    }).catch(function(e) {
       done(e);
     });
   });
@@ -277,7 +277,7 @@ describe("Batch insert", function() {
     }).then(function(result) {
       assert.deepEqual(result, {id: "foo"});
       done();
-    }).error(function(e) {
+    }).catch(function(e) {
       done(e);
     });
   });
@@ -427,8 +427,8 @@ describe("Joins", function() {
       r.table(otherModel.getTableName()).indexList().run().then(function(result) {
         r.table(otherModel.getTableName()).indexWait(foreignKey).run().then(function() {
           done();
-        }).error(done);
-      }).error(done);
+        }).catch(done);
+      }).catch(done);
     })
   });
   it('BelongsTo should create an index on the other model', function(done) {
@@ -446,8 +446,8 @@ describe("Joins", function() {
       r.table(otherModel.getTableName()).indexList().run().then(function(result) {
         r.table(otherModel.getTableName()).indexWait('otherId').run().then(function() {
           done();
-        }).error(done);
-      }).error(done);
+        }).catch(done);
+      }).catch(done);
     })
   });
   it('hasMany should create an index on the other model', function(done) {
@@ -466,9 +466,9 @@ describe("Joins", function() {
       r.table(otherModel.getTableName()).indexList().run().then(function(result) {
         r.table(otherModel.getTableName()).indexWait(foreignKey).run().then(function() {
           done();
-        }).error(done);
+        }).catch(done);
 
-      }).error(done);
+      }).catch(done);
     })
   });
 
@@ -491,9 +491,9 @@ describe("Joins", function() {
       r.table(model.getTableName()).indexList().run().then(function(result) {
         r.table(model.getTableName()).indexWait("notid1").run().then(function() {
           done();
-        }).error(done);
+        }).catch(done);
 
-      }).error(done);
+      }).catch(done);
     })
   });
 
@@ -516,8 +516,8 @@ describe("Joins", function() {
       r.table(otherModel.getTableName()).indexList().run().then(function(result) {
         r.table(otherModel.getTableName()).indexWait("notid2").run().then(function() {
           done();
-        }).error(done);
-      }).error(done);
+        }).catch(done);
+      }).catch(done);
     })
   });
 
@@ -542,8 +542,8 @@ describe("Joins", function() {
       r.table(linkName).indexList().run().then(function(result) {
         r.table(otherModel.getTableName()).indexWait("notid2").run().then(function() {
           done();
-        }).error(done);
-      }).error(done);
+        }).catch(done);
+      }).catch(done);
     });
   });
   it('_apply is reserved ', function() {
@@ -756,7 +756,7 @@ describe('virtual', function(){
     }).then(function(result) {
       assert.equal(result.numVirtual, undefined);
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('Virtual fields should not be saved but still regenerated once retrieved', function(done) {
     var Model = thinky.createModel(modelNames[0], {
@@ -784,7 +784,7 @@ describe('virtual', function(){
       assert.equal(result.numVirtual, 3);
 
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('Virtual fields should not be saved but should be put back later (if no default)', function(done) {
     var Model = thinky.createModel(modelNames[0], {
@@ -806,7 +806,7 @@ describe('virtual', function(){
       assert.equal(result.numVirtual, undefined);
 
       done();
-    }).error(done).catch(done);
+    }).catch(done).catch(done);
   });
   it('Virtual fields should be genrated after other default values', function() {
     var Model = thinky.createModel(modelNames[0], {

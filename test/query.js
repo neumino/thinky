@@ -75,7 +75,7 @@ describe('Model queries', function() {
       }
 
       done()
-    }).error(done);
+    }).catch(done);
   });
 
   after(cleanTables);
@@ -83,7 +83,7 @@ describe('Model queries', function() {
   it('Model.run() should return', function(done){
     Model.run().then(function(result) {
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('Model.run() should take a callback', function(done){
     Model.run(function(err, result) {
@@ -100,7 +100,7 @@ describe('Model queries', function() {
       assert.equal(result.length, 3);
       assert.deepEqual(bag, newBag);
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('Model.run() should return instances of Document', function(done){
     Model.run().then(function(result) {
@@ -109,7 +109,7 @@ describe('Model queries', function() {
         assert(result[i] instanceof Document);
       }
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('Model.run() should return instances of the model', function(done){
     Model.run().then(function(result) {
@@ -119,12 +119,12 @@ describe('Model queries', function() {
         assert.deepEqual(result[i].constructor, Model);
       }
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('Model.add(1).run() should be able to error', function(done){
     Model.add(1).run().then(function(result) {
       done(new Error("The promise should not be resolved."))
-    }).error(function(error) {
+    }).catch(function(error) {
       assert(error.message.match(/^Expected type DATUM but found TABLE/));
       done();
     });
@@ -132,7 +132,7 @@ describe('Model queries', function() {
   it('Model.map(1).run should error', function(done){
     Model.map(function() { return 1 }).run().then(function(result) {
       done(new Error("The promise should not be resolved."))
-    }).error(function(error) {
+    }).catch(function(error) {
       assert.equal(error.message, "The results could not be converted to instances of `"+Model.getTableName()+"`\nDetailed error: Cannot build a new instance of `"+Model.getTableName()+"` without an object")
       done();
     });
@@ -141,19 +141,19 @@ describe('Model queries', function() {
     Model.get(data[0].id).run().then(function(result) {
       assert.deepEqual(data[0], result);
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('Model._get() should return null if no doc is found', function(done){
     Model._get('nonExistingId').execute().then(function(result) {
       assert.equal(result, null)
       done();
-    }).error(done);
+    }).catch(done);
   });
 
   it('Model.get().merge(..) should throw before calling merge', function(done){
     Model.get("NonExistingKey").merge({foo: "bar"}).run().then(function(result) {
       done(new Error("Was expecting an error"));
-    }).error(function(error) {
+    }).catch(function(error) {
       assert(error.message.match(Errors.DOCUMENT_NOT_FOUND_REGEX));
       done();
     });
@@ -164,7 +164,7 @@ describe('Model queries', function() {
       assert.deepEqual(result.__proto__.constructor, Model);
       assert.deepEqual(result.constructor, Model);
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('Model.group("foo").run should work -- without extra argument', function(done){
     Model.group("foo").run().then(function(result) {
@@ -176,7 +176,7 @@ describe('Model queries', function() {
         }
       }
       done()
-    }).error(function(error) {
+    }).catch(function(error) {
       done();
     });
   });
@@ -190,7 +190,7 @@ describe('Model queries', function() {
         }
       }
       done()
-    }).error(function(error) {
+    }).catch(function(error) {
       done();
     });
   });
@@ -199,7 +199,7 @@ describe('Model queries', function() {
       assert(result instanceof Document);
       assert(result.isSaved());
       done()
-    }).error(function(error) {
+    }).catch(function(error) {
       done();
     });
   });
@@ -213,7 +213,7 @@ describe('Model queries', function() {
         }
       }
       done()
-    }).error(function(error) {
+    }).catch(function(error) {
       done();
     });
   });
@@ -226,7 +226,7 @@ describe('Model queries', function() {
         }
       }
       done()
-    }).error(function(error) {
+    }).catch(function(error) {
       done();
     });
   });
@@ -250,27 +250,27 @@ describe('Model queries', function() {
       }
       done();
 
-    }).error(done);
+    }).catch(done);
   });
   it('Model.filter(false) should work', function(done){
     Model.filter(false).run().then(function(result) {
       assert.equal(result.length, 0);
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('Model.execute should not return instances of the model', function(done){
     Model.execute().then(function(result) {
       assert(!(result[0] instanceof Document));
       assert.equal(result.length, 3);
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('Model.execute should work with a callback', function(done){
     Model.execute(function(err, result) {
       assert(!(result[0] instanceof Document));
       assert.equal(result.length, 3);
       done();
-    }).error(done);
+    }).catch(done);
   });
 
   it('Model.map(1).execute should work', function(done){
@@ -278,12 +278,12 @@ describe('Model queries', function() {
       assert(!(result[0] instanceof Document));
       assert.equal(result.length, 3);
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('Model.add(1).execute() should be able to error', function(done){
     Model.add(1).execute().then(function(result) {
       done(new Error("The promise should not be resolved."))
-    }).error(function(error) {
+    }).catch(function(error) {
       assert(error.message.match(/^Expected type DATUM but found TABLE/));
       done();
     });
@@ -331,7 +331,7 @@ describe('getJoin', function(){
         assert(result.isSaved());
         assert(result.otherDoc.isSaved());
         done()
-      }).error(done);
+      }).catch(done);
     })
     it('should retrieve joined documents with sequence', function(done) {
       Model.filter({id: doc.id}).getJoin().run().then(function(result) {
@@ -339,7 +339,7 @@ describe('getJoin', function(){
         assert(result[0].isSaved());
         assert(result[0].otherDoc.isSaved());
         done()
-      }).error(done);
+      }).catch(done);
     })
   })
   describe("Joins - belongsTo", function() {
@@ -381,7 +381,7 @@ describe('getJoin', function(){
         assert(result.isSaved());
         assert(result.otherDoc.isSaved());
         done()
-      }).error(done);
+      }).catch(done);
     })
     it('should retrieve joined documents with sequence', function(done) {
       Model.filter({id: doc.id}).getJoin().run().then(function(result) {
@@ -389,7 +389,7 @@ describe('getJoin', function(){
         assert(result[0].isSaved());
         assert(result[0].otherDoc.isSaved());
         done()
-      }).error(done);
+      }).catch(done);
     })
   })
   describe("Joins - hasMany with allowExtra(false)", function() {
@@ -419,7 +419,7 @@ describe('getJoin', function(){
       doc.saveAll().then(function(doc) {
         util.sortById(doc.otherDocs);
         done();
-      }).error(done);
+      }).catch(done);
 
     });
 
@@ -435,7 +435,7 @@ describe('getJoin', function(){
           assert.equal(result.otherDocs[i].isSaved(), true);
         }
         done()
-      }).error(done);
+      }).catch(done);
     })
     it('should retrieve joined documents with sequence', function(done) {
       Model.filter({id: doc.id}).getJoin().run().then(function(result) {
@@ -448,7 +448,7 @@ describe('getJoin', function(){
         }
 
         done()
-      }).error(done);
+      }).catch(done);
     })
   })
   describe("Joins - hasMany with removeExtra()", function() {
@@ -478,7 +478,7 @@ describe('getJoin', function(){
       doc.saveAll().then(function(doc) {
         util.sortById(doc.otherDocs);
         done();
-      }).error(done);
+      }).catch(done);
 
     });
 
@@ -494,7 +494,7 @@ describe('getJoin', function(){
           assert.equal(result.otherDocs[i].isSaved(), true);
         }
         done()
-      }).error(done);
+      }).catch(done);
     })
     it('should retrieve joined documents with sequence', function(done) {
       Model.filter({id: doc.id}).getJoin().run().then(function(result) {
@@ -507,7 +507,7 @@ describe('getJoin', function(){
         }
 
         done()
-      }).error(done);
+      }).catch(done);
     })
   })
   describe("Joins - hasMany", function() {
@@ -537,7 +537,7 @@ describe('getJoin', function(){
       doc.saveAll().then(function(doc) {
         util.sortById(doc.otherDocs);
         done();
-      }).error(done);
+      }).catch(done);
 
     });
 
@@ -553,7 +553,7 @@ describe('getJoin', function(){
           assert.equal(result.otherDocs[i].isSaved(), true);
         }
         done()
-      }).error(done);
+      }).catch(done);
     })
     it('should retrieve joined documents with sequence', function(done) {
       Model.filter({id: doc.id}).getJoin().run().then(function(result) {
@@ -566,7 +566,7 @@ describe('getJoin', function(){
         }
 
         done()
-      }).error(done);
+      }).catch(done);
     })
   })
   describe("Joins - hasAndBelongsToMany", function() {
@@ -595,7 +595,7 @@ describe('getJoin', function(){
       doc.saveAll().then(function(doc) {
         util.sortById(doc.otherDocs);
         done();
-      }).error(done);
+      }).catch(done);
 
     });
 
@@ -611,7 +611,7 @@ describe('getJoin', function(){
           assert.equal(result.otherDocs[i].isSaved(), true);
         }
         done()
-      }).error(done);
+      }).catch(done);
     })
     it('should retrieve joined documents with sequence', function(done) {
       Model.filter({id: doc.id}).getJoin().run().then(function(result) {
@@ -624,7 +624,7 @@ describe('getJoin', function(){
         }
 
         done()
-      }).error(done);
+      }).catch(done);
     })
   })
   describe('options', function() {
@@ -683,7 +683,7 @@ describe('getJoin', function(){
           assert.equal(result.has.length, 5);
           done();
         });
-      }).error(done);
+      }).catch(done);
     });
     it('_apply should work with count (not coerce to arrays)', function(done) {
       var name = util.s8();
@@ -717,7 +717,7 @@ describe('getJoin', function(){
           assert.equal(result.has, 3);
           done();
         });
-      }).error(done);
+      }).catch(done);
     });
 
   });
@@ -748,8 +748,8 @@ describe('getJoin', function(){
         Model.get(doc.id).getJoin().run().then(function(result) {
           assert.equal(result.otherDoc, undefined);
           done();
-        }).error(done);
-      }).error(done);
+        }).catch(done);
+      }).catch(done);
     });
     it('belongsTo', function(done) {
       Model = thinky.createModel(modelNames[0], {
@@ -773,7 +773,7 @@ describe('getJoin', function(){
         Model.get(doc.id).getJoin().run().then(function(result) {
           assert.equal(result.otherDoc, undefined);
           done();
-        }).error(done);
+        }).catch(done);
       });
     });
     it('hasMany', function(done) {
@@ -797,7 +797,7 @@ describe('getJoin', function(){
         Model.get(doc.id).getJoin().run().then(function(result) {
           assert.equal(result.otherDocs, undefined);
           done();
-        }).error(done);
+        }).catch(done);
       });
     });
     it('hasAndBelongsToMany', function(done) {
@@ -821,8 +821,8 @@ describe('getJoin', function(){
         Model.get(doc.id).getJoin().run().then(function(result) {
           assert.equal(result.otherDocs, undefined);
           done();
-        }).error(done);
-      }).error(done);
+        }).catch(done);
+      }).catch(done);
 
     });
   });
@@ -1141,9 +1141,9 @@ describe('removeRelation', function(){
     doc.saveAll().then(function(doc) {
       return Model.get(doc.id).removeRelation('otherDoc').run()
     }).then(function(otherDocResults) {
-      assert.equal(otherDocResults.id, otherDoc.id); 
-      assert.equal(otherDocResults.str, otherDoc.str); 
-      assert.equal(otherDocResults.num, otherDoc.num); 
+      assert.equal(otherDocResults.id, otherDoc.id);
+      assert.equal(otherDocResults.str, otherDoc.str);
+      assert.equal(otherDocResults.num, otherDoc.num);
       return OtherModel.get(otherDoc.id).run()
     }).then(function(doc) {
       assert.equal(doc.foreignKey, undefined);
@@ -1178,9 +1178,9 @@ describe('removeRelation', function(){
       return Model.get(doc.id).removeRelation('otherDocs').run()
     }).then(function(otherDocResults) {
       assert.equal(otherDocResults.length, 1);
-      assert.equal(otherDocResults[0].id, otherDoc.id); 
-      assert.equal(otherDocResults[0].str, otherDoc.str); 
-      assert.equal(otherDocResults[0].num, otherDoc.num); 
+      assert.equal(otherDocResults[0].id, otherDoc.id);
+      assert.equal(otherDocResults[0].str, otherDoc.str);
+      assert.equal(otherDocResults[0].num, otherDoc.num);
 
       return OtherModel.get(otherDoc.id).run()
     }).then(function(doc) {
@@ -1218,9 +1218,9 @@ describe('removeRelation', function(){
       return Model.get(doc.id).removeRelation('otherDocs', {id: otherDoc2.id}).run()
     }).then(function(otherDocResults) {
       assert.equal(otherDocResults.length, 1);
-      assert.equal(otherDocResults[0].id, otherDoc2.id); 
-      assert.equal(otherDocResults[0].str, otherDoc2.str); 
-      assert.equal(otherDocResults[0].num, otherDoc2.num); 
+      assert.equal(otherDocResults[0].id, otherDoc2.id);
+      assert.equal(otherDocResults[0].str, otherDoc2.str);
+      assert.equal(otherDocResults[0].num, otherDoc2.num);
 
       return Model.get(doc.id).getJoin({otherDocs: true}).run()
     }).then(function(doc) {
@@ -1421,9 +1421,9 @@ describe('Query.run() should take options', function(){
           data.push(result);
 
           done()
-        }).error(done);
-      }).error(done);
-    }).error(done);
+        }).catch(done);
+      }).catch(done);
+    }).catch(done);
   });
 
   after(cleanTables);
@@ -1435,7 +1435,7 @@ describe('Query.run() should take options', function(){
     }).catch(Errors.DocumentNotFound, function(err) {
       assert(err.message.match(Errors.DOCUMENT_NOT_FOUND_REGEX));
       done();
-    }).error(function() {
+    }).catch(function() {
       done(new Error("Not the expected error"))
     });
   });
@@ -1443,7 +1443,7 @@ describe('Query.run() should take options', function(){
     var Errors = thinky.Errors;
     Model.get(0).run().then(function() {
       done(new Error("Was expecting an error"))
-    }).error(function(err) {
+    }).catch(function(err) {
       assert(err instanceof Errors.DocumentNotFound);
       assert(err.message.match(Errors.DOCUMENT_NOT_FOUND_REGEX));
       done();
@@ -1460,7 +1460,7 @@ describe('Query.run() should take options', function(){
         }
       }
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('Query.run({groupFormat: "raw"}) should be ignored', function(done){
     Model.group('num').run({groupFormat: "raw"}).then(function(result) {
@@ -1470,7 +1470,7 @@ describe('Query.run() should take options', function(){
         assert(result[i].reduction.length > 0)
       }
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('Query.execute({groupFormat: "raw"}) should not be ignored', function(done){
     Model.group('num').execute({groupFormat: "raw"}).then(function(result) {
@@ -1480,12 +1480,12 @@ describe('Query.run() should take options', function(){
         assert.equal(result.data[i].length, 2)
       }
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('Query.group("num").count().run() should not work', function(done){
     Model.group('num').count().run().then(function(result) {
       done(new Error("Should have thrown an error"))
-    }).error(function(err) {
+    }).catch(function(err) {
       done()
     });
   });
@@ -1494,14 +1494,14 @@ describe('Query.run() should take options', function(){
       assert.equal(result.length, 2);
       assert(result[0].reduction instanceof Document);
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('Query.group("num").count().execute() should work', function(done){
     Model.group('num').count().execute().then(function(result) {
       assert.equal(result.length, 2);
       assert((result[0].reduction === 2 && result[0].group === 1) ||(result[0].reduction === 1 && result[0].group === 2))
       done()
-    }).error(done);
+    }).catch(done);
   });
 });
 
@@ -1578,7 +1578,7 @@ describe('error', function() {
     var r = thinky.r;
     var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
 
-    User.filter(r.error('test')).error(function() {
+    User.filter(r.error('test')).catch(function() {
         done();
     });
   });
@@ -1589,7 +1589,7 @@ describe('error', function() {
     var r = thinky.r;
     var User = thinky.createModel(modelNames[0], {id: String}, {init: false});
 
-    var promise = User.filter(r.error('test')).error(function() {});
+    var promise = User.filter(r.error('test')).catch(function() {});
     assert(promise instanceof Promise, 'not a promise');
 
     promise.finally(function() {
@@ -1707,8 +1707,8 @@ describe('optimizer', function() {
         Model.once('ready', function() {
           done();
         })
-      }).error(done);
-    }).error(done);
+      }).catch(done);
+    }).catch(done);
   });
   it('orderBy should be able to use an index - thanks to ensureIndex', function() {
     var query = Model.orderBy('name1').toString();
@@ -1776,7 +1776,7 @@ describe('In place writes', function() {
       // We can force changes to be retrieved with returnChanges: 'always'
       assert.deepEqual(result, {id: doc.id, num: 1});
       done();
-    }).error(done);
+    }).catch(done);
   })
   it('Point write - post non valid - primary key is a string', function(done) {
     var Model = thinky.createModel(modelNames[0], {
@@ -1788,12 +1788,12 @@ describe('In place writes', function() {
       return Model.get(doc.id).update({num: r.expr("foo")}).run()
     }).then(function() {
       done(new Error("Was expecting an error"));
-    }).error(function(error) {
+    }).catch(function(error) {
       assert(error.message.match("The write failed, and the changes were reverted"));
       Model.get(doc.id).run().then(function(result) {
         assert.deepEqual(doc, result);
         done();
-      }).error(done);
+      }).catch(done);
     })
   })
   it('Point write - post non valid - primary key not a string', function(done) {
@@ -1806,12 +1806,12 @@ describe('In place writes', function() {
       return Model.get(doc.id).update({num: r.expr("foo")}).run()
     }).then(function() {
       done(new Error("Was expecting an error"));
-    }).error(function(error) {
+    }).catch(function(error) {
       assert(error.message.match("The write failed, and the changes were reverted"));
       Model.get(doc.id).run().then(function(result) {
         assert.deepEqual(doc, result);
         done();
-      }).error(done);
+      }).catch(done);
     })
   })
   it('Range write - valid', function(done) {
@@ -1832,7 +1832,7 @@ describe('In place writes', function() {
       assert.equal(result[0].num, 1);
       assert.equal(result[1].num, 1);
       done();
-    }).error(done);
+    }).catch(done);
   })
   it('Range write with one doc - valid', function(done) {
     var Model = thinky.createModel(modelNames[0], {
@@ -1847,7 +1847,7 @@ describe('In place writes', function() {
       assert.equal(result[0].id, docs[0].id);
       assert.equal(result[0].num, 1);
       done();
-    }).error(done);
+    }).catch(done);
   })
 
   it('Range write - post non valid - primary key is a string', function(done) {
@@ -1860,15 +1860,15 @@ describe('In place writes', function() {
       return Model.update({num: r.expr("foo")}).run()
     }).then(function() {
       done(new Error("Was expecting an error"));
-    }).error(function(error) {
+    }).catch(function(error) {
       assert(error.message.match("The write failed, and the changes were reverted"));
       Model.run().then(function(result) {
         result.sort(function(a, b) { return (a.num > b.num) ? 1 : -1; });
         assert.equal(result[0].num, 0);
         assert.equal(result[1].num, 1);
         done();
-      }).error(done);
-    }).error(done);
+      }).catch(done);
+    }).catch(done);
   })
   it('Range write - post non valid - primary key is not a string', function(done) {
     var Model = thinky.createModel(modelNames[0], {
@@ -1880,16 +1880,16 @@ describe('In place writes', function() {
       return Model.update({num: r.expr("foo")}).run()
     }).then(function() {
       done(new Error("Was expecting an error"));
-    }).error(function(error) {
+    }).catch(function(error) {
       assert(error.message.match("The write failed, and the changes were reverted"));
       Model.run().then(function(result) {
         result.sort(function(a, b) { return (a.num > b.num) ? 1 : -1; });
         assert.equal(result[0].num, 0);
         assert.equal(result[1].num, 1);
         done();
-      }).error(done);
+      }).catch(done);
 
-    }).error(done);
+    }).catch(done);
   })
   it('Point write - pre non valid', function(done) {
     var Model = thinky.createModel(modelNames[0], {
@@ -1901,12 +1901,12 @@ describe('In place writes', function() {
       return Model.get(doc.id).update({num: "foo"}).run()
     }).then(function() {
       done(new Error("Was expecting an error"));
-    }).error(function(error) {
+    }).catch(function(error) {
       assert(error.message.match(/^The partial value is not valid, so the write was not executed. The original error was:/));
       Model.get(doc.id).run().then(function(result) {
         assert.deepEqual(doc, result);
         done();
-      }).error(done);
+      }).catch(done);
     })
   })
   it('Point write on non existing doc', function(done) {
@@ -1914,7 +1914,7 @@ describe('In place writes', function() {
       id: String,
       num: Number
     });
-    Model.get('nonExistingId').update({foo: 'bar'}).run().error(function(error) {
+    Model.get('nonExistingId').update({foo: 'bar'}).run().catch(function(error) {
       assert(Errors.DOCUMENT_NOT_FOUND_REGEX.test(error.message));
       done();
     });
@@ -1944,7 +1944,7 @@ describe('In place writes', function() {
 
     it('handles Promises', function (done) {
       var Model = thinky.createModel(modelNames[0], {id: String});
-    
+
       var doc = new Model({id: util.s8(), num: 0});
       var bound = Model.get(doc.id).bindRun();
 
@@ -1961,7 +1961,7 @@ describe('In place writes', function() {
 
     it('handles node-style callbacks', function (done) {
       var Model = thinky.createModel(modelNames[0], {id: String});
-    
+
       var doc = new Model({id: util.s8(), num: 0});
       var bound = Model.get(doc.id).bindRun();
 
@@ -1982,7 +1982,7 @@ describe('In place writes', function() {
 
     it('handles Promises', function (done) {
       var Model = thinky.createModel(modelNames[0], {id: String});
-    
+
       var doc = new Model({id: util.s8(), num: 0});
       var bound = Model.get(doc.id).bindExecute();
 
@@ -1999,7 +1999,7 @@ describe('In place writes', function() {
 
     it('handles node-style callbacks', function (done) {
       var Model = thinky.createModel(modelNames[0], {id: String});
-    
+
       var doc = new Model({id: util.s8(), num: 0});
       var bound = Model.get(doc.id).bindExecute();
 
@@ -2015,5 +2015,5 @@ describe('In place writes', function() {
     });
 
   });
-  
+
 });

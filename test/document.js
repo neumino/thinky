@@ -58,7 +58,7 @@ describe('save', function() {
       doc.save().then(function(result) {
         assert.equal(doc.isSaved(), true);
         done();
-      }).error(done);
+      }).catch(done);
     });
     it('Save should fail if validate throws', function(done){
       var str = util.s8();
@@ -71,7 +71,7 @@ describe('save', function() {
       assert.equal(doc.isSaved(), false);
       doc.save().then(function(result) {
         done(new Error("Was expecting an error"));
-      }).error(function(error) {
+      }).catch(function(error) {
         done();
       });
     });
@@ -104,13 +104,13 @@ describe('save', function() {
         })
         doc2.save().then(function(r) {
           done(new Error("Expecting error"))
-        }).error(function (err) {
+        }).catch(function (err) {
           assert(err instanceof Errors.DuplicatePrimaryKey);
           assert(err.message.match(Errors.DUPLICATE_PRIMARY_KEY_REGEX));
           assert.equal(err.primaryKey, 'id');
           done();
         });
-      }).error(done);
+      }).catch(done);
     });
 
     it('setSaved should do the same', function(){
@@ -137,7 +137,7 @@ describe('save', function() {
       doc.save().then(function(result) {
         done();
 
-      }).error(done);
+      }).catch(done);
     });
     it('Save then the table is ready', function(done){
       var str = util.s8();
@@ -149,7 +149,7 @@ describe('save', function() {
       })
       doc.save().then(function(result) {
         done();
-      }).error(done);
+      }).catch(done);
     });
     it('Save the document should be updated on place', function(done){
       var str = util.s8();
@@ -165,7 +165,7 @@ describe('save', function() {
         assert.equal(doc.num, num);
         assert.notEqual(doc.id, undefined);
         done();
-      }).error(done);
+      }).catch(done);
     });
     it('Save should be able to update a doc', function(done){
       var str = util.s8();
@@ -185,7 +185,7 @@ describe('save', function() {
             done();
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('Updating a document should keep a reference to the old value ', function(done){
       var str = util.s8();
@@ -207,7 +207,7 @@ describe('save', function() {
           });
           done();
         });
-      }).error(done);
+      }).catch(done);
     });
     it('Updating a document should validate it first (and in case of failure, it should not be persisted in the db)', function(done){
       var str = util.s8();
@@ -222,14 +222,14 @@ describe('save', function() {
         doc.str = 2
         doc.save().then(function(result) {
           done(new Error("Expecting an error"))
-        }).error(function() {
+        }).catch(function() {
           Model.get(doc.id).run().then(function(result) {
             // Make sure that the document was not updated
             assert.equal(result.str, str);
             done();
-          }).error(done);
+          }).catch(done);
         });
-      }).error(done);
+      }).catch(done);
     });
     it('Regression #117 - #118', function(done){
       var t = new Model({
@@ -239,7 +239,7 @@ describe('save', function() {
       t.save().then(function(result) {
         assert.equal(result.extra.nested, 1)
         done()
-      }).error(done)
+      }).catch(done)
     });
     it('Nesting undefined field', function(done){
       var t = new Model({
@@ -249,7 +249,7 @@ describe('save', function() {
       t.save().then(function(result) {
         assert.equal(result.extra.nested.foo, 1)
         done()
-      }).error(done)
+      }).catch(done)
     });
     it('Point - ReQL point', function(done){
       Model = thinky.createModel(modelNames[0], {
@@ -263,7 +263,7 @@ describe('save', function() {
       t.save().then(function(result) {
         assert.equal(result.point.$reql_type$, 'GEOMETRY');
         done()
-      }).error(done)
+      }).catch(done)
     });
   });
   describe("Replacement", function() {
@@ -285,7 +285,7 @@ describe('save', function() {
       }).then(function(result) {
         assert.equal(result.extra, undefined)
         done()
-      }).error(done).catch(done);
+      }).catch(done).catch(done);
     });
 
     it('Date as string should be coerced to ReQL dates', function(done){
@@ -307,7 +307,7 @@ describe('save', function() {
         assert.equal(Object.prototype.toString.call(result.date), "[object Object]");
         assert.equal(result.date.$reql_type$, "TIME");
         done()
-      }).error(done)
+      }).catch(done)
     });
     it('Date as string should be coerced to ReQL dates in array', function(done){
       var Model = thinky.createModel(modelNames[0], {
@@ -332,7 +332,7 @@ describe('save', function() {
         assert.equal(Object.prototype.toString.call(result.array[0].date), "[object Object]");
         assert.equal(result.array[0].date.$reql_type$, "TIME");
         done()
-      }).error(done)
+      }).catch(done)
     });
 
     it('Date as number should be coerced to ReQL dates', function(done){
@@ -353,7 +353,7 @@ describe('save', function() {
         assert.equal(Object.prototype.toString.call(result.date), "[object Object]");
         assert.equal(result.date.$reql_type$, "TIME");
         done()
-      }).error(done)
+      }).catch(done)
     });
     it('Points as array should be coerced to ReQL points', function(done){
       var Model = thinky.createModel(modelNames[0], {
@@ -371,8 +371,8 @@ describe('save', function() {
           assert.equal(t.loc.type, "Point")
           assert(Array.isArray(t.loc.coordinates))
           done()
-        }).error(done);
-      }).error(done)
+        }).catch(done);
+      }).catch(done)
     });
     it('Raw ReQL points should work', function(done){
       var Model = thinky.createModel(modelNames[0], {
@@ -393,8 +393,8 @@ describe('save', function() {
           assert.equal(t.loc.type, "Point")
           assert(Array.isArray(t.loc.coordinates))
           done()
-        }).error(done);
-      }).error(done)
+        }).catch(done);
+      }).catch(done)
     });
 
     it('Points as objects should be coerced to ReQL points', function(done){
@@ -413,7 +413,7 @@ describe('save', function() {
         assert.equal(t.loc.$reql_type$, "GEOMETRY")
         assert(Array.isArray(t.loc.coordinates))
         done()
-      }).error(done)
+      }).catch(done)
     });
     it('Points as geojson should be coerced to ReQL points', function(done){
       var Model = thinky.createModel(modelNames[0], {
@@ -431,7 +431,7 @@ describe('save', function() {
         assert.equal(t.loc.$reql_type$, "GEOMETRY")
         assert(Array.isArray(t.loc.coordinates))
         done()
-      }).error(done)
+      }).catch(done)
     });
     it('Number as string should be coerced to number', function(done){
       var Model = thinky.createModel(modelNames[0], {
@@ -449,7 +449,7 @@ describe('save', function() {
         assert.equal(typeof t.number, "number")
         assert.equal(t.number, 123456)
         done()
-      }).error(done)
+      }).catch(done)
     });
   });
   describe("Joins - hasOne", function() {
@@ -487,7 +487,7 @@ describe('save', function() {
         assert.equal(doc.str, docValues.str);
         assert.equal(doc.num, docValues.num);
         done();
-      }).error(done);
+      }).catch(done);
     });
     it('new should create instances of Document for joined documents too', function() {
       var docValues = {str: util.s8(), num: util.random(), otherDoc: {str: util.s8(), num: util.random()}}
@@ -505,7 +505,7 @@ describe('save', function() {
       doc.save().then(function(doc) {
         assert.strictEqual(doc.otherDoc, otherDoc)
         done();
-      }).error(done);
+      }).catch(done);
     })
     it('saveAll should save everything', function(done) {
       var docValues = {str: util.s8(), num: util.random()}
@@ -524,7 +524,7 @@ describe('save', function() {
         assert.strictEqual(doc.otherDoc, otherDoc)
         assert.strictEqual(doc.otherDoc.foreignKey, doc.id)
         done();
-      }).error(done);
+      }).catch(done);
     })
     it('save should not remove the foreign key', function(done) {
       var docValues = {str: util.s8(), num: util.random()}
@@ -541,7 +541,7 @@ describe('save', function() {
       }).then(function(result) {
         assert.equal(result.foreignKey, doc.id);
         done();
-      }).error(done);
+      }).catch(done);
     })
   });
   describe("Joins - belongsTo", function() {
@@ -577,7 +577,7 @@ describe('save', function() {
         assert.equal(doc.str, docValues.str);
         assert.equal(doc.num, docValues.num);
         done();
-      }).error(done);
+      }).catch(done);
     })
     it('save should not change the joined document', function(done) {
       var docValues = {str: util.s8(), num: util.random()}
@@ -589,7 +589,7 @@ describe('save', function() {
       doc.save().then(function(doc) {
         assert.strictEqual(doc.otherDoc, otherDoc)
         done();
-      }).error(done);
+      }).catch(done);
     })
     it('saveAll should save everything', function(done) {
       var docValues = {str: util.s8(), num: util.random()}
@@ -608,7 +608,7 @@ describe('save', function() {
         assert.strictEqual(doc.otherDoc, otherDoc)
         assert.strictEqual(doc.foreignKey, doc.otherDoc.id)
         done();
-      }).error(done);
+      }).catch(done);
     })
     it('saveAll should save a referene to this in the belongsTo doc', function(done) {
       var docValues = {str: util.s8(), num: util.random()}
@@ -620,7 +620,7 @@ describe('save', function() {
       doc.saveAll().then(function(doc2) {
         assert.equal(doc.otherDoc.__proto__._parents._belongsTo[Model.getTableName()][0].doc, doc);
         done();
-      }).error(done);
+      }).catch(done);
     })
     it('saveAll should delete a reference of belongsTo if the document was removed', function(done) {
       var docValues = {str: util.s8(), num: util.random()}
@@ -640,7 +640,7 @@ describe('save', function() {
 
           done();
         })
-      }).error(done);
+      }).catch(done);
     })
     it('saveAll should delete a reference of belongsTo only if the document was first retrieved', function(done) {
       var docValues = {str: util.s8(), num: util.random()}
@@ -666,7 +666,7 @@ describe('save', function() {
             });
           });
         });
-      }).error(done);
+      }).catch(done);
     });
     it('save should not remove the foreign key', function(done) {
       var docValues = {str: util.s8(), num: util.random()}
@@ -683,7 +683,7 @@ describe('save', function() {
       }).then(function(result) {
         assert.equal(result.foreignKey, otherDoc.id);
         done();
-      }).error(done);
+      }).catch(done);
     })
 
   });
@@ -725,7 +725,7 @@ describe('save', function() {
         assert.equal(doc.str, docValues.str);
         assert.equal(doc.num, docValues.num);
         done();
-      }).error(done);
+      }).catch(done);
     })
     it('save should not change the joined document', function(done) {
       var docValues = {str: util.s8(), num: util.random()}
@@ -736,7 +736,7 @@ describe('save', function() {
       doc.save().then(function(doc) {
         assert.strictEqual(doc.otherDocs, otherDocs)
         done();
-      }).error(done);
+      }).catch(done);
     })
     it('saveAll should save everything', function(done) {
       var docValues = {str: util.s8(), num: util.random()}
@@ -758,7 +758,7 @@ describe('save', function() {
           assert.strictEqual(doc.otherDocs[i].foreignKey, doc.id)
         }
         done();
-      }).error(done);
+      }).catch(done);
     })
     it('saveAll should not throw if the joined documents are missing', function(done) {
       var docValues = {str: util.s8(), num: util.random()}
@@ -766,7 +766,7 @@ describe('save', function() {
 
       doc.saveAll().then(function(doc) {
         done();
-      }).error(done);
+      }).catch(done);
     })
 
   });
@@ -805,7 +805,7 @@ describe('save', function() {
         assert.equal(doc.str, docValues.str);
         assert.equal(doc.num, docValues.num);
         done();
-      }).error(done);
+      }).catch(done);
     })
     it('save should not change the joined document', function(done) {
       var docValues = {str: util.s8(), num: util.random()}
@@ -820,7 +820,7 @@ describe('save', function() {
       doc.save().then(function(doc) {
         assert.strictEqual(doc.otherDocs, otherDocs)
         done();
-      }).error(done);
+      }).catch(done);
     })
     it('saveAll should save everything', function(done) {
       var docValues = {str: util.s8(), num: util.random()}
@@ -858,7 +858,7 @@ describe('save', function() {
           done();
         })
 
-      }).error(done);
+      }).catch(done);
     })
     it('saveAll should create new links with the good id', function(done) {
       var docValues = {str: util.s8(), num: util.random()}
@@ -904,8 +904,8 @@ describe('save', function() {
           assert.equal(total, 3);
 
           done();
-        }).error(done);
-      }).error(done);
+        }).catch(done);
+      }).catch(done);
     })
     it('saveAll should create new links with the secondary value', function(done) {
       var docValues = {str: util.s8(), num: util.random()}
@@ -950,10 +950,10 @@ describe('save', function() {
 
           assert.equal(total, 3);
           done();
-        }).error(done);
+        }).catch(done);
 
 
-      }).error(done);
+      }).catch(done);
     })
     it('saveAll should delete links if they are missing', function(done) {
       var linkName;
@@ -981,7 +981,7 @@ describe('save', function() {
             done();
           });
         });
-      }).error(done);
+      }).catch(done);
     })
     it('Keep the same reference', function(done) {
       var otherDoc = new OtherModel({str: util.s8(), num: util.random()});
@@ -1028,8 +1028,8 @@ describe('save', function() {
           assert.equal(total, 3);
 
           done();
-        }).error(done);
-      }).error(done);
+        }).catch(done);
+      }).catch(done);
     })
 
   });
@@ -1076,7 +1076,7 @@ describe('save', function() {
             done();
           });
         });
-      }).error(done);
+      }).catch(done);
 
     })
   });
@@ -1127,7 +1127,7 @@ describe('save', function() {
 
           });
         });
-      }).error(done);
+      }).catch(done);
 
     })
   });
@@ -1172,7 +1172,7 @@ describe('save', function() {
             })
           });
         });
-      }).error(done);
+      }).catch(done);
 
     })
   });
@@ -1225,10 +1225,10 @@ describe('save', function() {
             Model.get(doc.id).getJoin().run().then(function(result) {
               assert.equal(result.otherDocs.length, 2);
               done();
-            }).error(done);
-          }).error(done);
-        }).error(done);
-      }).error(done);
+            }).catch(done);
+          }).catch(done);
+        }).catch(done);
+      }).catch(done);
     })
   });
   describe('modelToSave', function() {
@@ -1298,7 +1298,7 @@ describe('save', function() {
         assert.equal(doc52.isSaved(), false);
         assert.equal(doc6.isSaved(), false);
         done();
-      }).error(done);
+      }).catch(done);
     });
     it('saveAll should save everything', function(done) {
       var doc1 = new Model1({})
@@ -1325,7 +1325,7 @@ describe('save', function() {
         assert.equal(doc52.isSaved(), true);
         assert.equal(doc6.isSaved(), true);
         done();
-      }).error(done);
+      }).catch(done);
     });
     it('saveAll should be limited by modelToSave - 1', function(done) {
       var doc1 = new Model1({})
@@ -1352,7 +1352,7 @@ describe('save', function() {
         assert.equal(doc52.isSaved(), false);
         assert.equal(doc6.isSaved(), false);
         done();
-      }).error(done);
+      }).catch(done);
     });
     it('saveAll should be limited by modelToSave - 2', function(done) {
       var doc1 = new Model1({})
@@ -1379,7 +1379,7 @@ describe('save', function() {
         assert.equal(doc52.isSaved(), false);
         assert.equal(doc6.isSaved(), true);
         done();
-      }).error(done);
+      }).catch(done);
     });
     it('saveAll should be limited by modelToSave - 3', function(done) {
       var doc1 = new Model1({})
@@ -1406,7 +1406,7 @@ describe('save', function() {
         assert.equal(doc52.isSaved(), false);
         assert.equal(doc6.isSaved(), false);
         done();
-      }).error(done);
+      }).catch(done);
     });
     it('saveAll should be limited by modelToSave - 4', function(done) {
       var doc1 = new Model1({})
@@ -1433,7 +1433,7 @@ describe('save', function() {
         assert.equal(doc52.isSaved(), true);
         assert.equal(doc6.isSaved(), false);
         done();
-      }).error(done);
+      }).catch(done);
     });
   })
   describe('validate', function() {
@@ -1443,7 +1443,7 @@ describe('save', function() {
       var doc = new Model({id: "notADate"});
       doc.save().then(function() {
         done(new Error("Was expecting an error"));
-      }).error(function(error) {
+      }).catch(function(error) {
         assert.equal(error.message, 'Value for [id] must be a date or a valid string or null.')
         done();
       });
@@ -1453,7 +1453,7 @@ describe('save', function() {
       var doc = new Model({id: "notADate"});
       doc.save().then(function() {
         done(new Error("Was expecting an error"));
-      }).error(function(error) {
+      }).catch(function(error) {
         assert(error instanceof Errors.ValidationError)
         done();
       });
@@ -1485,7 +1485,7 @@ describe('delete', function() {
         assert.equal(typeof doc.id, 'string');
         assert.equal(doc.isSaved(), true);
         done();
-      }).error(done);
+      }).catch(done);
     });
     it('should delete the document', function(done) {
       doc.delete().then(function() {
@@ -1493,7 +1493,7 @@ describe('delete', function() {
           assert.equal(result.length, 0);
           done();
         });
-      }).error(done);
+      }).catch(done);
     });
     it('should work with a callback', function(done) {
       doc.delete(function() {
@@ -1512,8 +1512,8 @@ describe('delete', function() {
             assert.equal(doc.isSaved(), false);
             done();
           });
-        }).error(done);
-      }).error(done);
+        }).catch(done);
+      }).catch(done);
     });
   });
   describe('hasOne', function() {
@@ -1555,10 +1555,10 @@ describe('delete', function() {
               assert.equal(result.length, 1);
               assert.deepEqual(result[0], otherDoc);
               done();
-            }).error(done);
+            }).catch(done);
 
           });
-        }).error(done);
+        }).catch(done);
 
       })
     });
@@ -1575,9 +1575,9 @@ describe('delete', function() {
         doc.deleteAll().then(function() {
           assert.equal(doc.isSaved(), false);
           assert.equal(otherDoc.isSaved(), false);
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
-            OtherModel.get(otherDoc.id).run().error(function(error) {
+            OtherModel.get(otherDoc.id).run().catch(function(error) {
               assert(error instanceof Errors.DocumentNotFound);
               done();
             });
@@ -1599,9 +1599,9 @@ describe('delete', function() {
         doc.deleteAll({otherDoc: true}).then(function() {
           assert.equal(doc.isSaved(), false);
           assert.equal(otherDoc.isSaved(), false);
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
-            OtherModel.get(otherDoc.id).run().error(function(error) {
+            OtherModel.get(otherDoc.id).run().catch(function(error) {
               assert(error instanceof Errors.DocumentNotFound);
               done();
             });
@@ -1628,9 +1628,9 @@ describe('delete', function() {
             OtherModel.get(otherDoc.id).run().then(function(result) {
               assert.deepEqual(result, otherDoc);
               done();
-            }).error(done);
+            }).catch(done);
           });
-        }).error(done);
+        }).catch(done);
       })
     });
 
@@ -1670,7 +1670,7 @@ describe('delete', function() {
         var otherDocCopy = util.deepCopy(doc.otherDoc);
 
         doc.delete().then(function() {
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
 
             OtherModel.get(otherDoc.id).run().then(function(result) {
@@ -1700,10 +1700,10 @@ describe('delete', function() {
           assert.strictEqual(doc, result);
           assert.equal(doc.otherDoc, undefined);
           assert.equal(otherDoc.isSaved(), false);
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
 
-            OtherModel.get(otherDoc.id).run().error(function(error) {
+            OtherModel.get(otherDoc.id).run().catch(function(error) {
               assert(error instanceof Errors.DocumentNotFound);
               done();
             });
@@ -1726,10 +1726,10 @@ describe('delete', function() {
           assert.equal(doc.isSaved(), false);
           assert.equal(otherDoc.isSaved(), false);
           assert.strictEqual(doc, result);
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
 
-            OtherModel.get(otherDoc.id).run().error(function(error) {
+            OtherModel.get(otherDoc.id).run().catch(function(error) {
               assert(error instanceof Errors.DocumentNotFound);
               done();
             });
@@ -1751,7 +1751,7 @@ describe('delete', function() {
         var otherDocCopy = util.deepCopy(doc.otherDoc);
 
         doc.deleteAll({foo: true}).then(function() {
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
 
             OtherModel.get(otherDoc.id).run().then(function(result) {
@@ -1795,7 +1795,7 @@ describe('delete', function() {
         assert.equal(doc.isSaved(), true);
 
         doc.delete().then(function() {
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
             assert.equal(doc.isSaved(), false);
             for(var i=0; i<otherDocs.length; i++) {
@@ -1822,7 +1822,7 @@ describe('delete', function() {
         assert.equal(doc.isSaved(), true);
 
         doc.deleteAll({foo: true}).then(function() {
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
             assert.equal(doc.isSaved(), false);
             assert.equal(doc.isSaved(), false);
@@ -1835,10 +1835,10 @@ describe('delete', function() {
               assert.equal(result.length, 3);
               assert.deepEqual(util.sortById(result), util.sortById(otherDocs));
               done();
-            }).error(done);
+            }).catch(done);
 
           });
-        }).error(done);
+        }).catch(done);
 
       })
     });
@@ -1853,7 +1853,7 @@ describe('delete', function() {
 
         doc.deleteAll().then(function(result) {
           assert.strictEqual(result, doc);
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
             assert.equal(doc.isSaved(), false);
             for(var i=0; i<otherDocs.length; i++) {
@@ -1881,7 +1881,7 @@ describe('delete', function() {
 
         doc.deleteAll({otherDocs: true}).then(function(result) {
           assert.strictEqual(result, doc);
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
             assert.equal(doc.isSaved(), false);
             for(var i=0; i<otherDocs.length; i++) {
@@ -1931,7 +1931,7 @@ describe('delete', function() {
           for(var i=0; i<otherDocs.length; i++) {
             assert.equal(doc.otherDocs[i].isSaved(), true)
           }
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
 
             OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
@@ -1958,7 +1958,7 @@ describe('delete', function() {
           for(var i=0; i<otherDocs.length; i++) {
             assert.equal(doc.otherDocs[i].isSaved(), true)
           }
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
 
             OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
@@ -1967,11 +1967,11 @@ describe('delete', function() {
               r.table(Model._joins.otherDocs.link).run().then(function(result) {
                 assert.equal(result.length, 0);
                 done();
-              }).error(done);
-            }).error(done);
+              }).catch(done);
+            }).catch(done);
 
           });
-        }).error(done);
+        }).catch(done);
 
       })
     });
@@ -1987,7 +1987,7 @@ describe('delete', function() {
           for(var i=0; i<otherDocs.length; i++) {
             assert.equal(otherDocs[i].isSaved(), false)
           }
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
 
             OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
@@ -1996,11 +1996,11 @@ describe('delete', function() {
               r.table(Model._joins.otherDocs.link).run().then(function(result) {
                 assert.equal(result.length, 0);
                 done();
-              }).error(done);
-            }).error(done);
+              }).catch(done);
+            }).catch(done);
 
           });
-        }).error(done);
+        }).catch(done);
 
       })
     });
@@ -2016,7 +2016,7 @@ describe('delete', function() {
           for(var i=0; i<otherDocs.length; i++) {
             assert.equal(otherDocs[i].isSaved(), false)
           }
-          Model.get(doc.id).run().error(function(error) {
+          Model.get(doc.id).run().catch(function(error) {
             assert(error instanceof Errors.DocumentNotFound);
 
             OtherModel.getAll(otherDocs[0].id, otherDocs[1].id, otherDocs[2].id).run().then(function(result) {
@@ -2025,11 +2025,11 @@ describe('delete', function() {
               r.table(Model._joins.otherDocs.link).run().then(function(result) {
                 assert.equal(result.length, 0);
                 done();
-              }).error(done);
-            }).error(done);
+              }).catch(done);
+            }).catch(done);
 
           });
-        }).error(done);
+        }).catch(done);
 
       })
     });
@@ -2113,7 +2113,7 @@ describe('delete', function() {
 
           done();
         });
-      }).error(done);
+      }).catch(done);
     });
     it('deleteAll should follow modelToDelete if provided - 1', function(done) {
       var doc1 = new Model1({})
@@ -2150,7 +2150,7 @@ describe('delete', function() {
           assert.equal(doc6.isSaved(), true);
           done();
         });
-      }).error(done);
+      }).catch(done);
     });
     it('deleteAll should follow modelToDelete if provided - 2', function(done) {
       var doc1 = new Model1({})
@@ -2188,7 +2188,7 @@ describe('delete', function() {
 
           done();
         });
-      }).error(done);
+      }).catch(done);
     });
     it('deleteAll should follow modelToDelete if provided - 3', function(done) {
       var doc1 = new Model1({})
@@ -2226,7 +2226,7 @@ describe('delete', function() {
 
           done();
         });
-      }).error(done);
+      }).catch(done);
     });
   });
 });
@@ -2268,7 +2268,7 @@ describe('purge', function() {
           });
         });
       });
-    }).error(done);
+    }).catch(done);
   });
   it('should work with a callback', function(done) {
     var Model = thinky.createModel(modelNames[0], {
@@ -2305,7 +2305,7 @@ describe('purge', function() {
           });
         });
       });
-    }).error(done);
+    }).catch(done);
   });
   it('belongsTo -- purge should remove itself', function(done) {
     var Model = thinky.createModel(modelNames[0], {
@@ -2335,7 +2335,7 @@ describe('purge', function() {
           });
         });
       });
-    }).error(done);
+    }).catch(done);
   });
   it('belongsTo not called on its own model -- purge should remove itself + clean the other docs', function(done) {
     var Model = thinky.createModel(modelNames[0], {
@@ -2368,7 +2368,7 @@ describe('purge', function() {
           });
         });
       });
-    }).error(done);
+    }).catch(done);
   });
 
   it('hasMany -- purge should remove itself', function(done) {
@@ -2403,7 +2403,7 @@ describe('purge', function() {
           })
         });
       });
-    }).error(done);
+    }).catch(done);
   });
   it('hasAndBelongsToMany -- pk -- purge should clean the database', function(done) {
     var Model = thinky.createModel(modelNames[0], {
@@ -2436,7 +2436,7 @@ describe('purge', function() {
           });
         });
       });
-    }).error(done);;
+    }).catch(done);;
   });
   it('hasAndBelongsToMany not called on this model -- pk -- purge should clean the database', function(done) {
     var Model = thinky.createModel(modelNames[0], {
@@ -2470,7 +2470,7 @@ describe('purge', function() {
           });
         });
       });
-    }).error(done);
+    }).catch(done);
   });
   it('hasAndBelongsToMany -- not pk -- purge should clean the database', function(done) {
     var Model = thinky.createModel(modelNames[0], {
@@ -2506,7 +2506,7 @@ describe('purge', function() {
           });
         });
       });
-    }).error(done);
+    }).catch(done);
   });
   it('hasAndBelongsToMany not called on this model -- not pk -- purge should clean the database', function(done) {
     var Model = thinky.createModel(modelNames[0], {
@@ -2541,7 +2541,7 @@ describe('purge', function() {
           });
         });
       });
-    }).error(done);
+    }).catch(done);
   });
 });
 describe('date', function() {
@@ -2560,7 +2560,7 @@ describe('date', function() {
         assert.deepEqual(result.date, doc.date);
         done();
       });
-    }).error(done);;
+    }).catch(done);;
   });
 });
 
@@ -2580,7 +2580,7 @@ describe('default should be saved', function() {
     }).then(function(result) {
       assert.equal(result.num, 2)
       done();
-    }).error(done).catch(done);
+    }).catch(done).catch(done);
   });
   it('when generated on save', function(done) {
     var Model = thinky.createModel(modelNames[0], {
@@ -2596,7 +2596,7 @@ describe('default should be saved', function() {
     }).then(function(result) {
       assert.equal(result.num, 2)
       done();
-    }).error(done).catch(done);
+    }).catch(done).catch(done);
   });
 });
 
@@ -2709,7 +2709,7 @@ describe('hooks', function() {
     var doc = new Model({id: "foobar"}).then(function() {
       assert.equal(doc.id, doc.title)
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('init post async - error', function(done) {
     var Model = thinky.createModel(modelNames[0], {id: String, title: String});
@@ -2723,7 +2723,7 @@ describe('hooks', function() {
 
     var doc = new Model({id: "foobar"}).then(function() {
       done(new Error("Expecting error"));
-    }).error(function(err) {
+    }).catch(function(err) {
       assert.equal(err.message, "Async error thrown by a hook");
       done();
     });
@@ -2742,7 +2742,7 @@ describe('hooks', function() {
     var doc = new Model({id: "foobar"}).then(function() {
       assert.equal(doc.id, doc.title)
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('validate oncreate + init async', function(done) {
     var Model = thinky.createModel(modelNames[0], {id: String, title: String}, {validate: 'oncreate'});
@@ -2765,7 +2765,7 @@ describe('hooks', function() {
       assert.equal(doc.id, doc.title)
       assert.equal(doc.id, doc.title2)
       done();
-    }).error(done);
+    }).catch(done);
   });
 
   it('validate post sync', function() {
@@ -2807,7 +2807,7 @@ describe('hooks', function() {
     doc.validate().then(function() {
       assert.equal(doc.id, doc.title)
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('init post async - error', function(done) {
     var Model = thinky.createModel(modelNames[0], {id: String, title: String});
@@ -2822,7 +2822,7 @@ describe('hooks', function() {
     var doc = new Model({id: "foobar"});
     doc.validate().then(function() {
       done(new Error("Expecting error"));
-    }).error(function(err) {
+    }).catch(function(err) {
       assert.equal(err.message, "Async error thrown by a hook");
       done();
     });
@@ -2841,7 +2841,7 @@ describe('hooks', function() {
     doc.validateAll().then(function() {
       assert.equal(doc.id, doc.title)
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('init validateAll async joins', function(done) {
     var Model = thinky.createModel(modelNames[0], {id: String, title: String});
@@ -2863,7 +2863,7 @@ describe('hooks', function() {
     doc.validateAll().then(function() {
       assert.equal(otherDoc.id, otherDoc.title)
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('validate on save', function(done) {
     var Model = thinky.createModel(modelNames[0], {id: String, title: String});
@@ -2881,7 +2881,7 @@ describe('hooks', function() {
       assert.strictEqual(result, doc)
       assert.equal(result.id, result.title)
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('validate on retrieve - error on validate', function(done) {
     var Model = thinky.createModel(modelNames[0], {id: String, title: String});
@@ -2898,12 +2898,12 @@ describe('hooks', function() {
       r.table(Model.getTableName()).insert({id: 1}).run().then(function(result) {
         Model.get(1).run().then(function(result) {
           done(new Error("Was expecting an error"))
-        }).error(function(err) {
+        }).catch(function(err) {
           assert.equal(err.message, "Value for [id] must be a string or null.");
           assert(err instanceof Errors.ValidationError);
           done();
         });
-      }).error(done);
+      }).catch(done);
     });
   });
   it('validate on retrieve - error on hook', function(done) {
@@ -2921,11 +2921,11 @@ describe('hooks', function() {
       r.table(Model.getTableName()).insert({id: 1}).run().then(function(result) {
         Model.get(1).run().then(function(result) {
           done(new Error("Was expecting an error"))
-        }).error(function(err) {
+        }).catch(function(err) {
           assert.equal(err.message, "I'm Hook, and I'm a vilain");
           done();
         });
-      }).error(done);
+      }).catch(done);
     });
   });
   it('save pre', function(done) {
@@ -2947,7 +2947,7 @@ describe('hooks', function() {
         assert.equal(result.id, result.title);
         done();
       });
-    }).error(done);
+    }).catch(done);
   });
   it('save pre - with error and callback', function(done) {
     var Model = thinky.createModel(modelNames[0], {id: String, title: String});
@@ -2983,7 +2983,7 @@ describe('hooks', function() {
         assert.equal(result.id, result.title);
         done();
       });
-    }).error(done);
+    }).catch(done);
   });
 
   it('save post', function(done) {
@@ -3005,7 +3005,7 @@ describe('hooks', function() {
         assert.equal(result.title, undefined);
         done();
       });
-    }).error(done);
+    }).catch(done);
   });
   it('save pre join', function(done) {
     var Model = thinky.createModel(modelNames[0], {id: String, title: String});
@@ -3027,7 +3027,7 @@ describe('hooks', function() {
     doc.saveAll().then(function(result) {
       assert.equal(otherDoc.id, otherDoc.title)
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('save pre join', function(done) {
     var Model = thinky.createModel(modelNames[0], {id: String, title: String});
@@ -3049,7 +3049,7 @@ describe('hooks', function() {
     doc.saveAll().then(function(result) {
       assert.equal(otherDoc.id, otherDoc.title)
       done();
-    }).error(done);
+    }).catch(done);
   });
   it('delete pre', function(done) {
     var Model = thinky.createModel(modelNames[0], {id: String, title: String});
@@ -3070,8 +3070,8 @@ describe('hooks', function() {
         assert.strictEqual(result, doc)
         assert.equal(doc.id, doc.title);
         done();
-      }).error(done);
-    }).error(done);
+      }).catch(done);
+    }).catch(done);
   });
   it('delete post', function(done) {
     var Model = thinky.createModel(modelNames[0], {id: String, title: String});
@@ -3092,8 +3092,8 @@ describe('hooks', function() {
         assert.strictEqual(result, doc)
         assert.equal(doc.id, doc.title);
         done();
-      }).error(done);
-    }).error(done);
+      }).catch(done);
+    }).catch(done);
   });
   it('hook for retrieve', function(done) {
     var Model = thinky.createModel(modelNames[0], {id: String, title: String});
@@ -3112,8 +3112,8 @@ describe('hooks', function() {
         Model.get(id).run().then(function(result) {
           assert.equal(result.title, result.id);
           done();
-        }).error(done);
-      }).error(done);
+        }).catch(done);
+      }).catch(done);
     });
   });
 });
