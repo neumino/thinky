@@ -7,7 +7,7 @@ hl: about
 
 ### Author
 
-Michel Tu - [orphee@gmail.com](orphee@gmail.com) - [http://justonepixel.com](http://justonepixel.com)
+Michel Tu - <a href="mailto:orphee@gmail.com">orphee@gmail.com</a> - [http://justonepixel.com](http://justonepixel.com)
 
 
 ### Donations
