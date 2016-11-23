@@ -627,6 +627,124 @@ describe('getJoin', function(){
       }).error(done);
     })
   })
+
+  describe("Joins - hasAndBelongsToMany with same model, same key, backref option", function() {
+    var Model;
+
+    before(function(done) {
+      Model = thinky.createModel(modelNames[0], {
+        id: String,
+      });
+      Model.hasAndBelongsToMany(Model, "following", "id", "id", { backref: "followers" });
+      done();
+    });
+
+    after(cleanTables);
+
+    it('should retrieve joined backref documents', function(done) {
+      var doc = new Model({});
+      var otherDoc = new Model({});
+      doc.following = [otherDoc];
+      doc.saveAll({ followers: true, following: true })
+        .then(function() {
+          return Model.get(doc.id).getJoin({ following: true, followers: true }).run();
+        })
+        .then(function(result) {
+          doc = result;
+          return Model.get(result.following[0].id).getJoin({ following: true, followers: true }).run();
+        })
+        .then(function(otherResult) {
+          otherDoc = otherResult;
+          assert.equal(doc.following.length, 1);
+          assert.equal(otherDoc.followers.length, 1);
+          assert.deepEqual(doc.following[0].id, otherDoc.id);
+          assert.deepEqual(otherDoc.followers[0].id, doc.id);
+          done();
+        })
+        .error(done);
+    });
+
+    it('should insert reverse link', function(done) {
+      var doc = new Model({});
+      var otherDoc = new Model({});
+      doc.followers = [otherDoc];
+      doc.saveAll({ followers: true, following: true })
+        .then(function() {
+          return Model.get(doc.id).getJoin({ following: true, followers: true }).run();
+        })
+        .then(function(result) {
+          doc = result;
+          return Model.get(result.followers[0].id).getJoin({ following: true, followers: true }).run();
+        })
+        .then(function(otherResult) {
+          otherDoc = otherResult;
+          assert.equal(doc.followers.length, 1);
+          assert.equal(otherDoc.following.length, 1);
+          assert.deepEqual(doc.followers[0].id, otherDoc.id);
+          assert.deepEqual(otherDoc.following[0].id, doc.id);
+          done();
+        })
+        .error(done);
+    });
+
+    it('should delete reverse link', function(done) {
+      var doc = new Model({});
+      var otherDoc = new Model({});
+      doc.followers = [otherDoc];
+      doc.saveAll({ followers: true, following: true })
+        .then(function() {
+          doc.followers = [];
+          return doc.saveAll({ followers: true, following: true })
+        })
+        .then(function() {
+          return Model.get(doc.id).getJoin({ following: true, followers: true }).run();
+        })
+        .then(function(result) {
+          assert.equal(result.followers.length, 0);
+          assert.equal(result.following.length, 0);
+        })
+        .then(function() {
+          return Model.get(otherDoc.id).getJoin({ following: true, followers: true }).run();
+        })
+        .then(function(result) {
+          assert.equal(result.followers.length, 0);
+          assert.equal(result.following.length, 0);
+          done();
+        })
+        .error(done);
+    });
+
+    it('should save reverse link', function(done) {
+      var doc = new Model({});
+      var otherDoc1 = new Model({});
+      var otherDoc2 = new Model({});
+      doc.followers = [otherDoc1];
+      doc.saveAll({ followers: true, following: true })
+        .then(function() {
+          doc.followers = [otherDoc2];
+          return doc.saveAll({ followers: true, following: true })
+        })
+        .then(function() {
+          return Model.get(doc.id).getJoin({ following: true, followers: true }).run();
+        })
+        .then(function(result) {
+          assert.equal(result.followers.length, 1);
+          assert.equal(result.following.length, 0);
+          assert.equal(result.followers[0].id, otherDoc2.id);
+        })
+        .then(function() {
+          return Model.get(otherDoc2.id).getJoin({ following: true, followers: true }).run();
+        })
+        .then(function(result) {
+          assert.equal(result.followers.length, 0);
+          assert.equal(result.following.length, 1);
+          assert.equal(result.following[0].id, doc.id);
+          done();
+        })
+        .error(done);
+    });
+  });
+
   describe('options', function() {
     afterEach(cleanTables);
 
@@ -1110,6 +1228,29 @@ describe('addRelation', function(){
       done();
     });
   });
+
+  it('hasAndBelongsToMany - same table, same key with backref', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+    });
+    Model.hasAndBelongsToMany(Model, "following", "id", "id", { backref: "followers" });
+
+    var doc = new Model({});
+    var otherDoc = new Model({});
+    doc.save().then(function() {
+      return otherDoc.save();
+    }).then(function() {
+      return Model.get(doc.id).addRelation('followers', otherDoc);
+    }).then(function() {
+      return Model.get(doc.id).getJoin({ followers: true }).run();
+    }).then(function(doc) {
+      assert.equal(doc.followers.length, 1);
+      return Model.get(otherDoc.id).getJoin({ following: true }).run();
+    }).then(function(otherDoc) {
+      assert.equal(otherDoc.following.length, 1);
+      done();
+    }).error(done);
+  });
 });
 
 describe('removeRelation', function(){
@@ -1384,6 +1525,60 @@ describe('removeRelation', function(){
       assert.equal(doc.others[0].id, otherDoc1.id);
       done();
     });
+  });
+
+  it('should work for hasAndBelongsToMany - same table, same key with backref - all', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+    });
+    Model.hasAndBelongsToMany(Model, "following", "id", "id", { backref: "followers" });
+
+    var doc = new Model({});
+    var otherDoc1 = new Model({});
+    var otherDoc2 = new Model({});
+    var otherDoc3 = new Model({});
+    doc.followers = [otherDoc1, otherDoc2];
+    doc.following = [otherDoc3];
+    doc.saveAll({ followers: true, following: true }).then(function(doc) {
+      return Model.get(doc.id).removeRelation('followers');
+    }).then(function() {
+      return Model.get(doc.id).getJoin({ followers: true, following: true }).run();
+    }).then(function(doc) {
+      assert.equal(doc.followers.length, 0);
+      assert.equal(doc.following.length, 1);
+      return Model.getAll(otherDoc1.id, otherDoc2.id).getJoin({ following: true }).run();
+    }).then(function(otherDocs) {
+      assert.equal(otherDocs[0].following.length, 0);
+      assert.equal(otherDocs[1].following.length, 0);
+      done();
+    }).error(done);
+  });
+
+  it.only('should work for hasAndBelongsToMany - same table, same key with backref - one', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+    });
+    Model.hasAndBelongsToMany(Model, "following", "id", "id", { backref: "followers" });
+
+    var doc = new Model({});
+    var otherDoc1 = new Model({});
+    var otherDoc2 = new Model({});
+    var otherDoc3 = new Model({});
+    var otherDoc4 = new Model({});
+    doc.followers = [otherDoc1, otherDoc2];
+    doc.following = [otherDoc3, otherDoc4];
+    doc.saveAll({ followers: true, following: true }).then(function(doc) {
+      return Model.get(doc.id).removeRelation('followers', otherDoc1);
+    }).then(function() {
+      return Model.get(doc.id).getJoin({ followers: true, following: true }).run();
+    }).then(function(doc) {
+      assert.equal(doc.followers.length, 1);
+      assert.equal(doc.following.length, 2);
+      return Model.get(otherDoc1.id).getJoin({ following: true }).run();
+    }).then(function(otherDoc1) {
+      assert.equal(otherDoc1.following.length, 0);
+      done();
+    }).error(done);
   });
 });
 
