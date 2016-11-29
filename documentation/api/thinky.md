@@ -15,9 +15,8 @@ var r = thinky.r;
 The `options` argument is optional and can have the fields:
 
 - Options for the drivers:
-    - `min`: the minimum number of connections in the pool, default `50`
     - `max`: the maximum number of connections in the pool, default `1000`
-    - `bufferSize`: the minimum number of connections available in the pool, default `50`
+    - `buffer`: the minimum number of connections available in the pool, default `50`
     - `timeoutError`: number of milliseconds before reconnecting in case of an error,   
     default `1000`
     - `timeoutGb`: number of milliseconds before removing a connection that has not been used,   
