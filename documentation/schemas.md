@@ -131,19 +131,6 @@ var User = thinky.createModel("User", {
 })
 ```
 
-Another way to do it is with `type`:
-
-```js
-var type = thinky.type;
-var User = thinky.createModel("User", {
-    id: type.string(),
-    name: type.string(),
-    email: type.string(),
-    age: type.number(),
-    birthdate: type.date()
-})
-```
-
 __Note__: About validator:
 
 The reason behind the validator field is that you can import modules that are good at validating data like
@@ -169,21 +156,6 @@ var User = thinky.createModel("User", {
 Another way to do it is with:
 
 ```js
-var type = thinky.type;
-var User = thinky.createModel("User", {
-    id: type.string(),
-    contact: {
-        email: type.string(),
-        phone: type.string()
-    },
-    age: type.number()
-});
-```
-
-One more is with:
-
-```js
-var type = thinky.type;
 var User = thinky.createModel("User", {
     id: type.string(),
     contact: type.object().schema({
@@ -193,9 +165,6 @@ var User = thinky.createModel("User", {
     age: type.number()
 });
 ```
-
-
-
 
 _Example_: Create a model where the field `scores` is an array of `Number`.
 
@@ -210,25 +179,12 @@ var Game = thinky.createModel("Game", {
 Another way to do it is with:
 
 ```js
-var type = thinky.type;
 var Game = thinky.createModel("Game", {
     id: type.string(),
     name: type.string(),
     scores: type.array().schema(type.number())
 });
 ```
-
-One more is with:
-
-```js
-var Game = thinky.createModel("Game", {
-    id: type.string(),
-    name: type.string(),
-    scores: [type.number()]
-});
-```
-
-
 
 _Example_: Create a model where the field `game` is an array of objects with two fields &mdash; `score` and `winner`.
 
@@ -255,9 +211,6 @@ var Game = thinky.createModel("Game", {
     }))
 });
 ```
-
-
-
 
 _Example_: Create a model for a post where the default value for `createdAt` is the
 current date if not specified.
