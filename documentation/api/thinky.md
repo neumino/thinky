@@ -24,7 +24,7 @@ The `options` argument is optional and can have the fields:
     - `host`: host of the RethinkDB server, default `"localhost"`
     - `port`: client port of the RethinkDB server, default `28015`
     - `db`: the default database, default `"test"`
-    - `authKey`: the authentification key to the RethinkDB server, default `""`
+    - `user`/`password`: the user/password to access the database.
 - Options for the schemas
     - `validate`: can be `"onsave"` or `"oncreate"`. The default value is `"onsave"`
     - `timeFormat`: can be `"native"` or `"raw"`. The default value is `"native"`
