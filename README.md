@@ -1,5 +1,7 @@
 # Thinky
 ===============================
+
+[![Join the chat at https://gitter.im/neumino/thinky](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/neumino/thinky?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 <a href="https://app.wercker.com/project/bykey/e5ab679f3412f8f86ef6488b31004fed"><img alt="Wercker status" src="https://app.wercker.com/status/e5ab679f3412f8f86ef6488b31004fed/m/master" align="right"></a>
 Light Node.js ORM for RethinkDB.  
 
