@@ -122,18 +122,6 @@ This is the only guarantee. A default value should not rely on another default v
 _Example_: Create a basic Model for a `user`.
 
 ```js
-var User = thinky.createModel("User", {
-    id: type.string(),
-    name: type.string(),
-    email: type.string(),
-    age: type.number(),
-    birthdate: type.date()
-})
-```
-
-Another way to do it is with `type`:
-
-```js
 var type = thinky.type;
 var User = thinky.createModel("User", {
     id: type.string(),
@@ -156,6 +144,7 @@ The reason behind the validator field is that you can import modules that are go
 _Example_: Create a model with nested fields.
 
 ```js
+var type = thinky.type;
 var User = thinky.createModel("User", {
     id: type.string(),
     contact: {
@@ -172,20 +161,6 @@ Another way to do it is with:
 var type = thinky.type;
 var User = thinky.createModel("User", {
     id: type.string(),
-    contact: {
-        email: type.string(),
-        phone: type.string()
-    },
-    age: type.number()
-});
-```
-
-One more is with:
-
-```js
-var type = thinky.type;
-var User = thinky.createModel("User", {
-    id: type.string(),
     contact: type.object().schema({
         email: type.string(),
         phone: type.string()
@@ -194,12 +169,10 @@ var User = thinky.createModel("User", {
 });
 ```
 
-
-
-
 _Example_: Create a model where the field `scores` is an array of `Number`.
 
 ```js
+var type = thinky.type;
 var Game = thinky.createModel("Game", {
     id: type.string(),
     name: type.string(),
@@ -218,21 +191,10 @@ var Game = thinky.createModel("Game", {
 });
 ```
 
-One more is with:
-
-```js
-var Game = thinky.createModel("Game", {
-    id: type.string(),
-    name: type.string(),
-    scores: [type.number()]
-});
-```
-
-
-
 _Example_: Create a model where the field `game` is an array of objects with two fields &mdash; `score` and `winner`.
 
 ```js
+var type = thinky.type;
 var Game = thinky.createModel("Game", {
     id: type.string(),
     name: type.string(0,
@@ -246,6 +208,7 @@ var Game = thinky.createModel("Game", {
 You can also do the same with:
 
 ```js
+var type = thinky.type;
 var Game = thinky.createModel("Game", {
     id: type.string(),
     name: type.string(),
@@ -256,13 +219,11 @@ var Game = thinky.createModel("Game", {
 });
 ```
 
-
-
-
 _Example_: Create a model for a post where the default value for `createdAt` is the
 current date if not specified.
 
 ```js
+var type = thinky.type;
 var Post = thinky.createModel("Post",{
     id: type.string(),
     title: type.string(),
@@ -275,6 +236,7 @@ _Example_: Create a model for a user where the nickname, if not defined, will be
 name.
 
 ```js
+var type = thinky.type;
 var Post = thinky.createModel("Post",{
     id: type.string(),
     firstname: type.string(),
@@ -289,6 +251,7 @@ _Example_: Create a model for a `post` where the field `title` must be a `String
 (where `null` will not be a valid value).
 
 ```js
+var type = thinky.type;
 var Post = thinky.createModel("Post",{
     id: type.string(),
     title: type.string().options({enforce_type: "strict"}),
@@ -301,6 +264,7 @@ _Example_: Create a model `User` and make sure that the field email is a valid e
 using [validator](https://github.com/chriso/validator.js)
 
 ```js
+var type = thinky.type;
 var validator = require('validator');
 
 var User = thinky.createModel("Users",{
