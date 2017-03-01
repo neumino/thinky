@@ -30,18 +30,20 @@ describe('Options', function(){
       enforce_extra: 'strict',
       enforce_missing: true,
       enforce_type: 'strict',
-      validate: 'oncreate'
+      validate: 'oncreate',
+      version: undefined
     });
   });
 
   it('Options on a model', function(){
     var name = util.s8();
-    var Model = thinky.createModel(name, {id: String, name: String}, {
+    var Model = thinky.createModel(name, {id: String, name: String, version: Number}, {
       timeFormat: 'native',
       enforce_extra: 'none',
       enforce_missing: false,
       enforce_type: 'loose',
-      validate: 'onsave'
+      validate: 'onsave',
+      version: 'version'
     });
 
     assert.deepEqual(Model.getOptions(), {
@@ -49,7 +51,8 @@ describe('Options', function(){
       enforce_extra: 'none',
       enforce_missing: false,
       enforce_type: 'loose',
-      validate: 'onsave'
+      validate: 'onsave',
+      version: 'version'
     })
 
     // Make sure we didn't messed up the global options
@@ -58,7 +61,8 @@ describe('Options', function(){
       enforce_extra: 'strict',
       enforce_missing: true,
       enforce_type: 'strict',
-      validate: 'oncreate'
+      validate: 'oncreate',
+      version: undefined
     });
 
   });
@@ -90,19 +94,21 @@ describe('Options', function(){
   });
   it('Options on a document', function(){
     var name = util.s8();
-    var Model = thinky.createModel(name, {id: String, name: String});
+    var Model = thinky.createModel(name, {id: String, name: String, version: Number});
 
     var doc = new Model({}, {
       timeFormat: 'raw',
       enforce_extra: 'none',
       enforce_missing: false,
       enforce_type: 'none',
-      validate: 'onsave'
+      validate: 'onsave',
+      version: 'version'
     })
 
     assert.deepEqual(doc._getOptions(), {
       timeFormat: 'raw',
-      validate: 'onsave'
+      validate: 'onsave',
+      version: 'version'
     })
 
     // Make sure we didn't messed up the global options
@@ -111,7 +117,8 @@ describe('Options', function(){
       enforce_extra: 'strict',
       enforce_missing: true,
       enforce_type: 'strict',
-      validate: 'oncreate'
+      validate: 'oncreate',
+      version: undefined
     });
   });
 })
