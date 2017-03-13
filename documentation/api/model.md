@@ -788,7 +788,7 @@ The events that can be emited on a document are:
 
 - `"saving"`: just before a document is saved
 - `"saved"`: once a document is saved
-- `"delete"`: once a document is deleted
+- `"deleted"`: once a document is deleted
 
 
 _Example_: Log every post that we save in the database.
