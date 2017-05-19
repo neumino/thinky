@@ -207,6 +207,7 @@ describe('Chainable types', function(){
       return (error instanceof Errors.ValidationError) && (error.message === "Value for [id] must be a string.")
     });
   });
+
   it('String - basic - null and strict', function(){
     var name = util.s8();
     var Model = thinky.createModel(name,
@@ -3085,6 +3086,30 @@ describe('validate', function(){
 
     assert.deepEqual(doc, {id: value.id, otherDoc: {id: otherDoc.id, otherId: otherDoc.otherId}});
 
+  });
+
+  it('Extra field - enforce_extra:"log" - global option', function(){
+    var name = util.s8();
+    var str = util.s8();
+
+    var Model = thinky.createModel(name, {
+      id: String,
+      foo: {fizz: String},
+    }, {init: false, enforce_extra: 'log'})
+
+    doc = new Model({
+      id: str,
+      foo: {fizz: "Hello", buzz: "OMIT"},
+      bar: "OMIT"
+    })
+    doc.validate();
+
+    assert.equal(true, doc.foo.hasOwnProperty('buzz'));
+    assert.deepEqual(doc, {
+      id: str,
+      foo: { fizz: 'Hello', buzz: "OMIT" },
+      bar: "OMIT"
+    });
   });
 
   it('Test option validate="oncreate"', function(){
