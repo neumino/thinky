@@ -705,6 +705,25 @@ describe('virtual', function(){
     })
     assert.equal(doc.numVirtual, 3);
   });
+  it('Generate fields -- virtuals with access to parent', function() {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      num: Number,
+      numbers: {
+        numVirtual: {
+          _type: 'virtual',
+          default: function(parentDoc) {
+            return parentDoc.num+2
+          }
+        }
+      }
+
+    });
+    var doc = new Model({
+      num: 1, numbers:{}
+    })
+    assert.equal(doc.numbers.numVirtual, 3);
+  });
   it('Generate fields -- manually', function() {
     var Model = thinky.createModel(modelNames[0], {
       id: String,
