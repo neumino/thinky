@@ -23,7 +23,7 @@ html{
 body{
     margin: 0px;
     padding: 0px;
-    background: url(/images/background.png) #fafafa;
+    background: url(/thinky/images/background.png) #fafafa;
     font-family: "Open Sans";
     -webkit-font-smoothing: antialiased;
 }
