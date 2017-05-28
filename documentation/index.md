@@ -110,4 +110,4 @@ And there is more! Here is a non exhaustive list:
 - Automatically create table and indexes.
 - Automatically remove relations when a document is deleted.
 
-Take a look at the <a href="/documentation/api/thinky">documentation</a> or at the [examples](https://github.com/neumino/thinky/tree/master/examples) to read more!
+Take a look at the <a href="/thinky/documentation/api/thinky">documentation</a> or at the [examples](https://github.com/neumino/thinky/tree/master/examples) to read more!
