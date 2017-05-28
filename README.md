@@ -96,7 +96,7 @@ Post.get("0e4a6f6f-cc0c-4aa5-951a-fcfc480dd05a").getJoin().run().then(function(r
 
 ### Documentation
 
-[https://thinky.io](https://thinky.io)
+[https://www.justonepixel.com/thinky](https://www.justonepixel.com/thinky) (branch `gh-pages).
 
 ### Help
 
