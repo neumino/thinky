@@ -5,7 +5,7 @@ permalink: /documentation/api/model/
 
 ## Model
 
-A model is returned from [thinky.createModel](/documentation/api/thinky/#createmodel)
+A model is returned from [thinky.createModel](/thinky/documentation/api/thinky/#createmodel)
 
 
 <div id="gettablename"></div>
@@ -172,7 +172,7 @@ The arguments are:
 - `options`: set the field `init` to `false` if the indexes
 were already created and do not want `thinky` to try to create them.
 
-Read more about `hasOne` on [the article](/documentation/relations/) dedicated to relations.
+Read more about `hasOne` on [the article](/thinky/documentation/relations/) dedicated to relations.
 
 _Example_:
 
@@ -229,7 +229,7 @@ The arguments are:
 were already created and do not want `thinky` to try to create them.
 
 
-Read more about `belongsTo` on [the article](/documentation/relations/) dedicated to relations.   
+Read more about `belongsTo` on [the article](/thinky/documentation/relations/) dedicated to relations.   
 Do not use the primary key of `Model` as the left key.
 
 
@@ -294,7 +294,7 @@ The arguments are:
 were already created and do not want `thinky` to try to create them.
 
 
-Read more about `hasMany` on [the article](/documentation/relations/) dedicated to relations
+Read more about `hasMany` on [the article](/thinky/documentation/relations/) dedicated to relations
 
 _Example_:
 
@@ -365,12 +365,12 @@ The join is done via a third table that is automatically created and managed by 
 - `options`:
   - set the field `init` to `false` if the indexes were already created and do not want `thinky` to try to create them.
   - set the field `type` to a string to differentiate two n-n relations for the same two models.
-  - set the field `table` to an object specifying the table settings as you would with [thinky.createModel](/documentation/api/thinky/#createmodel)
+  - set the field `table` to an object specifying the table settings as you would with [thinky.createModel](/thinky/documentation/api/thinky/#createmodel)
 You can also specify a string for `type` which will be used to differentiate
 the table if you link multiple times the same models.
 
 We __highly recommend__ to use the primary keys for the fields used to perform the join.  
-If you do not, read carefully [the article](/documentation/relations/) dedicated to relations
+If you do not, read carefully [the article](/thinky/documentation/relations/) dedicated to relations
 
 
 _Example_: Link two models with `hasAndBelongsTo`.
@@ -683,7 +683,7 @@ User.save([
 <div id="querysmethods"></div>
 ### [Query's methods](#querysmethods)
 
-All the methods defined on a [Query](/documentation/api/query/) object are also available on a Model.
+All the methods defined on a [Query](/thinky/documentation/api/query/) object are also available on a Model.
 
 In terms of `Query`, a model is equivalent to
 
@@ -691,7 +691,7 @@ In terms of `Query`, a model is equivalent to
 r.table(model.getTableName())
 ```
 
-_Example_: Returns all the posts using [run](/documentation/api/query/#run).
+_Example_: Returns all the posts using [run](/thinky/documentation/api/query/#run).
 
 Suppose the model `Post` is defined with:
 
@@ -778,7 +778,7 @@ Post.addListener('retrieved', function(doc) {
 
 All the methods defined on
 [EventEmitter](http://nodejs.org/api/events.html#events_class_events_eventemitter) are available
-on a [document](/documentation/api/document/).
+on a [document](/thinky/documentation/api/document/).
 
 For convenience purposes, you can define listeners on the model that will be transmitted on each
 newly created documents. All the methods are the same as in EventEmitter, except that they

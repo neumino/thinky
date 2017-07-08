@@ -101,7 +101,7 @@ Currently `thinky` will throw the following errors:
 - `DocumentNotFound` is thrown when a `get` call returns `null` instead of a document.
 - `InvalidWrite` is thrown when an in place upgrade/replace returns a non-valid document.
 - `ValidationError` is thrown when the schema validation of a document fails.
-  Read more about the schema and validation on [this article](/documentation/schemas/).
+  Read more about the schema and validation on [this article](/thinky/documentation/schemas/).
 
 
 _Example_: Retrieve a document with its primary key and print a message
@@ -188,7 +188,7 @@ The arguments are:
 It must be a string composed of `[a-zA-Z0-0_]`.    
 Two models cannot be created with the same `tableName`.
 - `schema` which must be a valid schema.  
-Read more about schemas on [this article](/documentation/schemas/)
+Read more about schemas on [this article](/thinky/documentation/schemas/)
 - `options` can be an object with the fields:
     - `pk`: the primary key of the table.   
     If the primary key is not `"id"`, the `pk` field is __mandatory__.
@@ -198,7 +198,7 @@ Read more about schemas on [this article](/documentation/schemas/)
     - `validator`: A function that will be used to validate a document before saving it. The context is set to the whole document.
     - `table`: an `object` that will be used to create the table, useful to set replicas, shards etc.
 
-Read more about `enforce_missing`/`enforce_extra`/`enforce_type` on [the article](/documentation/schemas/) about schemas.
+Read more about `enforce_missing`/`enforce_extra`/`enforce_type` on [the article](/thinky/documentation/schemas/) about schemas.
 
 _Example_: Create a basic Model for a `user`.
 

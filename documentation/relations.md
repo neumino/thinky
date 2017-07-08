@@ -9,10 +9,10 @@ permalink: /documentation/relations/
 
 Thinky lets you create Models that you can join. Four relations are defined:
 
-- [hasOne](/documentation/api/model/#hasone)
-- [belongsTo](/documentation/api/model/#belongsto)
-- [hasMany](/documentation/api/model/#hasmany)
-- [hasAndBelongsToMany](/documentation/api/model/#hasandbelongstomany)
+- [hasOne](/thinky/documentation/api/model/#hasone)
+- [belongsTo](/thinky/documentation/api/model/#belongsto)
+- [hasMany](/thinky/documentation/api/model/#hasmany)
+- [hasAndBelongsToMany](/thinky/documentation/api/model/#hasandbelongstomany)
 
 These four relations are usually used in three different ways.   
 Suppose we have two models `A` and `B`, we can have:

@@ -9,7 +9,7 @@ Schemas are structures that describe a Model. They are used to validate the
 data before saving it.   
 It can also specify generate some default values if needed.
 
-A schema in thinky is define with an object that is passed to [thinky.createModel](/documentation/api/thinky/#createmodel).   
+A schema in thinky is define with an object that is passed to [thinky.createModel](/thinky/documentation/api/thinky/#createmodel).   
 Each field of the object maps to a type. The valid types are:
 
 - `String`

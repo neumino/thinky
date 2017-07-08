@@ -44,6 +44,6 @@ Nothing that I can think of. It is basically sugar on top of the driver.
 
 Take a look at:
 
-- The [quickstart](/documentation/)
+- The [quickstart](/thinky/documentation/)
 - The [examples on GitHub](https://github.com/neumino/thinky/tree/master/examples)
-- The [API documentation](/documentation/api/thinky/)
+- The [API documentation](/thinky/documentation/api/thinky/)
