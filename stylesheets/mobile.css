@@ -64,3 +64,6 @@ ul.doc-nav {
 li{
     list-style: none;
 }
+pre code{
+    font-size:1.5rem !important;
+}
