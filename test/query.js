@@ -721,6 +721,49 @@ describe('getJoin', function(){
     });
 
   });
+  describe("The _rel option", function() {
+    afterEach(cleanTables);
+    it("should allow the same join multiple times", function(done) {
+        var name = util.s8();
+        var Model = thinky.createModel(modelNames[0], {
+          id: String
+        });
+
+        var otherName = util.s8();
+        var OtherModel = thinky.createModel(modelNames[1], {
+          id: String,
+          otherId: String
+        });
+
+        Model.hasMany(OtherModel, "has", "id", "otherId");
+        OtherModel.belongsTo(Model, "belongsTo", "otherId", "id");
+
+        var values = {};
+        var otherValues = { };
+        var doc = new Model(values);
+        var otherDocs = [
+          new OtherModel(otherValues),
+          new OtherModel(otherValues),
+          new OtherModel(otherValues),
+          new OtherModel(otherValues),
+          new OtherModel(otherValues)
+        ];
+
+        doc.has = otherDocs;
+
+        doc.saveAll().then(function(result) {
+          Model.get(doc.id).getJoin({
+            has: { _apply: function(s) { return s.limit(3) } },
+            hasCount: {  _rel: 'has', _apply: function(s) { return s.count() }, _array: false }
+          }).run().then(function (result) {
+            assert.equal(result.has.length, 3);
+            assert.equal(result.hasCount, 5);
+            done();
+          }).error(done);
+        });
+
+    });
+  })
   describe("should not throw with missing keys", function() {
     afterEach(cleanTables);
 
