@@ -36,7 +36,7 @@ not that many rules.
 
 # Documentation
 
-The documentation is on [thinky.io](https://thinky.io).
+The documentation is on [www.justonepixel.com/thinky](https://www.justonepixel.com/thinky).
 
 If you find a typo, error, feel free to submit a pull request on the `gh-pages` branch. You
 can also just open an issue.
