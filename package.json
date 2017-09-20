@@ -1,5 +1,5 @@
 {
-  "name": "cur3n4/thinky",
+  "name": "thinky",
   "version": "2.3.9",
   "description": "RethinkDB ORM for Node.js",
   "main": "lib/thinky.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/cur3n4/thinky"
+    "url": "git://github.com/neumino/thinky"
   },
   "keywords": [
     "rethinkdb",
@@ -21,7 +21,7 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/cur3n4/thinky/issues"
+    "url": "https://github.com/neumino/thinky/issues"
   },
   "dependencies":{
     "rethinkdbdash": "~2.3.0",
