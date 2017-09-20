@@ -1,5 +1,5 @@
 {
-  "name": "thinky",
+  "name": "cur3n4/thinky",
   "version": "2.3.9",
   "description": "RethinkDB ORM for Node.js",
   "main": "lib/thinky.js",
