@@ -281,6 +281,25 @@ describe("Batch insert", function() {
       done(e);
     });
   });
+  it('Batch insert should update the numeric version when inserting documents with numeric versioning ', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      version: Number
+    }, {version: 'version'});
+    var docs = [];
+    for(var i=0; i<10; i++) {
+      docs.push({})
+    }
+    Model.save(docs).then(function(result) {
+      assert.strictEqual(result, docs);
+      for(i=0; i<10; i++) {
+        assert.equal(docs[i].version, 0);
+      }
+      done();
+    }).error(function(e) {
+        done(e);
+    });
+  });
 
 
 });
