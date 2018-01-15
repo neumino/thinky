@@ -1522,7 +1522,8 @@ describe('save', function() {
               doc2.save().then(function() {
                 done(new Error("Was expecting an error"));
               }).error(function(error){
-                assert.equal(error.message, 'Versioning failed - there is a different version for ' + modelNames[0] + ' in the database from: ' + 0);
+                assert(error.message.startsWith('Versioning failed - there is a different version for ' + modelNames[0]));
+                assert(error.message.endsWith(' in the database from: ' + 0))
                 done();
               });
             }).error(done);

@@ -31,7 +31,8 @@ describe('Options', function(){
       enforce_missing: true,
       enforce_type: 'strict',
       validate: 'oncreate',
-      version: undefined
+      version: undefined,
+      validateAfterSave: true
     });
   });
 
@@ -43,7 +44,8 @@ describe('Options', function(){
       enforce_missing: false,
       enforce_type: 'loose',
       validate: 'onsave',
-      version: 'version'
+      version: 'version',
+      validateAfterSave: false
     });
 
     assert.deepEqual(Model.getOptions(), {
@@ -52,7 +54,8 @@ describe('Options', function(){
       enforce_missing: false,
       enforce_type: 'loose',
       validate: 'onsave',
-      version: 'version'
+      version: 'version',
+      validateAfterSave: false
     })
 
     // Make sure we didn't messed up the global options
@@ -62,7 +65,8 @@ describe('Options', function(){
       enforce_missing: true,
       enforce_type: 'strict',
       validate: 'oncreate',
-      version: undefined
+      version: undefined,
+      validateAfterSave: true
     });
 
   });
@@ -102,13 +106,15 @@ describe('Options', function(){
       enforce_missing: false,
       enforce_type: 'none',
       validate: 'onsave',
-      version: 'version'
+      version: 'version',
+      validateAfterSave: true
     })
 
     assert.deepEqual(doc._getOptions(), {
       timeFormat: 'raw',
       validate: 'onsave',
-      version: 'version'
+      version: 'version',
+      validateAfterSave: true
     })
 
     // Make sure we didn't messed up the global options
@@ -118,7 +124,9 @@ describe('Options', function(){
       enforce_missing: true,
       enforce_type: 'strict',
       validate: 'oncreate',
-      version: undefined
+      version: undefined,
+      validateAfterSave: false,
+      validateAfterSave: true
     });
   });
 })
