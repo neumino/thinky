@@ -1459,6 +1459,80 @@ describe('save', function() {
       });
     });
   });
+
+  describe('version', function() {
+    afterEach(cleanTables);
+
+    it('should set an initial version of 0 version when saving a new document with numeric versioning', function(done) {
+      var Model = thinky.createModel(modelNames[0], {id: Date, version: Number}, {version: 'version'});
+      var doc = new Model({id: new Date()});
+      doc.save().then(function() {
+        assert.equal(doc.version, 0);
+        done();
+      }).error(done);
+    });
+    it('should set an initial version of a date version when saving a new document with date versioning', function(done) {
+      var Model = thinky.createModel(modelNames[0], {id: Date, version: Date}, {version: 'version'});
+      var doc = new Model({id: new Date()});
+      doc.save().then(function() {
+        assert.equal(Math.floor(doc.version / 1000), Math.floor(new Date() / 1000));
+        done();
+      }).error(done);
+    });
+    it('should update the numeric version when saving an existing document with numeric versioning', function(done) {
+      var Model = thinky.createModel(modelNames[0], {id: Date, version: Number}, {version: 'version'});
+      var doc = new Model({id: new Date()});
+      doc.save().then(function() {
+        assert.equal(doc.version, 0);
+        doc.save().then(function() {
+          assert.equal(doc.version, 1);
+          done();
+        }).error(done);
+      }).error(done);
+    });
+    it('should update the date version when saving an existing document with date versioning', function(done) {
+      var Model = thinky.createModel(modelNames[0], {id: Date, version: Date}, {version: 'version'});
+      var doc = new Model({id: new Date()});
+      doc.save().then(function() {
+        assert.equal(Math.floor(doc.version / 1000), Math.floor(new Date() / 1000));
+        var originalVersion = doc.version;
+        doc.save().then(function() {
+          assert.notEqual(doc.version, originalVersion);
+          done();
+        }).error(done);
+      }).error(done);
+    });
+    it('should throw an error when setting the version field to a non Date or non numeric', function(done) {
+      var Model = thinky.createModel(modelNames[0], {id: Date, version: String}, {version: 'version'});
+      var doc = new Model({id: new Date()});
+      doc.save().then(function() {
+        done(new Error("Was expecting an error"));
+      }).error(function(error){
+        assert.equal(error.message, 'Version columns can only be Date or Number');
+        done();
+      });
+    });
+    it('should throw an error when trying to update a document with an old version', function(done) {
+      var Model = thinky.createModel(modelNames[0], {id: Date, version: Number}, {version: 'version'});
+      var doc = new Model({id: new Date()});
+      doc.save().then(function() {
+        Model.get(doc.id).run().then(function(doc1) {
+          Model.get(doc.id).run().then(function(doc2) {
+            doc1.save().then(function() {
+              doc2.save().then(function() {
+                done(new Error("Was expecting an error"));
+              }).error(function(error){
+                assert(error.message.startsWith('Versioning failed - there is a different version for ' + modelNames[0]));
+                assert(error.message.endsWith(' in the database from: ' + 0))
+                done();
+              });
+            }).error(done);
+          }).error(done);
+        }).error(done);
+      }).error(done);
+    });
+
+  });
 });
 
 describe('delete', function() {

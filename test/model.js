@@ -281,6 +281,25 @@ describe("Batch insert", function() {
       done(e);
     });
   });
+  it('Batch insert should update the numeric version when inserting documents with numeric versioning ', function(done) {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      version: Number
+    }, {version: 'version'});
+    var docs = [];
+    for(var i=0; i<10; i++) {
+      docs.push({})
+    }
+    Model.save(docs).then(function(result) {
+      assert.strictEqual(result, docs);
+      for(i=0; i<10; i++) {
+        assert.equal(docs[i].version, 0);
+      }
+      done();
+    }).error(function(e) {
+        done(e);
+    });
+  });
 
 
 });
@@ -704,6 +723,26 @@ describe('virtual', function(){
       num: 1
     })
     assert.equal(doc.numVirtual, 3);
+  });
+  it('Generate fields -- virtuals with access to parent', function() {
+    var Model = thinky.createModel(modelNames[0], {
+      id: String,
+      num: Number,
+      numbers: [{
+        initial: number,
+        numVirtual: {
+          _type: 'virtual',
+          default: function(parentDoc) {
+            return this.initial + parentDoc.num+2
+          }
+        }
+      }]
+
+    });
+    var doc = new Model({
+      num: 1, numbers:[{ initial: 1}]
+    })
+    assert.equal(doc.numbers.numVirtual, 4);
   });
   it('Generate fields -- manually', function() {
     var Model = thinky.createModel(modelNames[0], {
