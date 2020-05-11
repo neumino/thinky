@@ -23,12 +23,12 @@
   "bugs": {
     "url": "https://github.com/neumino/thinky/issues"
   },
-  "dependencies":{
+  "dependencies": {
     "rethinkdbdash": "~2.3.0",
     "bluebird": "~2.10.2",
     "validator": "~3.34.0"
   },
   "devDependencies": {
-    "mocha": "~1.21.5"
+    "mocha": "~7.1.2"
   }
 }
