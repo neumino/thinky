@@ -1,6 +1,5 @@
 // Import express and co
 var express = require('express');
-var bodyParser = require('body-parser');
 var app = express();
 
 // Load config for RethinkDB and express
@@ -8,7 +7,7 @@ var config = require(__dirname+"/config.js")
 
 // Import rethinkdbdash
 //var thinky = require('thinky')(config.rethinkdb);
-var thinky = require('thinky')(config.rethinkdb);
+var thinky = require('../../lib/thinky')(config.rethinkdb);
 var r = thinky.r;
 var type = thinky.type;
 
@@ -25,7 +24,7 @@ Todo.ensureIndex("createdAt");
 
 
 app.use(express.static(__dirname + '/public'));
-app.use(bodyParser());
+app.use(express);
 
 app.route('/todo/get').get(get);
 app.route('/todo/new').put(create);
