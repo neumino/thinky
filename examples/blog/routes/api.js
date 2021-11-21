@@ -1,6 +1,6 @@
 // Import
 var config = require(__dirname+'/../config.js');
-var thinky = require('thinky')(config);
+var thinky = require('../../../lib/thinky')(config);
 var r = thinky.r;
 var type = thinky.type;
 

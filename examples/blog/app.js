@@ -3,7 +3,6 @@ var express = require('express');
 var routes = require('./routes');
 var api = require('./routes/api');
 var config = require('./config.js');
-var bodyParser = require('body-parser');
 var serveStatic = require('serve-static')
 
 var app = express();
@@ -11,27 +10,25 @@ var app = express();
 
 app.use(serveStatic('public', {'index': ['index.html', 'index.htm']}))
 //app.use(express.static(__dirname + '/public'));
-//app.use(bodyParser());
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: false }))
 // // parse application/json
-app.use(bodyParser.json())
+app.use(express.json())
 
 app.set('views', __dirname + '/views');
 app.set('view options', { layout: false });
-app.engine('jade', require('jade').__express);
+app.engine('pug', require('pug').__express);
 
 
 /*
 // Configuration
 app.configure(function(){
     app.set('views', __dirname + '/views');
-    app.set('view engine', 'jade');
+    app.set('view engine', 'pug');
     app.set('view options', {
         layout: false
     });
-    app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(express.static(__dirname + '/public'));
     app.use(app.router);

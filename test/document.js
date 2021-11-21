@@ -50,7 +50,7 @@ describe('save', function() {
       var str = util.s8();
       var num = util.random();
 
-      doc = new Model({
+      var doc = new Model({
         str: str,
         num: num
       })
@@ -64,7 +64,7 @@ describe('save', function() {
       var str = util.s8();
       var num = util.random();
 
-      doc = new Model({
+      var doc = new Model({
         str: num,
         num: num
       })
@@ -79,7 +79,7 @@ describe('save', function() {
       var str = util.s8();
       var num = util.random();
 
-      doc = new Model({
+      var doc = new Model({
         str: str,
         num: num
       })
@@ -95,11 +95,11 @@ describe('save', function() {
       var str = util.s8();
       var num = util.random();
 
-      doc = new Model({
+      var doc = new Model({
         id: str
       })
       doc.save().then(function(result) {
-        doc2 = new Model({
+        var doc2 = new Model({
           id: str
         })
         doc2.save().then(function(r) {
@@ -117,12 +117,12 @@ describe('save', function() {
       var str = util.s8();
       var num = util.random();
 
-      doc = new Model({
+      var doc = new Model({
         str: str,
         num: num
       })
       assert.equal(doc.isSaved(), false);
-      assert.equal(doc.setSaved());
+      doc.setSaved()
       assert.equal(doc.isSaved(), true);
     });
 
@@ -130,7 +130,7 @@ describe('save', function() {
       var str = util.s8();
       var num = util.random();
 
-      doc = new Model({
+      var doc = new Model({
         str: str,
         num: num
       })
@@ -143,7 +143,7 @@ describe('save', function() {
       var str = util.s8();
       var num = util.random();
 
-      doc = new Model({
+      var doc = new Model({
         str: str,
         num: num
       })
@@ -155,7 +155,7 @@ describe('save', function() {
       var str = util.s8();
       var num = util.random();
 
-      doc = new Model({
+      var doc = new Model({
         str: str,
         num: num
       })
@@ -171,7 +171,7 @@ describe('save', function() {
       var str = util.s8();
       var num = util.random();
 
-      doc = new Model({
+      var doc = new Model({
         str: str,
         num: num
       })
@@ -191,7 +191,7 @@ describe('save', function() {
       var str = util.s8();
       var num = util.random();
 
-      doc = new Model({
+      var doc = new Model({
         str: str,
         num: num
       })
@@ -213,7 +213,7 @@ describe('save', function() {
       var str = util.s8();
       var num = util.random();
 
-      doc = new Model({
+      var doc = new Model({
         str: str,
         num: num
       })
@@ -252,7 +252,7 @@ describe('save', function() {
       }).error(done)
     });
     it('Point - ReQL point', function(done){
-      Model = thinky.createModel(modelNames[0], {
+      var Model = thinky.createModel(modelNames[0], {
         id: String,
         point: type.point()
       })
@@ -491,7 +491,7 @@ describe('save', function() {
     });
     it('new should create instances of Document for joined documents too', function() {
       var docValues = {str: util.s8(), num: util.random(), otherDoc: {str: util.s8(), num: util.random()}}
-      doc = new Model(docValues);
+      var doc = new Model(docValues);
       assert.equal(doc._getModel()._name, Model.getTableName())
       assert.equal(doc.otherDoc._getModel()._name, OtherModel.getTableName())
     });

@@ -1,4 +1,4 @@
-var thinky = require('thinky');
+var thinky = require('../../lib/thinky');
 var config = require('./config');
 
 // Initialize thinky

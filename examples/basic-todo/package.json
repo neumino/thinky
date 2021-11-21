@@ -4,7 +4,5 @@
   , "private": true
   , "dependencies": {
       "express": "4.17.1"
-    , "body-parser": "1.0.2"
-    , "thinky": "~1.15.6"
   }
 }
