@@ -1,9 +1,8 @@
 # Thinky
-===============================
-<a href="https://app.wercker.com/project/bykey/e5ab679f3412f8f86ef6488b31004fed"><img alt="Wercker status" src="https://app.wercker.com/status/e5ab679f3412f8f86ef6488b31004fed/m/master" align="right"></a>
-Light Node.js ORM for RethinkDB.  
 
-### Quick start 
+[![Mocha tests CI](https://github.com/dotnetCarpenter/thinky/actions/workflows/node.js.yml/badge.svg)](https://github.com/dotnetCarpenter/thinky/actions/workflows/node.js.yml)
+
+### Quick start
 
 Install:
 
@@ -23,7 +22,7 @@ var Post = thinky.createModel("Post", {
   title: String,
   content: String,
   idAuthor: String
-}); 
+});
 
 // You can also add constraints on the schema
 var Author = thinky.createModel("Author", {
@@ -118,7 +117,7 @@ You are welcome to do a pull request.
 
 ### Roadmap
 
-The roadmap is defined with the issues/feedback on GitHub. Checkout:  
+The roadmap is defined with the issues/feedback on GitHub. Checkout:
 [https://github.com/neumino/thinky/issues](https://github.com/neumino/thinky/issues)
 
 
@@ -139,7 +138,7 @@ The roadmap is defined with the issues/feedback on GitHub. Checkout:
 - [rasapetter](https://github.com/rasapetter)
 - [simonratner](https://github.com/simonratner)
 - [wezs](https://github.com/wezs)
- 
+
 
 ### License
 

@@ -1,3 +1,5 @@
+'use strict';
+
 var config = require(__dirname+'/../config.js');
 
 /*

@@ -1,5 +1,6 @@
-var config = require(__dirname+'/../config.js');
+'use strict';
 
+var config = require(__dirname+'/../config.js');
 var thinky = require(__dirname+'/../lib/thinky.js')(config);
 var r = thinky.r;
 var type = thinky.type;

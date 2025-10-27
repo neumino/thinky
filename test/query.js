@@ -1,3 +1,5 @@
+'use strict';
+
 var config = require(__dirname+'/../config.js');
 var thinky = require(__dirname+'/../lib/thinky.js')(config);
 var r = thinky.r;
@@ -43,7 +45,7 @@ describe('Model queries', function() {
     var str = util.s8();
     var num = util.random();
 
-    doc = new Model({
+    var doc = new Model({
       str: str,
       num: num
     })
@@ -724,7 +726,7 @@ describe('getJoin', function(){
   describe("should not throw with missing keys", function() {
     afterEach(cleanTables);
 
-    var Model, OtherModel;
+    var Model, OtherModel, doc;
     it('hasOne', function(done) {
       Model = thinky.createModel(modelNames[0], {
         id: String,
@@ -740,7 +742,7 @@ describe('getJoin', function(){
       })
       Model.hasOne(OtherModel, "otherDoc", "str", "foreignKey")
 
-      var doc = new Model({
+      doc = new Model({
         id: util.s8(),
         num: 1
       })
@@ -1122,7 +1124,6 @@ describe('removeRelation', function(){
       num: Number
     });
 
-    var otherName = util.s8();
     var OtherModel = thinky.createModel(modelNames[1], {
       id: String,
       str: String,
@@ -1134,16 +1135,16 @@ describe('removeRelation', function(){
     var docValues = {str: util.s8(), num: util.random()}
     var otherDocValues = {str: util.s8(), num: util.random()}
 
-    doc = new Model(docValues);
+    var doc = new Model(docValues);
     var otherDoc = new OtherModel(otherDocValues);
     doc.otherDoc = otherDoc;
 
     doc.saveAll().then(function(doc) {
       return Model.get(doc.id).removeRelation('otherDoc').run()
     }).then(function(otherDocResults) {
-      assert.equal(otherDocResults.id, otherDoc.id); 
-      assert.equal(otherDocResults.str, otherDoc.str); 
-      assert.equal(otherDocResults.num, otherDoc.num); 
+      assert.equal(otherDocResults.id, otherDoc.id);
+      assert.equal(otherDocResults.str, otherDoc.str);
+      assert.equal(otherDocResults.num, otherDoc.num);
       return OtherModel.get(otherDoc.id).run()
     }).then(function(doc) {
       assert.equal(doc.foreignKey, undefined);
@@ -1158,7 +1159,6 @@ describe('removeRelation', function(){
       num: Number
     });
 
-    var otherName = util.s8();
     var OtherModel = thinky.createModel(modelNames[1], {
       id: String,
       str: String,
@@ -1170,7 +1170,7 @@ describe('removeRelation', function(){
     var docValues = {str: util.s8(), num: util.random()}
     var otherDocValues = {str: util.s8(), num: util.random()}
 
-    doc = new Model(docValues);
+    var doc = new Model(docValues);
     var otherDoc = new OtherModel(otherDocValues);
     doc.otherDocs = [otherDoc];
 
@@ -1178,9 +1178,9 @@ describe('removeRelation', function(){
       return Model.get(doc.id).removeRelation('otherDocs').run()
     }).then(function(otherDocResults) {
       assert.equal(otherDocResults.length, 1);
-      assert.equal(otherDocResults[0].id, otherDoc.id); 
-      assert.equal(otherDocResults[0].str, otherDoc.str); 
-      assert.equal(otherDocResults[0].num, otherDoc.num); 
+      assert.equal(otherDocResults[0].id, otherDoc.id);
+      assert.equal(otherDocResults[0].str, otherDoc.str);
+      assert.equal(otherDocResults[0].num, otherDoc.num);
 
       return OtherModel.get(otherDoc.id).run()
     }).then(function(doc) {
@@ -1196,7 +1196,6 @@ describe('removeRelation', function(){
       num: Number
     });
 
-    var otherName = util.s8();
     var OtherModel = thinky.createModel(modelNames[1], {
       id: String,
       str: String,
@@ -1209,7 +1208,7 @@ describe('removeRelation', function(){
     var otherDocValues1 = {str: util.s8(), num: util.random()}
     var otherDocValues2 = {str: util.s8(), num: util.random()}
 
-    doc = new Model(docValues);
+    var doc = new Model(docValues);
     var otherDoc1 = new OtherModel(otherDocValues1);
     var otherDoc2 = new OtherModel(otherDocValues2);
     doc.otherDocs = [otherDoc1, otherDoc2];
@@ -1218,9 +1217,9 @@ describe('removeRelation', function(){
       return Model.get(doc.id).removeRelation('otherDocs', {id: otherDoc2.id}).run()
     }).then(function(otherDocResults) {
       assert.equal(otherDocResults.length, 1);
-      assert.equal(otherDocResults[0].id, otherDoc2.id); 
-      assert.equal(otherDocResults[0].str, otherDoc2.str); 
-      assert.equal(otherDocResults[0].num, otherDoc2.num); 
+      assert.equal(otherDocResults[0].id, otherDoc2.id);
+      assert.equal(otherDocResults[0].str, otherDoc2.str);
+      assert.equal(otherDocResults[0].num, otherDoc2.num);
 
       return Model.get(doc.id).getJoin({otherDocs: true}).run()
     }).then(function(doc) {
@@ -1238,7 +1237,6 @@ describe('removeRelation', function(){
       foreignKey: String
     });
 
-    var otherName = util.s8();
     var OtherModel = thinky.createModel(modelNames[1], {
       id: String,
       str: String,
@@ -1249,7 +1247,7 @@ describe('removeRelation', function(){
     var docValues = {str: util.s8(), num: util.random()}
     var otherDocValues = {str: util.s8(), num: util.random()}
 
-    doc = new Model(docValues);
+    var doc = new Model(docValues);
     var otherDoc = new OtherModel(otherDocValues);
     doc.otherDoc = otherDoc;
 
@@ -1274,7 +1272,6 @@ describe('removeRelation', function(){
       num: Number
     });
 
-    var otherName = util.s8();
     var OtherModel = thinky.createModel(modelNames[1], {
       id: String,
       str: String,
@@ -1286,7 +1283,7 @@ describe('removeRelation', function(){
     var docValues = {str: util.s8(), num: util.random()}
     var otherDocValues = {str: util.s8(), num: util.random()}
 
-    doc = new Model(docValues);
+    var doc = new Model(docValues);
     var otherDoc = new OtherModel(otherDocValues);
     doc.otherDocs = [otherDoc];
 
@@ -1306,7 +1303,6 @@ describe('removeRelation', function(){
       num: Number
     });
 
-    var otherName = util.s8();
     var OtherModel = thinky.createModel(modelNames[1], {
       id: String,
       str: String,
@@ -1319,7 +1315,7 @@ describe('removeRelation', function(){
     var otherDocValues1 = {str: util.s8(), num: util.random()}
     var otherDocValues2 = {str: util.s8(), num: util.random()}
 
-    doc = new Model(docValues);
+    var doc = new Model(docValues);
     var otherDoc1 = new OtherModel(otherDocValues1);
     var otherDoc2 = new OtherModel(otherDocValues2);
     doc.otherDocs = [otherDoc1, otherDoc2];
@@ -1345,7 +1341,7 @@ describe('removeRelation', function(){
 
     Model.hasAndBelongsToMany(Model, "others", "id", "id")
 
-    doc = new Model({str: util.s8(), num: util.random()});
+    var doc = new Model({str: util.s8(), num: util.random()});
     var otherDoc1 = new Model({str: util.s8(), num: util.random()});
     var otherDoc2 = new Model({str: util.s8(), num: util.random()});
     doc.others = [otherDoc1, otherDoc2];
@@ -1370,7 +1366,7 @@ describe('removeRelation', function(){
 
     Model.hasAndBelongsToMany(Model, "others", "id", "id")
 
-    doc = new Model({str: util.s8(), num: util.random()});
+    var doc = new Model({str: util.s8(), num: util.random()});
     var otherDoc1 = new Model({str: util.s8(), num: util.random()});
     var otherDoc2 = new Model({str: util.s8(), num: util.random()});
     doc.others = [otherDoc1, otherDoc2];
@@ -1391,7 +1387,6 @@ describe('Query.run() should take options', function(){
   var Model;
   var data = [];
   before(function(done) {
-    var name = util.s8();
     Model = thinky.createModel(modelNames[0], {
       id: String,
       str: String,
@@ -1399,7 +1394,7 @@ describe('Query.run() should take options', function(){
     })
     var str = util.s8();
 
-    doc = new Model({
+    var doc = new Model({
       str: str,
       num: 1
     })
@@ -1944,7 +1939,7 @@ describe('In place writes', function() {
 
     it('handles Promises', function (done) {
       var Model = thinky.createModel(modelNames[0], {id: String});
-    
+
       var doc = new Model({id: util.s8(), num: 0});
       var bound = Model.get(doc.id).bindRun();
 
@@ -1961,7 +1956,7 @@ describe('In place writes', function() {
 
     it('handles node-style callbacks', function (done) {
       var Model = thinky.createModel(modelNames[0], {id: String});
-    
+
       var doc = new Model({id: util.s8(), num: 0});
       var bound = Model.get(doc.id).bindRun();
 
@@ -1982,7 +1977,7 @@ describe('In place writes', function() {
 
     it('handles Promises', function (done) {
       var Model = thinky.createModel(modelNames[0], {id: String});
-    
+
       var doc = new Model({id: util.s8(), num: 0});
       var bound = Model.get(doc.id).bindExecute();
 
@@ -1999,7 +1994,7 @@ describe('In place writes', function() {
 
     it('handles node-style callbacks', function (done) {
       var Model = thinky.createModel(modelNames[0], {id: String});
-    
+
       var doc = new Model({id: util.s8(), num: 0});
       var bound = Model.get(doc.id).bindExecute();
 
@@ -2015,5 +2010,5 @@ describe('In place writes', function() {
     });
 
   });
-  
+
 });

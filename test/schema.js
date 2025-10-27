@@ -1,3 +1,5 @@
+'use strict';
+
 var config = require(__dirname+'/../config.js');
 var thinky = require(__dirname+'/../lib/thinky.js')(config);
 var r = thinky.r;
@@ -1209,7 +1211,7 @@ describe('Chainable types', function(){
         foo: type.virtual()
       },
       {init: false})
-    var doc = new Model({ id: 'bar', foo: "bar"})
+    new Model({ id: 'bar', foo: "bar"})
   });
   it('Any - basic', function(){
     var name = util.s8();
@@ -1241,7 +1243,7 @@ describe('generateDefault', function(){
       field: {_type: String, default: defaultValue}
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
     assert.equal(doc.id, str);
@@ -1259,7 +1261,7 @@ describe('generateDefault', function(){
       }}
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1278,7 +1280,7 @@ describe('generateDefault', function(){
       }}
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1296,7 +1298,7 @@ describe('generateDefault', function(){
       field: {_type: Number, default: defaultValue}
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1315,7 +1317,7 @@ describe('generateDefault', function(){
       }}
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1333,7 +1335,7 @@ describe('generateDefault', function(){
       field: {_type: Boolean, default: defaultValue}
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1352,7 +1354,7 @@ describe('generateDefault', function(){
       }}
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1370,7 +1372,7 @@ describe('generateDefault', function(){
       field: {_type: Array, default: defaultValue}
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1389,7 +1391,7 @@ describe('generateDefault', function(){
       }}
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1406,7 +1408,7 @@ describe('generateDefault', function(){
       field: {_type: Object, default: defaultValue}
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1425,7 +1427,7 @@ describe('generateDefault', function(){
       }}
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1442,7 +1444,7 @@ describe('generateDefault', function(){
       field: {_type: Object, default: defaultValue}
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1467,7 +1469,7 @@ describe('generateDefault', function(){
       }
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1492,7 +1494,7 @@ describe('generateDefault', function(){
       }
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1519,7 +1521,7 @@ describe('generateDefault', function(){
       }
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       nested: []
     })
@@ -1547,7 +1549,7 @@ describe('generateDefault', function(){
       }
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       nested: [{}]
 
@@ -1572,7 +1574,7 @@ describe('generateDefault', function(){
       }]
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       nested: [{}]
 
@@ -1597,7 +1599,7 @@ describe('generateDefault', function(){
       }]
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       nested: [{}, {field: 4}, {}]
 
@@ -1623,7 +1625,7 @@ describe('generateDefault', function(){
       }
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1647,7 +1649,7 @@ describe('generateDefault', function(){
       }
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1667,7 +1669,7 @@ describe('generateDefault', function(){
       }
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1687,7 +1689,7 @@ describe('generateDefault', function(){
       }
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       nested: {}
     })
@@ -1708,7 +1710,7 @@ describe('generateDefault', function(){
       }
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -1757,7 +1759,7 @@ describe('generateDefault', function(){
       }
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       nested: null
     })
@@ -1775,7 +1777,7 @@ describe('validate', function(){
       field: String
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: 1
     })
@@ -1795,7 +1797,7 @@ describe('validate', function(){
       field: String
     }, {init: false, enforce_type: 'loose'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: 1
     })
@@ -1816,7 +1818,7 @@ describe('validate', function(){
       field: String
     }, {init: false, enforce_type: 'none'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: 1
     })
@@ -1832,7 +1834,7 @@ describe('validate', function(){
       field: String
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: undefined
     })
@@ -1848,7 +1850,7 @@ describe('validate', function(){
       field: String
     }, {init: false, enforce_type: 'loose'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: undefined
     })
@@ -1864,7 +1866,7 @@ describe('validate', function(){
       field: String
     }, {init: false, enforce_type: 'none'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: undefined
     })
@@ -1880,7 +1882,7 @@ describe('validate', function(){
       field: String
     }, {init: false, enforce_type: 'none', enforce_missing: true})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: undefined
     })
@@ -1899,7 +1901,7 @@ describe('validate', function(){
       field: String
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: null
     })
@@ -1919,7 +1921,7 @@ describe('validate', function(){
       field: String
     }, {init: false, enforce_type: 'loose'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: null
     })
@@ -1935,7 +1937,7 @@ describe('validate', function(){
       field: String
     }, {init: false, enforce_type: 'none'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: null
     })
@@ -1951,7 +1953,7 @@ describe('validate', function(){
       field: Number
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "hello"
     })
@@ -1971,7 +1973,7 @@ describe('validate', function(){
       field: Number
     }, {init: false, enforce_type: 'loose'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "hello"
     })
@@ -1992,7 +1994,7 @@ describe('validate', function(){
       field: Number
     }, {init: false, enforce_type: 'none'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "hello"
     })
@@ -2008,7 +2010,7 @@ describe('validate', function(){
       field: Number
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "123456"
     })
@@ -2024,7 +2026,7 @@ describe('validate', function(){
       field: Boolean
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "hello"
     })
@@ -2044,7 +2046,7 @@ describe('validate', function(){
       field: Boolean
     }, {init: false, enforce_type: 'loose'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "hello"
     })
@@ -2065,7 +2067,7 @@ describe('validate', function(){
       field: Boolean
     }, {init: false, enforce_type: 'none'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "hello"
     })
@@ -2081,7 +2083,7 @@ describe('validate', function(){
       field: Date
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: (new Date()).toJSON()
     })
@@ -2097,7 +2099,7 @@ describe('validate', function(){
       field: Date
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "hello"
     })
@@ -2117,7 +2119,7 @@ describe('validate', function(){
       field:  Date
     }, {init: false, enforce_type: 'loose'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "hello"
     })
@@ -2137,7 +2139,7 @@ describe('validate', function(){
       field: Date
     }, {init: false, enforce_type: 'loose'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: (new Date()).toJSON()
     })
@@ -2153,7 +2155,7 @@ describe('validate', function(){
       field: Date
     }, {init: false, enforce_type: 'none'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "hello"
     })
@@ -2169,7 +2171,7 @@ describe('validate', function(){
       field: Date
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: {$reql_type$: "TIME", epoch_time: 1231, timezone: "+10:00" }
     })
@@ -2185,7 +2187,7 @@ describe('validate', function(){
       field: Date
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: {$reql_type$: "TIME", epoch_time: 1231}
     })
@@ -2204,7 +2206,7 @@ describe('validate', function(){
       field: Date
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: {$reql_type$: "TIME", timezone: "+00:00"}
     })
@@ -2223,7 +2225,7 @@ describe('validate', function(){
       field: Date
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: r.now()
     })
@@ -2238,7 +2240,7 @@ describe('validate', function(){
       field: Date
     }, {init: false, enforce_missing: true})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
     assert.throws(function() {
@@ -2256,7 +2258,7 @@ describe('validate', function(){
       field: Date
     }, {init: false, enforce_missing: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
     doc.validate();
@@ -2270,7 +2272,7 @@ describe('validate', function(){
       field: Buffer
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: new Buffer([1,2,3])
     })
@@ -2286,7 +2288,7 @@ describe('validate', function(){
       field: Buffer
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "hello"
     })
@@ -2306,7 +2308,7 @@ describe('validate', function(){
       field: Buffer
     }, {init: false, enforce_type: 'loose'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "hello"
     })
@@ -2327,7 +2329,7 @@ describe('validate', function(){
       field: Buffer
     }, {init: false, enforce_type: 'none'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "hello"
     })
@@ -2343,7 +2345,7 @@ describe('validate', function(){
       field: Buffer
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: {$reql_type$: "BINARY", data: (new Buffer("hello")).toString("base64") }
     })
@@ -2359,7 +2361,7 @@ describe('validate', function(){
       field: Buffer
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: { $reql_type$: "BINARY" }
     })
@@ -2378,7 +2380,7 @@ describe('validate', function(){
       field: Buffer
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: r.http('http://some/domain/com/some/binary/file')
     })
@@ -2393,7 +2395,7 @@ describe('validate', function(){
       field: Buffer
     }, {init: false, enforce_missing: true})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
     assert.throws(function() {
@@ -2411,7 +2413,7 @@ describe('validate', function(){
       field: Buffer
     }, {init: false, enforce_missing: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
     doc.validate();
@@ -2425,7 +2427,7 @@ describe('validate', function(){
       field: [Number]
     }, {init: false, enforce_missing: true})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -2444,7 +2446,7 @@ describe('validate', function(){
       field: [Number]
     }, {init: false, enforce_missing: true})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -2463,7 +2465,7 @@ describe('validate', function(){
       field: [Number]
     }, {init: false, enforce_missing: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -2478,7 +2480,7 @@ describe('validate', function(){
       field: [Number]
     }, {init: false, enforce_type: 'loose'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: 2
     })
@@ -2498,7 +2500,7 @@ describe('validate', function(){
       field: [Number]
     }, {init: false, enforce_type: 'loose'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: {}
     })
@@ -2518,7 +2520,7 @@ describe('validate', function(){
       field: [Number]
     }, {init: false, enforce_type: 'none'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -2533,7 +2535,7 @@ describe('validate', function(){
       field: [Number]
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: ["hello"]
     })
@@ -2553,7 +2555,7 @@ describe('validate', function(){
       field: [Number]
     }, {init: false, enforce_type: 'loose'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: ["hello"]
     })
@@ -2573,7 +2575,7 @@ describe('validate', function(){
       field: [Number]
     }, {init: false, enforce_type: 'none'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: ["hello"]
     })
@@ -2589,7 +2591,7 @@ describe('validate', function(){
       field: [Number]
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: [1, 2, 3, "hello"]
     })
@@ -2609,7 +2611,7 @@ describe('validate', function(){
       field: [Number]
     }, {init: false, enforce_type: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: [1, 2, 3, undefined]
     })
@@ -2629,7 +2631,7 @@ describe('validate', function(){
       field: [Number]
     }, {init: false, enforce_type: 'loose'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: [1, 2, 3, undefined]
     })
@@ -2651,7 +2653,7 @@ describe('validate', function(){
       field: [Number]
     }, {init: false, enforce_type: 'loose'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: [1, 2, 3, null]
     })
@@ -2667,7 +2669,7 @@ describe('validate', function(){
       field: {}
     }, {init: false, enforce_missing: true})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -2686,7 +2688,7 @@ describe('validate', function(){
       field: {}
     }, {init: false, enforce_missing: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -2701,7 +2703,7 @@ describe('validate', function(){
       field: {}
     }, {init: false, enforce_type: "loose"})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "foo"
     })
@@ -2721,7 +2723,7 @@ describe('validate', function(){
       field: {}
     }, {init: false, enforce_type: "none"})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -2736,7 +2738,7 @@ describe('validate', function(){
       field: {}
     }, {init: false, enforce_type: "none"})
 
-    doc = new Model({
+    var doc = new Model({
       id: str
     })
 
@@ -2753,7 +2755,7 @@ describe('validate', function(){
       }
     }, {init: false, enforce_type: "strict"})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "bar"
     })
@@ -2775,7 +2777,7 @@ describe('validate', function(){
       }
     }, {init: false, enforce_type: "strict"})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: "hello"
     })
@@ -2797,7 +2799,7 @@ describe('validate', function(){
       }
     }, {init: false, enforce_type: "strict"})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: {
         foo: "str"
@@ -2821,7 +2823,7 @@ describe('validate', function(){
       }
     }, {init: false, enforce_type: "loose"})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: {
         foo: "str"
@@ -2842,7 +2844,7 @@ describe('validate', function(){
       id: String
     }, {init: false, enforce_type: "strict"})
 
-    doc = new Model({})
+    var doc = new Model({})
 
     doc.validate();
   });
@@ -2858,7 +2860,7 @@ describe('validate', function(){
       }
     }, {init: false, enforce_missing: true, enforce_type: "loose"})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: {}
     })
@@ -2880,7 +2882,7 @@ describe('validate', function(){
       }
     }, {init: false, enforce_missing: false, enforce_type: "loose"})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: {}
     })
@@ -2898,7 +2900,7 @@ describe('validate', function(){
       }
     }, {init: false, enforce_missing: false, enforce_type: "loose"})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: {}
     })
@@ -2920,7 +2922,7 @@ describe('validate', function(){
       }
     }, {init: false, enforce_missing: false, enforce_type: "none"})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       field: {}
     })
@@ -2935,7 +2937,7 @@ describe('validate', function(){
       id: String
     }, {init: false, enforce_extra: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       foo: "hello"
     })
@@ -2954,7 +2956,7 @@ describe('validate', function(){
       foo: [{bar: String}]
     }, {init: false, enforce_extra: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       foo: [{bar: "Hello", buzz: "World"}]
     })
@@ -2973,7 +2975,7 @@ describe('validate', function(){
       foo: {bar: String}
     }, {init: false, enforce_extra: 'strict'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       foo: {bar: "Hello", buzz: "World"}
     })
@@ -2992,7 +2994,7 @@ describe('validate', function(){
       foo: {fizz: String},
     }, {init: false, enforce_extra: 'remove'})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       foo: {fizz: "Hello", buzz: "OMIT"},
       bar: "OMIT"
@@ -3020,7 +3022,7 @@ describe('validate', function(){
       }
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       foo: {fizz: "Hello", buzz: "OMIT"},
       bar: "keep"
@@ -3045,7 +3047,7 @@ describe('validate', function(){
       }).removeExtra()
     }, {init: false})
 
-    doc = new Model({
+    var doc = new Model({
       id: str,
       foo: {fizz: "Hello", buzz: "OMIT"},
       bar: "keep"
@@ -3077,7 +3079,7 @@ describe('validate', function(){
 
     var value = { id: util.s8() }
     var value2 = { id: util.s8(), otherId: value.id }
-    doc = new Model(value)
+    var doc = new Model(value)
     var otherDoc = new OtherModel(value2)
     doc.otherDoc = otherDoc;
 
@@ -3098,7 +3100,7 @@ describe('validate', function(){
 
 
     assert.throws(function() {
-      doc = new Model({
+      var doc = new Model({
         id: str,
         field: 1
       })
@@ -3131,7 +3133,7 @@ describe('validateAll', function() {
 
     Model.hasOne(OtherModel, "otherDoc", "otherId", "id", {init: false});
 
-    doc = new Model({
+    var doc = new Model({
       id: str1,
       field: str2,
       otherDoc: {
@@ -3166,7 +3168,7 @@ describe('validateAll', function() {
 
     Model.hasOne(OtherModel, "otherDoc", "otherId", "id", {init: false});
 
-    doc = new Model({
+    var doc = new Model({
       id: str1,
       field: str2,
       otherDoc: {
@@ -3201,7 +3203,7 @@ describe('validateAll', function() {
 
     Model.hasOne(OtherModel, "otherDoc", "otherId", "id", {init: false});
 
-    doc = new Model({
+    var doc = new Model({
       id: str1,
       field: str2,
       otherDoc: {
@@ -3237,7 +3239,7 @@ describe('validateAll', function() {
 
     Model.hasOne(OtherModel, "otherDoc", "otherId", "id", {init: false});
 
-    doc = new Model({
+    var doc = new Model({
       id: str1,
       field: str2,
       otherDoc: {
@@ -3273,7 +3275,7 @@ describe('validateAll', function() {
 
     Model.hasMany(OtherModel, "otherDocs", "id", "otherId", {init: false});
 
-    doc = new Model({
+    var doc = new Model({
       id: str1,
       field: str2,
       otherDocs: [{
@@ -3309,7 +3311,7 @@ describe('validateAll', function() {
 
     Model.hasMany(OtherModel, "otherDocs", "id", "otherId", {init: false});
 
-    doc = new Model({
+    var doc = new Model({
       id: str1,
       field: str2,
       otherDocs: [{
@@ -3345,7 +3347,7 @@ describe('validateAll', function() {
 
     Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "otherId", {init: false});
 
-    doc = new Model({
+    var doc = new Model({
       id: str1,
       field: str2,
       otherDocs: [{
@@ -3381,7 +3383,7 @@ describe('validateAll', function() {
 
     Model.hasAndBelongsToMany(OtherModel, "otherDocs", "id", "otherId", {init: false});
 
-    doc = new Model({
+    var doc = new Model({
       id: str1,
       field: str2,
       otherDocs: [{
@@ -3823,7 +3825,7 @@ describe('_validator', function(){
   it('Array without type', function(){
     var name = util.s8();
     var Model = thinky.createModel(name, {id: Array}, {init: false})
-    doc = new Model({id: [1,2,3]});
+    var doc = new Model({id: [1,2,3]});
     doc.validate();
   });
 });
